@@ -1,5 +1,5 @@
 # Use the official ASP.NET Core SDK image for building
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy csproj files and restore dependencies
@@ -18,7 +18,7 @@ FROM build AS publish
 RUN dotnet publish "WebCV.Web.csproj" -c Release -o /app/publish
 
 # Use the official ASP.NET Core runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
