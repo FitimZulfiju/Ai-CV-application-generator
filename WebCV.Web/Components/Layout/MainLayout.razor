@@ -1,0 +1,50 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudScrollToTop TopOffset="400">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+</MudScrollToTop>
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudImage Src="/logo.png" Height="32" Alt="AI Web CV Logo" Style="cursor: pointer;" @onclick="NavigateToHome" />
+        <MudText Typo="Typo.h5" Class="ml-3">AI Web 'CV | Application' Generator</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/fitimzulfiu/Web-CV-application-generator" Target="_blank" />
+    </MudAppBar>
+        @if (LoadingService.IsVisible)
+                    {
+            <WebCV.Web.Components.Shared.LoadingIndicator 
+                Color="Color.Info" 
+                Size="Size.Large"
+                Value="@LoadingService.Percentage" 
+                Indeterminate="@(LoadingService.Percentage <= 0)" 
+            Class="width-100" 
+            Style="position: fixed; top: 64px; z-index: 2000;">
+            <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                    <b>
+
+        @LoadingService.Percentage
+%
+        </b>
+            </MudText>
+        </WebCV.Web.Components.Shared.LoadingIndicator>
+    }
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Class="pt-16 pa-4">
+
+
+            @Body
+    </MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>

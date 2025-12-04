@@ -1,0 +1,39 @@
+﻿@page "/my-applications"
+@attribute [Authorize]
+
+<PageTitle>Your AI-powered career assistant</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+    <MudText Typo="Typo.h5" Class="pb-4">📝 My Applications</MudText>
+
+    @if (_isLoading)
+    {
+        <WebCV.Web.Components.Shared.LoadingIndicator />
+    }
+    else if (_applications == null || !_applications.Any())
+    {
+        <MudAlert Severity="Severity.Info">You haven't generated any applications yet. Go to <MudLink Href="/generate">Generate</MudLink> to create one!</MudAlert>
+    }
+    else
+    {
+        <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Date</MudTh>
+                <MudTh>Company</MudTh>
+                <MudTh>Job Title</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Date">@context.CreatedDate.ToLocalTime().ToString("g")</MudTd>
+                <MudTd DataLabel="Company">@context.JobPosting?.CompanyName</MudTd>
+                <MudTd DataLabel="Job Title">@context.JobPosting?.Title</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewApplication(context.Id))" Class="mr-2" StartIcon="@Icons.Material.Filled.Visibility">View</MudButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => DeleteApplication(context))" aria-label="delete"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+</MudContainer>
+
+

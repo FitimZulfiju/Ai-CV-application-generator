@@ -1,0 +1,13 @@
+<MudProgressLinear Color="@Color" Value="@Value" Indeterminate="@Indeterminate" Size="@Size" Class="@Class" Style="@Style">
+    @ChildContent
+</MudProgressLinear>
+
+@code {
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+    [Parameter] public Size Size { get; set; } = Size.Small;
+    [Parameter] public int Value { get; set; }
+    [Parameter] public bool Indeterminate { get; set; } = true;
+    [Parameter] public string Class { get; set; } = "my-7";
+    [Parameter] public string Style { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

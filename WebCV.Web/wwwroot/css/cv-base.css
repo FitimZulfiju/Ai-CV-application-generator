@@ -1,0 +1,58 @@
+/* 
+   Modern Professional CV Styles - Base
+   Fitim Zulfiju - Full-Stack .NET Developer
+*/
+
+/* CSS Reset & Base */
+.cv-container * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color Palette - Balanced Professional Colors */
+    --primary-color: #2c7be5;
+    /* Medium professional blue */
+    --primary-dark: #1e5fae;
+    --primary-light: #4a90e8;
+    --text-dark: #1f2937;
+    --text-medium: #4b5563;
+    --text-light: #6b7280;
+    --bg-light: #f9fafb;
+    --bg-white: #ffffff;
+    --border-color: #e5e7eb;
+    --accent-color: #10b981;
+    /* Success green for highlights */
+    --shadow-sm: 0 0.062em 0.125em 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 0.25em 0.375em -0.062em rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 0.625em 0.938em -0.188em rgba(0, 0, 0, 0.1);
+}
+
+.cv-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: #f3f4f6;
+    padding: 1.25em;
+    width: 100%;
+    min-height: 100%;
+}
+
+.cv-container .container {
+    max-width: 100%;
+    /* Full width for preview */
+    margin: 0 auto;
+    background: var(--bg-white);
+    box-shadow: var(--shadow-lg);
+    padding: 0;
+}
+
+/* Visual page divider for HTML view */
+.cv-container .page {
+    padding-bottom: 1.5em;
+}
+
+.cv-container .page:not(:last-child) {
+    border-bottom: 0.062em solid var(--border-color);
+}

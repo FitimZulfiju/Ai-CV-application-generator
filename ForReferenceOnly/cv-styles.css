@@ -1,0 +1,1015 @@
+/* 
+   Modern Professional CV Styles
+   Fitim Zulfiju - Full-Stack .NET Developer
+*/
+
+/* CSS Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color Palette - Balanced Professional Colors */
+    --primary-color: #2c7be5;
+    /* Medium professional blue */
+    --primary-dark: #1e5fae;
+    --primary-light: #4a90e8;
+    --text-dark: #1f2937;
+    --text-medium: #4b5563;
+    --text-light: #6b7280;
+    --bg-light: #f9fafb;
+    --bg-white: #ffffff;
+    --border-color: #e5e7eb;
+    --accent-color: #10b981;
+    /* Success green for highlights */
+    --shadow-sm: 0 0.062em 0.125em 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 0.25em 0.375em -0.062em rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 0.625em 0.938em -0.188em rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: #f3f4f6;
+    padding: 1.25em;
+}
+
+.container {
+    max-width: 56.25em;
+    margin: 0 auto;
+    background: var(--bg-white);
+    box-shadow: var(--shadow-lg);
+    padding: 0;
+}
+
+/* Visual page divider for HTML view: keep pages visually separated while
+   preserving compact / print-friendly rules in @media print below. */
+.page {
+    /* Base page spacing so each page block can have consistent padding */
+    padding-bottom: 1.5em;
+}
+
+/* Add a visible divider between pages in HTML view — target any .page
+   that isn't the last child of the container so the last page doesn't get a divider. */
+.page:not(:last-child) {
+    border-bottom: 0.062em solid var(--border-color);
+}
+
+/* Header Section */
+.header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 2.5em 3.125em 1.875em;
+    text-align: center;
+    position: relative;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.25em;
+    background: var(--accent-color);
+}
+
+.name {
+    font-size: 2.625em;
+    font-weight: 700;
+    letter-spacing: 0.125em;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+}
+
+.title {
+    font-size: 1.25em;
+    font-weight: 400;
+    margin-bottom: 1.25em;
+    opacity: 0.95;
+    letter-spacing: 0.031em;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.25em;
+    margin-top: 0.938em;
+}
+
+.contact-info-wrapper {
+    text-align: center;
+    font-size: 0.812em;
+    color: white;
+    opacity: 1;
+    line-height: 1.6;
+    margin-top: 0.938em;
+}
+
+.contact-info-wrapper a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.5);
+    transition: border-bottom 0.2s ease;
+}
+
+.contact-info-wrapper a:hover {
+    border-bottom: 0.062em solid white;
+}
+
+/* Optional Profile Photo */
+.profile-photo-wrapper {
+    position: absolute;
+    left: 3.125em;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    /* Hidden by default */
+}
+
+.profile-photo {
+    width: 7.5em;
+    height: 7.5em;
+    border-radius: 50%;
+    border: 0.25em solid white;
+    object-fit: cover;
+    box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.2);
+}
+
+/* Show photo only when body has show-photo class */
+body.show-photo .profile-photo-wrapper {
+    display: block;
+}
+
+/* When photo is shown, adjust header layout */
+body.show-photo .header {
+    position: relative;
+    min-height: 10em;
+}
+
+/* Removed padding - text stays centered, photo overlays on left */
+
+/* Professional Summary */
+.summary {
+    font-size: 0.938em;
+    line-height: 1.8;
+    color: var(--text-medium);
+    text-align: justify;
+    padding: 2.188em 3.125em;
+    background: var(--bg-light);
+    border-left: 0.25em solid var(--primary-color);
+    margin: 0;
+}
+
+.summary strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Section Styling */
+.section {
+    padding: 2.188em 3.125em;
+    border-bottom: 0.062em solid var(--border-color);
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 1.25em;
+    padding-bottom: 0.625em;
+    border-bottom: 0.188em solid var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.062em;
+    display: inline-block;
+}
+
+/* Skills Grid */
+.skills-grid {
+    display: grid;
+    /* Use a single column so each skill category appears on its own full row in HTML view.
+       Previously this used a two-column grid which caused the items to be displayed side-by-side.
+       Keeping a single column gives the same full-row appearance as the print layout. */
+    grid-template-columns: 1fr;
+    gap: 1.25em;
+    margin-top: 1.25em;
+}
+
+.skill-category {
+    background: var(--bg-light);
+    padding: 1.125em;
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--primary-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.skill-category:hover {
+    transform: translateY(-0.125em);
+    box-shadow: var(--shadow-md);
+}
+
+.skill-title {
+    font-size: 0.938em;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.5em;
+}
+
+.skill-list {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.6;
+}
+
+/* Work Experience */
+.job {
+    margin-bottom: 1.875em;
+    padding-bottom: 1.562em;
+    border-bottom: 0.062em solid var(--border-color);
+}
+
+.job:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75em;
+    gap: 1.25em;
+}
+
+.job-title {
+    font-size: 1.062em;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25em;
+}
+
+.company {
+    font-size: 0.875em;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.job-dates {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.date {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 600;
+    display: block;
+}
+
+.duration {
+    font-size: 0.75em;
+    color: var(--text-light);
+    font-style: italic;
+    display: block;
+    margin-top: 0.125em;
+}
+
+.achievements,
+.project-features,
+.course-list {
+    /* Reset list appearance for achievement/project/course lists */
+    list-style: none;
+    padding-left: 0;
+}
+
+/* Shared LI appearance for lists used in Achievements / Projects / Courses */
+.achievements li,
+.project-features li,
+.course-list li {
+    padding-left: 0.5em;
+    /* Negative indent pulls first-line bullet into the gutter */
+    text-indent: -0.5em;
+    display: block;
+}
+
+.achievements li {
+    font-size: 0.875em;
+    color: var(--text-medium);
+    line-height: 1.7;
+    margin-bottom: 0.625em;
+    /* padding-left / text-indent / display moved to shared rule above */
+    /* Reset display */
+}
+
+.achievements li::before {
+    content: '▸';
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.375em;
+    /* Increased to 1.375em */
+    display: inline-block;
+    width: 0.5em;
+    /* Adjusted to 0.5em */
+    text-align: left;
+    vertical-align: middle;
+    /* Align middle */
+    position: relative;
+    top: -0.062em;
+    /* Slight adjustment for visual center */
+    line-height: 1;
+}
+
+.achievements li strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+/* Education */
+.education {
+    background: var(--bg-light);
+    padding: 1.25em;
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--accent-color);
+}
+
+.education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+.degree {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.education-date {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 600;
+}
+
+.school {
+    font-size: 0.875em;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+.recognition {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.6;
+    margin-top: 0.625em;
+    padding-top: 0.625em;
+    border-top: 0.062em solid var(--border-color);
+}
+
+/* Personal Projects */
+.project {
+    background: var(--bg-light);
+    padding: 1.25em;
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--primary-color);
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.625em;
+}
+
+.project-title {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.project-date {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 600;
+}
+
+.project-links {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    margin-bottom: 0.75em;
+    line-height: 1.6;
+}
+
+.project-links strong {
+    color: var(--primary-dark);
+}
+
+.project-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 0.062em solid transparent;
+    transition: border-bottom 0.2s ease;
+}
+
+.project-links a:hover {
+    border-bottom: 0.062em solid var(--primary-color);
+}
+
+.project-features {
+    /* merged with .achievements/.course-list above */
+}
+
+.project-features li {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.7;
+    margin-bottom: 0.5em;
+    /* padding-left / text-indent / display moved to shared rule above */
+    display: block;
+}
+
+.project-features li::before {
+    content: '✓';
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.25em;
+    /* Increased to 1.25em */
+    display: inline-block;
+    width: 0.5em;
+    /* Adjusted to 0.5em */
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    top: -0.062em;
+    line-height: 1;
+}
+
+.project-features li strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+/* Additional Info Grid */
+.additional-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 1.875em;
+}
+
+.additional-section {
+    background: var(--bg-light);
+    padding: 1.25em;
+    border-radius: 0.5em;
+}
+
+.additional-section .section-title {
+    font-size: 1em;
+    margin-bottom: 0.938em;
+    padding-bottom: 0.5em;
+}
+
+/* Languages */
+.language-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.language-item {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    padding: 0;
+    display: inline;
+}
+
+.language-item::after {
+    content: ' | ';
+    opacity: 0.6;
+}
+
+.language-item:last-child::after {
+    content: '';
+    margin-right: 0;
+}
+
+.language-item strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Professional Development */
+.course-list {
+    /* merged with .achievements/.project-features above */
+}
+
+.course-list li {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.6;
+    margin-bottom: 0.5em;
+    /* padding-left / text-indent / display moved to shared rule above */
+}
+
+.course-list li::before {
+    content: '◆';
+    color: var(--primary-color);
+    font-size: 1em;
+    /* Increased to 1em */
+    display: inline-block;
+    width: 0.5em;
+    /* Adjusted to 0.5em */
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    top: -0.062em;
+    line-height: 1;
+}
+
+/* Interests */
+.interests-section {
+    padding-bottom: 1.562em;
+}
+
+.interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625em;
+    margin-top: 0.938em;
+}
+
+.interest-tag {
+    display: inline-block;
+    padding: 0.5em 1em;
+    background: var(--bg-light);
+    border: 0.062em solid var(--border-color);
+    border-radius: 1.25em;
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.interest-tag:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-0.125em);
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 1.562em;
+    background: var(--bg-light);
+    color: var(--text-light);
+    font-size: 0.812em;
+    font-style: italic;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Force background colors to print for specific sections */
+    .summary,
+    .skill-category,
+    .education,
+    .project,
+    .interest-tag,
+    .footer {
+        background-color: var(--bg-light) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .container {
+        max-width: 100%;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    /* Reduce header size for print */
+    .header {
+        padding: 0.75em 1.875em 0.625em;
+        page-break-after: avoid;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color: white !important;
+    }
+
+    .name {
+        font-size: 1.625em;
+        margin-bottom: 0.25em;
+        color: white !important;
+    }
+
+    .title {
+        font-size: 0.812em;
+        margin-bottom: 0.562em;
+        color: white !important;
+    }
+
+    .contact-info-wrapper {
+        font-size: 0.719em;
+        line-height: 1.6;
+        margin-top: 0.562em;
+        color: white !important;
+        opacity: 1 !important;
+    }
+
+    /* Links in header - white color for print */
+    .contact-info-wrapper a {
+        color: white !important;
+        text-decoration: none;
+        border-bottom: none;
+    }
+
+    /* Links in projects - blue color for print */
+    .project-links a {
+        color: var(--primary-color) !important;
+        text-decoration: none;
+        border-bottom: none;
+    }
+
+    /* Profile photo in print */
+    body.show-photo .profile-photo-wrapper {
+        display: block;
+        left: 1.875em;
+    }
+
+    body.show-photo .profile-photo {
+        width: 6.25em;
+        height: 6.25em;
+        border: 0.188em solid white;
+    }
+
+    body.show-photo .header {
+        min-height: 8.75em;
+        position: relative;
+        padding-left: 9.5em;
+    }
+
+    /* Text stays centered - photo overlays on left */
+
+    /* Reduce section padding */
+    .section {
+        padding: 0.75em 1.875em;
+        page-break-inside: avoid;
+    }
+
+    .summary {
+        padding: 0.75em 1.875em;
+        font-size: 0.75em;
+        line-height: 1.6;
+    }
+
+    /* Compact section titles */
+    .section-title {
+        font-size: 1em;
+        margin-bottom: 0.75em;
+        padding-bottom: 0.375em;
+    }
+
+    /* Compact skills grid */
+    .skills-grid {
+        gap: 0.75em;
+        margin-top: 0.625em;
+    }
+
+    .skill-category {
+        padding: 0.75em;
+        page-break-inside: avoid;
+    }
+
+    .skill-title {
+        font-size: 0.812em;
+        margin-bottom: 0.375em;
+    }
+
+    .skill-list {
+        font-size: 0.719em;
+        line-height: 1.5;
+    }
+
+    /* Force Work Experience to start on new page */
+    .work-experience-section {
+        page-break-before: always;
+    }
+
+    /* Compact work experience */
+    .job {
+        margin-bottom: 1.125em;
+        /* Reduced from 1.562em */
+        padding-bottom: 0.625em;
+        page-break-inside: avoid;
+    }
+
+    .job-header {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        margin-bottom: 0.188em;
+    }
+
+    .job-dates {
+        text-align: right !important;
+        white-space: nowrap !important;
+    }
+
+    .job-title {
+        font-size: 0.812em;
+        margin-bottom: 0.125em;
+    }
+
+    .company {
+        font-size: 0.719em;
+    }
+
+    .date {
+        font-size: 0.625em;
+    }
+
+    .duration {
+        font-size: 0.625em;
+    }
+
+    .achievements {
+        margin-top: 0.188em;
+    }
+
+    .achievements li {
+        font-size: 0.688em;
+        line-height: 1.5;
+        /* Reduced from 1.6 */
+        margin-bottom: 0.125em;
+        /* Reduced from 0.25em */
+        padding-left: 0.5em;
+        /* Adjusted to 0.5em */
+        text-indent: -0.5em;
+    }
+
+    .achievements li::before {
+        width: 0.5em;
+        /* Adjusted to 0.5em */
+        font-size: 1em;
+        /* Fix: Reduce bullet size for print */
+    }
+
+    /* Force Education to start on new page */
+    .education-section {
+        page-break-before: always;
+    }
+
+    /* Compact education */
+    .education {
+        padding: 0.75em;
+        page-break-inside: avoid;
+    }
+
+    .degree {
+        font-size: 0.812em;
+    }
+
+    .education-date {
+        font-size: 0.625em;
+    }
+
+    .school {
+        font-size: 0.719em;
+        /* Increased from 0.688em */
+    }
+
+    .recognition {
+        font-size: 0.688em;
+        /* Increased from 0.625em */
+        line-height: 1.4;
+        margin-top: 0.375em;
+        padding-top: 0.375em;
+    }
+
+    /* Compact projects */
+    .project {
+        padding: 0.625em;
+        page-break-inside: avoid;
+    }
+
+    .project-title {
+        font-size: 0.812em;
+        /* Increased from 0.75em */
+    }
+
+    .project-date {
+        font-size: 0.625em;
+        /* Increased from 0.562em */
+    }
+
+    .project-links {
+        font-size: 0.625em;
+        /* Increased from 0.562em */
+        margin-bottom: 0.312em;
+    }
+
+    .project-features li {
+        font-size: 0.688em;
+        /* Increased from 0.625em */
+        line-height: 1.5;
+        /* Increased from 1.35 */
+        margin-bottom: 0.125em;
+        padding-left: 0.5em;
+        /* Adjusted to 0.5em */
+        text-indent: -0.5em;
+    }
+
+    .project-features li::before {
+        width: 0.5em;
+        /* Adjusted to 0.5em */
+        font-size: 1em;
+        /* Fix: Reduce bullet size for print */
+    }
+
+    /* Remove HTML-only page dividers for print output */
+    .page {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Compact additional sections */
+    .additional-grid {
+        gap: 0.938em;
+    }
+
+    .additional-section {
+        padding: 0.625em;
+    }
+
+    .additional-section .section-title {
+        font-size: 0.812em;
+        margin-bottom: 0.375em;
+    }
+
+    .language-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+    }
+
+    .language-item {
+        font-size: 0.688em;
+        /* Increased from 0.625em */
+        padding: 0;
+        display: inline;
+    }
+
+    .language-item::after {
+        content: ' | ';
+        opacity: 0.6;
+    }
+
+    .language-item:last-child::after {
+        content: '';
+    }
+
+    .course-list li {
+        font-size: 0.688em;
+        /* Increased from 0.562em */
+        line-height: 1.5;
+        /* Increased from 1.3 */
+        margin-bottom: 0.188em;
+        padding-left: 0.5em;
+        /* Adjusted to 0.5em */
+        text-indent: -0.5em;
+    }
+
+    .course-list li::before {
+        width: 0.5em;
+        /* Adjusted to 0.5em */
+        font-size: 0.875em;
+        /* Fix: Reduce bullet size for print */
+    }
+
+    /* Compact interests */
+    .interests-section {
+        padding-bottom: 0.75em;
+    }
+
+    .interests {
+        gap: 0.312em;
+        margin-top: 0.5em;
+        /* Keep interests on a single row when printing */
+        flex-wrap: nowrap;
+        /* prevent wrapping onto a new line */
+        white-space: nowrap;
+        /* keep inner text from wrapping */
+        /* Allow items to overflow horizontally if too long — safer than wrapping to a new line in print */
+        overflow-x: visible;
+    }
+
+    .interest-tag {
+        padding: 0.25em 0.5em;
+        font-size: 0.625em;
+        white-space: nowrap;
+        /* ensure multi-word tags stay together */
+        /* Increased from 0.562em */
+    }
+
+    /* Footer */
+    .footer {
+        padding: 0.625em;
+        font-size: 0.625em;
+    }
+
+    /* Remove hover effects */
+    .skill-category:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .interest-tag:hover {
+        background: var(--bg-light);
+        color: var(--text-medium);
+        border-color: var(--border-color);
+        transform: none;
+    }
+
+    /* Ensure links are visible when printed */
+    .contact-item,
+    .project-links {
+        color: var(--text-dark) !important;
+    }
+
+    /* Allow page breaks where needed */
+    .section:not(.summary) {
+        page-break-inside: auto;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 48em) {
+    body {
+        padding: 0.625em;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .header {
+        padding: 1.875em 1.562em 1.562em;
+    }
+
+    .name {
+        font-size: 2em;
+    }
+
+    .title {
+        font-size: 1em;
+    }
+
+    .section {
+        padding: 1.562em 1.562em;
+    }
+
+    .summary {
+        padding: 1.562em;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 0.938em;
+    }
+
+    .job-header {
+        flex-direction: column;
+        gap: 0.625em;
+    }
+
+    .job-dates {
+        text-align: left;
+    }
+
+    .additional-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25em;
+    }
+
+    .contact-info {
+        flex-direction: column;
+        gap: 0.625em;
+    }
+}

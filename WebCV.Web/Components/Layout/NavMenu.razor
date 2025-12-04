@@ -1,0 +1,34 @@
+﻿@rendermode InteractiveServer
+
+
+<MudNavMenu>
+    @* <MudText Typo="Typo.h6" Class="px-4 py-2">WebCV</MudText> *@
+    <MudDivider Class="mb-2" />
+    
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+            <MudNavLink Href="/generate" Icon="@Icons.Material.Filled.AutoAwesome">Generate</MudNavLink>
+            <MudNavLink Href="/my-applications" Icon="@Icons.Material.Filled.List">My Applications</MudNavLink>
+            <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+            
+            <MudDivider Class="my-2" />
+            
+            <MudText Typo="Typo.body2" Class="px-4 py-2">Logged in as: @context.User.Identity?.Name</MudText>
+            
+            <MudNavLink OnClick="Logout" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
+            
+            <form action="/logout" method="post" id="logout-form" style="display:none;">
+            </form>
+        </Authorized>
+        <NotAuthorized>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="/login" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
+            <MudNavLink Href="/register" Icon="@Icons.Material.Filled.PersonAdd">Register</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudNavMenu>
+
+

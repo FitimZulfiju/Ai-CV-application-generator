@@ -1,0 +1,58 @@
+@page "/application/{Id:int}"
+@attribute [Authorize]
+
+<PageTitle>Your AI-powered career assistant</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+
+    @if (_isLoading)
+    {
+        <WebCV.Web.Components.Shared.LoadingIndicator />
+    }
+    else if (_application == null)
+    {
+        <MudAlert Severity="Severity.Error">Application not found.</MudAlert>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" Class="mt-4">Back to List</MudButton>
+    }
+    else
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-6">
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
+            <MudText Typo="Typo.h4">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
+        </MudStack>
+
+        <MudTabs Elevation="2" Rounded="true" PanelClass="pa-6">
+            <MudTabPanel Text="Cover Letter" Icon="@Icons.Material.Filled.Description">
+                @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
+                {
+                    <MudPaper Elevation="0" Class="cv-paper-container">
+                        <WebCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" />
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Warning">Unable to load cover letter.</MudAlert>
+                }
+            </MudTabPanel>
+            <MudTabPanel Text="Tailored CV" Icon="@Icons.Material.Filled.ContactPage">
+                @if (_tailoredResume != null)
+                {
+                    <MudPaper Elevation="1" Class="cv-paper-container">
+                        <WebCV.Web.Components.Shared.CvPreview Profile="_tailoredResume" />
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Warning">Unable to load tailored CV.</MudAlert>
+                }
+            </MudTabPanel>
+            <MudTabPanel Text="Job Description" Icon="@Icons.Material.Filled.DocumentScanner">
+                <MudPaper Elevation="1" Class="pa-4">
+                    <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.JobPosting?.Description</MudText>
+                </MudPaper>
+            </MudTabPanel>
+        </MudTabs>
+    }
+</MudContainer>
+
+

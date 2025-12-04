@@ -1,0 +1,37 @@
+@page "/login"
+
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Class="pa-6" Elevation="3">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">WebCV Login</MudText>
+
+        <form method="post" action="/perform-login">
+
+            <MudTextField T="string" @bind-Value="_email" UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="Email" Variant="Variant.Outlined" InputType="InputType.Email"
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
+
+            <MudTextField T="string" @bind-Value="_password" UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password"
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="mb-3" Required="true" />
+
+            <div class="d-flex align-center mb-3">
+                <input type="hidden" name="rememberMe" value="@(_rememberMe.ToString().ToLower())" />
+                <MudCheckBox T="bool" @bind-Value="_rememberMe" Label="Remember Me" Color="Color.Primary" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(Error))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-3">@Error</MudAlert>
+            }
+
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
+        </form>
+
+        <MudDivider Class="my-4" />
+
+        <MudText Align="Align.Center">
+            Don't have an account? <MudLink Href="/register">Register here</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
+

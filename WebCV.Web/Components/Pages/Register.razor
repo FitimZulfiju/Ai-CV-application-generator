@@ -1,0 +1,35 @@
+@page "/register"
+
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Class="pa-6" Elevation="3">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Create Account</MudText>
+        
+        <form method="post" action="/perform-register">
+            
+            <MudTextField T="string" @bind-Value="_email" UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="Email" Variant="Variant.Outlined" InputType="MudBlazor.InputType.Email" 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
+
+            <MudTextField T="string" @bind-Value="_password" UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })" Label="Password" Variant="Variant.Outlined" InputType="MudBlazor.InputType.Password" 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="mb-3" Required="true" HelperText="Minimum 6 characters, at least one uppercase, lowercase, and digit" />
+
+            <MudTextField T="string" @bind-Value="_confirmPassword" UserAttributes="@(new Dictionary<string, object> { { "name", "confirmPassword" } })" Label="Confirm Password" Variant="Variant.Outlined" InputType="MudBlazor.InputType.Password" 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="mb-3" Required="true" />
+            
+            @if (!string.IsNullOrEmpty(Error))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-3">@Error</MudAlert>
+            }
+            
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true" StartIcon="@Icons.Material.Filled.PersonAdd">Register</MudButton>
+        </form>
+        
+        <MudDivider Class="my-4" />
+        
+        <MudText Align="Align.Center">
+            Already have an account? <MudLink Href="/login">Login here</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
+

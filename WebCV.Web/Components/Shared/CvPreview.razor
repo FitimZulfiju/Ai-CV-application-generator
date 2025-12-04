@@ -1,0 +1,190 @@
+@if (Profile == null)
+{
+    <MudAlert Severity="Severity.Warning">No profile data available to preview.</MudAlert>
+}
+else
+{
+    <div class="cv-container @(Profile.ShowProfilePicture && !string.IsNullOrEmpty(Profile.ProfilePictureUrl) ? "show-photo" : "")">
+        <div class="container">
+            <div class="first-page page">
+                <!-- Header Section -->
+                <header class="header">
+                    <!-- Optional Profile Photo - Remove 'hidden' class to show photo -->
+                    @if (Profile.ShowProfilePicture && !string.IsNullOrEmpty(Profile.ProfilePictureUrl))
+                    {
+                        <div class="profile-photo-wrapper">
+                            <img src="@Profile.ProfilePictureUrl" alt="@Profile.FullName" class="profile-photo">
+                        </div>
+                    }
+                    <div class="header-text">
+                        <h1 class="name">@Profile.FullName</h1>
+                        <h2 class="title">@Profile.Title</h2>
+                        <div class="contact-info-wrapper">
+                            Email: <a href="mailto:@Profile.Email">@Profile.Email</a> | Phone: @Profile.PhoneNumber
+                            | Location: @Profile.Location<br>
+                            LinkedIn: <a href="@Profile.LinkedInUrl" target="_blank">@Profile.LinkedInUrl</a> | GitHub: <a href="@Profile.PortfolioUrl" target="_blank">@Profile.PortfolioUrl</a>
+                        </div>
+                    </div>
+                </header>
+                <!-- Professional Summary -->
+                <section class="section">
+                    <p class="summary">
+                        @((MarkupString)FormatSummary(Profile.ProfessionalSummary))
+                    </p>
+                </section>
+                <!-- Core Competencies -->
+                <section class="section">
+                    <h3 class="section-title">CORE COMPETENCIES</h3>
+                    <div class="skills-grid">
+                        @if (Profile.Skills != null && Profile.Skills.Any())
+                        {
+                            @foreach (var group in Profile.Skills.GroupBy(s => s.Category))
+                            {
+                                <div class="skill-category">
+                                    <h4 class="skill-title">@group.Key</h4>
+                                    <p class="skill-list">@string.Join(", ", group.Select(s => s.Name))</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>No skills listed.</p>
+                        }
+                    </div>
+                </section>
+            </div>
+            <div class="second-page page">
+                <!-- Work Experience -->
+                <section class="section work-experience-section">
+                    <h3 class="section-title">WORK EXPERIENCE</h3>
+                    @if (Profile.WorkExperience != null && Profile.WorkExperience.Any())
+                    {
+                        @foreach (var job in Profile.WorkExperience)
+                        {
+                            <div class="job">
+                                <div class="job-header">
+                                    <div>
+                                        <h4 class="job-title">@job.JobTitle</h4>
+                                        <p class="company">@job.CompanyName@(!string.IsNullOrEmpty(job.Location) ? $" - {job.Location}" : "")</p>
+                                    </div>
+                                    <div class="job-dates">
+                                        <span class="date">@job.StartDate?.ToString("MM/yyyy") – @(job.EndDate.HasValue ? job.EndDate.Value.ToString("MM/yyyy") : "Present")</span>
+                                        <span class="duration">@CalculateDuration(job.StartDate, job.EndDate)</span>
+                                    </div>
+                                </div>
+                                <ul class="achievements">
+                                    @((MarkupString)FormatDescription(job.Description))
+                                </ul>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No work experience listed.</p>
+                    }
+                </section>
+            </div>
+            <div class="third-page page">
+                <!-- Education -->
+                <section class="section education-section">
+                    <h3 class="section-title">EDUCATION</h3>
+                    @if (Profile.Educations != null && Profile.Educations.Any())
+                    {
+                        @foreach (var edu in Profile.Educations)
+                        {
+                            <div class="education">
+                                <div class="education-header">
+                                    <h4 class="degree">@edu.Degree</h4>
+                                    <span class="education-date">@edu.StartDate?.ToString("yyyy") - @(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")</span>
+                                </div>
+                                <p class="school">@edu.InstitutionName</p>
+                                @if (!string.IsNullOrEmpty(edu.Description))
+                                {
+                                    <p class="recognition">@((MarkupString)FormatSummary(edu.Description))</p>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No education listed.</p>
+                    }
+                </section>
+                
+                <!-- Personal Projects -->
+                <section class="section">
+                    <h3 class="section-title">PERSONAL PROJECTS</h3>
+                    @if (Profile.Projects != null && Profile.Projects.Any())
+                    {
+                        @foreach (var proj in Profile.Projects)
+                        {
+                            <div class="project">
+                                <div class="project-header">
+                                    <h4 class="project-title">@proj.Name</h4>
+                                    <span class="project-date">@proj.StartDate?.ToString("yyyy") - @(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : "Present")</span>
+                                </div>
+                                <p class="project-links">
+                                    @if (!string.IsNullOrEmpty(proj.Link))
+                                    {
+                                        <strong>GitHub:</strong> <a href="@proj.Link" target="_blank">@proj.Link</a> <span> | </span>
+                                    }
+                                    <strong>Technologies:</strong> @proj.Technologies
+                                </p>
+                                <ul class="project-features">
+                                    @((MarkupString)FormatDescription(proj.Description))
+                                </ul>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No personal projects listed.</p>
+                    }
+                </section>
+
+                <!-- Languages Section -->
+                <section class="section">
+                    <h3 class="section-title">LANGUAGES</h3>
+                    <div class="language-list">
+                        @if (Profile.Languages != null && Profile.Languages.Any())
+                        {
+                            @foreach (var lang in Profile.Languages)
+                            {
+                                <span class="language-item"><strong>@lang.Name</strong> (@lang.Proficiency)</span>
+                            }
+                        }
+                        else
+                        {
+                            <p>No languages listed.</p>
+                        }
+                    </div>
+                </section>
+
+                <!-- Interests -->
+                <section class="section interests-section">
+                    <h3 class="section-title">INTERESTS</h3>
+                    <div class="interests">
+                        @if (Profile.Interests != null && Profile.Interests.Any())
+                        {
+                            @foreach (var interest in Profile.Interests)
+                            {
+                                <span class="interest-tag">@interest.Name</span>
+                            }
+                        }
+                        else
+                        {
+                            <p>No interests listed.</p>
+                        }
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="footer">
+                    <p>References available upon request</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+}
+
+

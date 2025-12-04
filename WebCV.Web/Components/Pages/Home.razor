@@ -1,0 +1,69 @@
+﻿@page "/"
+
+<PageTitle>Your AI-powered career assistant</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+
+    <MudGrid Spacing="20" Class="d-flex justify-center align-center" Justify="Justify.Center">
+        <MudItem xs="12" md="6">
+            <MudImage Fluid="true" Src="/logoSlogan.png" Alt="AI Web CV Logo"
+                      Style="max-width: 100%; height: auto;" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">
+                Welcome to Web <br>'CV | Cover Letter' Generator
+            </MudText>
+            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-8">
+                Your AI-powered career assistant.
+            </MudText>
+        </MudItem>
+    </MudGrid>
+
+    <MudDivider DividerType="DividerType.FullWidth" Class="my-8" />
+
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="12" sm="6">
+            <MudCard Elevation="4"
+                     Class="pa-4 hover-card"
+                     @onclick="@(() => Navigation.NavigateTo("/profile"))"
+                     Style="cursor: pointer; height: 100%;">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" Color="Color.Primary" />
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Manage Profile</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>Update your Master CV, experience, education, and skills. This is the source of truth for all your applications.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/profile">Go to Profile</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" sm="6">
+            <MudCard Elevation="4"
+                     Class="pa-4 hover-card"
+                     @onclick="@(() => Navigation.NavigateTo("/generate"))"
+                     Style="cursor: pointer; height: 100%;">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Size="Size.Large" Color="Color.Secondary" />
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Generate Application</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>Paste a job description and let AI tailor a cover letter and resume specifically for that role.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/generate">Start Generating</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

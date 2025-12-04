@@ -1,0 +1,549 @@
+/* 
+   Modern Professional CV Styles - Layout & Components
+*/
+
+/* Header Section */
+.cv-container .header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 2.5em 3.125em 1.875em;
+    text-align: center;
+    position: relative;
+}
+
+.cv-container .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.25em;
+    background: var(--accent-color);
+}
+
+.cv-container .name {
+    font-size: 2.625em;
+    font-weight: 700;
+    letter-spacing: 0.125em;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+}
+
+.cv-container .title {
+    font-size: 1.25em;
+    font-weight: 400;
+    margin-bottom: 1.25em;
+    opacity: 0.95;
+    letter-spacing: 0.031em;
+}
+
+.cv-container .contact-info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.25em;
+    margin-top: 0.938em;
+}
+
+.cv-container .contact-info-wrapper {
+    text-align: center;
+    font-size: 0.812em;
+    color: white;
+    opacity: 1;
+    line-height: 1.6;
+    margin-top: 0.938em;
+}
+
+.cv-container .contact-info-wrapper a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.5);
+    transition: border-bottom 0.2s ease;
+}
+
+.cv-container .contact-info-wrapper a:hover {
+    border-bottom: 0.062em solid white;
+}
+
+/* Optional Profile Photo */
+.cv-container .profile-photo-wrapper {
+    position: absolute;
+    left: 3.125em;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    z-index: 10;
+}
+
+.cv-container .profile-photo {
+    width: 7.5em;
+    height: 7.5em;
+    border-radius: 50%;
+    border: 0.25em solid white;
+    object-fit: cover;
+    box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.2);
+}
+
+/* Show photo only when cv-container has show-photo class */
+.cv-container.show-photo .profile-photo-wrapper {
+    display: block;
+}
+
+/* When photo is shown, adjust header layout */
+.cv-container.show-photo .header {
+    position: relative;
+    min-height: 10em;
+}
+
+/* Professional Summary */
+.cv-container .summary {
+    font-size: 0.938em;
+    line-height: 1.8;
+    color: var(--text-medium);
+    text-align: justify;
+    padding: 2.188em 3.125em;
+    background: var(--bg-light);
+    border-left: 0.25em solid var(--primary-color);
+    margin: 0;
+}
+
+.cv-container .summary strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Section Styling */
+.cv-container .section {
+    padding: 2.188em 3.125em;
+    border-bottom: 0.062em solid var(--border-color);
+}
+
+.cv-container .section:last-child {
+    border-bottom: none;
+}
+
+.cv-container .section-title {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 1.25em;
+    padding-bottom: 0.625em;
+    border-bottom: 0.188em solid var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.062em;
+    display: inline-block;
+}
+
+/* Skills Grid */
+.cv-container .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25em;
+    margin-top: 1.25em;
+}
+
+.cv-container .skill-category {
+    background: var(--bg-light);
+    padding: 1.125em;
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--primary-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cv-container .skill-category:hover {
+    transform: translateY(-0.125em);
+    box-shadow: var(--shadow-md);
+}
+
+.cv-container .skill-title {
+    font-size: 0.938em;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.5em;
+}
+
+.cv-container .skill-list {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.6;
+}
+
+/* Work Experience */
+.cv-container .job {
+    margin-bottom: 1.875em;
+    padding-bottom: 1.562em;
+    border-bottom: 0.062em solid var(--border-color);
+}
+
+.cv-container .job:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.cv-container .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75em;
+    gap: 1.25em;
+}
+
+.cv-container .job-title {
+    font-size: 1.062em;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25em;
+}
+
+.cv-container .company {
+    font-size: 0.875em;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.cv-container .job-dates {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.cv-container .date {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 600;
+    display: block;
+}
+
+.cv-container .duration {
+    font-size: 0.75em;
+    color: var(--text-light);
+    font-style: italic;
+    display: block;
+    margin-top: 0.125em;
+}
+
+.cv-container .achievements,
+.cv-container .project-features,
+.cv-container .course-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.cv-container .achievements li,
+.cv-container .project-features li,
+.cv-container .course-list li {
+    padding-left: 0.5em;
+    text-indent: -0.5em;
+    display: block;
+}
+
+.cv-container .achievements li {
+    font-size: 0.875em;
+    color: var(--text-medium);
+    line-height: 1.7;
+    margin-bottom: 0.625em;
+}
+
+.cv-container .achievements li::before {
+    content: '▸';
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.375em;
+    display: inline-block;
+    width: 0.5em;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    top: -0.062em;
+    line-height: 1;
+}
+
+.cv-container .achievements li strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+/* Education */
+.cv-container .education {
+    background: var(--bg-light);
+    padding: 1.25em;
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--accent-color);
+}
+
+.cv-container .education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+.cv-container .degree {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.cv-container .education-date {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 600;
+}
+
+.cv-container .school {
+    font-size: 0.875em;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+.cv-container .recognition {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.6;
+    margin-top: 0.625em;
+    padding-top: 0.625em;
+    border-top: 0.062em solid var(--border-color);
+}
+
+/* Personal Projects */
+.cv-container .project {
+    background: var(--bg-light);
+    padding: 1.25em;
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--primary-color);
+}
+
+.cv-container .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.625em;
+}
+
+.cv-container .project-title {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.cv-container .project-date {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 600;
+}
+
+.cv-container .project-links {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    margin-bottom: 0.75em;
+    line-height: 1.6;
+}
+
+.cv-container .project-links strong {
+    color: var(--primary-dark);
+}
+
+.cv-container .project-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 0.062em solid transparent;
+    transition: border-bottom 0.2s ease;
+}
+
+.cv-container .project-links a:hover {
+    border-bottom: 0.062em solid var(--primary-color);
+}
+
+.cv-container .project-features li {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.7;
+    margin-bottom: 0.5em;
+    display: block;
+}
+
+.cv-container .project-features li::before {
+    content: '✓';
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.25em;
+    display: inline-block;
+    width: 0.5em;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    top: -0.062em;
+    line-height: 1;
+}
+
+.cv-container .project-features li strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+/* Additional Info Grid */
+.cv-container .additional-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 1.875em;
+}
+
+.cv-container .additional-section {
+    background: var(--bg-light);
+    padding: 1.25em;
+    border-radius: 0.5em;
+}
+
+.cv-container .additional-section .section-title {
+    font-size: 1em;
+    margin-bottom: 0.938em;
+    padding-bottom: 0.5em;
+}
+
+/* Languages */
+.cv-container .language-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em 0;
+}
+
+.cv-container .language-item {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    padding: 0;
+    display: inline;
+}
+
+.cv-container .language-item::after {
+    content: '|';
+    margin: 0 0.5em;
+    opacity: 0.6;
+}
+
+.cv-container .language-item:last-child::after {
+    content: '';
+    margin-right: 0;
+}
+
+.cv-container .language-item strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Professional Development */
+.cv-container .course-list li {
+    font-size: 0.812em;
+    color: var(--text-medium);
+    line-height: 1.6;
+    margin-bottom: 0.5em;
+}
+
+.cv-container .course-list li::before {
+    content: '◆';
+    color: var(--primary-color);
+    font-size: 1em;
+    display: inline-block;
+    width: 0.5em;
+    text-align: left;
+    vertical-align: middle;
+    position: relative;
+    top: -0.062em;
+    line-height: 1;
+}
+
+/* Interests */
+.cv-container .interests-section {
+    padding-bottom: 1.562em;
+}
+
+.cv-container .interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625em;
+    margin-top: 0.938em;
+}
+
+.cv-container .interest-tag {
+    display: inline-block;
+    padding: 0.5em 1em;
+    background: var(--bg-light);
+    border: 0.062em solid var(--border-color);
+    border-radius: 1.25em;
+    font-size: 0.812em;
+    color: var(--text-medium);
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.cv-container .interest-tag:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-0.125em);
+}
+
+/* Footer */
+.cv-container .footer {
+    text-align: center;
+    padding: 1.562em;
+    background: var(--bg-light);
+    color: var(--text-light);
+    font-size: 0.812em;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 48em) {
+    .cv-container {
+        padding: 0.625em;
+    }
+
+    .cv-container .container {
+        padding: 0;
+    }
+
+    .cv-container .header {
+        padding: 1.875em 1.562em 1.562em;
+    }
+
+    .cv-container .name {
+        font-size: 2em;
+    }
+
+    .cv-container .title {
+        font-size: 1em;
+    }
+
+    .cv-container .section {
+        padding: 1.562em 1.562em;
+    }
+
+    .cv-container .summary {
+        padding: 1.562em;
+    }
+
+    .cv-container .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 0.938em;
+    }
+
+    .cv-container .job-header {
+        flex-direction: column;
+        gap: 0.625em;
+    }
+
+    .cv-container .job-dates {
+        text-align: left;
+    }
+
+    .cv-container .additional-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25em;
+    }
+
+    .cv-container .contact-info {
+        flex-direction: column;
+        gap: 0.625em;
+    }
+}

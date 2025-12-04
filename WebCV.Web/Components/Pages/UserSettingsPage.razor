@@ -1,0 +1,97 @@
+﻿@page "/settings"
+@attribute [Authorize]
+
+<PageTitle>Your AI-powered career assistant</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+    <MudPaper Class="pa-6" Elevation="3">
+
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+            <MudText Typo="Typo.h5">⚙️ Settings</MudText>
+
+            <MudText Typo="Typo.body1">
+                Manage your API keys for AI services. These keys are encrypted before being stored.
+            </MudText>
+        </MudStack>
+
+        <EditForm Model="@_model" OnValidSubmit="SaveSettings">
+            <DataAnnotationsValidator />
+
+            <MudCard Class="mb-2">
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">⚛️ OpenAI</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="pt-2">
+                    <MudTextField @bind-Value="_model.OpenAIApiKey"
+                                  Label="API Key"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(_showOpenAiKey? InputType.Text: InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(_showOpenAiKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="ToggleOpenAiVisibility"
+                                  HelperText="Required for OpenAI models (GPT-4, etc.)" />
+                    <MudText Typo="Typo.caption" Class="mt-1">
+                        Get your key from <MudLink Href="https://platform.openai.com/api-keys" Target="_blank">OpenAI Platform</MudLink>
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Class="mb-2">
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">⚛️ Google Gemini</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="pt-2">
+                    <MudTextField @bind-Value="_model.GoogleGeminiApiKey"
+                                  Label="API Key"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(_showGoogleKey? InputType.Text: InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(_showGoogleKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="ToggleGoogleVisibility"
+                                  HelperText="Required for Gemini models" />
+                    <MudText Typo="Typo.caption" Class="mt-1">
+                        Get your key from <MudLink Href="https://aistudio.google.com/app/apikey" Target="_blank">Google AI Studio</MudLink>
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Class="mb-3">
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Default AI Model</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="pt-2">
+                    <MudSelect @bind-Value="_model.DefaultModel" Label="Select Default Model" Variant="Variant.Outlined">
+                        <MudSelectItem Value="@("gpt-4o")">GPT-4o</MudSelectItem>
+                        <MudSelectItem Value="@("gpt-4-turbo")">GPT-4 Turbo</MudSelectItem>
+                        <MudSelectItem Value="@("gpt-3.5-turbo")">GPT-3.5 Turbo</MudSelectItem>
+                        <MudSelectItem Value="@("gemini-1.5-pro")">Gemini 1.5 Pro</MudSelectItem>
+                        <MudSelectItem Value="@("gemini-1.5-flash")">Gemini 1.5 Flash</MudSelectItem>
+                    </MudSelect>
+                    <MudText Typo="Typo.caption" Class="mt-1">
+                        Select the model that will be selected by default when generating applications.
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Disabled="_isLoading" StartIcon="@Icons.Material.Filled.Save">
+                @if (_isLoading)
+                {
+                    <WebCV.Web.Components.Shared.LoadingIndicator />
+                    <MudText Class="ms-2">Saving...</MudText>
+                }
+                else
+                {
+                    <MudText>Save Settings</MudText>
+                }
+            </MudButton>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
+
+
