@@ -63,12 +63,21 @@ namespace WebCV.Infrastructure.Services
                 sb.AppendLine("TONE: Adopt a professional tone suitable for Danish/Scandinavian business culture: Direct, concise, humble but confident, and focused on the value the candidate brings to the company.");
                 sb.AppendLine("CRITICAL INSTRUCTIONS:");
                 sb.AppendLine("1. Do NOT include the CANDIDATE'S contact header (Name, Email, Phone). This is added automatically.");
-                sb.AppendLine("2. DO include the CURRENT DATE (as provided above) and the COMPANY'S details at the top.");
+                sb.AppendLine("2. DO include the CURRENT DATE (as provided above).");
+                sb.AppendLine("   FORMATTING RULES FOR COMPANY DETAILS:");
+                sb.AppendLine("   - CASE A: If the Company Address is EXPLICITLY FOUND in the job description:");
+                sb.AppendLine("     [Company Name]");
+                sb.AppendLine("     [Company Address]");
+                sb.AppendLine("     [Current Date]");
+                sb.AppendLine("   - CASE B: If the Company Address is UNKNOWN:");
+                sb.AppendLine("     [Company Name]");
+                sb.AppendLine("     [Current Date]");
+                sb.AppendLine("   CRITICAL: Do NEVER use placeholders like '[Company Address]'. If unknown, use Case B.");
                 sb.AppendLine("3. Include a professional, concise SUBJECT line (e.g., 'RE: Application for [Job Title]'). Do NOT clutter the subject with the source.");
                 sb.AppendLine("4. Start with a professional salutation (e.g., 'Dear Hiring Manager,' or 'Dear [Name],').");
                 sb.AppendLine("5. Write the body of the letter. CRITICAL: In the VERY FIRST sentence, explicitly mention where the job was found based on the Job URL (e.g., '...as advertised on LinkedIn', '...on Indeed', or '...on your company website'). If no URL is provided, use '...as advertised'.");
                 sb.AppendLine($"6. End with 'Sincerely,' followed by the candidate's name: {profile.FullName}.");
-                sb.AppendLine("7. Do NOT use placeholders like '[Your Name]', '[Your Address]'.");
+                sb.AppendLine("7. Do NOT use placeholders like '[Your Name]', '[Your Address]', or '[Company Address]'.");
             }
 
             return sb.ToString();

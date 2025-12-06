@@ -8,7 +8,7 @@ window.cvScaler = {
             const isCoverLetter = page.closest('.cover-letter') !== null;
             const hasFooter = page.querySelector('.footer');
 
-            let maxHeight, maxFontSizeRem, minFontSizeRem;
+            let maxHeight, minFontSizeRem;
 
             if (isCoverLetter) {
                 // COVER LETTER STRATEGY:
@@ -32,15 +32,33 @@ window.cvScaler = {
             
             let currentHeight = page.scrollHeight;
             
-            // SHRINK ONLY logic
+            // SHRINK logic (Applies to ALL)
             if (currentHeight > maxHeight) {
                 while (currentHeight > maxHeight && fontSizeRem > minFontSizeRem) {
                     fontSizeRem -= stepRem;
                     page.style.fontSize = fontSizeRem + 'rem';
                     currentHeight = page.scrollHeight;
                 }
+            } 
+ 
+            // GROW logic (Applies to CV ONLY - we want CV pages to look full)
+            else if (!isCoverLetter) { 
+                // Don't let CV font get comically large, cap at 1.35rem
+                const maxCvFont = 1.35; 
+                
+                while (currentHeight < maxHeight && fontSizeRem < maxCvFont) {
+                    let nextFontSizeRem = fontSizeRem + stepRem;
+                    page.style.fontSize = nextFontSizeRem + 'rem';
+                    
+                    if (page.scrollHeight > maxHeight) {
+                        // Revert one step and stop
+                        page.style.fontSize = fontSizeRem + 'rem';
+                        break;
+                    }
+                    fontSizeRem = nextFontSizeRem;
+                    currentHeight = page.scrollHeight;
+                }
             }
-            // Grow logic REMOVED. We accept empty space for better consistency.
         });
     }
 };
