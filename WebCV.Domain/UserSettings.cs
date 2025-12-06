@@ -9,7 +9,7 @@ namespace WebCV.Domain
         // Encrypted API keys
         public string? OpenAIApiKey { get; set; }
         public string? GoogleGeminiApiKey { get; set; }
-        public string? DefaultModel { get; set; }
+        public AIModel DefaultModel { get; set; } = AIModel.Gpt4o;
         
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedDate { get; set; }

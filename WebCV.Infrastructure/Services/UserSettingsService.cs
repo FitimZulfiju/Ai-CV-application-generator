@@ -33,7 +33,7 @@ namespace WebCV.Infrastructure.Services
             return settings;
         }
 
-        public async Task SaveUserSettingsAsync(string userId, string openAiApiKey, string googleGeminiApiKey, string defaultModel)
+        public async Task SaveUserSettingsAsync(string userId, string openAiApiKey, string googleGeminiApiKey, AIModel defaultModel)
         {
             using var context = await _contextFactory.CreateDbContextAsync();
             Console.WriteLine($"[UserSettingsService] Saving settings for userId: {userId}. Gemini Key Input Length: {googleGeminiApiKey?.Length ?? 0}");

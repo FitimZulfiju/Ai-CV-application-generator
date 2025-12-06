@@ -39,7 +39,7 @@ public partial class UserSettingsPage
             {
                 _model.OpenAIApiKey = settings.OpenAIApiKey ?? string.Empty;
                 _model.GoogleGeminiApiKey = settings.GoogleGeminiApiKey ?? string.Empty;
-                _model.DefaultModel = settings.DefaultModel ?? "gpt-4o";
+                _model.DefaultModel = settings.DefaultModel;
             }
         }
         catch (Exception ex)
@@ -92,6 +92,6 @@ public partial class UserSettingsPage
     {
         public string OpenAIApiKey { get; set; } = string.Empty;
         public string GoogleGeminiApiKey { get; set; } = string.Empty;
-        public string DefaultModel { get; set; } = "gpt-4o";
+        public AIModel DefaultModel { get; set; } = AIModel.Gpt4o;
     }
 }

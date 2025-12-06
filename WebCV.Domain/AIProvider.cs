@@ -1,4 +1,4 @@
-namespace WebCV.Application.Interfaces
+namespace WebCV.Domain
 {
     public enum AIProvider
     {

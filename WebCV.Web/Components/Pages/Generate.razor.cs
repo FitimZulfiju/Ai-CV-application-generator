@@ -96,16 +96,9 @@ public partial class Generate
         if (!string.IsNullOrEmpty(userId))
         {
             var settings = await UserSettingsService.GetUserSettingsAsync(userId);
-            if (settings != null && !string.IsNullOrEmpty(settings.DefaultModel))
+            if (settings != null)
             {
-                if (settings.DefaultModel.StartsWith("gpt", StringComparison.OrdinalIgnoreCase))
-                {
-                    _selectedProvider = AIProvider.OpenAI;
-                }
-                else if (settings.DefaultModel.StartsWith("gemini", StringComparison.OrdinalIgnoreCase))
-                {
-                    _selectedProvider = AIProvider.GoogleGemini;
-                }
+                _selectedProvider = settings.DefaultModel.GetProvider();
             }
         }
     }
