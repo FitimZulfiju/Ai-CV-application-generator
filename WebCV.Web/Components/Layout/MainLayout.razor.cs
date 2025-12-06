@@ -11,16 +11,9 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private bool _drawerOpen = true;
     protected bool IsAuthenticated { get; set; }
 
-    public string AppVersion { get; set; } = "1.0.0";
-
     protected override void OnInitialized()
     {
         LoadingService.OnChange += StateHasChanged;
-        var version = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
-        if (version != null)
-        {
-            AppVersion = $"{version.Major}.{version.Minor}.{version.Build}";
-        }
     }
 
     public void Dispose()
