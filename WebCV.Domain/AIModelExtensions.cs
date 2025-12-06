@@ -8,10 +8,10 @@ namespace WebCV.Domain
             {
                 AIModel.Gpt4o => "gpt-4o",
                 AIModel.Gemini20Flash => "gemini-2.0-flash",
-                AIModel.Mistral7B => "mistral-7b",
-                AIModel.Llama31_8B => "llama-3.1-8b",
-                AIModel.Phi3Mini => "phi-3-mini",
-                AIModel.Gpt4All => "gpt4all",
+                AIModel.Mistral7B => "mistral",
+                AIModel.Llama31_8B => "llama3.1",
+                AIModel.Phi3Mini => "phi3",
+                AIModel.Gpt4All => "gpt4all", // Assumes user has a model named 'gpt4all' or safe default
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }

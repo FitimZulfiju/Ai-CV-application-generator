@@ -1,12 +1,14 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace WebCV.Infrastructure.Services
 {
-    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory) : IAIServiceFactory
+    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory, IConfiguration configuration) : IAIServiceFactory
     {
         private readonly IUserSettingsService _userSettingsService = userSettingsService;
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
+        private readonly IConfiguration _configuration = configuration;
 
         public async Task<IAIService> GetServiceAsync(AIProvider provider, string userId)
         {
@@ -16,7 +18,7 @@ namespace WebCV.Infrastructure.Services
             {
                 AIProvider.OpenAI => CreateOpenAIService(settings),
                 AIProvider.GoogleGemini => CreateGoogleGeminiService(settings, _httpClientFactory),
-                AIProvider.Local => new LocalAIService(_loggerFactory.CreateLogger<LocalAIService>()),
+                AIProvider.Local => new LocalAIService(settings?.DefaultModel ?? Domain.AIModel.Mistral7B, _loggerFactory.CreateLogger<LocalAIService>(), _httpClientFactory.CreateClient(), _configuration["ConnectionStrings:Ollama"]),
                 _ => throw new ArgumentException("Invalid AI Provider", nameof(provider))
             };
         }
