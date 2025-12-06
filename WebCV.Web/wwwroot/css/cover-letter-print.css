@@ -5,21 +5,25 @@
 */
 
 @media print {
-    /* 
-       Reduced Global Page Margin (Local override not possible for @page, 
-       but we can simulate by keeping the container flexible)
-       
-       NOTE: We stick to the global 1cm @page margin to match CV.
-       Space saving comes from internal padding reduction.
-    */
+    /* Prevent the generic "always break after page" for cover letters */
+    .cover-letter .page {
+        page-break-after: auto !important;
+    }
 
-    /* Reduce Header Padding */
+    /* Reduced Header Padding */
     .cover-letter .header {
         padding: 0.5cm 1cm 0.625cm !important;
     }
 
-    /* Reduce Body Section Padding */
+    /* Reduced Body Section Padding */
     .cover-letter .section {
         padding: 0.5cm 1cm !important;
+    }
+
+    /* Hide scroll-to-top button and any other floating UI elements */
+    .mud-fab,
+    .scroll-to-top,
+    button[aria-label*="scroll"] {
+        display: none !important;
     }
 }

@@ -18,6 +18,8 @@
     .mud-snackbar-container,
     .mud-layout .mud-main-content > .mud-container > .mud-stack, /* Hide the main header stack if d-print-none fails */
     .mud-divider, /* Hide dividers */
+    .mud-fab, /* Hide floating action buttons including scroll-to-top */
+    .mud-scroll-to-top,
     .d-print-none {
     display: none !important;
   }
