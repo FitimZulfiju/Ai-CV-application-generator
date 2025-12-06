@@ -68,7 +68,8 @@ public class LocalAIService : IAIService
             Format = json ? "json" : null,
             Options = new Dictionary<string, object>
             {
-                { "temperature", 0.7 }
+                { "temperature", 0.7 },
+                { "num_ctx", 4096 } // Restrict context to 4k for all local models to prevent CPU performance issues (some models default to 128k)
             }
         };
 
