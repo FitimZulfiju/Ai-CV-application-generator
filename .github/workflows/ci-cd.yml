@@ -46,4 +46,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/webcv:latest
+          build-args: |
+            BUILD_VERSION=1.0.${{ github.run_number }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/webcv:latest
+            ${{ secrets.DOCKER_USERNAME }}/webcv:1.0.${{ github.run_number }}

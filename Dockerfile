@@ -15,7 +15,8 @@ WORKDIR "/src/WebCV.Web"
 RUN dotnet build "WebCV.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WebCV.Web.csproj" -c Release -o /app/publish
+ARG BUILD_VERSION=1.0.0
+RUN dotnet publish "WebCV.Web.csproj" -c Release -o /app/publish /p:Version=${BUILD_VERSION}
 
 # Use the official ASP.NET Core runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
