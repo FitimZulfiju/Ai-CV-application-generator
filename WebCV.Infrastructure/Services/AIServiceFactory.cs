@@ -18,7 +18,7 @@ namespace WebCV.Infrastructure.Services
             {
                 AIProvider.OpenAI => CreateOpenAIService(settings),
                 AIProvider.GoogleGemini => CreateGoogleGeminiService(settings, _httpClientFactory),
-                AIProvider.Local => new LocalAIService(settings?.DefaultModel ?? Domain.AIModel.Mistral7B, _loggerFactory.CreateLogger<LocalAIService>(), _httpClientFactory.CreateClient(), _configuration["ConnectionStrings:Ollama"]),
+                AIProvider.Local => new LocalAIService(settings?.DefaultModel ?? Domain.AIModel.Mistral7B, _loggerFactory.CreateLogger<LocalAIService>(), _httpClientFactory.CreateClient("LocalAI"), _configuration["ConnectionStrings:Ollama"]),
                 _ => throw new ArgumentException("Invalid AI Provider", nameof(provider))
             };
         }

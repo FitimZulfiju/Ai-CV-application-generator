@@ -58,6 +58,21 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IJobPostScraper, JobPostScraper>();
 builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
 
+// Configure named HttpClient for Local AI with longer timeout
+builder.Services.AddHttpClient("LocalAI", client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(10);
+});
+
+// Configure Forwarded Headers for Docker/Proxy scenarios
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
+                               Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 builder.Services.AddScoped<IAIServiceFactory, AIServiceFactory>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddScoped<IJobApplicationOrchestrator, JobApplicationOrchestrator>();
@@ -73,6 +88,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+
+app.UseForwardedHeaders(); // Must be before UseHttpsRedirection
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
