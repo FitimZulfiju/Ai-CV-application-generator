@@ -15,11 +15,11 @@
 
     /* Reduce Header Padding */
     .cover-letter .header {
-        padding: 0.5cm 1.5cm 0.625cm !important;
+        padding: 0.5cm 1cm 0.625cm !important;
     }
 
     /* Reduce Body Section Padding */
     .cover-letter .section {
-        padding: 0.5cm 1.5cm !important;
+        padding: 0.5cm 1cm !important;
     }
 }

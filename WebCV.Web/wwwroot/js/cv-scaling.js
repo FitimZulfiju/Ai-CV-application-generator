@@ -14,7 +14,7 @@ window.cvScaler = {
                 // COVER LETTER STRATEGY:
                 // Start with Standard Size (1.0rem). 
                 // Only shrink if it overflows 900px (safety buffer). Never grow beyond standard.
-                maxHeight = 1080;
+                maxHeight = 1030;
                 minFontSizeRem = 0.45; 
             } else {
                 // CV STRATEGY (Smart Scaling):
