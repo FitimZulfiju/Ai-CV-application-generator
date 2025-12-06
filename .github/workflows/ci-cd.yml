@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: ["main", "master"]
 
+permissions:
+  contents: write
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -34,6 +37,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate Version
+        id: version
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "breaking|major"
+          minor_pattern: "feat|feature"
+          version_format: "${major}.${minor}.${patch}"
+          enable_prerelease_mode: false
+          search_commit_body: true
+          user_format_type: "csv"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -47,7 +64,7 @@ jobs:
           context: .
           push: true
           build-args: |
-            BUILD_VERSION=1.0.${{ github.run_number }}
+            BUILD_VERSION=${{ steps.version.outputs.version }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/webcv:latest
-            ${{ secrets.DOCKER_USERNAME }}/webcv:1.0.${{ github.run_number }}
+            ${{ secrets.DOCKER_USERNAME }}/webcv:${{ steps.version.outputs.version }}
