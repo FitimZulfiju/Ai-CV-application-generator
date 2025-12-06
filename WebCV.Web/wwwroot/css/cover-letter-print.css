@@ -1,0 +1,25 @@
+/* 
+   Specific Print Overrides for Cover Letters 
+   Goal: Minimize padding/margins to ensure single-page fit.
+   Scope: Applied only to .cover-letter containers.
+*/
+
+@media print {
+    /* 
+       Reduced Global Page Margin (Local override not possible for @page, 
+       but we can simulate by keeping the container flexible)
+       
+       NOTE: We stick to the global 1cm @page margin to match CV.
+       Space saving comes from internal padding reduction.
+    */
+
+    /* Reduce Header Padding */
+    .cover-letter .header {
+        padding: 0.5cm 1.5cm 0.625cm !important;
+    }
+
+    /* Reduce Body Section Padding */
+    .cover-letter .section {
+        padding: 0.5cm 1.5cm !important;
+    }
+}
