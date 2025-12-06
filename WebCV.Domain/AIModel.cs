@@ -6,7 +6,6 @@ namespace WebCV.Domain
         Gemini20Flash,
         Mistral7B,
         Llama31_8B,
-        Phi3Mini,
-        Gpt4All
+        Phi3Mini
     }
 }

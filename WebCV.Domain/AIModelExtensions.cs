@@ -11,7 +11,6 @@ namespace WebCV.Domain
                 AIModel.Mistral7B => "mistral",
                 AIModel.Llama31_8B => "llama3.1",
                 AIModel.Phi3Mini => "phi3",
-                AIModel.Gpt4All => "gpt4all", // Assumes user has a model named 'gpt4all' or safe default
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }
@@ -25,7 +24,6 @@ namespace WebCV.Domain
                 "mistral-7b" => AIModel.Mistral7B,
                 "llama-3.1-8b" => AIModel.Llama31_8B,
                 "phi-3-mini" => AIModel.Phi3Mini,
-                "gpt4all" => AIModel.Gpt4All,
                 _ => AIModel.Gpt4o // Default to GPT-4o
             };
         }
@@ -39,7 +37,6 @@ namespace WebCV.Domain
                 AIModel.Mistral7B => AIProvider.Local,
                 AIModel.Llama31_8B => AIProvider.Local,
                 AIModel.Phi3Mini => AIProvider.Local,
-                AIModel.Gpt4All => AIProvider.Local,
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }
@@ -53,7 +50,6 @@ namespace WebCV.Domain
                 AIModel.Mistral7B => "Mistral 7B",
                 AIModel.Llama31_8B => "LLaMA 3.1 8B",
                 AIModel.Phi3Mini => "Phi-3 Mini 3.8B",
-                AIModel.Gpt4All => "GPT4All",
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }
