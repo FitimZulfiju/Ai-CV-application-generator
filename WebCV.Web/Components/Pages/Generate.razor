@@ -9,9 +9,10 @@
 
     <MudGrid>
         <MudItem xs="12" Class="d-print-none">
-            <MudCard Elevation="3" Class="pa-4 d-print-none">
-                <MudText Typo="Typo.h6" Class="mb-1">📋 Job Details</MudText>
-                <MudForm @ref="_form">
+            <div class="d-print-none">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudText Typo="Typo.h6" Class="mb-1">📋 Job Details</MudText>
+                    <MudForm @ref="_form">
                     <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
                         <MudSelect T="AIProvider" Label="AI Provider" @bind-Value="_selectedProvider" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model">
                             <MudSelectItem Value="AIProvider.OpenAI">OpenAI (GPT-4o)</MudSelectItem>
@@ -147,6 +148,7 @@
                     }
                 </MudForm>
             </MudCard>
+            </div>
         </MudItem>
 
         <MudItem xs="12">

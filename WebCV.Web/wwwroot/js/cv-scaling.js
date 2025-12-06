@@ -4,46 +4,43 @@ window.cvScaler = {
         const stepRem = 0.01;
 
         pages.forEach(page => {
-            // Dynamic "content-aware" logic:
-            // Check if the page contains a footer
+            // Check if this page belongs to a Cover Letter
+            const isCoverLetter = page.closest('.cover-letter') !== null;
             const hasFooter = page.querySelector('.footer');
 
-            // 1035px for standard body pages (filling space aggressively).
-            // 990px for the footer page (strict safety to keep footer visible).
-            const maxHeight = hasFooter ? 990 : 1035; 
-            
-            // We allow ALL pages to potentially grow to 1.35rem if they are empty,
-            // relying on the maxHeight check to stop them if they get too full.
-            const maxFontSizeRem = 1.35;
-            const minFontSizeRem = 0.55;
+            let maxHeight, maxFontSizeRem, minFontSizeRem;
 
-            let fontSizeRem = 0.95; 
+            if (isCoverLetter) {
+                // COVER LETTER STRATEGY:
+                // Start with Standard Size (1.0rem). 
+                // Only shrink if it overflows 900px (safety buffer). Never grow beyond standard.
+                maxHeight = 900;
+                minFontSizeRem = 0.45; 
+            } else {
+                // CV STRATEGY (Smart Scaling):
+                // Start with Standard Size (0.95rem).
+                // Only shrink if it overflows the specific page limit.
+                maxHeight = hasFooter ? 990 : 1035; 
+                minFontSizeRem = 0.55;
+            }
+
+            // STANDARD STARTING SIZE
+            // We trust the standard size looks best.
+            let fontSizeRem = isCoverLetter ? 1.0 : 0.95; 
+
             page.style.fontSize = fontSizeRem + 'rem';
             
             let currentHeight = page.scrollHeight;
             
+            // SHRINK ONLY logic
             if (currentHeight > maxHeight) {
-                // Shrink
                 while (currentHeight > maxHeight && fontSizeRem > minFontSizeRem) {
                     fontSizeRem -= stepRem;
                     page.style.fontSize = fontSizeRem + 'rem';
                     currentHeight = page.scrollHeight;
                 }
-            } else {
-                // Grow logic
-                while (currentHeight < maxHeight && fontSizeRem < maxFontSizeRem) {
-                    let nextFontSizeRem = fontSizeRem + stepRem;
-                    page.style.fontSize = nextFontSizeRem + 'rem';
-                    
-                    if (page.scrollHeight > maxHeight) {
-                        // Revert one step and stop
-                        page.style.fontSize = fontSizeRem + 'rem';
-                        break;
-                    }
-                    fontSizeRem = nextFontSizeRem;
-                    currentHeight = page.scrollHeight;
-                }
             }
+            // Grow logic REMOVED. We accept empty space for better consistency.
         });
     }
 };
