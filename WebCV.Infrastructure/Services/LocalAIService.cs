@@ -69,7 +69,8 @@ public class LocalAIService : IAIService
             Options = new Dictionary<string, object>
             {
                 { "temperature", 0.7 },
-                { "num_ctx", 4096 } // Restrict context to 4k for all local models to prevent CPU performance issues (some models default to 128k)
+                { "num_ctx", 2048 }, // Aggressive optimization: 2k context for speed
+                { "num_predict", 1024 } // Limit generation to 1k tokens to prevent infinite loops
             }
         };
 
