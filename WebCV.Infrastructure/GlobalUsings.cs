@@ -14,4 +14,5 @@ global using WebCV.Infrastructure.Data;
 global using System.Globalization;
 global using HtmlAgilityPack;
 global using Microsoft.JSInterop;
-
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;

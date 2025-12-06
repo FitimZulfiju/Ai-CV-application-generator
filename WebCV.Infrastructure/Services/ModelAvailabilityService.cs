@@ -1,8 +1,3 @@
-using System.Net.Http.Json;
-using System.Text.Json;
-using WebCV.Application.Interfaces;
-using WebCV.Domain;
-
 namespace WebCV.Infrastructure.Services;
 
 public class ModelAvailabilityService : IModelAvailabilityService
@@ -10,7 +5,7 @@ public class ModelAvailabilityService : IModelAvailabilityService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<ModelAvailabilityService> _logger;
     private readonly string _ollamaEndpoint;
-    
+
     // Cache to avoid hitting Ollama API repeatedly
     private List<AIModel>? _cachedModels;
     private DateTime _cacheExpiry = DateTime.MinValue;
@@ -122,8 +117,6 @@ public class ModelAvailabilityService : IModelAvailabilityService
             {
                 installedModels.Add(AIModel.Phi3Mini);
             }
-
-            _logger.LogInformation("Found {Count} installed local models", installedModels.Count);
         }
         catch (Exception ex)
         {
