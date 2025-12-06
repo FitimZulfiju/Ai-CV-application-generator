@@ -52,6 +52,16 @@ jobs:
           search_commit_body: true
           user_format_type: "csv"
 
+      - name: Debug Version Output
+        run: |
+          echo "----------------------------------------"
+          echo "Calculated Version: ${{ steps.version.outputs.version }}"
+          echo "Major: ${{ steps.version.outputs.major }}"
+          echo "Minor: ${{ steps.version.outputs.minor }}"
+          echo "Patch: ${{ steps.version.outputs.patch }}"
+          echo "Increment: ${{ steps.version.outputs.increment }}"
+          echo "----------------------------------------"
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
