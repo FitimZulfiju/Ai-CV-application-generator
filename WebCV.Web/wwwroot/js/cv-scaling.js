@@ -1,16 +1,23 @@
 window.cvScaler = {
     fitContentToPages: function () {
         const pages = document.querySelectorAll('.page');
-        // 1123px is full A4 @ 96dpi. Browser margins (header/footer/printable area) reduce this significantly.
-        // With 1cm margins (approx 38px each), available height is ~1047px.
-        // We set safety limit to 1010px to prevent footer spilling.
-        const maxHeight = 1010; 
-        const minFontSizeRem = 0.55; 
-        const maxFontSizeRem = 1.15; 
-        const stepRem = 0.02;
+        const stepRem = 0.01;
 
         pages.forEach(page => {
-            let fontSizeRem = 0.95; // Start with larger standard size to encourage filling
+            // Dynamic "content-aware" logic:
+            // Check if the page contains a footer
+            const hasFooter = page.querySelector('.footer');
+
+            // 1035px for standard body pages (filling space aggressively).
+            // 990px for the footer page (strict safety to keep footer visible).
+            const maxHeight = hasFooter ? 990 : 1035; 
+            
+            // We allow ALL pages to potentially grow to 1.35rem if they are empty,
+            // relying on the maxHeight check to stop them if they get too full.
+            const maxFontSizeRem = 1.35;
+            const minFontSizeRem = 0.55;
+
+            let fontSizeRem = 0.95; 
             page.style.fontSize = fontSizeRem + 'rem';
             
             let currentHeight = page.scrollHeight;
