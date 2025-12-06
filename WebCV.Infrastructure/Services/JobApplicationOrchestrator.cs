@@ -24,10 +24,20 @@ namespace WebCV.Infrastructure.Services
             string userId,
             AIProvider provider,
             CandidateProfile profile,
-            JobPosting job)
+            JobPosting job,
+            AIModel? model = null)
         {
-            var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId);
+            var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, model);
 
+            if (provider == AIProvider.Local)
+            {
+                // Run sequentially for local models to prevent CPU thrashing/queuing timeouts
+                var coverLetter = await aiService.GenerateCoverLetterAsync(profile, job);
+                var resume = await aiService.GenerateTailoredResumeAsync(profile, job);
+                return (coverLetter, resume);
+            }
+
+            // Run in parallel for cloud providers
             var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job);
             var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job);
 

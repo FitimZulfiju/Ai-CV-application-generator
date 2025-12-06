@@ -10,15 +10,18 @@ namespace WebCV.Infrastructure.Services
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
         private readonly IConfiguration _configuration = configuration;
 
-        public async Task<IAIService> GetServiceAsync(AIProvider provider, string userId)
+        public async Task<IAIService> GetServiceAsync(AIProvider provider, string userId, AIModel? model = null)
         {
             var settings = await _userSettingsService.GetUserSettingsAsync(userId);
+            
+            // Use passed model if provided, otherwise fallback to settings default, then to system default
+            var selectedModel = model ?? settings?.DefaultModel ?? Domain.AIModel.Phi3Mini;
 
             return provider switch
             {
                 AIProvider.OpenAI => CreateOpenAIService(settings),
                 AIProvider.GoogleGemini => CreateGoogleGeminiService(settings, _httpClientFactory),
-                AIProvider.Local => new LocalAIService(settings?.DefaultModel ?? Domain.AIModel.Mistral7B, _loggerFactory.CreateLogger<LocalAIService>(), _httpClientFactory.CreateClient("LocalAI"), _configuration["ConnectionStrings:Ollama"]),
+                AIProvider.Local => new LocalAIService(selectedModel, _loggerFactory.CreateLogger<LocalAIService>(), _httpClientFactory.CreateClient("LocalAI"), _configuration["ConnectionStrings:Ollama"]),
                 _ => throw new ArgumentException("Invalid AI Provider", nameof(provider))
             };
         }

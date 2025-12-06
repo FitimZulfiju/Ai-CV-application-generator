@@ -181,7 +181,7 @@ public partial class Generate
             }
 
             LoadingService.Update(30, "Generating cover letter...");
-            var result = await JobOrchestrator.GenerateApplicationAsync(userId, _selectedProvider, _cachedProfile, _job);
+            var result = await JobOrchestrator.GenerateApplicationAsync(userId, _selectedProvider, _cachedProfile, _job, _selectedModel);
 
             LoadingService.Update(70, "Tailoring CV...");
             _generatedCoverLetter = result.CoverLetter;
