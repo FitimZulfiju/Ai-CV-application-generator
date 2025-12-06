@@ -14,9 +14,13 @@
                     <MudText Typo="Typo.h6" Class="mb-1">📋 Job Details</MudText>
                     <MudForm @ref="_form">
                     <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
-                        <MudSelect T="AIProvider" Label="AI Provider" @bind-Value="_selectedProvider" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model">
-                            <MudSelectItem Value="AIProvider.OpenAI">OpenAI (GPT-4o)</MudSelectItem>
-                            <MudSelectItem Value="AIProvider.GoogleGemini">Google Gemini (Flash)</MudSelectItem>
+                        <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model">
+                            <MudSelectItem Value="AIModel.Gpt4o">GPT-4o</MudSelectItem>
+                            <MudSelectItem Value="AIModel.Gemini20Flash">Gemini 2.0 Flash</MudSelectItem>
+                            <MudSelectItem Value="AIModel.Mistral7B">Mistral 7B (Local)</MudSelectItem>
+                            <MudSelectItem Value="AIModel.Llama31_8B">LLaMA 3.1 8B (Local)</MudSelectItem>
+                            <MudSelectItem Value="AIModel.Phi3Mini">Phi-3 Mini 3.8B (Local)</MudSelectItem>
+                            <MudSelectItem Value="AIModel.Gpt4All">GPT4All (Local)</MudSelectItem>
                         </MudSelect>
                         <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
                         <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />

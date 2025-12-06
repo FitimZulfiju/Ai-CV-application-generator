@@ -25,7 +25,8 @@ public partial class Generate
     private string _originalResumeJson = string.Empty;
     private bool _manualEntry = false;
     private MudForm? _form;
-    private AIProvider _selectedProvider = AIProvider.OpenAI;
+    private AIProvider _selectedProvider => _selectedModel.GetProvider();
+    private AIModel _selectedModel = AIModel.Gpt4o;
     private bool _showAdvancedEditor = false;
     private int _splitterSize = 30;
     private int _activeTabIndex = 0;
@@ -98,7 +99,7 @@ public partial class Generate
             var settings = await UserSettingsService.GetUserSettingsAsync(userId);
             if (settings != null)
             {
-                _selectedProvider = settings.DefaultModel.GetProvider();
+                _selectedModel = settings.DefaultModel;
             }
         }
     }
@@ -211,7 +212,7 @@ public partial class Generate
             LoadingService.Update(100, "Complete!");
             await Task.Delay(300);
 
-            Snackbar.Add($"Application Generated using {_selectedProvider}!", Severity.Success);
+            Snackbar.Add($"Application Generated using {_selectedModel.GetDisplayName()}!", Severity.Success);
             _previewCoverLetter = true; // Auto-switch to preview
 
         }

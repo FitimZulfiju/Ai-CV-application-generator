@@ -1,9 +1,12 @@
+using Microsoft.Extensions.Logging;
+
 namespace WebCV.Infrastructure.Services
 {
-    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory) : IAIServiceFactory
+    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory) : IAIServiceFactory
     {
         private readonly IUserSettingsService _userSettingsService = userSettingsService;
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
         public async Task<IAIService> GetServiceAsync(AIProvider provider, string userId)
         {
@@ -13,6 +16,7 @@ namespace WebCV.Infrastructure.Services
             {
                 AIProvider.OpenAI => CreateOpenAIService(settings),
                 AIProvider.GoogleGemini => CreateGoogleGeminiService(settings, _httpClientFactory),
+                AIProvider.Local => new LocalAIService(_loggerFactory.CreateLogger<LocalAIService>()),
                 _ => throw new ArgumentException("Invalid AI Provider", nameof(provider))
             };
         }
