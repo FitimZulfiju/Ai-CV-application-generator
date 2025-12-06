@@ -68,3 +68,11 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/webcv:latest
             ${{ secrets.DOCKER_USERNAME }}/webcv:${{ steps.version.outputs.version }}
+
+      - name: Tag Repository
+        if: steps.version.outputs.version != ''
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
