@@ -4,6 +4,8 @@ namespace WebCV.Domain
     {
         OpenAI,
         GoogleGemini,
-        Local
+        Anthropic,
+        Groq,
+        DeepSeek
     }
 }

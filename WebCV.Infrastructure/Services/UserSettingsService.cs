@@ -29,11 +29,26 @@ namespace WebCV.Infrastructure.Services
                 settings.GoogleGeminiApiKey = Decrypt(settings.GoogleGeminiApiKey);
             }
 
-            Console.WriteLine($"[UserSettingsService] Settings retrieved. Gemini Key Present: {!string.IsNullOrEmpty(settings.GoogleGeminiApiKey)}");
+            if (!string.IsNullOrEmpty(settings.ClaudeApiKey))
+            {
+                settings.ClaudeApiKey = Decrypt(settings.ClaudeApiKey);
+            }
+
+            if (!string.IsNullOrEmpty(settings.GroqApiKey))
+            {
+                settings.GroqApiKey = Decrypt(settings.GroqApiKey);
+            }
+
+            if (!string.IsNullOrEmpty(settings.DeepSeekApiKey))
+            {
+                settings.DeepSeekApiKey = Decrypt(settings.DeepSeekApiKey);
+            }
+
+ Console.WriteLine($"[UserSettingsService] Settings retrieved.");
             return settings;
         }
 
-        public async Task SaveUserSettingsAsync(string userId, string openAiApiKey, string googleGeminiApiKey, AIModel defaultModel)
+        public async Task SaveUserSettingsAsync(string userId, string openAiApiKey, string googleGeminiApiKey, string claudeApiKey, string groqApiKey, string deepSeekApiKey, AIModel defaultModel)
         {
             using var context = await _contextFactory.CreateDbContextAsync();
             Console.WriteLine($"[UserSettingsService] Saving settings for userId: {userId}. Gemini Key Input Length: {googleGeminiApiKey?.Length ?? 0}");
@@ -69,14 +84,38 @@ namespace WebCV.Infrastructure.Services
 
             if (!string.IsNullOrEmpty(googleGeminiApiKey))
             {
-                var encrypted = Encrypt(googleGeminiApiKey);
-                Console.WriteLine($"[UserSettingsService] Encrypted Gemini Key Length: {encrypted.Length}");
-                settings.GoogleGeminiApiKey = encrypted;
+                settings.GoogleGeminiApiKey = Encrypt(googleGeminiApiKey);
             }
             else
             {
-                Console.WriteLine("[UserSettingsService] Gemini Key is empty/null, setting to null.");
                 settings.GoogleGeminiApiKey = null;
+            }
+
+            if (!string.IsNullOrEmpty(claudeApiKey))
+            {
+                settings.ClaudeApiKey = Encrypt(claudeApiKey);
+            }
+            else
+            {
+                settings.ClaudeApiKey = null;
+            }
+
+            if (!string.IsNullOrEmpty(groqApiKey))
+            {
+                settings.GroqApiKey = Encrypt(groqApiKey);
+            }
+            else
+            {
+                settings.GroqApiKey = null;
+            }
+
+            if (!string.IsNullOrEmpty(deepSeekApiKey))
+            {
+                settings.DeepSeekApiKey = Encrypt(deepSeekApiKey);
+            }
+            else
+            {
+                settings.DeepSeekApiKey = null;
             }
 
             settings.DefaultModel = defaultModel;

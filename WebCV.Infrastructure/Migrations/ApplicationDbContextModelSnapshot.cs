@@ -556,13 +556,22 @@ namespace WebCV.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ClaudeApiKey")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeepSeekApiKey")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DefaultModel")
                         .HasColumnType("int");
 
                     b.Property<string>("GoogleGeminiApiKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroqApiKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OpenAIApiKey")

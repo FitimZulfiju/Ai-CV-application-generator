@@ -32,14 +32,6 @@
                             <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Class="mb-6" Label="Manual Entry Mode" T="bool" />
                         </MudStack>
 
-                        @if (_availableModels.Any(m => m.GetProvider() == AIProvider.Local))
-                        {
-                            <MudAlert Severity="Severity.Info" Dense="true" Class="mb-4">
-                                <strong>Local Models Available:</strong> These run on your hardware. Performance depends on GPU availability.
-                                With GPU: Fast generation. Without GPU: Very slow or unavailable. Quality may differ from cloud models.
-                            </MudAlert>
-                        }
-
                         @if (!_manualEntry)
                         {
                             <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3" Spacing="2">

@@ -16,6 +16,9 @@ public partial class UserSettingsPage
 
     private bool _showOpenAiKey = false;
     private bool _showGoogleKey = false;
+    private bool _showClaudeKey = false;
+    private bool _showGroqKey = false;
+    private bool _showDeepSeekKey = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,7 +29,7 @@ public partial class UserSettingsPage
         }
         catch
         {
-            _availableModels = new List<AIModel> { AIModel.Gpt4o, AIModel.Gemini20Flash };
+            _availableModels = new List<AIModel> { AIModel.Gpt4o, AIModel.Gemini20Flash, AIModel.Claude35Haiku, AIModel.Llama3370B, AIModel.DeepSeekV3 };
         }
         finally
         {
@@ -56,6 +59,9 @@ public partial class UserSettingsPage
             {
                 _model.OpenAIApiKey = settings.OpenAIApiKey ?? string.Empty;
                 _model.GoogleGeminiApiKey = settings.GoogleGeminiApiKey ?? string.Empty;
+                _model.ClaudeApiKey = settings.ClaudeApiKey ?? string.Empty;
+                _model.GroqApiKey = settings.GroqApiKey ?? string.Empty;
+                _model.DeepSeekApiKey = settings.DeepSeekApiKey ?? string.Empty;
                 _model.DefaultModel = settings.DefaultModel;
             }
         }
@@ -74,7 +80,14 @@ public partial class UserSettingsPage
         _isLoading = true;
         try
         {
-            await UserSettingsService.SaveUserSettingsAsync(_userId, _model.OpenAIApiKey, _model.GoogleGeminiApiKey, _model.DefaultModel);
+            await UserSettingsService.SaveUserSettingsAsync(
+                _userId, 
+                _model.OpenAIApiKey, 
+                _model.GoogleGeminiApiKey,
+                _model.ClaudeApiKey,
+                _model.GroqApiKey,
+                _model.DeepSeekApiKey,
+                _model.DefaultModel);
             Snackbar.Add("Settings saved successfully!", Severity.Success);
         }
         catch (Exception ex)
@@ -104,17 +117,34 @@ public partial class UserSettingsPage
     {
         _showGoogleKey = !_showGoogleKey;
     }
+
+    private void ToggleClaudeVisibility()
+    {
+        _showClaudeKey = !_showClaudeKey;
+    }
+
+    private void ToggleGroqVisibility()
+    {
+        _showGroqKey = !_showGroqKey;
+    }
+
+    private void ToggleDeepSeekVisibility()
+    {
+        _showDeepSeekKey = !_showDeepSeekKey;
+    }
     
     private string GetModelDisplayName(AIModel model)
     {
-        var displayName = model.GetDisplayName();
-        return model.GetProvider() == AIProvider.Local ? $"{displayName} (Local)" : displayName;
+        return model.GetDisplayName();
     }
 
     private class SettingsModel
     {
         public string OpenAIApiKey { get; set; } = string.Empty;
         public string GoogleGeminiApiKey { get; set; } = string.Empty;
+        public string ClaudeApiKey { get; set; } = string.Empty;
+        public string GroqApiKey { get; set; } = string.Empty;
+        public string DeepSeekApiKey { get; set; } = string.Empty;
         public AIModel DefaultModel { get; set; } = AIModel.Gpt4o;
     }
 }

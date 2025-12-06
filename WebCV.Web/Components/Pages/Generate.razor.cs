@@ -28,7 +28,7 @@ public partial class Generate
     private MudForm? _form;
     private AIProvider _selectedProvider => _selectedModel.GetProvider();
     private AIModel _selectedModel = AIModel.Gpt4o;
-    private List<AIModel> _availableModels = new();
+    private List<AIModel> _availableModels = [];
     private bool _isLoadingModels = true;
     private bool _showAdvancedEditor = false;
     private int _splitterSize = 30;
@@ -111,7 +111,7 @@ public partial class Generate
         
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (!string.IsNullOrEmpty(userId))
         {
@@ -176,7 +176,7 @@ public partial class Generate
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-            var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -317,7 +317,6 @@ public partial class Generate
     
     private string GetModelDisplayName(AIModel model)
     {
-        var displayName = model.GetDisplayName();
-        return model.GetProvider() == AIProvider.Local ? $"{displayName} (Local)" : displayName;
+        return model.GetDisplayName();
     }
 }

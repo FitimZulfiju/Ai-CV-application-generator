@@ -3,11 +3,13 @@ namespace WebCV.Infrastructure.Services
     public class JobApplicationOrchestrator(
         IJobPostScraper jobScraper,
         IAIServiceFactory aiServiceFactory,
-        ICVService cvService) : IJobApplicationOrchestrator
+        ICVService cvService,
+        ILogger<JobApplicationOrchestrator> logger) : IJobApplicationOrchestrator
     {
         private readonly IJobPostScraper _jobScraper = jobScraper;
         private readonly IAIServiceFactory _aiServiceFactory = aiServiceFactory;
         private readonly ICVService _cvService = cvService;
+        private readonly ILogger<JobApplicationOrchestrator> _logger = logger;
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
@@ -27,17 +29,11 @@ namespace WebCV.Infrastructure.Services
             JobPosting job,
             AIModel? model = null)
         {
+            // Get the AI service for the selected model
             var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, model);
+            _logger.LogInformation("Starting application generation for Job {JobTitle} using {Model}", job.Title, model?.GetDisplayName() ?? "default");
 
-            if (provider == AIProvider.Local)
-            {
-                // Run sequentially for local models to prevent CPU thrashing/queuing timeouts
-                var coverLetter = await aiService.GenerateCoverLetterAsync(profile, job);
-                var resume = await aiService.GenerateTailoredResumeAsync(profile, job);
-                return (coverLetter, resume);
-            }
-
-            // Run in parallel for cloud providers
+            // Run in parallel for all cloud providers
             var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job);
             var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job);
 

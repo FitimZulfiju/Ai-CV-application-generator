@@ -6,9 +6,9 @@ namespace WebCV.Tests.Domain;
 public class AIModelExtensionsTests
 {
     [Theory]
-    [InlineData(AIModel.Mistral7B, AIProvider.Local)]
-    [InlineData(AIModel.Llama31_8B, AIProvider.Local)]
-    [InlineData(AIModel.Phi3Mini, AIProvider.Local)]
+    [InlineData(AIModel.Claude35Haiku, AIProvider.Anthropic)]
+    [InlineData(AIModel.Llama3370B, AIProvider.Groq)]
+    [InlineData(AIModel.DeepSeekV3, AIProvider.DeepSeek)]
     [InlineData(AIModel.Gpt4o, AIProvider.OpenAI)]
     [InlineData(AIModel.Gemini20Flash, AIProvider.GoogleGemini)]
     public void GetProvider_ReturnsCorrectProvider(AIModel model, AIProvider expectedProvider)
@@ -21,10 +21,11 @@ public class AIModelExtensionsTests
     }
 
     [Theory]
-    [InlineData(AIModel.Mistral7B, "Mistral 7B")]
-    [InlineData(AIModel.Llama31_8B, "LLaMA 3.1 8B")]
-    [InlineData(AIModel.Phi3Mini, "Phi-3 Mini 3.8B")]
-
+    [InlineData(AIModel.Claude35Haiku, "Claude 3.5 Haiku")]
+    [InlineData(AIModel.Llama3370B, "Llama 3.3 70B")]
+    [InlineData(AIModel.DeepSeekV3, "DeepSeek V3")]
+    [InlineData(AIModel.Gpt4o, "GPT-4o")]
+    [InlineData(AIModel.Gemini20Flash, "Gemini 2.0 Flash")]
     public void GetDisplayName_ReturnsCorrectDisplayName(AIModel model, string expectedName)
     {
         // Act

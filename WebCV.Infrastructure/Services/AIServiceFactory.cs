@@ -1,27 +1,24 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-
 namespace WebCV.Infrastructure.Services
 {
-    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory, IConfiguration configuration) : IAIServiceFactory
+    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory) : IAIServiceFactory
     {
         private readonly IUserSettingsService _userSettingsService = userSettingsService;
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-        private readonly ILoggerFactory _loggerFactory = loggerFactory;
-        private readonly IConfiguration _configuration = configuration;
 
         public async Task<IAIService> GetServiceAsync(AIProvider provider, string userId, AIModel? model = null)
         {
             var settings = await _userSettingsService.GetUserSettingsAsync(userId);
-            
+
             // Use passed model if provided, otherwise fallback to settings default, then to system default
-            var selectedModel = model ?? settings?.DefaultModel ?? Domain.AIModel.Phi3Mini;
+            AIModel selectedModel = model ?? settings?.DefaultModel ?? AIModel.Gpt4o;
 
             return provider switch
             {
                 AIProvider.OpenAI => CreateOpenAIService(settings),
                 AIProvider.GoogleGemini => CreateGoogleGeminiService(settings, _httpClientFactory),
-                AIProvider.Local => new LocalAIService(selectedModel, _loggerFactory.CreateLogger<LocalAIService>(), _httpClientFactory.CreateClient("LocalAI"), _configuration["ConnectionStrings:Ollama"]),
+                AIProvider.Anthropic => CreateClaudeService(settings, _httpClientFactory),
+                AIProvider.Groq => CreateGroqService(settings, _httpClientFactory),
+                AIProvider.DeepSeek => CreateDeepSeekService(settings, _httpClientFactory),
                 _ => throw new ArgumentException("Invalid AI Provider", nameof(provider))
             };
         }
@@ -46,6 +43,42 @@ namespace WebCV.Infrastructure.Services
 
             var httpClient = httpClientFactory.CreateClient();
             return new GoogleGeminiService(httpClient, apiKey);
+        }
+
+        private static ClaudeService CreateClaudeService(UserSettings? settings, IHttpClientFactory httpClientFactory)
+        {
+            var apiKey = settings?.ClaudeApiKey;
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                throw new InvalidOperationException("Claude API Key is not configured. Please go to Settings to configure it.");
+            }
+
+            var httpClient = httpClientFactory.CreateClient();
+            return new ClaudeService(httpClient, apiKey);
+        }
+
+        private static GroqService CreateGroqService(UserSettings? settings, IHttpClientFactory httpClientFactory)
+        {
+            var apiKey = settings?.GroqApiKey;
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                throw new InvalidOperationException("Groq API Key is not configured. Please go to Settings to configure it.");
+            }
+
+            var httpClient = httpClientFactory.CreateClient();
+            return new GroqService(httpClient, apiKey);
+        }
+
+        private static DeepSeekService CreateDeepSeekService(UserSettings? settings, IHttpClientFactory httpClientFactory)
+        {
+            var apiKey = settings?.DeepSeekApiKey;
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                throw new InvalidOperationException("DeepSeek API Key is not configured. Please go to Settings to configure it.");
+            }
+
+            var httpClient = httpClientFactory.CreateClient();
+            return new DeepSeekService(httpClient, apiKey);
         }
     }
 }

@@ -59,6 +59,69 @@
                 </MudCardContent>
             </MudCard>
 
+            <MudCard Class="mb-2">
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">🤖 Anthropic Claude</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="pt-2">
+                    <MudTextField @bind-Value="_model.ClaudeApiKey"
+                                  Label="API Key"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(_showClaudeKey? InputType.Text: InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(_showClaudeKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="ToggleClaudeVisibility"
+                                  HelperText="Required for Claude models" />
+                    <MudText Typo="Typo.caption" Class="mt-1">
+                        Get your key from <MudLink Href="https://console.anthropic.com/" Target="_blank">Anthropic Console</MudLink> ($5 free credit)
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Class="mb-2">
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">⚡ Groq</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="pt-2">
+                    <MudTextField @bind-Value="_model.GroqApiKey"
+                                  Label="API Key"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(_showGroqKey? InputType.Text: InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(_showGroqKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="ToggleGroqVisibility"
+                                  HelperText="Required for Llama models via Groq" />
+                    <MudText Typo="Typo.caption" Class="mt-1">
+                        Get your key from <MudLink Href="https://console.groq.com/" Target="_blank">Groq Console</MudLink> (14,400 requests/day free)
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Class="mb-2">
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">🚀 DeepSeek</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="pt-2">
+                    <MudTextField @bind-Value="_model.DeepSeekApiKey"
+                                  Label="API Key"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(_showDeepSeekKey? InputType.Text: InputType.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(_showDeepSeekKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  OnAdornmentClick="ToggleDeepSeekVisibility"
+                                  HelperText="Required for DeepSeek models" />
+                    <MudText Typo="Typo.caption" Class="mt-1">
+                        Get your key from <MudLink Href="https://platform.deepseek.com/" Target="_blank">DeepSeek Platform</MudLink> (Very affordable: $0.14-$0.42 per million tokens)
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
             <MudCard Class="mb-3">
                 <MudCardHeader Class="pb-0">
                     <CardHeaderContent>
@@ -79,13 +142,6 @@
                             }
                         }
                     </MudSelect>
-                    @if (_availableModels.Any(m => m.GetProvider() == AIProvider.Local))
-                    {
-                        <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
-                            <strong>Local Models:</strong> Run on your hardware (GPU recommended). 
-                            Faster with GPU, very slow without. May produce different results than cloud models (GPT-4o/Gemini).
-                        </MudAlert>
-                    }
                     <MudText Typo="Typo.caption" Class="mt-1">
                         Select the model that will be selected by default when generating applications.
                     </MudText>

@@ -5,6 +5,7 @@ using WebCV.Application.Interfaces;
 using WebCV.Application.DTOs;
 using WebCV.Infrastructure.Services;
 using Xunit;
+using Microsoft.Extensions.Logging;
 
 namespace WebCV.Tests.Services;
 
@@ -14,6 +15,7 @@ public class JobApplicationOrchestratorTests
     private readonly Mock<IAIServiceFactory> _mockAiFactory;
     private readonly Mock<ICVService> _mockCvService;
     private readonly Mock<IAIService> _mockAiService;
+    private readonly Mock<ILogger<JobApplicationOrchestrator>> _mockLogger;
     private readonly JobApplicationOrchestrator _orchestrator;
 
     public JobApplicationOrchestratorTests()
@@ -22,11 +24,13 @@ public class JobApplicationOrchestratorTests
         _mockAiFactory = new Mock<IAIServiceFactory>();
         _mockCvService = new Mock<ICVService>();
         _mockAiService = new Mock<IAIService>();
+        _mockLogger = new Mock<ILogger<JobApplicationOrchestrator>>();
 
         _orchestrator = new JobApplicationOrchestrator(
             _mockScraper.Object,
             _mockAiFactory.Object,
-            _mockCvService.Object
+            _mockCvService.Object,
+            _mockLogger.Object
         );
     }
 

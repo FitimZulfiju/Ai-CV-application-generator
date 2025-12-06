@@ -1,11 +1,10 @@
-namespace WebCV.Domain
+namespace WebCV.Domain;
+
+public enum AIModel
 {
-    public enum AIModel
-    {
-        Gpt4o,
-        Gemini20Flash,
-        Mistral7B,
-        Llama31_8B,
-        Phi3Mini
-    }
+    Gpt4o,
+    Gemini20Flash,
+    Claude35Haiku,
+    Llama3370B,
+    DeepSeekV3
 }

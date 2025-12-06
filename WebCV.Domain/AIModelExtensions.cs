@@ -7,10 +7,10 @@ namespace WebCV.Domain
             return model switch
             {
                 AIModel.Gpt4o => "gpt-4o",
-                AIModel.Gemini20Flash => "gemini-2.0-flash",
-                AIModel.Mistral7B => "mistral",
-                AIModel.Llama31_8B => "llama3.1",
-                AIModel.Phi3Mini => "phi3",
+                AIModel.Gemini20Flash => "gemini-2.0-flash-exp",
+                AIModel.Claude35Haiku => "claude-3-5-haiku-20241022",
+                AIModel.Llama3370B => "llama-3.3-70b-versatile",
+                AIModel.DeepSeekV3 => "deepseek-chat",
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }
@@ -20,10 +20,10 @@ namespace WebCV.Domain
             return modelString?.ToLowerInvariant() switch
             {
                 "gpt-4o" => AIModel.Gpt4o,
-                "gemini-2.0-flash" => AIModel.Gemini20Flash,
-                "mistral-7b" => AIModel.Mistral7B,
-                "llama-3.1-8b" => AIModel.Llama31_8B,
-                "phi-3-mini" => AIModel.Phi3Mini,
+                "gemini-2.0-flash-exp" => AIModel.Gemini20Flash,
+                "claude-3-5-haiku-20241022" => AIModel.Claude35Haiku,
+                "llama-3.3-70b-versatile" => AIModel.Llama3370B,
+                "deepseek-chat" => AIModel.DeepSeekV3,
                 _ => AIModel.Gpt4o // Default to GPT-4o
             };
         }
@@ -34,9 +34,9 @@ namespace WebCV.Domain
             {
                 AIModel.Gpt4o => AIProvider.OpenAI,
                 AIModel.Gemini20Flash => AIProvider.GoogleGemini,
-                AIModel.Mistral7B => AIProvider.Local,
-                AIModel.Llama31_8B => AIProvider.Local,
-                AIModel.Phi3Mini => AIProvider.Local,
+                AIModel.Claude35Haiku => AIProvider.Anthropic,
+                AIModel.Llama3370B => AIProvider.Groq,
+                AIModel.DeepSeekV3 => AIProvider.DeepSeek,
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }
@@ -47,9 +47,9 @@ namespace WebCV.Domain
             {
                 AIModel.Gpt4o => "GPT-4o",
                 AIModel.Gemini20Flash => "Gemini 2.0 Flash",
-                AIModel.Mistral7B => "Mistral 7B",
-                AIModel.Llama31_8B => "LLaMA 3.1 8B",
-                AIModel.Phi3Mini => "Phi-3 Mini 3.8B",
+                AIModel.Claude35Haiku => "Claude 3.5 Haiku",
+                AIModel.Llama3370B => "Llama 3.3 70B",
+                AIModel.DeepSeekV3 => "DeepSeek V3",
                 _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
             };
         }

@@ -29,24 +29,20 @@ public class ModelAvailabilityService : IModelAvailabilityService
     public async Task<List<AIModel>> GetAvailableModelsAsync()
     {
         // Check cache first
-        if (_cachedModels != null && DateTime.UtcNow < _cacheExpiry)
+        if (_cachedModels != null &&DateTime.UtcNow < _cacheExpiry)
         {
             return _cachedModels;
         }
 
         var models = new List<AIModel>
         {
-            // Cloud models are always available
+            // All cloud models are always available
             AIModel.Gpt4o,
-            AIModel.Gemini20Flash
+            AIModel.Gemini20Flash,
+            AIModel.Claude35Haiku,
+            AIModel.Llama3370B,
+            AIModel.DeepSeekV3
         };
-
-        // Check if local AI is available
-        if (await IsLocalAIAvailableAsync())
-        {
-            var localModels = await GetInstalledLocalModelsAsync();
-            models.AddRange(localModels);
-        }
 
         // Cache the result
         _cachedModels = models;
@@ -104,23 +100,11 @@ public class ModelAvailabilityService : IModelAvailabilityService
                 }
             }
 
-            // Map installed models to AIModel enum
-            if (modelNames.Contains("mistral"))
-            {
-                installedModels.Add(AIModel.Mistral7B);
-            }
-            if (modelNames.Contains("llama3.1"))
-            {
-                installedModels.Add(AIModel.Llama31_8B);
-            }
-            if (modelNames.Contains("phi3"))
-            {
-                installedModels.Add(AIModel.Phi3Mini);
-            }
+            // All local model mapping removed since we're using cloud models only
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to check installed Ollama models");
+            _logger.LogWarning(ex, "Failed to check installed models");
         }
 
         return installedModels;

@@ -211,7 +211,10 @@ namespace WebCV.Infrastructure.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     OpenAIApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleGeminiApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DefaultModel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaudeApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GroqApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeepSeekApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DefaultModel = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

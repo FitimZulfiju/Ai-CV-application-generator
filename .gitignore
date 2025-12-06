@@ -93,6 +93,11 @@ FxCopReport.xml
 appsettings.json
 appsettings.Development.json
 
+# API Keys and Secrets
+**/modelAiKey.txt
+**/*apikey*.txt
+**/*api-key*.txt
+
 # OS Generated
 .DS_Store
 Thumbs.db

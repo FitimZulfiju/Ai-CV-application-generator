@@ -1,6 +1,7 @@
 ﻿global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Design;
 global using OpenAI.Chat;
 global using System.ClientModel;
 global using System.Text;
@@ -16,3 +17,4 @@ global using HtmlAgilityPack;
 global using Microsoft.JSInterop;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
+global using System.Net.Http.Headers;
