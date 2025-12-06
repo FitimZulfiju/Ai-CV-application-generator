@@ -6,16 +6,33 @@ public partial class UserSettingsPage
     [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] public ISnackbar Snackbar { get; set; } = default!;
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
 
     private SettingsModel _model = new();
     private bool _isLoading = false;
     private string _userId = string.Empty;
+    private List<AIModel> _availableModels = new();
+    private bool _isLoadingModels = true;
 
     private bool _showOpenAiKey = false;
     private bool _showGoogleKey = false;
 
     protected override async Task OnInitializedAsync()
     {
+        // Load available models first
+        try
+        {
+            _availableModels = await ModelAvailabilityService.GetAvailableModelsAsync();
+        }
+        catch
+        {
+            _availableModels = new List<AIModel> { AIModel.Gpt4o, AIModel.Gemini20Flash };
+        }
+        finally
+        {
+            _isLoadingModels = false;
+        }
+        
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -86,6 +103,12 @@ public partial class UserSettingsPage
     private void ToggleGoogleVisibility()
     {
         _showGoogleKey = !_showGoogleKey;
+    }
+    
+    private string GetModelDisplayName(AIModel model)
+    {
+        var displayName = model.GetDisplayName();
+        return model.GetProvider() == AIProvider.Local ? $"{displayName} (Local)" : displayName;
     }
 
     private class SettingsModel

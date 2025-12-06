@@ -10,6 +10,7 @@ public partial class Generate
     [Inject] public IUserSettingsService UserSettingsService { get; set; } = default!;
     [Inject] public ILoadingService LoadingService { get; set; } = default!;
     [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
 
     private JobPosting _job = new();
     private string _generatedCoverLetter = string.Empty;
@@ -27,6 +28,8 @@ public partial class Generate
     private MudForm? _form;
     private AIProvider _selectedProvider => _selectedModel.GetProvider();
     private AIModel _selectedModel = AIModel.Gpt4o;
+    private List<AIModel> _availableModels = new();
+    private bool _isLoadingModels = true;
     private bool _showAdvancedEditor = false;
     private int _splitterSize = 30;
     private int _activeTabIndex = 0;
@@ -90,6 +93,22 @@ public partial class Generate
 
     protected override async Task OnInitializedAsync()
     {
+        // Load available models first
+        try
+        {
+            _availableModels = await ModelAvailabilityService.GetAvailableModelsAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load available models: {ex.Message}", Severity.Warning);
+            // Fallback to cloud models only
+            _availableModels = new List<AIModel> { AIModel.Gpt4o, AIModel.Gemini20Flash };
+        }
+        finally
+        {
+            _isLoadingModels = false;
+        }
+        
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -295,4 +314,10 @@ public partial class Generate
     }
 
     private string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
+    
+    private string GetModelDisplayName(AIModel model)
+    {
+        var displayName = model.GetDisplayName();
+        return model.GetProvider() == AIProvider.Local ? $"{displayName} (Local)" : displayName;
+    }
 }

@@ -66,13 +66,26 @@
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent Class="pt-2">
-                    <MudSelect T="AIModel" @bind-Value="_model.DefaultModel" Label="Select Default Model" Variant="Variant.Outlined">
-                        <MudSelectItem Value="AIModel.Gpt4o">GPT-4o</MudSelectItem>
-                        <MudSelectItem Value="AIModel.Gemini20Flash">Gemini 2.0 Flash</MudSelectItem>
-                        <MudSelectItem Value="AIModel.Mistral7B">Mistral 7B (Local)</MudSelectItem>
-                        <MudSelectItem Value="AIModel.Llama31_8B">LLaMA 3.1 8B (Local)</MudSelectItem>
-                        <MudSelectItem Value="AIModel.Phi3Mini">Phi-3 Mini 3.8B (Local)</MudSelectItem>
+                    <MudSelect T="AIModel" @bind-Value="_model.DefaultModel" Label="Select Default Model" Variant="Variant.Outlined" Disabled="_isLoadingModels">
+                        @if (_isLoadingModels)
+                        {
+                            <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
+                        }
+                        else
+                        {
+                            @foreach (var model in _availableModels)
+                            {
+                                <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
+                            }
+                        }
                     </MudSelect>
+                    @if (_availableModels.Any(m => m.GetProvider() == AIProvider.Local))
+                    {
+                        <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
+                            <strong>Local Models:</strong> Run on your hardware (GPU recommended). 
+                            Faster with GPU, very slow without. May produce different results than cloud models (GPT-4o/Gemini).
+                        </MudAlert>
+                    }
                     <MudText Typo="Typo.caption" Class="mt-1">
                         Select the model that will be selected by default when generating applications.
                     </MudText>

@@ -82,6 +82,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddScoped<IAIServiceFactory, AIServiceFactory>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddScoped<IJobApplicationOrchestrator, JobApplicationOrchestrator>();
+builder.Services.AddScoped<IModelAvailabilityService, ModelAvailabilityService>();
 builder.Services.AddScoped<ILoadingService, LoadingService>();
 
 var app = builder.Build();

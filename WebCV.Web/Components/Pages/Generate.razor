@@ -14,13 +14,26 @@
                     <MudText Typo="Typo.h6" Class="mb-1">📋 Job Details</MudText>
                     <MudForm @ref="_form">
                     <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
-                        <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model">
-                            <MudSelectItem Value="AIModel.Gpt4o">GPT-4o</MudSelectItem>
-                            <MudSelectItem Value="AIModel.Gemini20Flash">Gemini 2.0 Flash</MudSelectItem>
-                            <MudSelectItem Value="AIModel.Mistral7B">Mistral 7B (Local)</MudSelectItem>
-                            <MudSelectItem Value="AIModel.Llama31_8B">LLaMA 3.1 8B (Local)</MudSelectItem>
-                            <MudSelectItem Value="AIModel.Phi3Mini">Phi-3 Mini 3.8B (Local)</MudSelectItem>
+                        <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model" Disabled="_isLoadingModels">
+                            @if (_isLoadingModels)
+                            {
+                                <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
+                            }
+                            else
+                            {
+                                @foreach (var model in _availableModels)
+                                {
+                                    <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
+                                }
+                            }
                         </MudSelect>
+                        @if (_availableModels.Any(m => m.GetProvider() == AIProvider.Local))
+                        {
+                            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
+                                <strong>Local Models Available:</strong> These run on your hardware. Performance depends on GPU availability. 
+                                With GPU: Fast generation. Without GPU: Very slow or unavailable. Quality may differ from cloud models.
+                            </MudAlert>
+                        }
                         <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
                         <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
                         <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Class="mb-6" Label="Manual Entry Mode" T="bool" />
