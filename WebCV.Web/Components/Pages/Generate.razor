@@ -13,157 +13,158 @@
                 <MudCard Elevation="3" Class="pa-4">
                     <MudText Typo="Typo.h6" Class="mb-1">📋 Job Details</MudText>
                     <MudForm @ref="_form">
-                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
-                        <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model" Disabled="_isLoadingModels">
-                            @if (_isLoadingModels)
-                            {
-                                <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
-                            }
-                            else
-                            {
-                                @foreach (var model in _availableModels)
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
+                            <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model" Disabled="_isLoadingModels">
+                                @if (_isLoadingModels)
                                 {
-                                    <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
+                                    <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
                                 }
-                            }
-                        </MudSelect>
+                                else
+                                {
+                                    @foreach (var model in _availableModels)
+                                    {
+                                        <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
+                            <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
+                            <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Class="mb-6" Label="Manual Entry Mode" T="bool" />
+                        </MudStack>
+
                         @if (_availableModels.Any(m => m.GetProvider() == AIProvider.Local))
                         {
-                            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
-                                <strong>Local Models Available:</strong> These run on your hardware. Performance depends on GPU availability. 
+                            <MudAlert Severity="Severity.Info" Dense="true" Class="mb-4">
+                                <strong>Local Models Available:</strong> These run on your hardware. Performance depends on GPU availability.
                                 With GPU: Fast generation. Without GPU: Very slow or unavailable. Quality may differ from cloud models.
                             </MudAlert>
                         }
-                        <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
-                        <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
-                        <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Class="mb-6" Label="Manual Entry Mode" T="bool" />
-                    </MudStack>
 
-                    @if (!_manualEntry)
-                    {
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3" Spacing="2">
-                            <!-- Text Field takes all available space -->
-                            <MudItem Class="flex-grow-1">
-                                <MudTextField @bind-Value="_job.Url"
-                                              Label="Job URL"
-                                              Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start"
-                                              AdornmentIcon="@Icons.Material.Filled.Link"
-                                              Required="true"
-                                              RequiredError=""
-                                              Clearable="true" />
-                            </MudItem>
-
-                            <!-- Button stays at the end -->
-                            <MudItem Class="d-flex justify-end">
-                                <MudButton Variant="Variant.Filled"
-                                           Color="Color.Secondary"
-                                           Size="Size.Large"
-                                           OnClick="FetchJobDetails"
-                                           Disabled="_isFetching"
-                                           StartIcon="@Icons.Material.Filled.CloudDownload">
-                                    @if (_isFetching)
-                                    {
-                                        <WebCV.Web.Components.Shared.LoadingIndicator />
-                                    }
-                                    else
-                                    {
-                                        <MudText>Fetch</MudText>
-                                    }
-                                </MudButton>
-                            </MudItem>
-                        </MudStack>
-                    }
-
-                    @if (_showAdvancedEditor || _manualEntry)
-                    {
-                        int _min = 10;
-                        int _max = 90;
-
-                        <div class="d-flex flex-grow-1" style="height: 600px; width: 100%;">
-                            <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column" Style="height: 100%;" Elevation="0">
-                                <div class="d-flex justify-space-between align-center">
-                                    <MudText Typo="Typo.caption">Editor (Markdown) | Job Description</MudText>
-                                    <MudTooltip Text="Clear Content">
-                                        <MudIconButton Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small" Color="Color.Error" OnClick="ClearEditor" />
-                                    </MudTooltip>
-                                </div>
-                                <div class="flex-grow-1" style="overflow-y: auto;">
-                                    <MudTextField @bind-Value="_job.Description"
+                        @if (!_manualEntry)
+                        {
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3" Spacing="2">
+                                <!-- Text Field takes all available space -->
+                                <MudItem Class="flex-grow-1">
+                                    <MudTextField @bind-Value="_job.Url"
+                                                  Label="Job URL"
                                                   Variant="Variant.Outlined"
+                                                  Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Link"
                                                   Required="true"
                                                   RequiredError=""
-                                                  AutoGrow="true"
-                                                  Class="flex-grow-1"
-                                                  Style="min-height: 100%;"
-                                                  Immediate="true"
-                                                  DebounceInterval="300"
-                                                  TextChanged="UpdatePreview" />
-                                </div>
-                            </MudPaper>
+                                                  Clearable="true" />
+                                </MudItem>
 
-                            <MudPaper Width="@($"{100 - _splitterSize}%")" Class="d-flex flex-column pl-1" Style="height: 100%;" Elevation="0">
-                                <MudText Typo="Typo.caption" Class="mb-1">Preview (HTML)</MudText>
-                                <MudPaper Elevation="0" Outlined="true" Class="pa-4 flex-grow-1" Style="overflow-y: auto; background-color: var(--mud-palette-background-grey);">
-                                    @if (string.IsNullOrWhiteSpace(_previewHtml))
-                                    {
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary">Preview will appear here...</MudText>
-                                    }
-                                    else
-                                    {
-                                        <div class="markdown-body">
-                                            @((MarkupString)_previewHtml)
-                                        </div>
-                                    }
+                                <!-- Button stays at the end -->
+                                <MudItem Class="d-flex justify-end">
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="Color.Secondary"
+                                               Size="Size.Large"
+                                               OnClick="FetchJobDetails"
+                                               Disabled="_isFetching"
+                                               StartIcon="@Icons.Material.Filled.CloudDownload">
+                                        @if (_isFetching)
+                                        {
+                                            <WebCV.Web.Components.Shared.LoadingIndicator />
+                                        }
+                                        else
+                                        {
+                                            <MudText>Fetch</MudText>
+                                        }
+                                    </MudButton>
+                                </MudItem>
+                            </MudStack>
+                        }
+
+                        @if (_showAdvancedEditor || _manualEntry)
+                        {
+                            int _min = 10;
+                            int _max = 90;
+
+                            <div class="d-flex flex-grow-1" style="height: 600px; width: 100%;">
+                                <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column" Style="height: 100%;" Elevation="0">
+                                    <div class="d-flex justify-space-between align-center">
+                                        <MudText Typo="Typo.caption">Editor (Markdown) | Job Description</MudText>
+                                        <MudTooltip Text="Clear Content">
+                                            <MudIconButton Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small" Color="Color.Error" OnClick="ClearEditor" />
+                                        </MudTooltip>
+                                    </div>
+                                    <div class="flex-grow-1" style="overflow-y: auto;">
+                                        <MudTextField @bind-Value="_job.Description"
+                                                      Variant="Variant.Outlined"
+                                                      Required="true"
+                                                      RequiredError=""
+                                                      AutoGrow="true"
+                                                      Class="flex-grow-1"
+                                                      Style="min-height: 100%;"
+                                                      Immediate="true"
+                                                      DebounceInterval="300"
+                                                      TextChanged="UpdatePreview" />
+                                    </div>
                                 </MudPaper>
-                            </MudPaper>
-                        </div>
 
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mt-2"
-                                  Style="border:1px solid lightgrey; border-radius:4px; padding:4px;">
-
-                            <!-- LEFT AREA: centered content -->
-                            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                                <MudText Typo="Typo.caption" Class="mr-2">Split Ratio: <strong>@_splitterSize</strong> (min:@_min | max:@_max)</MudText>
-                                <MudSlider T="int" @bind-Value="@_splitterSize"
-                                           Min="_min"
-                                           Max="_max"
-                                           Step="1"
-                                           Variant="Variant.Filled"
-                                           Color="Color.Primary"
-                                           ValueLabel="true"
-                                           Style="width:400px;" />
+                                <MudPaper Width="@($"{100 - _splitterSize}%")" Class="d-flex flex-column pl-1" Style="height: 100%;" Elevation="0">
+                                    <MudText Typo="Typo.caption" Class="mb-1">Preview (HTML)</MudText>
+                                    <MudPaper Elevation="0" Outlined="true" Class="pa-4 flex-grow-1" Style="overflow-y: auto; background-color: var(--mud-palette-background-grey);">
+                                        @if (string.IsNullOrWhiteSpace(_previewHtml))
+                                        {
+                                            <MudText Typo="Typo.body2" Color="Color.Secondary">Preview will appear here...</MudText>
+                                        }
+                                        else
+                                        {
+                                            <div class="markdown-body">
+                                                @((MarkupString)_previewHtml)
+                                            </div>
+                                        }
+                                    </MudPaper>
+                                </MudPaper>
                             </div>
 
-                            <!-- CENTER DIVIDER -->
-                            <MudDivider Vertical="true"
-                                        FlexItem="true"
-                                        Class="mx-3" />
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Class="mt-2"
+                                      Style="border:1px solid lightgrey; border-radius:4px; padding:4px;">
 
-                            <!-- RIGHT AREA: centered content -->
-                            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                                <MudButton Variant="Variant.Filled"
-                                           Color="Color.Primary"
-                                           Size="Size.Medium"
-                                           OnClick="GenerateContent"
-                                           Disabled="_isGenerating"
-                                           StartIcon="@Icons.Material.Filled.AutoAwesome"
-                                           Style="min-width:200px;">
-                                    @if (_isGenerating)
-                                    {
-                                        <WebCV.Web.Components.Shared.LoadingIndicator />
-                                        <MudText Class="ms-2">Generating...</MudText>
-                                    }
-                                    else
-                                    {
-                                        <MudText>Generate Application</MudText>
-                                    }
-                                </MudButton>
-                            </div>
-                        </MudStack>
-                    }
-                </MudForm>
-            </MudCard>
+                                <!-- LEFT AREA: centered content -->
+                                <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                                    <MudText Typo="Typo.caption" Class="mr-2">Split Ratio: <strong>@_splitterSize</strong> (min:@_min | max:@_max)</MudText>
+                                    <MudSlider T="int" @bind-Value="@_splitterSize"
+                                               Min="_min"
+                                               Max="_max"
+                                               Step="1"
+                                               Variant="Variant.Filled"
+                                               Color="Color.Primary"
+                                               ValueLabel="true"
+                                               Style="width:400px;" />
+                                </div>
+
+                                <!-- CENTER DIVIDER -->
+                                <MudDivider Vertical="true"
+                                            FlexItem="true"
+                                            Class="mx-3" />
+
+                                <!-- RIGHT AREA: centered content -->
+                                <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="Color.Primary"
+                                               Size="Size.Medium"
+                                               OnClick="GenerateContent"
+                                               Disabled="_isGenerating"
+                                               StartIcon="@Icons.Material.Filled.AutoAwesome"
+                                               Style="min-width:200px;">
+                                        @if (_isGenerating)
+                                        {
+                                            <WebCV.Web.Components.Shared.LoadingIndicator />
+                                            <MudText Class="ms-2">Generating...</MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText>Generate Application</MudText>
+                                        }
+                                    </MudButton>
+                                </div>
+                            </MudStack>
+                        }
+                    </MudForm>
+                </MudCard>
             </div>
         </MudItem>
 
