@@ -7,15 +7,19 @@ public class DeepSeekService(HttpClient httpClient, string apiKey) : IAIService
     private readonly string ApiUrl = "https://api.deepseek.com/v1/chat/completions";
     private const string Model = "deepseek-chat";
 
-    public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job)
+    public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
     {
-        var prompt = $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
+        var systemPrompt = AISystemPrompts.CoverLetterSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt)) systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+        var prompt = $"{systemPrompt}\n\n{AIPromptBuilder.Build(profile, job)}";
         return await CallDeepSeekApiAsync(prompt);
     }
 
-    public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job)
+    public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
     {
-        var prompt = $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job)}";
+        var systemPrompt = AISystemPrompts.ResumeTailoringSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt)) systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+        var prompt = $"{systemPrompt}\n\n{AIPromptBuilder.Build(profile, job, isResume: true)}";
         var jsonResponse = await CallDeepSeekApiAsync(prompt);
 
         try

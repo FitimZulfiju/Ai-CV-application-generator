@@ -27,15 +27,16 @@ namespace WebCV.Infrastructure.Services
             AIProvider provider,
             CandidateProfile profile,
             JobPosting job,
-            AIModel? model = null)
+            AIModel? model = null,
+            string? customPrompt = null)
         {
             // Get the AI service for the selected model
             var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, model);
             _logger.LogInformation("Starting application generation for Job {JobTitle} using {Model}", job.Title, model?.GetDisplayName() ?? "default");
 
             // Run in parallel for all cloud providers
-            var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job);
-            var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job);
+            var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job, customPrompt);
+            var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job, customPrompt);
 
             await Task.WhenAll(coverLetterTask, resumeTask);
 

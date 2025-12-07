@@ -8,7 +8,7 @@ namespace WebCV.Infrastructure.Services
         private const string Model = "claude-3-5-haiku-20241022";
         private const string ApiVersion = "2023-06-01";
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job)
+        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
             string prompt = $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
             
@@ -16,7 +16,7 @@ namespace WebCV.Infrastructure.Services
             {
                 model = Model,
                 max_tokens = 4096,
-                system = AISystemPrompts.CoverLetterSystemPrompt,
+                system = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.CoverLetterSystemPrompt : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
                 messages = new[]
                 {
                     new { role = "user", content = BuildPrompt(profile, job) }
@@ -45,7 +45,7 @@ namespace WebCV.Infrastructure.Services
                 ?? "Error: No content generated.";
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job)
+        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
             var prompt = $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
             
@@ -53,7 +53,7 @@ namespace WebCV.Infrastructure.Services
             {
                 model = Model,
                 max_tokens = 4096,
-                system = AISystemPrompts.ResumeTailoringSystemPrompt,
+                system = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.ResumeTailoringSystemPrompt : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
                 messages = new[]
                 {
                     new { role = "user", content = BuildPrompt(profile, job, isResume: true) }

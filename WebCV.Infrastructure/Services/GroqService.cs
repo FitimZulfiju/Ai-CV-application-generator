@@ -7,7 +7,7 @@ namespace WebCV.Infrastructure.Services
         private readonly string ApiUrl = "https://api.groq.com/openai/v1/chat/completions";
         private const string Model = "llama-3.3-70b-versatile"; // Updated from deprecated 3.1 to 3.3
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job)
+        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
             var prompt = $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
             
@@ -16,7 +16,7 @@ namespace WebCV.Infrastructure.Services
                 model = Model,
                 messages = new[]
                 {
-                    new { role = "system", content = AISystemPrompts.CoverLetterSystemPrompt },
+                    new { role = "system", content = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.CoverLetterSystemPrompt : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}" },
                     new { role = "user", content = BuildPrompt(profile, job) }
                 },
                 temperature = 0.7,
@@ -44,7 +44,7 @@ namespace WebCV.Infrastructure.Services
                 ?? "Error: No content generated.";
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job)
+        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
             var prompt = $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
             
@@ -53,7 +53,7 @@ namespace WebCV.Infrastructure.Services
                 model = Model,
                 messages = new[]
                 {
-                    new { role = "system", content = AISystemPrompts.ResumeTailoringSystemPrompt },
+                    new { role = "system", content = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.ResumeTailoringSystemPrompt : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}" },
                     new { role = "user", content = BuildPrompt(profile, job, isResume: true) }
                 },
                 temperature = 0.7,

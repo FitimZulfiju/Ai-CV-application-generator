@@ -8,9 +8,11 @@ namespace WebCV.Infrastructure.Services
 
         private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job)
+        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
-            var prompt = $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
+            var systemPrompt = AISystemPrompts.CoverLetterSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt)) systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+        var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job)}";
             var requestBody = new
             {
                 contents = new[]
@@ -45,9 +47,11 @@ namespace WebCV.Infrastructure.Services
                    ?? "Error: No content generated.";
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job)
+        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
-            var prompt = $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
+            var systemPrompt = AISystemPrompts.ResumeTailoringSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt)) systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+        var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
             var requestBody = new
             {
                 contents = new[]

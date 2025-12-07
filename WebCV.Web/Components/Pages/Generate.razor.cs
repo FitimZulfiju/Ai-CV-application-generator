@@ -34,6 +34,7 @@ public partial class Generate
     private int _splitterSize = 30;
     private int _activeTabIndex = 0;
     private string _previewHtml = string.Empty;
+    private string _customPrompt = string.Empty;
 
     private void OnResumePreviewToggled(bool value)
     {
@@ -200,7 +201,7 @@ public partial class Generate
             }
 
             LoadingService.Update(30, "Generating cover letter...");
-            var result = await JobOrchestrator.GenerateApplicationAsync(userId, _selectedProvider, _cachedProfile, _job, _selectedModel);
+            var result = await JobOrchestrator.GenerateApplicationAsync(userId, _selectedProvider, _cachedProfile, _job, _selectedModel, _customPrompt);
 
             LoadingService.Update(70, "Tailoring CV...");
             _generatedCoverLetter = result.CoverLetter;

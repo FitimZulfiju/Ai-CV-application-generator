@@ -6,9 +6,13 @@ namespace WebCV.Infrastructure.Services
 
         private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job)
+        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
             var systemPrompt = AISystemPrompts.CoverLetterSystemPrompt;
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+            {
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+            }
 
             var userPrompt = BuildPrompt(profile, job);
 
@@ -20,9 +24,13 @@ namespace WebCV.Infrastructure.Services
             return completion.Content[0].Text;
         }
 
-        public async Task<Application.DTOs.TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job)
+        public async Task<Application.DTOs.TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
         {
             var systemPrompt = AISystemPrompts.ResumeTailoringSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt))
+        {
+            systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+        }
 
             var userPrompt = BuildPrompt(profile, job, isResume: true);
 
