@@ -16,12 +16,21 @@
     }
     else
     {
-        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-6 d-print-none">
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
-            <MudText Typo="Typo.h4">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
+            <MudText Typo="Typo.h6">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
+            <MudSpacer />
+            @if (_activeTabIndex == 0 && _application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintCoverLetter">Print Cover Letter</MudButton>
+            }
+            @if (_activeTabIndex == 1 && _tailoredResume != null)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintResume">Print CV</MudButton>
+            }
         </MudStack>
 
-        <MudTabs Elevation="2" Rounded="true" PanelClass="pa-6">
+        <MudTabs Elevation="2" Rounded="true" PanelClass="pa-6" @bind-ActivePanelIndex="_activeTabIndex">
             <MudTabPanel Text="Cover Letter" Icon="@Icons.Material.Filled.Description">
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {

@@ -8,7 +8,7 @@ public partial class MyApplications
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
     [Inject] public IDialogService DialogService { get; set; } = default!;
 
-    private List<GeneratedApplication> _applications = new();
+    private List<GeneratedApplication> _applications = [];
     private bool _isLoading = true;
     private string _userId = string.Empty;
 

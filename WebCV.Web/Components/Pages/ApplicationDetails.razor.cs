@@ -6,6 +6,7 @@ public partial class ApplicationDetails
     [Inject] public ISnackbar Snackbar { get; set; } = default!;
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
     [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
 
     [Parameter] public int Id { get; set; }
 
@@ -13,6 +14,7 @@ public partial class ApplicationDetails
     private CandidateProfile? _tailoredResume;
     private CandidateProfile? _cachedProfile;
     private bool _isLoading = true;
+    private int _activeTabIndex = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -68,5 +70,17 @@ public partial class ApplicationDetails
         {
             _isLoading = false;
         }
+    }
+
+    private async Task PrintCoverLetter()
+    {
+        if (_application == null || string.IsNullOrEmpty(_application.CoverLetterContent)) return;
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+
+    private async Task PrintResume()
+    {
+        if (_tailoredResume == null) return;
+        await JSRuntime.InvokeVoidAsync("window.print");
     }
 }
