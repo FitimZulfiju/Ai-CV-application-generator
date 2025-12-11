@@ -4,7 +4,7 @@
    Scope: Applied only to .cover-letter containers.
 */
 
-@media print {
+/* @media print { */
     /* Prevent the generic "always break after page" for cover letters */
     .cover-letter .page {
         page-break-after: auto !important;
@@ -26,4 +26,4 @@
     button[aria-label*="scroll"] {
         display: none !important;
     }
-}
+/* } */

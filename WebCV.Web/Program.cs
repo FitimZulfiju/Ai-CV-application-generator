@@ -58,6 +58,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // Register Application Services
+builder.Services.AddScoped<IPdfService, PdfService>();
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+QuestPDF.Settings.EnableDebugging = true;
+
 builder.Services.AddScoped<ICVService, CVService>();
 
 builder.Services.AddHttpClient();

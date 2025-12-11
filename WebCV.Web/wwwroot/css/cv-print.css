@@ -3,14 +3,14 @@
    Merged with reference styles
 */
 
-@media print {
-  /* 
+/* @media print { */
+/* 
        STRATEGY: Specific Hiding
        We explicitly hide the MudBlazor shell and navigation elements.
     */
 
-  /* Hide App Shell Elements */
-  .mud-appbar,
+/* Hide App Shell Elements */
+.mud-appbar,
     .mud-drawer,
     .mud-overlay,
     .mud-snackbar-provider,
@@ -21,503 +21,503 @@
     .mud-fab, /* Hide floating action buttons including scroll-to-top */
     .mud-scroll-to-top,
     .d-print-none {
-    display: none !important;
-  }
+  display: none !important;
+}
 
-  /* Hide Tab Headers, Action Buttons, and Page Title */
-  .mud-tabs-toolbar,
-  .mud-tabs-tabbar,
-  .profile-action-buttons,
-  .page-header-title {
-    display: none !important;
-  }
+/* Hide Tab Headers, Action Buttons, and Page Title */
+.mud-tabs-toolbar,
+.mud-tabs-tabbar,
+.profile-action-buttons,
+.page-header-title {
+  display: none !important;
+}
 
-  /* 
+/* 
        Reset Layout Containers 
        We need to ensure the main content area allows the CV to flow.
     */
-  html,
-  body,
-  .mud-layout,
-  .mud-main-content,
-  .mud-container,
-  .mud-grid,
-  .mud-tabs,
-  .mud-tabs-panels,
-  .mud-tabs-panel,
-  .profile-tabs {
-    width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    display: block !important;
-    position: static !important;
-    background: white !important;
-  }
+html,
+body,
+.mud-layout,
+.mud-main-content,
+.mud-container,
+.mud-grid,
+.mud-tabs,
+.mud-tabs-panels,
+.mud-tabs-panel,
+.profile-tabs {
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  display: block !important;
+  position: static !important;
+  background: white !important;
+}
 
-  /* Reset MudBlazor Card and Paper components */
-  .mud-card,
-  .mud-card-content,
-  .mud-paper,
-  .mud-grid-item {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-    /* margin: 0 !important; Only reset margin if it interferes. keeping it 0 is usually safe for wrappers */
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    outline: none !important;
-    overflow: visible !important;
-    display: block !important;
-    background: white !important;
-  }
+/* Reset MudBlazor Card and Paper components */
+.mud-card,
+.mud-card-content,
+.mud-paper,
+.mud-grid-item {
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  /* margin: 0 !important; Only reset margin if it interferes. keeping it 0 is usually safe for wrappers */
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  overflow: visible !important;
+  display: block !important;
+  background: white !important;
+}
 
-  /* 
+/* 
        Target the CV Wrapper (MudPaper) 
        Remove the scrollbar, border, and fixed height.
     */
-  .cv-paper-container {
-    box-shadow: none !important;
-    border: none !important;
-    outline: none !important;
-    height: auto !important;
-    overflow: visible !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-    background: white !important;
-  }
-
-  /* CV Container Styling */
-  .cv-container {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    background: white !important;
-  }
+.cv-paper-container {
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  height: auto !important;
+  overflow: visible !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  background: white !important;
 }
+
+/* CV Container Styling */
+.cv-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  background: white !important;
+}
+/* } */
 
 /* Reference Print Styles from cv-styles.css */
-@media print {
-  body {
-    background: white;
-    padding: 0;
-    margin: 0;
-  }
-
-  /* Force background colors to print for specific sections */
-  .summary,
-  .skill-category,
-  .education,
-  .project,
-  .interest-tag,
-  .footer {
-    background-color: var(--bg-light) !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .container {
-    max-width: 100%;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  /* Reduce header size for print */
-  .header {
-    /* Use Absolute Units for Padding so shrinking font doesn't shrink visual margins */
-    padding: 1cm 2cm 0.625cm; 
-    page-break-after: avoid;
-    background: linear-gradient(
-      135deg,
-      var(--primary-color) 0%,
-      var(--primary-dark) 100%
-    ) !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    color: white !important;
-  }
-
-  .name {
-    font-size: 1.625em;
-    margin-bottom: 0.25em;
-    color: white !important;
-  }
-
-  .title {
-    font-size: 0.812em;
-    margin-bottom: 0.562em;
-    color: white !important;
-  }
-
-  .contact-info-wrapper {
-    font-size: 0.719em;
-    line-height: 1.6;
-    margin-top: 0.562em;
-    color: white !important;
-    opacity: 1 !important;
-  }
-
-  /* Links in header - white color for print */
-  .contact-info-wrapper a {
-    color: white !important;
-    text-decoration: none;
-    border-bottom: none;
-  }
-
-  /* Links in projects - blue color for print */
-  .project-links a {
-    color: var(--primary-color) !important;
-    text-decoration: none;
-    border-bottom: none;
-  }
-
-  /* Profile photo in print */
-  body.show-photo .profile-photo-wrapper {
-    display: block;
-    left: 2cm; /* Match padding */
-  }
-
-  body.show-photo .profile-photo {
-    width: 6.25em;
-    height: 6.25em;
-    border: 0.188em solid white;
-  }
-
-  body.show-photo .header {
-    min-height: 8.75em;
-    position: relative;
-    padding-left: 9.5em;
-  }
-
-  /* Text stays centered - photo overlays on left */
-
-  /* Reduce section padding */
-  .section {
-    padding: 0.75cm 2cm; /* Match padding */
-    page-break-inside: avoid;
-  }
-
-  .summary {
-    padding: 0.75cm 2cm; /* Match padding */
-    font-size: 0.75em;
-    line-height: 1.6;
-  }
-
-  /* Compact section titles */
-  .section-title {
-    font-size: 1em;
-    margin-bottom: 0.75em;
-    padding-bottom: 0.375em;
-  }
-
-  /* Compact skills grid */
-  .skills-grid {
-    gap: 0.75em;
-    margin-top: 0.625em;
-  }
-
-  .skill-category {
-    padding: 0.75em;
-    page-break-inside: avoid;
-  }
-
-  .skill-title {
-    font-size: 0.812em;
-    margin-bottom: 0.375em;
-  }
-
-  .skill-list {
-    font-size: 0.719em;
-    line-height: 1.5;
-  }
-
-  /* Force Work Experience to start on new page */
-  .work-experience-section {
-    page-break-before: always;
-  }
-
-  /* Compact work experience */
-  .job {
-    margin-bottom: 1.125em;
-    /* Reduced from 1.562em */
-    padding-bottom: 0.625em;
-    page-break-inside: avoid;
-  }
-
-  .job-header {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: flex-start !important;
-    margin-bottom: 0.188em;
-  }
-
-  .job-dates {
-    text-align: right !important;
-    white-space: nowrap !important;
-  }
-
-  .job-title {
-    font-size: 0.812em;
-    margin-bottom: 0.125em;
-  }
-
-  .company {
-    font-size: 0.719em;
-  }
-
-  .date {
-    font-size: 0.625em;
-  }
-
-  .duration {
-    font-size: 0.625em;
-  }
-
-  .achievements {
-    margin-top: 0.188em;
-  }
-
-  .achievements li {
-    font-size: 0.688em;
-    line-height: 1.5;
-    /* Reduced from 1.6 */
-    margin-bottom: 0.125em;
-    /* Reduced from 0.25em */
-    padding-left: 0.5em;
-    /* Adjusted to 0.5em */
-    text-indent: -0.5em;
-  }
-
-  .achievements li::before {
-    width: 0.5em;
-    /* Adjusted to 0.5em */
-    font-size: 1em;
-    /* Fix: Reduce bullet size for print */
-  }
-
-  /* Force Education to start on new page */
-  .education-section {
-    page-break-before: always;
-  }
-
-  /* Compact education */
-  .education {
-    padding: 0.75em;
-    page-break-inside: avoid;
-  }
-
-  .degree {
-    font-size: 0.812em;
-  }
-
-  .education-date {
-    font-size: 0.625em;
-  }
-
-  .school {
-    font-size: 0.719em;
-    /* Increased from 0.688em */
-  }
-
-  .recognition {
-    font-size: 0.688em;
-    /* Increased from 0.625em */
-    line-height: 1.4;
-    margin-top: 0.375em;
-    padding-top: 0.375em;
-  }
-
-  /* Compact projects */
-  .project {
-    padding: 0.625em;
-    page-break-inside: avoid;
-  }
-
-  .project-title {
-    font-size: 0.812em;
-    /* Increased from 0.75em */
-  }
-
-  .project-date {
-    font-size: 0.625em;
-    /* Increased from 0.562em */
-  }
-
-  .project-links {
-    font-size: 0.625em;
-    /* Increased from 0.562em */
-    margin-bottom: 0.312em;
-  }
-
-  .project-features li {
-    font-size: 0.688em;
-    /* Increased from 0.625em */
-    line-height: 1.5;
-    /* Increased from 1.35 */
-    margin-bottom: 0.125em;
-    padding-left: 0.5em;
-    /* Adjusted to 0.5em */
-    text-indent: -0.5em;
-  }
-
-  .project-features li::before {
-    width: 0.5em;
-    /* Adjusted to 0.5em */
-    font-size: 1em;
-    /* Fix: Reduce bullet size for print */
-  }
-
-  /* Remove HTML-only page dividers for print output */
-  .page {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-    page-break-after: always !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* Don't force page break after the last page */
-  .page:last-child {
-      page-break-after: auto !important;
-  }
-
-  /* Compact additional sections */
-  .additional-grid {
-    gap: 0.938em;
-  }
-
-  .additional-section {
-    padding: 0.625em;
-  }
-
-  .additional-section .section-title {
-    font-size: 0.812em;
-    margin-bottom: 0.375em;
-  }
-
-  .language-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-  }
-
-  .language-item {
-    font-size: 0.688em;
-    /* Increased from 0.625em */
-    padding: 0;
-    display: inline;
-  }
-
-  .language-item::after {
-    content: " | ";
-    opacity: 0.6;
-  }
-
-  .language-item:last-child::after {
-    content: "";
-  }
-
-  .course-list li {
-    font-size: 0.688em;
-    /* Increased from 0.562em */
-    line-height: 1.5;
-    /* Increased from 1.3 */
-    margin-bottom: 0.188em;
-    padding-left: 0.5em;
-    /* Adjusted to 0.5em */
-    text-indent: -0.5em;
-  }
-
-  .course-list li::before {
-    width: 0.5em;
-    /* Adjusted to 0.5em */
-    font-size: 0.875em;
-    /* Fix: Reduce bullet size for print */
-  }
-
-  /* Compact interests */
-  .interests-section {
-    padding-bottom: 0.75em;
-  }
-
-  .interests {
-    gap: 0.312em;
-    margin-top: 0.5em;
-    /* Keep interests on a single row when printing */
-    flex-wrap: nowrap;
-    /* prevent wrapping onto a new line */
-    white-space: nowrap;
-    /* keep inner text from wrapping */
-    /* Allow items to overflow horizontally if too long — safer than wrapping to a new line in print */
-    overflow-x: visible;
-  }
-
-  .interest-tag {
-    padding: 0.25em 0.5em;
-    font-size: 0.625em;
-    white-space: nowrap;
-    /* ensure multi-word tags stay together */
-    /* Increased from 0.562em */
-  }
-
-  /* Footer */
-  .footer {
-    padding: 0.625em;
-    font-size: 0.625em;
-    background-color: white !important;
-  }
-
-  /* Remove hover effects */
-  .skill-category:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .interest-tag:hover {
-    background: var(--bg-light);
-    color: var(--text-medium);
-    border-color: var(--border-color);
-    transform: none;
-  }
-
-  /* Ensure links are visible when printed */
-  .contact-item,
-  .project-links {
-    color: var(--text-dark) !important;
-  }
-
-  /* Allow page breaks where needed */
-  .section:not(.summary) {
-    page-break-inside: auto;
-  }
+/* @media print { */
+body {
+  background: white;
+  padding: 0;
+  margin: 0;
 }
+
+/* Force background colors to print for specific sections */
+.summary,
+.skill-category,
+.education,
+.project,
+.interest-tag,
+.footer {
+  background-color: var(--bg-light) !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.container {
+  max-width: 100%;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* Reduce header size for print */
+.header {
+  /* Use Absolute Units for Padding so shrinking font doesn't shrink visual margins */
+  padding: 1cm 2cm 0.625cm;
+  page-break-after: avoid;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  ) !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  color: white !important;
+}
+
+.name {
+  font-size: 1.625em;
+  margin-bottom: 0.25em;
+  color: white !important;
+}
+
+.title {
+  font-size: 0.812em;
+  margin-bottom: 0.562em;
+  color: white !important;
+}
+
+.contact-info-wrapper {
+  font-size: 0.719em;
+  line-height: 1.6;
+  margin-top: 0.562em;
+  color: white !important;
+  opacity: 1 !important;
+}
+
+/* Links in header - white color for print */
+.contact-info-wrapper a {
+  color: white !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Links in projects - blue color for print */
+.project-links a {
+  color: var(--primary-color) !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Profile photo in print */
+body.show-photo .profile-photo-wrapper {
+  display: block;
+  left: 2cm; /* Match padding */
+}
+
+body.show-photo .profile-photo {
+  width: 6.25em;
+  height: 6.25em;
+  border: 0.188em solid white;
+}
+
+body.show-photo .header {
+  min-height: 8.75em;
+  position: relative;
+  padding-left: 9.5em;
+}
+
+/* Text stays centered - photo overlays on left */
+
+/* Reduce section padding */
+.section {
+  padding: 0.75cm 2cm; /* Match padding */
+  page-break-inside: avoid;
+}
+
+.summary {
+  padding: 0.75cm 2cm; /* Match padding */
+  font-size: 0.75em;
+  line-height: 1.6;
+}
+
+/* Compact section titles */
+.section-title {
+  font-size: 1em;
+  margin-bottom: 0.75em;
+  padding-bottom: 0.375em;
+}
+
+/* Compact skills grid */
+.skills-grid {
+  gap: 0.75em;
+  margin-top: 0.625em;
+}
+
+.skill-category {
+  padding: 0.75em;
+  page-break-inside: avoid;
+}
+
+.skill-title {
+  font-size: 0.812em;
+  margin-bottom: 0.375em;
+}
+
+.skill-list {
+  font-size: 0.719em;
+  line-height: 1.5;
+}
+
+/* Force Work Experience to start on new page */
+.work-experience-section {
+  page-break-before: always;
+}
+
+/* Compact work experience */
+.job {
+  margin-bottom: 1.125em;
+  /* Reduced from 1.562em */
+  padding-bottom: 0.625em;
+  page-break-inside: avoid;
+}
+
+.job-header {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 0.188em;
+}
+
+.job-dates {
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+
+.job-title {
+  font-size: 0.812em;
+  margin-bottom: 0.125em;
+}
+
+.company {
+  font-size: 0.719em;
+}
+
+.date {
+  font-size: 0.625em;
+}
+
+.duration {
+  font-size: 0.625em;
+}
+
+.achievements {
+  margin-top: 0.188em;
+}
+
+.achievements li {
+  font-size: 0.688em;
+  line-height: 1.5;
+  /* Reduced from 1.6 */
+  margin-bottom: 0.125em;
+  /* Reduced from 0.25em */
+  padding-left: 0.5em;
+  /* Adjusted to 0.5em */
+  text-indent: -0.5em;
+}
+
+.achievements li::before {
+  width: 0.5em;
+  /* Adjusted to 0.5em */
+  font-size: 1em;
+  /* Fix: Reduce bullet size for print */
+}
+
+/* Force Education to start on new page */
+.education-section {
+  page-break-before: always;
+}
+
+/* Compact education */
+.education {
+  padding: 0.75em;
+  page-break-inside: avoid;
+}
+
+.degree {
+  font-size: 0.812em;
+}
+
+.education-date {
+  font-size: 0.625em;
+}
+
+.school {
+  font-size: 0.719em;
+  /* Increased from 0.688em */
+}
+
+.recognition {
+  font-size: 0.688em;
+  /* Increased from 0.625em */
+  line-height: 1.4;
+  margin-top: 0.375em;
+  padding-top: 0.375em;
+}
+
+/* Compact projects */
+.project {
+  padding: 0.625em;
+  page-break-inside: avoid;
+}
+
+.project-title {
+  font-size: 0.812em;
+  /* Increased from 0.75em */
+}
+
+.project-date {
+  font-size: 0.625em;
+  /* Increased from 0.562em */
+}
+
+.project-links {
+  font-size: 0.625em;
+  /* Increased from 0.562em */
+  margin-bottom: 0.312em;
+}
+
+.project-features li {
+  font-size: 0.688em;
+  /* Increased from 0.625em */
+  line-height: 1.5;
+  /* Increased from 1.35 */
+  margin-bottom: 0.125em;
+  padding-left: 0.5em;
+  /* Adjusted to 0.5em */
+  text-indent: -0.5em;
+}
+
+.project-features li::before {
+  width: 0.5em;
+  /* Adjusted to 0.5em */
+  font-size: 1em;
+  /* Fix: Reduce bullet size for print */
+}
+
+/* Remove HTML-only page dividers for print output */
+.page {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  page-break-after: always !important;
+  page-break-inside: avoid !important;
+}
+
+/* Don't force page break after the last page */
+.page:last-child {
+  page-break-after: auto !important;
+}
+
+/* Compact additional sections */
+.additional-grid {
+  gap: 0.938em;
+}
+
+.additional-section {
+  padding: 0.625em;
+}
+
+.additional-section .section-title {
+  font-size: 0.812em;
+  margin-bottom: 0.375em;
+}
+
+.language-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.language-item {
+  font-size: 0.688em;
+  /* Increased from 0.625em */
+  padding: 0;
+  display: inline;
+}
+
+.language-item::after {
+  content: " | ";
+  opacity: 0.6;
+}
+
+.language-item:last-child::after {
+  content: "";
+}
+
+.course-list li {
+  font-size: 0.688em;
+  /* Increased from 0.562em */
+  line-height: 1.5;
+  /* Increased from 1.3 */
+  margin-bottom: 0.188em;
+  padding-left: 0.5em;
+  /* Adjusted to 0.5em */
+  text-indent: -0.5em;
+}
+
+.course-list li::before {
+  width: 0.5em;
+  /* Adjusted to 0.5em */
+  font-size: 0.875em;
+  /* Fix: Reduce bullet size for print */
+}
+
+/* Compact interests */
+.interests-section {
+  padding-bottom: 0.75em;
+}
+
+.interests {
+  gap: 0.312em;
+  margin-top: 0.5em;
+  /* Keep interests on a single row when printing */
+  flex-wrap: nowrap;
+  /* prevent wrapping onto a new line */
+  white-space: nowrap;
+  /* keep inner text from wrapping */
+  /* Allow items to overflow horizontally if too long — safer than wrapping to a new line in print */
+  overflow-x: visible;
+}
+
+.interest-tag {
+  padding: 0.25em 0.5em;
+  font-size: 0.625em;
+  white-space: nowrap;
+  /* ensure multi-word tags stay together */
+  /* Increased from 0.562em */
+}
+
+/* Footer */
+.footer {
+  padding: 0.625em;
+  font-size: 0.625em;
+  background-color: white !important;
+}
+
+/* Remove hover effects */
+.skill-category:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.interest-tag:hover {
+  background: var(--bg-light);
+  color: var(--text-medium);
+  border-color: var(--border-color);
+  transform: none;
+}
+
+/* Ensure links are visible when printed */
+.contact-item,
+.project-links {
+  color: var(--text-dark) !important;
+}
+
+/* Allow page breaks where needed */
+.section:not(.summary) {
+  page-break-inside: auto;
+}
+/* } */
 
 /* Remove grey shadow around document edges */
-@media print {
-  @page {
-    size: A4;
-    margin: 1cm;
-  }
-
-  /* Remove shadows from everything */
-  * {
-    box-shadow: none !important;
-  }
-
-  /* Only remove borders from containers, NOT from content elements */
-  .cv-paper-container,
-  .mud-paper,
-  .mud-card,
-  .container,
-  .page {
-    border: none !important;
-    outline: none !important;
-  }
+/* @media print { */
+@page {
+  size: A4;
+  margin: 1cm;
 }
+
+/* Remove shadows from everything */
+* {
+  box-shadow: none !important;
+}
+
+/* Only remove borders from containers, NOT from content elements */
+.cv-paper-container,
+.mud-paper,
+.mud-card,
+.container,
+.page {
+  border: none !important;
+  outline: none !important;
+}
+/* } */

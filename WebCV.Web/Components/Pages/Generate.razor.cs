@@ -11,8 +11,11 @@ public partial class Generate
     [Inject] public ILoadingService LoadingService { get; set; } = default!;
     [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
     [Inject] public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
+    [Inject] public IDialogService DialogService { get; set; } = default!;
 
-    private JobPosting _job = new();
+    private Shared.PrintPreviewModal _printPreviewModal = default!;
+
+    private readonly JobPosting _job = new();
     private string _generatedCoverLetter = string.Empty;
     private CandidateProfile? _generatedResume;
     private string? _detectedCompanyName;
@@ -26,7 +29,7 @@ public partial class Generate
     private string _originalResumeJson = string.Empty;
     private bool _manualEntry = false;
     private MudForm? _form;
-    private AIProvider _selectedProvider => _selectedModel.GetProvider();
+    private AIProvider SelectedProvider => _selectedModel.GetProvider();
     private AIModel _selectedModel = AIModel.Gpt4o;
     private List<AIModel> _availableModels = [];
     private bool _isLoadingModels = true;
@@ -35,6 +38,7 @@ public partial class Generate
     private int _activeTabIndex = 0;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
+    private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
 
     private void OnResumePreviewToggled(bool value)
     {
@@ -60,7 +64,7 @@ public partial class Generate
             // Switch to Edit: Serialize Object to JSON
             if (_generatedResume != null)
             {
-                _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                    _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             }
         }
     }
@@ -103,7 +107,7 @@ public partial class Generate
         {
             Snackbar.Add($"Failed to load available models: {ex.Message}", Severity.Warning);
             // Fallback to cloud models only
-            _availableModels = new List<AIModel> { AIModel.Gpt4o, AIModel.Gemini20Flash };
+            _availableModels = [AIModel.Gpt4o, AIModel.Gemini20Flash];
         }
         finally
         {
@@ -201,15 +205,15 @@ public partial class Generate
             }
 
             LoadingService.Update(30, "Generating cover letter...");
-            var result = await JobOrchestrator.GenerateApplicationAsync(userId, _selectedProvider, _cachedProfile, _job, _selectedModel, _customPrompt);
+            var (CoverLetter, ResumeResult) = await JobOrchestrator.GenerateApplicationAsync(userId, SelectedProvider, _cachedProfile, _job, _selectedModel, _customPrompt);
 
             LoadingService.Update(70, "Tailoring CV...");
-            _generatedCoverLetter = result.CoverLetter;
-            _generatedResume = result.ResumeResult.Profile;
-            _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            _generatedCoverLetter = CoverLetter;
+            _generatedResume = ResumeResult.Profile;
+                _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             _originalResumeJson = _resumeJson;
-            _detectedCompanyName = result.ResumeResult.DetectedCompanyName;
-            _detectedJobTitle = result.ResumeResult.DetectedJobTitle;
+            _detectedCompanyName = ResumeResult.DetectedCompanyName;
+            _detectedJobTitle = ResumeResult.DetectedJobTitle;
 
             // Fallback & Correction: Use AI-detected values if missing OR if they differ (AI is usually smarter)
             if (!string.IsNullOrWhiteSpace(_detectedCompanyName) &&
@@ -302,21 +306,53 @@ public partial class Generate
         Snackbar.Add("Copied JSON to clipboard!", Severity.Success);
     }
 
+    [Inject] public IPdfService PdfService { get; set; } = default!;
+    
+    // ... (Keep existing fields)
+
     private async Task PrintResume()
     {
         if (_generatedResume == null) return;
-        await JSRuntime.InvokeVoidAsync("window.print");
+        
+        LoadingService.Show("Generating PDF...", 0);
+        try 
+        {
+            var pdfBytes = await PdfService.GenerateCvAsync(_generatedResume);
+            await _printPreviewModal.ShowAsync(pdfBytes, "Resume", _job.Title);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+        }
+        finally 
+        {
+             LoadingService.Hide();
+        }
     }
 
     private async Task PrintCoverLetter()
     {
-        if (string.IsNullOrEmpty(_generatedCoverLetter)) return;
-        await JSRuntime.InvokeVoidAsync("window.print");
+        if (string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume == null) return;
+        
+        LoadingService.Show("Generating PDF...", 0);
+        try
+        {
+             var pdfBytes = await PdfService.GenerateCoverLetterAsync(_generatedCoverLetter, _generatedResume, _job.Title, _job.CompanyName);
+             await _printPreviewModal.ShowAsync(pdfBytes, "Cover Letter", $"{_job.Title} at {_job.CompanyName}");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            LoadingService.Hide();
+        }
     }
 
-    private string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
+    private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
     
-    private string GetModelDisplayName(AIModel model)
+    private static string GetModelDisplayName(AIModel model)
     {
         return model.GetDisplayName();
     }

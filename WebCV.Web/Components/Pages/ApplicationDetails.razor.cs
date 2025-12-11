@@ -7,6 +7,9 @@ public partial class ApplicationDetails
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
     [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] public IDialogService DialogService { get; set; } = default!;
+
+    private WebCV.Web.Components.Shared.PrintPreviewModal _printPreviewModal = default!;
 
     [Parameter] public int Id { get; set; }
 
@@ -72,15 +75,38 @@ public partial class ApplicationDetails
         }
     }
 
+    [Inject] public IPdfService PdfService { get; set; } = default!;
+
     private async Task PrintCoverLetter()
     {
         if (_application == null || string.IsNullOrEmpty(_application.CoverLetterContent)) return;
-        await JSRuntime.InvokeVoidAsync("window.print");
+        
+        try
+        {
+            var profile = _tailoredResume ?? _cachedProfile;
+            if (profile == null) return;
+
+             var pdfBytes = await PdfService.GenerateCoverLetterAsync(_application.CoverLetterContent, profile, _application.JobPosting?.Title ?? "Job", _application.JobPosting?.CompanyName ?? "Company");
+             await _printPreviewModal.ShowAsync(pdfBytes, "Cover Letter", $"{_application.JobPosting?.Title} at {_application.JobPosting?.CompanyName}");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+        }
     }
 
     private async Task PrintResume()
     {
         if (_tailoredResume == null) return;
-        await JSRuntime.InvokeVoidAsync("window.print");
+        
+        try
+        {
+            var pdfBytes = await PdfService.GenerateCvAsync(_tailoredResume);
+            await _printPreviewModal.ShowAsync(pdfBytes, "Resume", $"{_application?.JobPosting?.Title ?? "Job"} at {_application?.JobPosting?.CompanyName ?? "Company"}");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+        }
     }
 }

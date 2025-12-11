@@ -18,3 +18,7 @@ global using Microsoft.JSInterop;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 global using System.Net.Http.Headers;
+global using Microsoft.AspNetCore.Hosting;
+global using QuestPDF.Fluent;
+global using QuestPDF.Helpers;
+global using QuestPDF.Infrastructure;

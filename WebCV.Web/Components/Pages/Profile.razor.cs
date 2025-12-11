@@ -8,6 +8,9 @@ public partial class Profile
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
     [Inject] public IWebHostEnvironment Environment { get; set; } = default!;
     [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] public IDialogService DialogService { get; set; } = default!;
+    
+    private Shared.PrintPreviewModal _printPreviewModal = default!;
 
     private int _activeTabIndex;
     private CandidateProfile? _profile;
@@ -16,10 +19,10 @@ public partial class Profile
     {
         public string Name { get; set; } = string.Empty;
         public string NewSkillInput { get; set; } = string.Empty;
-        public List<string> Skills { get; set; } = new();
+        public List<string> Skills { get; set; } = [];
     }
 
-    private List<SkillCategoryViewModel> _skillCategories = new();
+    private List<SkillCategoryViewModel> _skillCategories = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,7 +46,7 @@ public partial class Profile
         }
 
         // Initialize categorized skills from database
-        if (_profile.Skills != null && _profile.Skills.Any())
+        if (_profile.Skills != null && _profile.Skills.Count != 0)
         {
             _skillCategories = [.. _profile.Skills
                 .GroupBy(s => s.Category)
@@ -171,9 +174,21 @@ public partial class Profile
         }
     }
 
+    [Inject] public IPdfService PdfService { get; set; } = default!;
+
     private async Task PrintProfile()
     {
-        await JSRuntime.InvokeVoidAsync("window.print");
+        if (_profile == null) return;
+        
+        try
+        {
+            var pdfBytes = await PdfService.GenerateCvAsync(_profile);
+            await _printPreviewModal.ShowAsync(pdfBytes, "CV", _profile.FullName);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+        }
     }
 
     private static string CalculateDuration(DateTime? start, DateTime? end)

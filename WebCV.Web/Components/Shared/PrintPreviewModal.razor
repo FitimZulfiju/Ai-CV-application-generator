@@ -1,0 +1,125 @@
+@using MudBlazor
+@inject IJSRuntime JS
+
+@if (_isVisible)
+{
+    <div class="print-preview-modal-overlay">
+        <div class="print-preview-modal-container">
+            <div class="print-preview-modal-header">
+                <MudText Typo="Typo.h6">@DocumentType Preview</MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="Close" />
+            </div>
+            
+            <div class="print-preview-modal-content" id="print-preview-content">
+                 @if (PdfData != null && PdfData.Length > 0)
+                {
+                    var pdfDataUrl = $"data:application/pdf;base64,{Convert.ToBase64String(PdfData)}";
+                    <iframe src="@pdfDataUrl" style="width: 100%; height: 100%; border: none;"></iframe>
+                }
+                else
+                {
+                    <MudText>No PDF Data</MudText>
+                }
+            </div>
+
+            <div class="print-preview-modal-footer">
+                <MudButton OnClick="Close" Variant="Variant.Text" Color="Color.Secondary">Close</MudButton>
+                <MudButton OnClick="DownloadPdf" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download">Download PDF</MudButton>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .print-preview-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000; /* MudBlazor dialog is 1300 */
+        }
+        .print-preview-modal-container {
+            background-color: white;
+            width: 90%;
+            height: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+        .print-preview-modal-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .print-preview-modal-content {
+            flex: 1;
+            overflow: hidden; /* iframe handles scroll */
+            background-color: #f5f5f5;
+        }
+        .print-preview-modal-footer {
+            padding: 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+}
+
+@code {
+    private bool _isVisible;
+    
+    public byte[]? PdfData { get; private set; }
+    public string? DocumentType { get; private set; }
+    public string? DocumentTitle { get; private set; }
+
+    public async Task ShowAsync(byte[] pdfData, string documentType, string documentTitle)
+    {
+        PdfData = pdfData;
+        DocumentType = documentType;
+        DocumentTitle = documentTitle;
+        _isVisible = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void Close()
+    {
+        _isVisible = false;
+        PdfData = null;
+        StateHasChanged();
+    }
+
+    private async Task DownloadPdf()
+    {
+        if (PdfData == null || PdfData.Length == 0) return;
+
+        var filename = $"{DocumentType}_{DocumentTitle?.Replace(" ", "_") ?? "DOC"}.pdf";
+        var base64 = Convert.ToBase64String(PdfData);
+
+        await JS.InvokeVoidAsync("eval", $@"
+            (function() {{
+                const byteCharacters = atob('{base64}');
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {{
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }}
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], {{ type: 'application/pdf' }});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = '{filename}';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }})();
+        ");
+    }
+}
