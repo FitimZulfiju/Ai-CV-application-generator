@@ -210,9 +210,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          if (!string.IsNullOrWhiteSpace(exp.Description))
                          {
                              // CSS uses ▸ (U+25B8) for achievements
-                             var desc = StripHtml(exp.Description)
-                                         .Replace("• ", "▸ ") // Replace standard bullet if present
-                                         .Replace("- ", "▸ "); // Replace dash if present
+                             var desc = StripHtml(exp.Description);
                              
                              table.Cell().ColumnSpan(2).PaddingTop(0.2f, Unit.Centimetre)
                                   .Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
@@ -313,9 +311,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                  if (!string.IsNullOrEmpty(proj.Description))
                                  {
                                       // CSS uses ✓ (U+2713) for project features
-                                      var desc = StripHtml(proj.Description)
-                                                  .Replace("• ", "✓ ")
-                                                  .Replace("- ", "✓ ");
+                                      var desc = StripHtml(proj.Description);
 
                                       c.Item().PaddingTop(0.1f, Unit.Centimetre).Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
                                  }
@@ -379,13 +375,16 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                });
     }
 
-    private static string StripHtml(string input)
+    private static string StripHtml(string input, string bullet = "\u2022 ")
     {
         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
-        // Pre-process list items to bullets using standard unicode chars that work with Arial
-        var text = input.Replace("<li>", "\u2022 ").Replace("</li>", "\n").Replace("<ul>", "").Replace("</ul>", "")
-                        .Replace("&#8226;", "\u2022 "); // HTML Entity for bullet
-        // Handle CSS content bullets manually in text replacement logic above if needed, but here we normalize 
+        // Pre-process list items to bullets
+        var text = System.Text.RegularExpressions.Regex.Replace(input, "<li>", bullet, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        text = System.Text.RegularExpressions.Regex.Replace(text, "</li>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        text = System.Text.RegularExpressions.Regex.Replace(text, "<ul>|</ul>", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        
+        text = text.Replace("&#8226;", "\u2022 ");
+        
         return System.Text.RegularExpressions.Regex.Replace(text, "<.*?>", string.Empty).Trim();
     }
 }
