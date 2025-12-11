@@ -42,7 +42,7 @@ else
                             {
                                 <div class="skill-category">
                                     <h4 class="skill-title">@group.Key</h4>
-                                    <p class="skill-list">@string.Join(", ", group.Select(s => s.Name))</p>
+                                    <p class="skill-list">@string.Join(", ", group.Select(s => s.Name).Distinct())</p>
                                 </div>
                             }
                         }
