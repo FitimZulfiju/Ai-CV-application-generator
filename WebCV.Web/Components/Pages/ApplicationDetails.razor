@@ -16,7 +16,7 @@
     }
     else
     {
-        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-6 d-print-none">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4 d-print-none">
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
             <MudText Typo="Typo.h6">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
             <MudSpacer />
@@ -30,7 +30,7 @@
             }
         </MudStack>
 
-        <MudTabs Elevation="2" Rounded="true" PanelClass="pa-6" @bind-ActivePanelIndex="_activeTabIndex">
+        <MudTabs Elevation="2"  Rounded="true" PanelClass="pt-4" @bind-ActivePanelIndex="_activeTabIndex">
             <MudTabPanel Text="Cover Letter" Icon="@Icons.Material.Filled.Description">
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
@@ -57,6 +57,17 @@
             </MudTabPanel>
             <MudTabPanel Text="Job Description" Icon="@Icons.Material.Filled.DocumentScanner">
                 <MudPaper Elevation="1" Class="pa-4">
+                    @if (!string.IsNullOrEmpty(_application.JobPosting?.Url))
+                    {
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+                            <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Primary" />
+                            <MudText Typo="Typo.subtitle2">Source:</MudText>
+                            <MudLink Href="@_application.JobPosting.Url" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
+                                @_application.JobPosting.Url
+                            </MudLink>
+                        </MudStack>
+                        <MudDivider Class="mb-4" />
+                    }
                     <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.JobPosting?.Description</MudText>
                 </MudPaper>
             </MudTabPanel>
