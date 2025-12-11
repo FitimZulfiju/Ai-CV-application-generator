@@ -21,8 +21,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(1.0f, Unit.Centimetre); // Reduced slightly to fit div-like content, header has padding
-                page.DefaultTextStyle(x => x.FontSize(10).FontFamily(Fonts.Arial).FontColor(TextDark));
+                page.Margin(1.25f, Unit.Centimetre); // Closer to CSS 2.5em/3.125em
+                page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Segoe UI").FontColor(TextDark));
 
                 page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
                 page.Content().Element(c => ComposeContent(c, profile));
@@ -45,45 +45,51 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(2.5f, Unit.Centimetre);
-                page.DefaultTextStyle(x => x.FontSize(11).FontFamily(Fonts.Arial).FontColor(TextDark));
+                page.Margin(1.25f, Unit.Centimetre);
+                page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Segoe UI").FontColor(TextDark));
                 
                 page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
                 
                 page.Content().Column(col => {
-                    // Body
-                    col.Item().PaddingTop(1, Unit.Centimetre);
+                    // Body with left border and background (matching .summary style)
+                    col.Item().PaddingTop(0.8f, Unit.Centimetre);
 
-                    // Date
-                    col.Item().Text(DateTime.Now.ToString("MMMM dd, yyyy"));
-                    col.Item().PaddingBottom(1, Unit.Centimetre);
-
-                    // Subject
-                    col.Item().Text($"RE: {jobTitle} Application - {companyName}").Bold();
-                    col.Item().PaddingBottom(0.5f, Unit.Centimetre);
-                    
-                    // Main content
-                    if (!string.IsNullOrWhiteSpace(letterContent))
-                    {
-                        foreach(var paragraph in letterContent.Split(["\n", "\r\n"], StringSplitOptions.RemoveEmptyEntries)) 
+                    // Wrap the entire letter content in a styled container (thinner: 1.5pt)
+                    col.Item().Background(BackgroundLight).BorderLeft(1.5f).BorderColor(PrimaryColor)
+                        .CornerRadius(5).Padding(10)
+                        .Column(letterCol => 
                         {
-                             col.Item().Text(paragraph.Trim());
-                             col.Item().PaddingBottom(0.3f, Unit.Centimetre);
-                        }
-                    }
-                    else 
-                    {
-                         col.Item().Text("No content provided.").Italic();
-                    }
+                            // Date
+                            letterCol.Item().Text(DateTime.Now.ToString("MMMM dd, yyyy")).FontSize(10);
+                            letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
 
-                    // Sign-off
-                    col.Item().PaddingTop(1, Unit.Centimetre);
-                    col.Item().Text("Sincerely,");
-                    col.Item().PaddingTop(0.5f, Unit.Centimetre);
-                    col.Item().Text(profile.FullName);
+                            // Subject
+                            letterCol.Item().Text($"{jobTitle} Application - {companyName}").Bold().FontSize(11);
+                            letterCol.Item().PaddingBottom(0.6f, Unit.Centimetre);
+                            
+                            // Main content
+                            if (!string.IsNullOrWhiteSpace(letterContent))
+                            {
+                                foreach(var paragraph in letterContent.Split(["\n", "\r\n"], StringSplitOptions.RemoveEmptyEntries)) 
+                                {
+                                     letterCol.Item().Text(paragraph.Trim()).FontSize(10).LineHeight(1.5f);
+                                     letterCol.Item().PaddingBottom(0.35f, Unit.Centimetre);
+                                }
+                            }
+                            else 
+                            {
+                                 letterCol.Item().Text("No content provided.").Italic();
+                            }
+
+                            // Sign-off
+                            letterCol.Item().PaddingTop(0.8f, Unit.Centimetre);
+                            letterCol.Item().Text("Sincerely,").FontSize(10);
+                            letterCol.Item().PaddingTop(0.5f, Unit.Centimetre);
+                            letterCol.Item().Text(profile.FullName).FontSize(10);
+                        });
                 });
                 
-                page.Footer().AlignCenter().Text(x => x.CurrentPageNumber());
+                // No footer for cover letter
             });
         });
 
@@ -93,55 +99,56 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
     private void ComposeHeader(IContainer container, CandidateProfile profile)
     {
         // Header from CSS: Background Gradient (Simulated with Primary), Color White, Centered, Padding
-        container.Background(PrimaryColor).Padding(1, Unit.Centimetre) // approx 2.5em
-            .Column(col => 
-            {
-                 // Photo
-                 if (!string.IsNullOrEmpty(profile.ProfilePictureUrl) && profile.ShowProfilePicture)
-                 {
-                     string path = Path.Combine(_env.WebRootPath, profile.ProfilePictureUrl.TrimStart('/', '\\'));
-                     if (File.Exists(path))
+        container.Column(c => 
+        {
+            c.Item().Background(PrimaryColor).Padding(1, Unit.Centimetre) // approx 2.5em
+                .Column(col => 
+                {
+                     // Photo
+                     if (!string.IsNullOrEmpty(profile.ProfilePictureUrl) && profile.ShowProfilePicture)
                      {
-                         col.Item().AlignCenter().Width(3, Unit.Centimetre).Height(3, Unit.Centimetre)
-                            .Image(path); // Circular crop hard in simple QuestPDF without helper, assumes square/standard
-                         col.Item().Height(0.5f, Unit.Centimetre);
+                         string path = Path.Combine(_env.WebRootPath, profile.ProfilePictureUrl.TrimStart('/', '\\'));
+                         if (File.Exists(path))
+                         {
+                             col.Item().AlignCenter().Width(3, Unit.Centimetre).Height(3, Unit.Centimetre)
+                                .Image(path); 
+                             col.Item().Height(0.5f, Unit.Centimetre);
+                         }
                      }
-                 }
 
-                 // Name
-                 col.Item().AlignCenter().Text(profile.FullName).FontSize(24).Bold().FontColor("#ffffff");
-                 
-                 // Title
-                 col.Item().AlignCenter().Text(profile.Title ?? "Candidate").FontSize(14).FontColor("#ffffff").FontColor(Colors.Grey.Lighten4);
-                 
-                 // Contact Info
-                 col.Item().PaddingTop(0.5f, Unit.Centimetre).AlignCenter().Text(t => 
-                 {
-                     t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                     var parts = new List<string>();
-                     if(!string.IsNullOrEmpty(profile.Email)) parts.Add(profile.Email);
-                     if(!string.IsNullOrEmpty(profile.PhoneNumber)) parts.Add(profile.PhoneNumber);
-                     if(!string.IsNullOrEmpty(profile.Location)) parts.Add(profile.Location);
+                     // Name
+                     col.Item().AlignCenter().Text(profile.FullName).FontSize(24).Bold().FontColor("#ffffff");
                      
-                     t.Span(string.Join(" | ", parts));
-                 });
+                     // Title
+                     col.Item().AlignCenter().Text(profile.Title ?? "Candidate").FontSize(14).FontColor("#ffffff").FontColor(Colors.Grey.Lighten4);
+                     
+                     // Contact Info
+                     col.Item().PaddingTop(0.5f, Unit.Centimetre).AlignCenter().Text(t => 
+                     {
+                         t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
+                         var parts = new List<string>();
+                         if(!string.IsNullOrEmpty(profile.Email)) parts.Add(profile.Email);
+                         if(!string.IsNullOrEmpty(profile.PhoneNumber)) parts.Add(profile.PhoneNumber);
+                         if(!string.IsNullOrEmpty(profile.Location)) parts.Add(profile.Location);
+                         
+                         t.Span(string.Join(" | ", parts));
+                     });
 
-                 // Links
-                  col.Item().PaddingTop(0.2f, Unit.Centimetre).AlignCenter().Text(t => 
-                 {
-                     t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                     var parts = new List<string>();
-                     if(!string.IsNullOrEmpty(profile.LinkedInUrl)) parts.Add($"LinkedIn: {profile.LinkedInUrl}");
-                     if(!string.IsNullOrEmpty(profile.PortfolioUrl)) parts.Add($"GitHub: {profile.PortfolioUrl}");
-                     
-                     t.Span(string.Join(" | ", parts));
-                 });
-                 
-                 // Bottom Accent Line (simulated with BorderBottom logic or just handled by Container end)
-                 // CSS has ::after with accent color height 0.25em. 
-                // Bottom Accent Line - Green Line (0.25em ~ 1mm)
-                 col.Item().PaddingTop(0.5f, Unit.Centimetre).Height(0.15f, Unit.Centimetre).Background(AccentColor);
-            });
+                     // Links
+                      col.Item().PaddingTop(0.2f, Unit.Centimetre).AlignCenter().Text(t => 
+                     {
+                         t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
+                         var parts = new List<string>();
+                         if(!string.IsNullOrEmpty(profile.LinkedInUrl)) parts.Add($"LinkedIn: {profile.LinkedInUrl}");
+                         if(!string.IsNullOrEmpty(profile.PortfolioUrl)) parts.Add($"GitHub: {profile.PortfolioUrl}");
+                         
+                         t.Span(string.Join(" | ", parts));
+                     });
+                });
+
+            // Bottom Accent Line - Full Width (thinner: 0.04cm)
+            c.Item().Height(0.04f, Unit.Centimetre).Background(AccentColor);
+        });
     }
 
     private static void ComposeContent(IContainer container, CandidateProfile profile)
@@ -153,7 +160,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             // Summary
             if (!string.IsNullOrWhiteSpace(profile.ProfessionalSummary))
             {
-                col.Item().Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
+                col.Item().Background(BackgroundLight).BorderLeft(1.5f).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
                    .Column(c => 
                    {
                         // Summary Text
@@ -170,7 +177,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 var categories = profile.Skills.GroupBy(s => s.Category ?? "Other").ToList();
                 foreach(var cat in categories)
                 {
-                    col.Item().PaddingBottom(0.2f, Unit.Centimetre).Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
+                    col.Item().PaddingBottom(0.2f, Unit.Centimetre).Background(BackgroundLight).BorderLeft(1.5f).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
                        .Column(c => 
                        {
                            c.Item().Text(StripHtml(cat.Key)).Bold().FontSize(10).FontColor(PrimaryDark);
@@ -210,7 +217,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          if (!string.IsNullOrWhiteSpace(exp.Description))
                          {
                              // CSS uses ▸ (U+25B8) for achievements
-                             var desc = StripHtml(exp.Description);
+                             var desc = StripHtml(exp.Description, "\u25B8 ");
                              
                              table.Cell().ColumnSpan(2).PaddingTop(0.2f, Unit.Centimetre)
                                   .Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
@@ -236,33 +243,33 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          columns.RelativeColumn();
                      });
 
-                     foreach(var edu in profile.Educations.OrderByDescending(e => e.StartDate))
-                     {
-                         table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
-                         {
-                             cell.Background(BackgroundLight).BorderLeft(4).BorderColor(AccentColor).CornerRadius(5).Padding(10).Column(c => 
-                             {
-                                 c.Item().Row(r => 
-                                 {
-                                     r.RelativeItem().Text(StripHtml(edu.Degree ?? "")).Bold().FontSize(11).FontColor(TextDark);
-                                     r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(10).FontColor(TextMedium);
-                                 });
-                                 
-                                 c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold();
+                      foreach(var edu in profile.Educations.OrderByDescending(e => e.StartDate))
+                      {
+                          table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
+                          {
+                              cell.Background(BackgroundLight).BorderLeft(1.5f).BorderColor(AccentColor).CornerRadius(5).Padding(10).Column(c => 
+                              {
+                                  c.Item().Row(r => 
+                                  {
+                                      r.RelativeItem().Text(StripHtml(edu.Degree ?? "")).Bold().FontSize(11).FontColor(TextDark);
+                                      r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(10).FontColor(TextMedium);
+                                  });
+                                  
+                                  c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold();
 
-                                 if (!string.IsNullOrEmpty(edu.Description))
-                                 {
-                                     c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(StripHtml(edu.Description)).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
-                                 }
-                             });
-                         });
-                     }
+                                  if (!string.IsNullOrEmpty(edu.Description))
+                                  {
+                                      c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(StripHtml(edu.Description)).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
+                                  }
+                              });
+                          });
+                      }
                  });
                  col.Item().PaddingBottom(0.5f, Unit.Centimetre);
             }
 
             // Projects
-            if (profile.Projects != null && profile.Projects.Count != 0)
+            if (profile.Projects != null && profile.Projects.Count !=0)
             {
                 SectionTitle(col, "Personal Projects"); // HTML title
                 
@@ -275,7 +282,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                      {
                          table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
                          {
-                             cell.Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).CornerRadius(5).Padding(10).Column(c => 
+                             cell.Background(BackgroundLight).BorderLeft(1.5f).BorderColor(PrimaryColor).CornerRadius(5).Padding(10).Column(c => 
                              {
                                  c.Item().Row(r => {
                                      r.RelativeItem().Text(StripHtml(proj.Name ?? "")).Bold().FontSize(11).FontColor(TextDark);
@@ -311,7 +318,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                  if (!string.IsNullOrEmpty(proj.Description))
                                  {
                                       // CSS uses ✓ (U+2713) for project features
-                                      var desc = StripHtml(proj.Description);
+                                      var desc = StripHtml(proj.Description, "\u2713 ");
 
                                       c.Item().PaddingTop(0.1f, Unit.Centimetre).Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
                                  }
@@ -355,12 +362,16 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                     {
                         t.Cell().Padding(2).Element(e => 
                         {
-                            e.Border(1).BorderColor(BorderColor).Background(BackgroundLight).CornerRadius(10).PaddingHorizontal(8).PaddingVertical(2)
+                            e.Border(1).BorderColor(BorderColor).Background(BackgroundLight).CornerRadius(15).PaddingHorizontal(8).PaddingVertical(2)
                              .AlignCenter().Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium).SemiBold();
                         });
                     }
                 });
             }
+
+            // Footer Reference
+            col.Item().PaddingTop(1, Unit.Centimetre).AlignCenter().Text("References available upon request")
+                .FontSize(9).FontColor(TextMedium).Italic();
         });
     }
 
