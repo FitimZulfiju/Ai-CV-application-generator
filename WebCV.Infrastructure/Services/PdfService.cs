@@ -1,4 +1,3 @@
-using QuestPDF.Helpers;
 namespace WebCV.Infrastructure.Services;
 
 public class PdfService(IWebHostEnvironment env) : IPdfService
@@ -49,16 +48,11 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 page.Margin(2.5f, Unit.Centimetre);
                 page.DefaultTextStyle(x => x.FontSize(11).FontFamily(Fonts.Arial).FontColor(TextDark));
                 
+                page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
+                
                 page.Content().Column(col => {
-                    // Header (Contact Info)
-                    col.Item().Text(profile.FullName).FontSize(16).Bold().FontColor(PrimaryColor);
-                    col.Item().PaddingTop(0.2f, Unit.Centimetre);
-                    col.Item().Text($"{profile.Email} | {profile.PhoneNumber}").FontSize(10).FontColor(TextMedium);
-                    if (!string.IsNullOrEmpty(profile.Location))
-                    {
-                        col.Item().Text(profile.Location).FontSize(10).FontColor(TextMedium);
-                    }
-                    col.Item().PaddingBottom(1, Unit.Centimetre);
+                    // Body
+                    col.Item().PaddingTop(1, Unit.Centimetre);
 
                     // Date
                     col.Item().Text(DateTime.Now.ToString("MMMM dd, yyyy"));
@@ -145,8 +139,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                  
                  // Bottom Accent Line (simulated with BorderBottom logic or just handled by Container end)
                  // CSS has ::after with accent color height 0.25em. 
-                 // We can add a line item.
-                 col.Item().PaddingTop(0.5f, Unit.Centimetre).Height(4).Background(AccentColor);
+                // Bottom Accent Line - Green Line (0.25em ~ 1mm)
+                 col.Item().PaddingTop(0.5f, Unit.Centimetre).Height(0.15f, Unit.Centimetre).Background(AccentColor);
             });
     }
 
@@ -159,8 +153,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             // Summary
             if (!string.IsNullOrWhiteSpace(profile.ProfessionalSummary))
             {
-                // CSS: .summary { background: var(--bg-light); border-left: 0.25em solid var(--primary-color); padding: ... }
-                col.Item().Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).Padding(10)
+                col.Item().Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
                    .Column(c => 
                    {
                         // Summary Text
@@ -177,7 +170,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 var categories = profile.Skills.GroupBy(s => s.Category ?? "Other").ToList();
                 foreach(var cat in categories)
                 {
-                    col.Item().PaddingBottom(0.2f, Unit.Centimetre).Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).Padding(10)
+                    col.Item().PaddingBottom(0.2f, Unit.Centimetre).Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
                        .Column(c => 
                        {
                            c.Item().Text(StripHtml(cat.Key)).Bold().FontSize(10).FontColor(PrimaryDark);
@@ -225,8 +218,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                   .Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
                          }
                          
-                         // Spacer Row
-                         table.Cell().ColumnSpan(2).BorderBottom(1).BorderColor(BorderColor).PaddingBottom(0.5f, Unit.Centimetre).PaddingTop(0.5f, Unit.Centimetre);
+                         // Spacer Row (Aligned grey separator)
+                         table.Cell().ColumnSpan(2).BorderBottom(1).BorderColor(BorderColor).PaddingTop(0.5f, Unit.Centimetre).PaddingBottom(0.5f, Unit.Centimetre);
                      }
                  });
                  col.Item().PaddingBottom(1, Unit.Centimetre);
@@ -249,7 +242,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                      {
                          table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
                          {
-                             cell.Background(BackgroundLight).BorderLeft(4).BorderColor(AccentColor).Padding(10).Column(c => 
+                             cell.Background(BackgroundLight).BorderLeft(4).BorderColor(AccentColor).CornerRadius(5).Padding(10).Column(c => 
                              {
                                  c.Item().Row(r => 
                                  {
@@ -258,6 +251,11 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                  });
                                  
                                  c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold();
+
+                                 if (!string.IsNullOrEmpty(edu.Description))
+                                 {
+                                     c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(StripHtml(edu.Description)).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
+                                 }
                              });
                          });
                      }
@@ -279,7 +277,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                      {
                          table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
                          {
-                             cell.Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).Padding(10).Column(c => 
+                             cell.Background(BackgroundLight).BorderLeft(4).BorderColor(PrimaryColor).CornerRadius(5).Padding(10).Column(c => 
                              {
                                  c.Item().Row(r => {
                                      r.RelativeItem().Text(StripHtml(proj.Name ?? "")).Bold().FontSize(11).FontColor(TextDark);
@@ -331,7 +329,14 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
              if (profile.Languages != null && profile.Languages.Count != 0)
             {
                 SectionTitle(col, "Languages");
-                col.Item().Text(string.Join(" | ", profile.Languages.Select(l => $"{StripHtml(l.Name)} ({StripHtml(l.Proficiency)})"))).FontColor(TextMedium);
+                col.Item().Text(t => 
+                {
+                     foreach(var lang in profile.Languages)
+                     {
+                         t.Span($"{StripHtml(lang.Name)}").Bold().FontColor(TextDark);
+                         t.Span($" ({StripHtml(lang.Proficiency)}) | ").FontColor(TextMedium);
+                     }
+                });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
             
@@ -339,20 +344,25 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 SectionTitle(col, "Interests");
                 
-                // Tags Layout: Row with wrapped items
-                col.Item().Element(element => 
+                // Tags Layout: Grid Table (Fallback for rounding)
+                col.Item().Table(t => 
                 {
-                    element.Wrap(wrap => 
+                    t.ColumnsDefinition(c => 
                     {
-                        wrap.Spacing(5);
-                        wrap.RunSpacing(5);
-                        
-                        foreach(var interest in profile.Interests)
-                        {
-                            wrap.Item().Border(1).BorderColor(BorderColor).Background(BackgroundLight).PaddingHorizontal(10).PaddingVertical(3).BorderRadius(10)
-                                   .Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium).SemiBold();
-                        }
+                        c.RelativeColumn();
+                        c.RelativeColumn();
+                        c.RelativeColumn();
+                        c.RelativeColumn();
                     });
+                    
+                foreach(var interest in profile.Interests)
+                    {
+                        t.Cell().Padding(2).Element(e => 
+                        {
+                            e.Border(1).BorderColor(BorderColor).Background(BackgroundLight).CornerRadius(10).PaddingHorizontal(8).PaddingVertical(2)
+                             .AlignCenter().Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium).SemiBold();
+                        });
+                    }
                 });
             }
         });
@@ -361,16 +371,21 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
     private static void SectionTitle(ColumnDescriptor column, string title)
     {
          column.Item().PaddingBottom(0.3f, Unit.Centimetre)
-               .BorderBottom(2).BorderColor(PrimaryColor) // CSS: border-bottom: 0.188em solid var(--primary-color)
-               .Text(title.ToUpper()).FontSize(12).Bold().FontColor(PrimaryDark).LetterSpacing(0.06f);
+               .Row(row => 
+               {
+                   // CSS: display: inline-block; border-bottom: ... (Matches content width)
+                   row.AutoItem().BorderBottom(2).BorderColor(PrimaryColor) 
+                      .Text(title.ToUpper()).FontSize(12).Bold().FontColor(PrimaryDark).LetterSpacing(0.06f);
+               });
     }
 
     private static string StripHtml(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
-        // Pre-process list items to bullets
-        var text = input.Replace("<li>", "• ").Replace("</li>", "\n").Replace("<ul>", "").Replace("</ul>", "");
-        // Remove remaining tags
+        // Pre-process list items to bullets using standard unicode chars that work with Arial
+        var text = input.Replace("<li>", "\u2022 ").Replace("</li>", "\n").Replace("<ul>", "").Replace("</ul>", "")
+                        .Replace("&#8226;", "\u2022 "); // HTML Entity for bullet
+        // Handle CSS content bullets manually in text replacement logic above if needed, but here we normalize 
         return System.Text.RegularExpressions.Regex.Replace(text, "<.*?>", string.Empty).Trim();
     }
 }
