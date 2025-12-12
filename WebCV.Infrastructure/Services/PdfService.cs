@@ -279,7 +279,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                        for(int i=0; i<count; i++)
                        {
                            var edu = eduList[i];
-                           table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
+                           table.Cell().Element(cell => 
                            {
                                cell.Background(BackgroundLight).BorderLeft(1.5f).BorderColor(AccentColor).CornerRadius(5).Padding(10).Column(c => 
                                {
@@ -309,12 +309,12 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                            // Divider between Education Items (if not last)
                            if (i < count - 1)
                            {
-                               table.Cell().ColumnSpan(1).PaddingTop(0.2f, Unit.Centimetre).PaddingBottom(0.2f, Unit.Centimetre)
+                               table.Cell().ColumnSpan(1)
                                     .LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                            }
                        }
                  });
-                  col.Item().PaddingBottom(0.5f, Unit.Centimetre);
+                  col.Item().PaddingBottom(0.3f, Unit.Centimetre);
              }
              
              // Divider between Education and Projects
@@ -378,7 +378,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 });
 
                 // Divider between Projects and Languages
-                col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
+                col.Item().PaddingTop(0.2f, Unit.Centimetre).PaddingBottom(0.3f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
             }
             
             // Languages
