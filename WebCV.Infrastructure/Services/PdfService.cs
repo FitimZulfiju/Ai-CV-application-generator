@@ -1,4 +1,4 @@
-namespace WebCV.Infrastructure.Services;
+﻿namespace WebCV.Infrastructure.Services;
 
 public class PdfService(IWebHostEnvironment env) : IPdfService
 {
@@ -13,6 +13,23 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
     private static readonly string TextMedium = "#4b5563";   // var(--text-medium)
     private static readonly string BackgroundLight = "#f9fafb"; // var(--bg-light)
     private static readonly string BorderColor = "#e5e7eb";  // var(--border-color)
+
+    private static readonly Dictionary<string, string> NamedColors = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "black", "#000000" }, { "white", "#FFFFFF" }, { "red", "#FF0000" }, { "lime", "#00FF00" }, { "blue", "#0000FF" },
+        { "yellow", "#FFFF00" }, { "cyan", "#00FFFF" }, { "magenta", "#FF00FF" }, { "silver", "#C0C0C0" }, { "gray", "#808080" },
+        { "grey", "#808080" }, { "maroon", "#800000" }, { "olive", "#808000" }, { "green", "#008000" }, { "purple", "#800080" },
+        { "teal", "#008080" }, { "navy", "#000080" }, { "orange", "#FFA500" }
+    };
+
+    private static string? GetHexColor(string? colorName)
+    {
+        if (string.IsNullOrWhiteSpace(colorName)) return null;
+        colorName = colorName.Trim();
+        if (colorName.StartsWith("#")) return colorName;
+        if (NamedColors.TryGetValue(colorName, out var hex)) return hex;
+        return null;
+    }
 
     public Task<byte[]> GenerateCvAsync(CandidateProfile profile)
     {
@@ -164,8 +181,12 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 col.Item().Background(BackgroundLight).BorderLeft(1.5f).BorderColor(PrimaryColor).CornerRadius(5).Padding(10)
                    .Column(c => 
                    {
-                        // Summary Text
-                        c.Item().Text(StripHtml(profile.ProfessionalSummary)).FontColor(TextMedium).FontSize(10).LineHeight(1.5f);
+                        // Summary Text with HTML formatting support
+                        c.Item().Text(t =>
+                        {
+                            t.DefaultTextStyle(s => s.FontColor(TextMedium).FontSize(10).LineHeight(1.5f));
+                            FormatHtmlToText(t, PreprocessHtml(profile.ProfessionalSummary));
+                        });
                    });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
@@ -229,9 +250,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          // Row 3: Description with Bullets
                          if (!string.IsNullOrWhiteSpace(exp.Description))
                          {
-                             var desc = StripHtml(exp.Description, "▸ ");
-                             table.Cell().ColumnSpan(2).PaddingTop(0.2f, Unit.Centimetre)
-                                  .Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
+                             table.Cell().ColumnSpan(2).PaddingTop(0.2f, Unit.Centimetre).Text(t => { t.DefaultTextStyle(dt => dt.FontSize(9).FontColor(TextMedium).LineHeight(1.5f)); FormatHtmlToText(t, PreprocessHtml(exp.Description, "\u25B8 ")); });
                          }
                          
                          // Grey Divider Line (only if not last)
@@ -274,11 +293,11 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
 
                                   if (!string.IsNullOrEmpty(edu.Description))
                                   {
-                                      // Handle **bold** markdown like HTML does
+                                      // Handle HTML tags like <strong style=color:blue;>
                                       c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(t =>
                                       {
                                           t.DefaultTextStyle(s => s.FontSize(9).FontColor(TextMedium).LineHeight(1.5f));
-                                          FormatMarkdownToText(t, edu.Description);
+                                          FormatHtmlToText(t, PreprocessHtml(edu.Description));
                                       });
                                   }
                               });
@@ -309,7 +328,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                      
                                      string dateStr = "";
                                      if (proj.StartDate.HasValue)
-                                          dateStr = $"{proj.StartDate:MMM yyyy} - {(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("MMM yyyy") : "Present")}";
+                                          dateStr = $"{proj.StartDate.Value:yyyy} - {(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : "Present")}";
                                      r.ConstantItem(120).AlignRight().Text(dateStr).FontSize(8).FontColor(TextMedium);
                                  });
 
@@ -338,9 +357,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                  if (!string.IsNullOrEmpty(proj.Description))
                                  {
                                       // CSS uses ✓ (U+2713) for project features
-                                      var desc = StripHtml(proj.Description, "✓ ");
-
-                                      c.Item().PaddingTop(0.1f, Unit.Centimetre).Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
+                                      c.Item().PaddingTop(0.1f, Unit.Centimetre).Text(t => { t.DefaultTextStyle(dt => dt.FontSize(9).FontColor(TextMedium).LineHeight(1.5f)); FormatHtmlToText(t, PreprocessHtml(proj.Description, "\u2713 ")); });
                                  }
                              });
                          });
@@ -406,35 +423,131 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                });
     }
 
-    private static void FormatMarkdownToText(dynamic textDescriptor, string input)
+    private static void FormatHtmlToText(QuestPDF.Fluent.TextDescriptor textDescriptor, string? input)
     {
         if (string.IsNullOrWhiteSpace(input)) return;
         
-        // Strip HTML first
-        var cleaned = System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty).Trim();
+        // Regex to match HTML tags with optional inline styles (supporting unquoted, single-quoted, and double-quoted)
+        var tagPattern = @"<(strong|b|em|i|u|span)(?:\s+style\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+)))?\s*>(.+?)</\1>";
+        var regex = new System.Text.RegularExpressions.Regex(tagPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
         
-        // Split by ** for bold formatting
-        var parts = cleaned.Split(new[] { "**" }, StringSplitOptions.None);
-        
-        for (int i = 0; i < parts.Length; i++)
+        int lastIndex = 0;
+        foreach (System.Text.RegularExpressions.Match match in regex.Matches(input))
         {
-            if (i % 2 == 0)
+            // Add text before this match (strip any remaining HTML tags)
+            if (match.Index > lastIndex)
             {
-                // Regular text
-                if (!string.IsNullOrEmpty(parts[i]))
+                var beforeText = input.Substring(lastIndex, match.Index - lastIndex);
+                var cleanBefore = System.Text.RegularExpressions.Regex.Replace(beforeText, "<.*?>", string.Empty);
+                if (!string.IsNullOrEmpty(cleanBefore))
                 {
-                    textDescriptor.Span(parts[i]);
+                    textDescriptor.Span(cleanBefore);
                 }
             }
-            else
+            
+            var tagName = match.Groups[1].Value.ToLower();
+            // Style attr can be in group 2 (double), 3 (single), or 4 (unquoted)
+            var styleAttr = match.Groups[2].Value + match.Groups[3].Value + match.Groups[4].Value;
+            var content = match.Groups[5].Value;
+            
+            // Strip nested HTML from content (simple handling)
+            var cleanContent = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+            
+            // Initial state based on tag
+            bool isBold = tagName == "strong" || tagName == "b";
+            bool isItalic = tagName == "em" || tagName == "i";
+            string? color = null;
+            
+            if (!string.IsNullOrEmpty(styleAttr))
             {
-                // Bold text (between **)
-                if (!string.IsNullOrEmpty(parts[i]))
+                // Parse color
+                var colorMatch = System.Text.RegularExpressions.Regex.Match(styleAttr, @"color\s*:\s*([^;]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (colorMatch.Success)
                 {
-                    textDescriptor.Span(parts[i]).Bold();
+                    var rawColor = colorMatch.Groups[1].Value.Trim();
+                    color = GetHexColor(rawColor);
                 }
+                
+                // Parse font-weight
+                var weightMatch = System.Text.RegularExpressions.Regex.Match(styleAttr, @"font-weight\s*:\s*([^;]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (weightMatch.Success)
+                {
+                    var weight = weightMatch.Groups[1].Value.Trim().ToLower();
+                    if (weight == "bold" || weight == "700" || weight == "800" || weight == "900") isBold = true;
+                    if (weight == "normal" || weight == "400") isBold = false;
+                }
+                
+                // Parse font-style
+                var styleMatch = System.Text.RegularExpressions.Regex.Match(styleAttr, @"font-style\s*:\s*([^;]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (styleMatch.Success)
+                {
+                    var style = styleMatch.Groups[1].Value.Trim().ToLower();
+                    if (style == "italic") isItalic = true;
+                    if (style == "normal") isItalic = false;
+                }
+            }
+            
+            // Apply styling
+            var span = textDescriptor.Span(cleanContent);
+            if (isBold) span.Bold();
+            if (isItalic) span.Italic();
+            if (!string.IsNullOrEmpty(color)) span.FontColor(color);
+            
+            lastIndex = match.Index + match.Length;
+        }
+        
+        // Add remaining text
+        if (lastIndex < input.Length)
+        {
+            var remainingText = input.Substring(lastIndex);
+            var cleanRemaining = System.Text.RegularExpressions.Regex.Replace(remainingText, "<.*?>", string.Empty);
+            if (!string.IsNullOrEmpty(cleanRemaining))
+            {
+                textDescriptor.Span(cleanRemaining);
             }
         }
+    }
+
+    private static string PreprocessHtml(string? input, string bullet = "")
+    {
+        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+        string pText = input ?? "";
+
+        // Handle Lists (<ul><li>...</li></ul>)
+        if (pText.Contains("<li>", StringComparison.OrdinalIgnoreCase))
+        {
+            // Replace <li> with bullet
+             pText = System.Text.RegularExpressions.Regex.Replace(pText, "<li>", !string.IsNullOrEmpty(bullet) ? bullet : "• ", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+             // Replace </li> with newline
+             pText = System.Text.RegularExpressions.Regex.Replace(pText, "</li>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+             pText = System.Text.RegularExpressions.Regex.Replace(pText, "<ul>|</ul>|<ol>|</ol>", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+             pText = pText.Replace("&#8226;", "• ");
+        }
+        else if (!string.IsNullOrEmpty(bullet) && pText.Contains('\n') && !pText.Contains("<p>", StringComparison.OrdinalIgnoreCase))
+        {
+            // Plain text with newlines - convert to bullets if requested
+             var lines = pText.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+             var sb = new System.Text.StringBuilder();
+             foreach (var line in lines)
+             {
+                 var cleanLine = line.Trim().TrimStart('-', '*').Trim();
+                 if (!string.IsNullOrEmpty(cleanLine))
+                     sb.AppendLine($"{bullet}{cleanLine}");
+             }
+             return sb.ToString().Trim();
+        }
+
+        // Convert <br> to newline
+        pText = System.Text.RegularExpressions.Regex.Replace(pText, "<br\\s*/?>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        // Convert </p> to newline
+        pText = System.Text.RegularExpressions.Regex.Replace(pText, "</p>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        pText = System.Text.RegularExpressions.Regex.Replace(pText, "<p.*?>", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // Decode HTML entities
+        pText = System.Net.WebUtility.HtmlDecode(pText);
+
+        return pText.Trim();
     }
 
     private static string CalculateDuration(DateTime? start, DateTime? end)
@@ -454,43 +567,11 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         return string.Join(" ", parts);
     }
 
-    private static string StripHtml(string input, string bullet = "\u2022 ")
+    // Keep strict StripHtml for titles/names where we want clean text only
+    private static string StripHtml(string? input)
     {
-        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
-        
-        // If already contains HTML li tags, process them
-        if (input.Contains("<li>", StringComparison.OrdinalIgnoreCase))
-        {
-            var text = System.Text.RegularExpressions.Regex.Replace(input, "<li>", bullet, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            text = System.Text.RegularExpressions.Regex.Replace(text, "</li>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            text = System.Text.RegularExpressions.Regex.Replace(text, "<ul>|</ul>", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            text = text.Replace("&#8226;", "\u2022 ");
-            return System.Text.RegularExpressions.Regex.Replace(text, "<.*?>", string.Empty).Trim();
-        }
-        
-        // Strip all HTML tags first
-        var cleaned = System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty).Trim();
-        
-        // Only convert plain text to bullets if a custom bullet was specified (for descriptions)
-        // If default bullet (\u2022), this is likely a title/name field - just return cleaned text
-        if (bullet != "\u2022 " && cleaned.Contains('\n'))
-        {
-            // Plain text description: split by newlines and add bullets
-            var lines = cleaned.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            var result = new System.Text.StringBuilder();
-            
-            foreach (var line in lines)
-            {
-                var cleanLine = line.Trim().TrimStart('-', '*').Trim();
-                if (!string.IsNullOrEmpty(cleanLine))
-                {
-                    result.AppendLine($"{bullet}{cleanLine}");
-                }
-            }
-            
-            return result.ToString().Trim();
-        }
-        
-        return cleaned;
+         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+         return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty).Trim();
     }
 }
+
