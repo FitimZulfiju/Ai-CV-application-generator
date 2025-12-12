@@ -173,7 +173,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             // Skills (Moved to Page 1)
             if (profile.Skills != null && profile.Skills.Count != 0)
             {
-                SectionTitle(col, "Core Competencies"); // HTML says "CORE COMPETENCIES" (Skills)
+                SectionTitle(col, "Core Competencies");
                 
                 var categories = profile.Skills.GroupBy(s => s.Category ?? "Other").ToList();
                 foreach(var cat in categories)
@@ -212,12 +212,12 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          table.Cell().Text(StripHtml(exp.JobTitle ?? "")).Bold().FontSize(11).FontColor(TextDark);
                          table.Cell().AlignRight().Text(t =>
                          {
-                             t.DefaultTextStyle(s => s.FontSize(8).FontColor(TextMedium).Italic());
+                             t.DefaultTextStyle(s => s.FontSize(8).FontColor(TextMedium));
                              t.Span($"{exp.StartDate:MM/yyyy} – {(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : "Present")}");
                              var duration = CalculateDuration(exp.StartDate, exp.EndDate);
                              if (!string.IsNullOrEmpty(duration))
                              {
-                                 t.Span($" ({duration})");
+                                 t.Span($" ({duration})").Italic();
                              }
                          });
                          
@@ -267,14 +267,19 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                   c.Item().Row(r => 
                                   {
                                       r.RelativeItem().Text(StripHtml(edu.Degree ?? "")).Bold().FontSize(11).FontColor(TextDark);
-                                      r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(10).FontColor(TextMedium);
+                                      r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(8).FontColor(TextMedium);
                                   });
                                   
                                   c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold().Bold();
 
                                   if (!string.IsNullOrEmpty(edu.Description))
                                   {
-                                      c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(StripHtml(edu.Description)).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
+                                      // Handle **bold** markdown like HTML does
+                                      c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(t =>
+                                      {
+                                          t.DefaultTextStyle(s => s.FontSize(9).FontColor(TextMedium).LineHeight(1.5f));
+                                          FormatMarkdownToText(t, edu.Description);
+                                      });
                                   }
                               });
                           });
@@ -286,7 +291,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             // Projects
             if (profile.Projects != null && profile.Projects.Count !=0)
             {
-                SectionTitle(col, "Personal Projects"); // HTML title
+                SectionTitle(col, "Personal Projects");
                 
                  col.Item().Table(table => {
                      table.ColumnsDefinition(columns => {
@@ -305,7 +310,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                      string dateStr = "";
                                      if (proj.StartDate.HasValue)
                                           dateStr = $"{proj.StartDate:MMM yyyy} - {(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("MMM yyyy") : "Present")}";
-                                     r.ConstantItem(120).AlignRight().Text(dateStr).FontSize(10).FontColor(TextMedium);
+                                     r.ConstantItem(120).AlignRight().Text(dateStr).FontSize(8).FontColor(TextMedium);
                                  });
 
                                  if (!string.IsNullOrEmpty(proj.Link) || !string.IsNullOrEmpty(proj.Technologies))
@@ -399,6 +404,37 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                    row.AutoItem().BorderBottom(1.5f).BorderColor(PrimaryColor) 
                       .Text(title.ToUpper()).FontSize(12).Bold().FontColor(PrimaryDark).LetterSpacing(0.06f);
                });
+    }
+
+    private static void FormatMarkdownToText(dynamic textDescriptor, string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return;
+        
+        // Strip HTML first
+        var cleaned = System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty).Trim();
+        
+        // Split by ** for bold formatting
+        var parts = cleaned.Split(new[] { "**" }, StringSplitOptions.None);
+        
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (i % 2 == 0)
+            {
+                // Regular text
+                if (!string.IsNullOrEmpty(parts[i]))
+                {
+                    textDescriptor.Span(parts[i]);
+                }
+            }
+            else
+            {
+                // Bold text (between **)
+                if (!string.IsNullOrEmpty(parts[i]))
+                {
+                    textDescriptor.Span(parts[i]).Bold();
+                }
+            }
+        }
     }
 
     private static string CalculateDuration(DateTime? start, DateTime? end)
