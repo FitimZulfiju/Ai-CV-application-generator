@@ -422,33 +422,30 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 SectionTitle(col, "Interests");
                 
-                // Tags Layout: Chips with background (Rounded 15)
-                // Tags Layout: Chips with background (Rounded 15)
-                // Use Inlined with padding on items to simulate spacing/run-spacing
-                // Use Inlined with padding on items to simulate spacing/run-spacing
-                col.Item().Inlined(w => 
+                // Tags Layout: Centered, allowed to wrap (2+ rows), rounded chips, restored font size
+                col.Item().AlignCenter().Inlined(w => 
                 {
-                    w.Spacing(0); // Handled by item padding
+                    w.Spacing(4); 
                     
                     foreach(var interest in profile.Interests)
                     {
-                        w.Item().PaddingRight(10).PaddingBottom(10).Element(chip => 
+                        w.Item().Padding(2).Element(chip => 
                         {
-                           chip.Border(1).BorderColor(BorderColor).Background(BackgroundLight)
-                            .PaddingHorizontal(12).PaddingVertical(6).CornerRadius(15)
-                            .Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium).Medium();
+                           chip.Border(0.5f).BorderColor(BorderColor).Background(BackgroundLight)
+                            .CornerRadius(4).PaddingHorizontal(2).PaddingVertical(2)
+                            .Text(StripHtml(interest.Name)).FontSize(8).FontColor(TextMedium);
                         });
                     }
                 });
 
                 
                 // Divider between Interests and Footer
-                col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
+                col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
             }
 
             // Footer Reference (Background, no gap)
-            col.Item().Background(BackgroundLight).PaddingVertical(1, Unit.Centimetre).AlignCenter()
-               .Text("References available upon request").FontSize(10).FontColor(TextMedium).Italic();
+            col.Item().Background(BackgroundLight).PaddingVertical(1).PaddingHorizontal(2).AlignCenter()
+               .Text("References available upon request").FontSize(8).FontColor(TextMedium).Italic();
         });
     }
 
