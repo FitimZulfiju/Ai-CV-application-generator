@@ -274,35 +274,51 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          columns.RelativeColumn();
                      });
 
-                      foreach(var edu in profile.Educations.OrderByDescending(e => e.StartDate))
-                      {
-                          table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
-                          {
-                              cell.Background(BackgroundLight).BorderLeft(1.5f).BorderColor(AccentColor).CornerRadius(5).Padding(10).Column(c => 
-                              {
-                                  c.Item().Row(r => 
-                                  {
-                                      r.RelativeItem().Text(StripHtml(edu.Degree ?? "")).Bold().FontSize(11).FontColor(TextDark);
-                                      r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(8).FontColor(TextMedium);
-                                  });
-                                  
-                                  c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold().Bold();
+                       int count = profile.Educations.Count;
+                       var eduList = profile.Educations.OrderByDescending(e => e.StartDate).ToList();
+                       for(int i=0; i<count; i++)
+                       {
+                           var edu = eduList[i];
+                           table.Cell().PaddingBottom(0.5f, Unit.Centimetre).Element(cell => 
+                           {
+                               cell.Background(BackgroundLight).BorderLeft(1.5f).BorderColor(AccentColor).CornerRadius(5).Padding(10).Column(c => 
+                               {
+                                   c.Item().Row(r => 
+                                   {
+                                       r.RelativeItem().Text(StripHtml(edu.Degree ?? "")).Bold().FontSize(11).FontColor(TextDark);
+                                       r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(8).FontColor(TextMedium);
+                                   });
+                                   
+                                   c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold().Bold();
+ 
+                                   if (!string.IsNullOrEmpty(edu.Description))
+                                   {
+                                       // Separator line (matches CSS .recognition border-top)
+                                       c.Item().PaddingTop(0.25f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
 
-                                  if (!string.IsNullOrEmpty(edu.Description))
-                                  {
-                                      // Handle HTML tags like <strong style=color:blue;>
-                                      c.Item().PaddingTop(0.2f, Unit.Centimetre).Text(t =>
-                                      {
-                                          t.DefaultTextStyle(s => s.FontSize(9).FontColor(TextMedium).LineHeight(1.5f));
-                                          FormatHtmlToText(t, PreprocessHtml(edu.Description));
-                                      });
-                                  }
-                              });
-                          });
-                      }
+                                       // Handle HTML tags like <strong style=color:blue;>
+                                       c.Item().PaddingTop(0.25f, Unit.Centimetre).Text(t =>
+                                       {
+                                           t.DefaultTextStyle(s => s.FontSize(9).FontColor(TextMedium).LineHeight(1.5f));
+                                           FormatHtmlToText(t, PreprocessHtml(edu.Description));
+                                       });
+                                   }
+                               });
+                           });
+                           
+                           // Divider between Education Items (if not last)
+                           if (i < count - 1)
+                           {
+                               table.Cell().ColumnSpan(1).PaddingTop(0.2f, Unit.Centimetre).PaddingBottom(0.2f, Unit.Centimetre)
+                                    .LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+                           }
+                       }
                  });
-                 col.Item().PaddingBottom(0.5f, Unit.Centimetre);
-            }
+                  col.Item().PaddingBottom(0.5f, Unit.Centimetre);
+             }
+             
+             // Divider between Education and Projects
+             col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
 
             // Projects
             if (profile.Projects != null && profile.Projects.Count !=0)
@@ -360,6 +376,9 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          });
                     }
                 });
+
+                // Divider between Projects and Languages
+                col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
             }
             
             // Languages
@@ -367,7 +386,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 SectionTitle(col, "Languages");
                 // Languages Layout: Stacked & Full Width (Table)
-                col.Item().PaddingBottom(0.5f, Unit.Centimetre).Table(table => 
+                col.Item().Table(table =>  
                 {
                     // Calculate columns to spread evenly across full width
                     // Fit ALL languages in one single row as requested
@@ -395,7 +414,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                          });
                     }
                 });
-                col.Item().PaddingBottom(1, Unit.Centimetre);
+                // CSS Section Separator: 0.4cm visual padding above/below line
+                col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
             }
             
              if (profile.Interests != null && profile.Interests.Count != 0)
@@ -405,7 +425,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 // Tags Layout: Chips with background (Rounded 15)
                 // Tags Layout: Chips with background (Rounded 15)
                 // Use Inlined with padding on items to simulate spacing/run-spacing
-                col.Item().PaddingTop(0.5f, Unit.Centimetre).Inlined(w => 
+                // Use Inlined with padding on items to simulate spacing/run-spacing
+                col.Item().Inlined(w => 
                 {
                     w.Spacing(0); // Handled by item padding
                     
@@ -419,6 +440,10 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                         });
                     }
                 });
+
+                
+                // Divider between Interests and Footer
+                col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
             }
 
             // Footer Reference (Background, no gap)
