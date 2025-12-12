@@ -386,33 +386,26 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 SectionTitle(col, "Languages");
                 // Languages Layout: Stacked & Full Width (Table)
-                col.Item().Table(table =>  
+                col.Item().Text(t => 
                 {
-                    // Calculate columns to spread evenly across full width
-                    // Fit ALL languages in one single row as requested
-                    var langCount = profile.Languages.Count;
-                    var columnsCount = langCount; 
-                    
-                    table.ColumnsDefinition(columns => 
-                    {
-                        for(int i=0; i<columnsCount; i++) columns.RelativeColumn();
-                    });
-
-                    // Add items
-                    for (int i = 0; i < langCount; i++)
-                    {
+                     t.DefaultTextStyle(x => x.FontSize(9).FontColor(TextMedium));
+                     t.AlignCenter();
+                     var langTexts = new List<string>();
+                     foreach(var lang in profile.Languages)
+                     {
+                         langTexts.Add($"{StripHtml(lang.Name)} ({StripHtml(lang.Proficiency)})");
+                     }
+                     // Bold language names: render each separately
+                     for (int i = 0; i < profile.Languages.Count; i++)
+                     {
                          var lang = profile.Languages[i];
-                         // Handle wrapping if huge list, though logic limits cols
-                         // Implicit new row if i >= columnsCount
-                         
-                         // Center content both Horizontally and Vertically in the cell
-                         table.Cell().AlignCenter().AlignMiddle().PaddingBottom(10).Column(c => 
+                         t.Span(StripHtml(lang.Name));
+                         t.Span($" ({StripHtml(lang.Proficiency)})").FontSize(8).Italic();
+                         if (i < profile.Languages.Count - 1)
                          {
-                             // Center text inside column
-                             c.Item().AlignCenter().Text(StripHtml(lang.Name)).Bold().FontSize(10).FontColor(TextDark);
-                             c.Item().AlignCenter().Text(StripHtml(lang.Proficiency)).FontSize(9).FontColor(TextMedium);
-                         });
-                    }
+                             t.Span(" | ");
+                         }
+                     }
                 });
                 // CSS Section Separator: 0.4cm visual padding above/below line
                 col.Item().PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre).LineHorizontal(1).LineColor(BorderColor);
