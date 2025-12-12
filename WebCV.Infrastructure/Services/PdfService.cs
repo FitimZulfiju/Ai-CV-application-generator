@@ -28,6 +28,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 page.Content().Element(c => ComposeContent(c, profile));
                 
                 page.Footer().AlignCenter().Text(x => {
+                    x.DefaultTextStyle(s => s.FontSize(7));
                     x.CurrentPageNumber();
                     x.Span(" / ");
                     x.TotalPages();
@@ -198,33 +199,47 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                  col.Item().Table(table => {
                      table.ColumnsDefinition(columns => {
                          columns.RelativeColumn();
-                         columns.ConstantColumn(120);
+                         columns.ConstantColumn(180); // Increased from 120 to 180 for date/duration
                      });
 
-                     foreach(var exp in profile.WorkExperience.OrderByDescending(e => e.StartDate))
+                     var workExperiences = profile.WorkExperience.OrderByDescending(e => e.StartDate).ToList();
+                     for (int i = 0; i < workExperiences.Count; i++)
                      {
+                         var exp = workExperiences[i];
+                         var isLast = (i == workExperiences.Count - 1);
+                         
                          // Row 1: Title & Date
                          table.Cell().Text(StripHtml(exp.JobTitle ?? "")).Bold().FontSize(11).FontColor(TextDark);
-                         table.Cell().AlignRight().Text($"{exp.StartDate:MMM yyyy} - {(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MMM yyyy") : "Present")}").FontSize(10).FontColor(TextMedium);
+                         table.Cell().AlignRight().Text(t =>
+                         {
+                             t.DefaultTextStyle(s => s.FontSize(8).FontColor(TextMedium).Italic());
+                             t.Span($"{exp.StartDate:MM/yyyy} – {(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : "Present")}");
+                             var duration = CalculateDuration(exp.StartDate, exp.EndDate);
+                             if (!string.IsNullOrEmpty(duration))
+                             {
+                                 t.Span($" ({duration})");
+                             }
+                         });
                          
-                         // Row 2: Company (Primary Color)
+                         // Row 2: Company
                          var companyText = StripHtml(exp.CompanyName ?? "");
                          if (!string.IsNullOrEmpty(exp.Location)) companyText += $" - {StripHtml(exp.Location)}";
-                         
                          table.Cell().ColumnSpan(2).Text(companyText).FontSize(10).FontColor(PrimaryColor).SemiBold(); 
 
-                         // Row 3: Description with Custom Bullets (▸)
+                         // Row 3: Description with Bullets
                          if (!string.IsNullOrWhiteSpace(exp.Description))
                          {
-                             // CSS uses ▸ (U+25B8) for achievements
-                             var desc = StripHtml(exp.Description, "\u25B8 ");
-                             
+                             var desc = StripHtml(exp.Description, "▸ ");
                              table.Cell().ColumnSpan(2).PaddingTop(0.2f, Unit.Centimetre)
                                   .Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
                          }
                          
-                         // Spacer Row (Aligned grey separator)
-                         table.Cell().ColumnSpan(2).BorderBottom(1).BorderColor(BorderColor).PaddingTop(0.5f, Unit.Centimetre).PaddingBottom(0.5f, Unit.Centimetre);
+                         // Grey Divider Line (only if not last)
+                         if (!isLast)
+                         {
+                             table.Cell().ColumnSpan(2).PaddingTop(0.4f, Unit.Centimetre).PaddingBottom(0.4f, Unit.Centimetre)
+                                  .LineHorizontal(1).LineColor(BorderColor);
+                         }
                      }
                  });
                  col.Item().PaddingBottom(1, Unit.Centimetre);
@@ -255,7 +270,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                       r.ConstantItem(100).AlignRight().Text($"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}").FontSize(10).FontColor(TextMedium);
                                   });
                                   
-                                  c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold();
+                                  c.Item().Text(StripHtml(edu.InstitutionName ?? "")).FontSize(10).FontColor(PrimaryColor).SemiBold().Bold();
 
                                   if (!string.IsNullOrEmpty(edu.Description))
                                   {
@@ -300,7 +315,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                          t.DefaultTextStyle(x => x.FontSize(9).FontColor(TextMedium));
                                          if (!string.IsNullOrEmpty(proj.Link))
                                          {
-                                             t.Span("Link: ").Bold().FontColor(PrimaryDark);
+                                             t.Span("GitHub: ").Bold().FontColor(PrimaryDark);
                                              t.Span(proj.Link).FontColor(PrimaryColor); 
                                              t.Span(" | ");
                                          }
@@ -318,7 +333,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                  if (!string.IsNullOrEmpty(proj.Description))
                                  {
                                       // CSS uses ✓ (U+2713) for project features
-                                      var desc = StripHtml(proj.Description, "\u2713 ");
+                                      var desc = StripHtml(proj.Description, "✓ ");
 
                                       c.Item().PaddingTop(0.1f, Unit.Centimetre).Text(desc).FontSize(9).FontColor(TextMedium).LineHeight(1.5f);
                                  }
@@ -334,10 +349,22 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 SectionTitle(col, "Languages");
                 col.Item().Text(t => 
                 {
+                     t.DefaultTextStyle(x => x.FontSize(10).FontColor(TextMedium));
+                     var langTexts = new List<string>();
                      foreach(var lang in profile.Languages)
                      {
-                         t.Span($"{StripHtml(lang.Name)}").Bold().FontColor(TextDark);
-                         t.Span($" ({StripHtml(lang.Proficiency)}) | ").FontColor(TextMedium);
+                         langTexts.Add($"{StripHtml(lang.Name)} ({StripHtml(lang.Proficiency)})");
+                     }
+                     // Bold language names: render each separately
+                     for (int i = 0; i < profile.Languages.Count; i++)
+                     {
+                         var lang = profile.Languages[i];
+                         t.Span(StripHtml(lang.Name)).Bold();
+                         t.Span($" ({StripHtml(lang.Proficiency)})");
+                         if (i < profile.Languages.Count - 1)
+                         {
+                             t.Span(" | ");
+                         }
                      }
                 });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
@@ -347,31 +374,19 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 SectionTitle(col, "Interests");
                 
-                // Tags Layout: Grid Table (Fallback for rounding)
-                col.Item().Table(t => 
+                // Tags Layout: Single row with bullet separators
+                col.Item().Text(t => 
                 {
-                    t.ColumnsDefinition(c => 
-                    {
-                        c.RelativeColumn();
-                        c.RelativeColumn();
-                        c.RelativeColumn();
-                        c.RelativeColumn();
-                    });
-                    
-                foreach(var interest in profile.Interests)
-                    {
-                        t.Cell().Padding(2).Element(e => 
-                        {
-                            e.Border(1).BorderColor(BorderColor).Background(BackgroundLight).CornerRadius(15).PaddingHorizontal(8).PaddingVertical(2)
-                             .AlignCenter().Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium).SemiBold();
-                        });
-                    }
+                    t.DefaultTextStyle(x => x.FontSize(9).FontColor(TextMedium));
+                    var interestNames = profile.Interests.Select(i => StripHtml(i.Name)).ToList();
+                    t.Span(string.Join(" • ", interestNames));
                 });
             }
 
-            // Footer Reference
-            col.Item().PaddingTop(1, Unit.Centimetre).AlignCenter().Text("References available upon request")
-                .FontSize(9).FontColor(TextMedium).Italic();
+            // Footer Reference (matching CSS: grey background, padding, top border)
+            col.Item().BorderTop(1).BorderColor(BorderColor).Background(BackgroundLight)
+               .PaddingVertical(1, Unit.Centimetre).AlignCenter()
+               .Text("References available upon request").FontSize(9).FontColor(TextMedium).Italic();
         });
     }
 
@@ -381,21 +396,65 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                .Row(row => 
                {
                    // CSS: display: inline-block; border-bottom: ... (Matches content width)
-                   row.AutoItem().BorderBottom(2).BorderColor(PrimaryColor) 
+                   row.AutoItem().BorderBottom(1.5f).BorderColor(PrimaryColor) 
                       .Text(title.ToUpper()).FontSize(12).Bold().FontColor(PrimaryDark).LetterSpacing(0.06f);
                });
+    }
+
+    private static string CalculateDuration(DateTime? start, DateTime? end)
+    {
+        if (!start.HasValue) return "";
+        
+        var endDate = end ?? DateTime.Now;
+        var totalMonths = ((endDate.Year - start.Value.Year) * 12) + endDate.Month - start.Value.Month + 1;
+
+        var years = totalMonths / 12;
+        var months = totalMonths % 12;
+
+        var parts = new List<string>();
+        if (years > 0) parts.Add($"{years} year{(years > 1 ? "s" : "")}");
+        if (months > 0) parts.Add($"{months} month{(months > 1 ? "s" : "")}");
+        
+        return string.Join(" ", parts);
     }
 
     private static string StripHtml(string input, string bullet = "\u2022 ")
     {
         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
-        // Pre-process list items to bullets
-        var text = System.Text.RegularExpressions.Regex.Replace(input, "<li>", bullet, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        text = System.Text.RegularExpressions.Regex.Replace(text, "</li>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        text = System.Text.RegularExpressions.Regex.Replace(text, "<ul>|</ul>", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
         
-        text = text.Replace("&#8226;", "\u2022 ");
+        // If already contains HTML li tags, process them
+        if (input.Contains("<li>", StringComparison.OrdinalIgnoreCase))
+        {
+            var text = System.Text.RegularExpressions.Regex.Replace(input, "<li>", bullet, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            text = System.Text.RegularExpressions.Regex.Replace(text, "</li>", "\n", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            text = System.Text.RegularExpressions.Regex.Replace(text, "<ul>|</ul>", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            text = text.Replace("&#8226;", "\u2022 ");
+            return System.Text.RegularExpressions.Regex.Replace(text, "<.*?>", string.Empty).Trim();
+        }
         
-        return System.Text.RegularExpressions.Regex.Replace(text, "<.*?>", string.Empty).Trim();
+        // Strip all HTML tags first
+        var cleaned = System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty).Trim();
+        
+        // Only convert plain text to bullets if a custom bullet was specified (for descriptions)
+        // If default bullet (\u2022), this is likely a title/name field - just return cleaned text
+        if (bullet != "\u2022 " && cleaned.Contains('\n'))
+        {
+            // Plain text description: split by newlines and add bullets
+            var lines = cleaned.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            var result = new System.Text.StringBuilder();
+            
+            foreach (var line in lines)
+            {
+                var cleanLine = line.Trim().TrimStart('-', '*').Trim();
+                if (!string.IsNullOrEmpty(cleanLine))
+                {
+                    result.AppendLine($"{bullet}{cleanLine}");
+                }
+            }
+            
+            return result.ToString().Trim();
+        }
+        
+        return cleaned;
     }
 }
