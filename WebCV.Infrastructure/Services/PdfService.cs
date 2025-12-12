@@ -366,18 +366,33 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
              if (profile.Languages != null && profile.Languages.Count != 0)
             {
                 SectionTitle(col, "Languages");
-                // Use Inlined to flow items like tags
-                col.Item().PaddingBottom(0.5f, Unit.Centimetre).Inlined(w => 
+                // Languages Layout: Stacked & Full Width (Table)
+                col.Item().PaddingBottom(0.5f, Unit.Centimetre).Table(table => 
                 {
-                    w.Spacing(10);
-                    foreach(var lang in profile.Languages)
+                    // Calculate columns to spread evenly across full width
+                    // Fit ALL languages in one single row as requested
+                    var langCount = profile.Languages.Count;
+                    var columnsCount = langCount; 
+                    
+                    table.ColumnsDefinition(columns => 
                     {
-                        w.Item().Text(t => 
-                        {
-                            t.DefaultTextStyle(dt => dt.FontSize(10).FontColor(TextMedium));
-                            t.Span(StripHtml(lang.Name)).Bold();
-                            t.Span($" ({StripHtml(lang.Proficiency)})");
-                        });
+                        for(int i=0; i<columnsCount; i++) columns.RelativeColumn();
+                    });
+
+                    // Add items
+                    for (int i = 0; i < langCount; i++)
+                    {
+                         var lang = profile.Languages[i];
+                         // Handle wrapping if huge list, though logic limits cols
+                         // Implicit new row if i >= columnsCount
+                         
+                         // Center content both Horizontally and Vertically in the cell
+                         table.Cell().AlignCenter().AlignMiddle().PaddingBottom(10).Column(c => 
+                         {
+                             // Center text inside column
+                             c.Item().AlignCenter().Text(StripHtml(lang.Name)).Bold().FontSize(10).FontColor(TextDark);
+                             c.Item().AlignCenter().Text(StripHtml(lang.Proficiency)).FontSize(9).FontColor(TextMedium);
+                         });
                     }
                 });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
@@ -387,21 +402,28 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 SectionTitle(col, "Interests");
                 
-                // Tags Layout: Chips with background
-                col.Item().Inlined(w => 
+                // Tags Layout: Chips with background (Rounded 15)
+                // Tags Layout: Chips with background (Rounded 15)
+                // Use Inlined with padding on items to simulate spacing/run-spacing
+                col.Item().PaddingTop(0.5f, Unit.Centimetre).Inlined(w => 
                 {
-                    w.Spacing(5);
+                    w.Spacing(0); // Handled by item padding
+                    
                     foreach(var interest in profile.Interests)
                     {
-                        w.Item().Background(BackgroundLight).PaddingHorizontal(8).PaddingVertical(4).CornerRadius(4)
-                         .Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium);
+                        w.Item().PaddingRight(10).PaddingBottom(10).Element(chip => 
+                        {
+                           chip.Border(1).BorderColor(BorderColor).Background(BackgroundLight)
+                            .PaddingHorizontal(12).PaddingVertical(6).CornerRadius(15)
+                            .Text(StripHtml(interest.Name)).FontSize(9).FontColor(TextMedium).Medium();
+                        });
                     }
                 });
             }
 
-            // Footer Reference
-            col.Item().PaddingTop(1, Unit.Centimetre).AlignCenter()
-               .Text("References available upon request").FontSize(10).FontColor(TextMedium);
+            // Footer Reference (Background, no gap)
+            col.Item().Background(BackgroundLight).PaddingVertical(1, Unit.Centimetre).AlignCenter()
+               .Text("References available upon request").FontSize(10).FontColor(TextMedium).Italic();
         });
     }
 
