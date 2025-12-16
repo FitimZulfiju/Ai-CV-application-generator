@@ -76,7 +76,7 @@ if (Directory.Exists(fontPath))
 {
     foreach (var file in Directory.GetFiles(fontPath, "*.ttf"))
     {
-        QuestPDF.Drawing.FontManager.RegisterFontType(File.OpenRead(file));
+        QuestPDF.Drawing.FontManager.RegisterFont(File.OpenRead(file));
     }
 }
 
