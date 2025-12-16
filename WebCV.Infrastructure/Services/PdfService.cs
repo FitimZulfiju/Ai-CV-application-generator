@@ -818,13 +818,42 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             }
 
             // Apply styling
-            var span = textDescriptor.Span(cleanContent);
-            if (isBold)
-                span.Bold();
-            if (isItalic)
-                span.Italic();
-            if (!string.IsNullOrEmpty(color))
-                span.FontColor(color);
+            if (cleanContent == "\u25B8") // Arrow
+            {
+                textDescriptor.Element(e =>
+                    e.PaddingBottom(-1.5f)
+                        .Width(10)
+                        .Height(10)
+                        .Svg("M9 12l-5 5V7z") // Simple arrow path
+                        .FillColor(PrimaryColor)
+                );
+
+                // Add a small space after
+                textDescriptor.Span(" ");
+            }
+            else if (cleanContent == "\u2713") // Checkmark
+            {
+                textDescriptor.Element(e =>
+                    e.PaddingBottom(-1)
+                        .Width(10)
+                        .Height(10)
+                        .Svg("M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z") // Checkmark path
+                        .FillColor(AccentColor)
+                );
+
+                // Add a small space after
+                textDescriptor.Span(" ");
+            }
+            else
+            {
+                var span = textDescriptor.Span(cleanContent);
+                if (isBold)
+                    span.Bold();
+                if (isItalic)
+                    span.Italic();
+                if (!string.IsNullOrEmpty(color))
+                    span.FontColor(color);
+            }
 
             lastIndex = match.Index + match.Length;
         }
