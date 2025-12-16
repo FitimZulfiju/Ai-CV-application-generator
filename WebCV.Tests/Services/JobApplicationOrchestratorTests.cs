@@ -1,11 +1,9 @@
-using Moq;
-using System.Text.Json;
-using WebCV.Domain;
-using WebCV.Application.Interfaces;
-using WebCV.Application.DTOs;
-using WebCV.Infrastructure.Services;
-using Xunit;
 using Microsoft.Extensions.Logging;
+using Moq;
+using WebCV.Application.DTOs;
+using WebCV.Application.Interfaces;
+using WebCV.Domain;
+using WebCV.Infrastructure.Services;
 
 namespace WebCV.Tests.Services;
 
@@ -38,7 +36,7 @@ public class JobApplicationOrchestratorTests
     public async Task FetchJobDetailsAsync_ShouldCallScraper()
     {
         // Arrange
-        var url = "https://example.com/job";
+        const string url = "https://example.com/job";
         var expectedJob = new JobPosting { Title = "Test Job" };
         _mockScraper.Setup(s => s.ScrapeJobPostingAsync(url)).ReturnsAsync(expectedJob);
 
@@ -54,33 +52,67 @@ public class JobApplicationOrchestratorTests
     public async Task GenerateApplicationAsync_ShouldOrchestrateAIAndReturnResults()
     {
         // Arrange
-        var userId = "user1";
-        var provider = AIProvider.OpenAI;
+        const string userId = "user1";
+        const AIProvider provider = AIProvider.OpenAI;
         var profile = new CandidateProfile();
         var job = new JobPosting();
-        
-        var expectedCoverLetter = "Dear Hiring Manager...";
-        var expectedResume = new TailoredResumeResult { Profile = new CandidateProfile { FullName = "Tailored" } };
 
-        _mockAiFactory.Setup(f => f.GetServiceAsync(provider, userId))
+        const string expectedCoverLetter = "Dear Hiring Manager...";
+        var expectedResume = new TailoredResumeResult
+        {
+            Profile = new CandidateProfile { FullName = "Tailored" },
+        };
+
+        _mockAiFactory
+            .Setup(f =>
+                f.GetServiceAsync(It.IsAny<AIProvider>(), It.IsAny<string>(), It.IsAny<AIModel?>())
+            )
             .ReturnsAsync(_mockAiService.Object);
 
-        _mockAiService.Setup(a => a.GenerateCoverLetterAsync(profile, job))
+        _mockAiService
+            .Setup(a =>
+                a.GenerateCoverLetterAsync(
+                    It.IsAny<CandidateProfile>(),
+                    It.IsAny<JobPosting>(),
+                    It.IsAny<string>()
+                )
+            )
             .ReturnsAsync(expectedCoverLetter);
-        
-        _mockAiService.Setup(a => a.GenerateTailoredResumeAsync(profile, job))
+
+        _mockAiService
+            .Setup(a =>
+                a.GenerateTailoredResumeAsync(
+                    It.IsAny<CandidateProfile>(),
+                    It.IsAny<JobPosting>(),
+                    It.IsAny<string>()
+                )
+            )
             .ReturnsAsync(expectedResume);
 
         // Act
-        var (coverLetter, resumeResult) = await _orchestrator.GenerateApplicationAsync(userId, provider, profile, job);
+        var (coverLetter, resumeResult) = await _orchestrator.GenerateApplicationAsync(
+            userId,
+            provider,
+            profile,
+            job
+        );
 
         // Assert
         Assert.Equal(expectedCoverLetter, coverLetter);
         Assert.Equal(expectedResume, resumeResult);
-        
-        _mockAiFactory.Verify(f => f.GetServiceAsync(provider, userId), Times.Once);
-        _mockAiService.Verify(a => a.GenerateCoverLetterAsync(profile, job), Times.Once);
-        _mockAiService.Verify(a => a.GenerateTailoredResumeAsync(profile, job), Times.Once);
+
+        _mockAiFactory.Verify(
+            f => f.GetServiceAsync(provider, userId, It.IsAny<AIModel?>()),
+            Times.Once
+        );
+        _mockAiService.Verify(
+            a => a.GenerateCoverLetterAsync(profile, job, It.IsAny<string>()),
+            Times.Once
+        );
+        _mockAiService.Verify(
+            a => a.GenerateTailoredResumeAsync(profile, job, It.IsAny<string>()),
+            Times.Once
+        );
     }
 
     [Fact]
@@ -97,12 +129,18 @@ public class JobApplicationOrchestratorTests
         await _orchestrator.SaveApplicationAsync(userId, job, profile, coverLetter, tailoredResume);
 
         // Assert
-        _mockCvService.Verify(s => s.SaveApplicationAsync(It.Is<GeneratedApplication>(app => 
-            app.UserId == userId &&
-            app.JobPosting == job &&
-            app.CandidateProfileId == profile.Id &&
-            app.CoverLetterContent == coverLetter &&
-            !string.IsNullOrEmpty(app.TailoredResumeJson)
-        )), Times.Once);
+        _mockCvService.Verify(
+            s =>
+                s.SaveApplicationAsync(
+                    It.Is<GeneratedApplication>(app =>
+                        app.UserId == userId
+                        && app.JobPosting == job
+                        && app.CandidateProfileId == profile.Id
+                        && app.CoverLetterContent == coverLetter
+                        && !string.IsNullOrEmpty(app.TailoredResumeJson)
+                    )
+                ),
+            Times.Once
+        );
     }
 }
