@@ -7,11 +7,16 @@
 
         <form method="post" action="/perform-login">
 
-            <MudTextField T="string" @bind-Value="_email" UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="Email" Variant="Variant.Outlined" InputType="InputType.Email"
-                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
+            <MudTextField T="string" @bind-Value="_email"
+                UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="Email"
+                Variant="Variant.Outlined" InputType="InputType.Email" Adornment="Adornment.Start"
+                AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
 
-            <MudTextField T="string" @bind-Value="_password" UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password"
-                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="mb-3" Required="true" />
+            <MudTextField T="string" @bind-Value="_password"
+                UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })" Label="Password"
+                Variant="Variant.Outlined" InputType="@PasswordInputType" Adornment="Adornment.End"
+                AdornmentIcon="@PasswordIcon" OnAdornmentClick="TogglePasswordVisibility"
+                AdornmentAriaLabel="Toggle password visibility" Class="mb-3" Required="true" />
 
             <div class="d-flex align-center mb-3">
                 <input type="hidden" name="rememberMe" value="@(_rememberMe.ToString().ToLower())" />
@@ -23,7 +28,8 @@
                 <MudAlert Severity="Severity.Error" Class="mb-3">@Error</MudAlert>
             }
 
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                FullWidth="true" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
         </form>
 
         <MudDivider Class="my-4" />
