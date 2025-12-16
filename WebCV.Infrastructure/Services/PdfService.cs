@@ -828,9 +828,6 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                             $"<svg viewBox=\"0 0 24 24\"><path fill=\"{PrimaryColor}\" d=\"M9 12l-5 5V7z\"/></svg>"
                         )
                 );
-
-                // Add a small space after
-                textDescriptor.Span(" ");
             }
             else if (cleanContent == "\u2713") // Checkmark
             {
