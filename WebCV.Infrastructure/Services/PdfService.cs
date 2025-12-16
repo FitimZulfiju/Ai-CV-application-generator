@@ -55,20 +55,154 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
 
     public Task<byte[]> GenerateCvAsync(CandidateProfile profile)
     {
+        // Smart Sizing: Find optimal font size for each page INDEPENDENTLY
+        float[] fontSizes =
+        [
+            14f,
+            13.75f,
+            13.5f,
+            13.25f,
+            13f,
+            12.75f,
+            12.5f,
+            12.25f,
+            12f,
+            11.75f,
+            11.5f,
+            11.25f,
+            11f,
+            10.75f,
+            10.5f,
+            10.25f,
+            10f,
+            9.5f,
+            9f,
+            8.5f,
+            8f,
+        ];
+
+        // 1. Find optimal font size for Page 1 (Header + Summary + Skills)
+        float page1Size = 8f; // Default fallback
+        foreach (var size in fontSizes)
+        {
+            var p1Doc = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1.25f, Unit.Centimetre);
+                    page.DefaultTextStyle(x =>
+                        x.FontSize(size).FontFamily("Lato").FontColor(TextDark)
+                    );
+                    page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
+                    page.Content().Element(c => ComposePageOne(c, profile, size));
+                });
+            });
+            if (GetPageCount(p1Doc.GeneratePdf()) <= 1)
+            {
+                page1Size = size;
+                break; // Found largest that fits
+            }
+        }
+
+        // 2. Find optimal font size for Page 2 (Work Experience) - expanded range
+        float[] page2FontSizes =
+        [
+            16f,
+            15.75f,
+            15.5f,
+            15.25f,
+            15f,
+            14.75f,
+            14.5f,
+            14.25f,
+            14f,
+            13.75f,
+            13.5f,
+            13.25f,
+            13f,
+            12.75f,
+            12.5f,
+            12.25f,
+            12f,
+            11.75f,
+            11.5f,
+            11.25f,
+            11f,
+            10.75f,
+            10.5f,
+            10.25f,
+            10f,
+            9.5f,
+            9f,
+            8.5f,
+            8f,
+        ];
+        float page2Size = 8f; // Default fallback
+        foreach (var size in page2FontSizes)
+        {
+            var p2Doc = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1.25f, Unit.Centimetre);
+                    page.DefaultTextStyle(x =>
+                        x.FontSize(size).FontFamily("Lato").FontColor(TextDark)
+                    );
+                    page.Content().Element(c => ComposePageTwo(c, profile, size));
+                });
+            });
+            if (GetPageCount(p2Doc.GeneratePdf()) <= 1)
+            {
+                page2Size = size;
+                break; // Found largest that fits
+            }
+        }
+
+        // 3. Use Page 2's size for Page 3 (or could make it independent too)
+        float page3Size = page2Size;
+
+        // 4. Generate final document with independent font sizes per page
         var document = Document.Create(container =>
         {
+            // Page 1
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(1.25f, Unit.Centimetre); // Closer to CSS 2.5em/3.125em
-                page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Lato").FontColor(TextDark));
+                page.Margin(1.25f, Unit.Centimetre);
+                page.DefaultTextStyle(x =>
+                    x.FontSize(page1Size).FontFamily("Lato").FontColor(TextDark)
+                );
+                page.Header().Element(c => ComposeHeader(c, profile));
+                page.Content().Element(c => ComposePageOne(c, profile, page1Size));
+            });
 
-                page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
-                page.Content().Element(c => ComposeContent(c, profile));
+            // Page 2
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(1.25f, Unit.Centimetre);
+                page.DefaultTextStyle(x =>
+                    x.FontSize(page2Size).FontFamily("Lato").FontColor(TextDark)
+                );
+                page.Content().Element(c => ComposePageTwo(c, profile, page2Size));
+            });
+
+            // Page 3+
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(1.25f, Unit.Centimetre);
+                page.DefaultTextStyle(x =>
+                    x.FontSize(page3Size).FontFamily("Lato").FontColor(TextDark)
+                );
+                page.Content().Element(c => ComposePageThree(c, profile, page3Size));
             });
         });
 
-        return Task.FromResult(document.GeneratePdf());
+        byte[] pdfBytes = document.GeneratePdf();
+        return Task.FromResult(pdfBytes);
     }
 
     public Task<byte[]> GenerateCoverLetterAsync(
@@ -78,154 +212,190 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         string companyName
     )
     {
-        var document = Document.Create(container =>
+        // Smart Sizing Loop: Try fonts from 12 down to 8 to fit in 1 page
+        float[] fontSizes = [12f, 11.5f, 11f, 10.5f, 10f, 9.5f, 9f, 8.5f, 8f];
+        byte[] pdfBytes = [];
+
+        foreach (var size in fontSizes)
         {
-            container.Page(page =>
+            var document = Document.Create(container =>
             {
-                page.Size(PageSizes.A4);
-                page.Margin(1.25f, Unit.Centimetre);
-                page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Lato").FontColor(TextDark));
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1.25f, Unit.Centimetre);
+                    page.DefaultTextStyle(x =>
+                        x.FontSize(size).FontFamily("Lato").FontColor(TextDark)
+                    );
 
-                page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
+                    page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
 
-                page.Content()
-                    .Column(col =>
-                    {
-                        // Body with left border and background (matching .summary style)
-                        col.Item().PaddingTop(0.8f, Unit.Centimetre);
+                    page.Content()
+                        .Column(col =>
+                        {
+                            // Body with left border and background (matching .summary style)
+                            col.Item().PaddingTop(0.8f, Unit.Centimetre);
 
-                        // Wrap the entire letter content in a styled container (thinner: 1.5pt)
-                        col.Item()
-                            .Background(BackgroundLight)
-                            .BorderLeft(1.5f)
-                            .BorderColor(PrimaryColor)
-                            .CornerRadius(5)
-                            .Padding(10)
-                            .Column(letterCol =>
-                            {
-                                // Date
-                                letterCol
-                                    .Item()
-                                    .Text(DateTime.Now.ToString("MMMM dd, yyyy"))
-                                    .FontSize(10);
-                                letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
-
-                                // Subject removed (included in generated content)
-
-                                // Main content
-                                if (!string.IsNullOrWhiteSpace(letterContent))
+                            // Wrap the entire letter content in a styled container (thinner: 1.5pt)
+                            col.Item()
+                                .Background(BackgroundLight)
+                                .BorderLeft(1.5f)
+                                .BorderColor(PrimaryColor)
+                                .CornerRadius(5)
+                                .Padding(10)
+                                .Column(letterCol =>
                                 {
-                                    foreach (
-                                        var paragraph in letterContent.Split(
-                                            ["\n", "\r\n"],
-                                            StringSplitOptions.RemoveEmptyEntries
-                                        )
-                                    )
+                                    // Date
+                                    letterCol
+                                        .Item()
+                                        .Text(DateTime.Now.ToString("MMMM dd, yyyy"))
+                                        .FontSize(size);
+                                    letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
+
+                                    // Subject removed (included in generated content)
+
+                                    // Main content
+                                    if (!string.IsNullOrWhiteSpace(letterContent))
                                     {
-                                        letterCol
-                                            .Item()
-                                            .Text(paragraph.Trim())
-                                            .FontSize(10)
-                                            .LineHeight(1.5f);
-                                        letterCol.Item().PaddingBottom(0.35f, Unit.Centimetre);
+                                        foreach (
+                                            var paragraph in letterContent.Split(
+                                                ["\n", "\r\n"],
+                                                StringSplitOptions.RemoveEmptyEntries
+                                            )
+                                        )
+                                        {
+                                            letterCol
+                                                .Item()
+                                                .Text(paragraph.Trim())
+                                                .FontSize(size)
+                                                .LineHeight(1.5f);
+                                            letterCol.Item().PaddingBottom(0.35f, Unit.Centimetre);
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    letterCol.Item().Text("No content provided.").Italic();
-                                }
+                                    else
+                                    {
+                                        letterCol.Item().Text("No content provided.").Italic();
+                                    }
 
-                                // Sign-off removed (included in generated content)
-                            });
-                    });
+                                    // Sign-off removed (included in generated content)
+                                });
+                        });
 
-                // No footer for cover letter
+                    // No footer for cover letter
+                });
             });
-        });
 
-        return Task.FromResult(document.GeneratePdf());
+            pdfBytes = document.GeneratePdf();
+            if (GetPageCount(pdfBytes) <= 1)
+            {
+                // Found the largest font that fits on 1 page!
+                return Task.FromResult(pdfBytes);
+            }
+        }
+
+        return Task.FromResult(pdfBytes!);
     }
 
     private void ComposeHeader(IContainer container, CandidateProfile profile)
     {
-        // Header from CSS: Background Gradient (Simulated with Primary), Color White, Centered, Padding
+        // Header from CSS: Background Gradient (Simulated with Primary), Color White, Left Aligned with Image
+        // Determine if photo will be shown to calculate padding
+        bool showPhoto =
+            profile.ShowProfilePicture && !string.IsNullOrEmpty(profile.ProfilePictureUrl);
+        float textPaddingLeft = showPhoto ? 4f : 1f; // 4cm when photo, 1cm otherwise (matches cv-print.css)
+
         container.Column(c =>
         {
             c.Item()
                 .Background(PrimaryColor)
-                .Padding(1, Unit.Centimetre) // approx 2.5em
-                .Column(col =>
+                .Layers(layers =>
                 {
-                    // Photo
-                    if (
-                        !string.IsNullOrEmpty(profile.ProfilePictureUrl)
-                        && profile.ShowProfilePicture
-                    )
+                    // 1. Text Layer (Primary - Centered in remaining space)
+                    layers
+                        .PrimaryLayer()
+                        .PaddingVertical(1, Unit.Centimetre)
+                        .PaddingLeft(textPaddingLeft, Unit.Centimetre)
+                        .PaddingRight(1, Unit.Centimetre)
+                        .MinHeight(3f, Unit.Centimetre) // Ensure height for image
+                        .Column(col =>
+                        {
+                            // Name
+                            col.Item()
+                                .AlignCenter()
+                                .Text(profile.FullName)
+                                .FontSize(20)
+                                .Bold()
+                                .FontColor("#ffffff");
+
+                            // Title
+                            col.Item()
+                                .AlignCenter()
+                                .Text(profile.Title ?? "Candidate")
+                                .FontSize(11)
+                                .FontColor(Colors.Grey.Lighten4);
+
+                            // Contact Info
+                            col.Item()
+                                .PaddingTop(0.2f, Unit.Centimetre)
+                                .AlignCenter()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
+                                    var parts = new List<string>();
+                                    if (!string.IsNullOrEmpty(profile.Email))
+                                        parts.Add($"Email: {profile.Email}");
+                                    if (!string.IsNullOrEmpty(profile.PhoneNumber))
+                                        parts.Add($"Phone: {profile.PhoneNumber}");
+                                    if (!string.IsNullOrEmpty(profile.Location))
+                                        parts.Add($"Location: {profile.Location}");
+
+                                    t.Span(string.Join(" | ", parts));
+                                });
+
+                            // Links
+                            col.Item()
+                                .PaddingTop(0.1f, Unit.Centimetre)
+                                .AlignCenter()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
+                                    var parts = new List<string>();
+                                    if (!string.IsNullOrEmpty(profile.LinkedInUrl))
+                                        parts.Add($"LinkedIn: {profile.LinkedInUrl}");
+                                    if (!string.IsNullOrEmpty(profile.PortfolioUrl))
+                                        parts.Add($"GitHub: {profile.PortfolioUrl}");
+
+                                    t.Span(string.Join(" | ", parts));
+                                });
+                        });
+
+                    // 2. Image Layer (Overlay - Left Aligned)
+                    if (showPhoto)
                     {
-                        string path = Path.Combine(
+                        var path = Path.Combine(
                             _env.WebRootPath,
-                            profile.ProfilePictureUrl.TrimStart('/', '\\')
+                            profile.ProfilePictureUrl!.TrimStart('/', '\\')
                         );
                         if (File.Exists(path))
                         {
-                            col.Item()
-                                .AlignCenter()
-                                .Width(3, Unit.Centimetre)
-                                .Height(3, Unit.Centimetre)
-                                .Image(path);
-                            col.Item().Height(0.5f, Unit.Centimetre);
+                            layers
+                                .Layer()
+                                .AlignMiddle()
+                                .AlignLeft()
+                                .PaddingLeft(1, Unit.Centimetre) // ~2cm left margin
+                                .Width(2.5f, Unit.Centimetre) // 6.25em ~ 2.5cm (print size)
+                                .Height(2.5f, Unit.Centimetre)
+                                .Element(e =>
+                                {
+                                    e.Background("#ffffff") // Fill gaps with white
+                                        .CornerRadius(1.25f, Unit.Centimetre)
+                                        .Border(2)
+                                        .BorderColor("#ffffff")
+                                        .Image(path)
+                                        .FitArea();
+                                });
                         }
                     }
-
-                    // Name
-                    col.Item()
-                        .AlignCenter()
-                        .Text(profile.FullName)
-                        .FontSize(24)
-                        .Bold()
-                        .FontColor("#ffffff");
-
-                    // Title
-                    col.Item()
-                        .AlignCenter()
-                        .Text(profile.Title ?? "Candidate")
-                        .FontSize(14)
-                        .FontColor("#ffffff")
-                        .FontColor(Colors.Grey.Lighten4);
-
-                    // Contact Info
-                    col.Item()
-                        .PaddingTop(0.5f, Unit.Centimetre)
-                        .AlignCenter()
-                        .Text(t =>
-                        {
-                            t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                            var parts = new List<string>();
-                            if (!string.IsNullOrEmpty(profile.Email))
-                                parts.Add(profile.Email);
-                            if (!string.IsNullOrEmpty(profile.PhoneNumber))
-                                parts.Add(profile.PhoneNumber);
-                            if (!string.IsNullOrEmpty(profile.Location))
-                                parts.Add(profile.Location);
-
-                            t.Span(string.Join(" | ", parts));
-                        });
-
-                    // Links
-                    col.Item()
-                        .PaddingTop(0.2f, Unit.Centimetre)
-                        .AlignCenter()
-                        .Text(t =>
-                        {
-                            t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                            var parts = new List<string>();
-                            if (!string.IsNullOrEmpty(profile.LinkedInUrl))
-                                parts.Add($"LinkedIn: {profile.LinkedInUrl}");
-                            if (!string.IsNullOrEmpty(profile.PortfolioUrl))
-                                parts.Add($"GitHub: {profile.PortfolioUrl}");
-
-                            t.Span(string.Join(" | ", parts));
-                        });
                 });
 
             // Bottom Accent Line - Full Width (thinner: 0.04cm)
@@ -233,7 +403,13 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         });
     }
 
-    private static void ComposeContent(IContainer container, CandidateProfile profile)
+    // --- Helper Methods for Page Sections ---
+
+    private static void ComposePageOne(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize
+    )
     {
         container.Column(col =>
         {
@@ -255,7 +431,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                             .Text(t =>
                             {
                                 t.DefaultTextStyle(s =>
-                                    s.FontColor(TextMedium).FontSize(10).LineHeight(1.5f)
+                                    s.FontColor(TextMedium).FontSize(fontSize).LineHeight(1.5f)
                                 );
                                 FormatHtmlToText(t, PreprocessHtml(profile.ProfessionalSummary));
                             });
@@ -263,7 +439,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
 
-            // Skills (Moved to Page 1)
+            // Skills (Core Competencies)
             if (profile.Skills != null && profile.Skills.Count != 0)
             {
                 SectionTitle(col, "Core Competencies");
@@ -272,7 +448,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 foreach (var cat in categories)
                 {
                     col.Item()
-                        .PaddingBottom(0.2f, Unit.Centimetre)
+                        .PaddingBottom(0.3f, Unit.Centimetre)
                         .Background(BackgroundLight)
                         .BorderLeft(1.5f)
                         .BorderColor(PrimaryColor)
@@ -283,21 +459,30 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                             c.Item()
                                 .Text(StripHtml(cat.Key))
                                 .Bold()
-                                .FontSize(10)
+                                .FontSize(fontSize)
                                 .FontColor(PrimaryDark);
                             c.Item()
                                 .Text(
                                     string.Join(", ", cat.Select(s => StripHtml(s.Name)).Distinct())
                                 )
-                                .FontSize(9)
+                                .FontSize(fontSize - 1)
                                 .FontColor(TextMedium);
                         });
                 }
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
+        });
+    }
 
-            // Page Break 1 (Start of Page 2: Work Experience)
-            col.Item().PageBreak();
+    private static void ComposePageTwo(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize
+    )
+    {
+        container.Column(col =>
+        {
+            col.Item().PaddingTop(1, Unit.Centimetre);
 
             // Experience
             if (profile.WorkExperience != null && profile.WorkExperience.Count != 0)
@@ -310,7 +495,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                         table.ColumnsDefinition(columns =>
                         {
                             columns.RelativeColumn();
-                            columns.ConstantColumn(180); // Increased from 120 to 180 for date/duration
+                            columns.ConstantColumn(180);
                         });
 
                         var workExperiences = profile
@@ -326,14 +511,16 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                 .Cell()
                                 .Text(StripHtml(exp.JobTitle ?? ""))
                                 .Bold()
-                                .FontSize(11)
+                                .FontSize(fontSize + 1)
                                 .FontColor(TextDark);
                             table
                                 .Cell()
                                 .AlignRight()
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(s => s.FontSize(8).FontColor(TextMedium));
+                                    t.DefaultTextStyle(s =>
+                                        s.FontSize(fontSize - 2).FontColor(TextMedium)
+                                    );
                                     t.Span(
                                         $"{exp.StartDate:MM/yyyy} – {(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : "Present")}"
                                     );
@@ -352,7 +539,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                 .Cell()
                                 .ColumnSpan(2)
                                 .Text(companyText)
-                                .FontSize(10)
+                                .FontSize(fontSize)
                                 .FontColor(PrimaryColor)
                                 .SemiBold();
 
@@ -366,7 +553,9 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                     .Text(t =>
                                     {
                                         t.DefaultTextStyle(dt =>
-                                            dt.FontSize(9).FontColor(TextMedium).LineHeight(1.5f)
+                                            dt.FontSize(fontSize - 1)
+                                                .FontColor(TextMedium)
+                                                .LineHeight(1.5f)
                                         );
                                         FormatHtmlToText(
                                             t,
@@ -375,7 +564,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                     });
                             }
 
-                            // Grey Divider Line (only if not last)
+                            // Grey Divider Line
                             if (!isLast)
                             {
                                 table
@@ -390,9 +579,18 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                     });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
+        });
+    }
 
-            // Page Break 2 (Start of Page 3: Education, etc)
-            col.Item().PageBreak();
+    private static void ComposePageThree(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize
+    )
+    {
+        container.Column(col =>
+        {
+            col.Item().PaddingTop(1, Unit.Centimetre);
 
             // Education
             if (profile.Educations != null && profile.Educations.Count != 0)
@@ -431,20 +629,20 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     r.RelativeItem()
                                                         .Text(StripHtml(edu.Degree ?? ""))
                                                         .Bold()
-                                                        .FontSize(11)
+                                                        .FontSize(fontSize + 1)
                                                         .FontColor(TextDark);
                                                     r.ConstantItem(100)
                                                         .AlignRight()
                                                         .Text(
                                                             $"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}"
                                                         )
-                                                        .FontSize(8)
+                                                        .FontSize(fontSize - 2)
                                                         .FontColor(TextMedium);
                                                 });
 
                                             c.Item()
                                                 .Text(StripHtml(edu.InstitutionName ?? ""))
-                                                .FontSize(10)
+                                                .FontSize(fontSize)
                                                 .FontColor(PrimaryColor)
                                                 .SemiBold()
                                                 .Bold();
@@ -463,7 +661,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     .Text(t =>
                                                     {
                                                         t.DefaultTextStyle(s =>
-                                                            s.FontSize(9)
+                                                            s.FontSize(fontSize - 1)
                                                                 .FontColor(TextMedium)
                                                                 .LineHeight(1.5f)
                                                         );
@@ -490,7 +688,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 col.Item().PaddingBottom(0.3f, Unit.Centimetre);
             }
 
-            // Divider between Education and Projects
+            // Divider
             col.Item()
                 .PaddingTop(0.4f, Unit.Centimetre)
                 .PaddingBottom(0.4f, Unit.Centimetre)
@@ -530,7 +728,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     r.RelativeItem()
                                                         .Text(StripHtml(proj.Name ?? ""))
                                                         .Bold()
-                                                        .FontSize(11)
+                                                        .FontSize(fontSize + 1)
                                                         .FontColor(TextDark);
 
                                                     string dateStr = "";
@@ -540,7 +738,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     r.ConstantItem(120)
                                                         .AlignRight()
                                                         .Text(dateStr)
-                                                        .FontSize(8)
+                                                        .FontSize(fontSize - 2)
                                                         .FontColor(TextMedium);
                                                 });
 
@@ -554,7 +752,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     .Text(t =>
                                                     {
                                                         t.DefaultTextStyle(x =>
-                                                            x.FontSize(9).FontColor(TextMedium)
+                                                            x.FontSize(fontSize - 1)
+                                                                .FontColor(TextMedium)
                                                         );
                                                         if (!string.IsNullOrEmpty(proj.Link))
                                                         {
@@ -580,7 +779,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                             if (!string.IsNullOrEmpty(proj.Role))
                                                 c.Item()
                                                     .Text(StripHtml(proj.Role))
-                                                    .FontSize(10)
+                                                    .FontSize(fontSize)
                                                     .FontColor(PrimaryColor)
                                                     .SemiBold();
 
@@ -592,7 +791,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     .Text(t =>
                                                     {
                                                         t.DefaultTextStyle(dt =>
-                                                            dt.FontSize(9)
+                                                            dt.FontSize(fontSize - 1)
                                                                 .FontColor(TextMedium)
                                                                 .LineHeight(1.5f)
                                                         );
@@ -969,5 +1168,12 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
         return Regex.Replace(input, "<.*?>", string.Empty).Trim();
+    }
+
+    private static int GetPageCount(byte[] pdfBytes)
+    {
+        var text = Encoding.Default.GetString(pdfBytes);
+        var matches = Regex.Matches(text, @"/Type\s*/Page\b", RegexOptions.IgnoreCase);
+        return matches.Count;
     }
 }

@@ -2,14 +2,27 @@ namespace WebCV.Web.Components.Pages;
 
 public partial class Profile
 {
-    [Inject] public ICVService CVService { get; set; } = default!;
-    [Inject] public ISnackbar Snackbar { get; set; } = default!;
-    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] public IWebHostEnvironment Environment { get; set; } = default!;
-    [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
-    [Inject] public IDialogService DialogService { get; set; } = default!;
-    
+    [Inject]
+    public ICVService CVService { get; set; } = default!;
+
+    [Inject]
+    public ISnackbar Snackbar { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public IWebHostEnvironment Environment { get; set; } = default!;
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    public IDialogService DialogService { get; set; } = default!;
+
     private Shared.PrintPreviewModal _printPreviewModal = default!;
 
     private int _activeTabIndex;
@@ -48,13 +61,16 @@ public partial class Profile
         // Initialize categorized skills from database
         if (_profile.Skills != null && _profile.Skills.Count != 0)
         {
-            _skillCategories = [.. _profile.Skills
-                .GroupBy(s => s.Category)
-                .Select(g => new SkillCategoryViewModel
-                {
-                    Name = g.Key,
-                    Skills = [.. g.Select(s => s.Name)]
-                })];
+            _skillCategories =
+            [
+                .. _profile
+                    .Skills.GroupBy(s => s.Category)
+                    .Select(g => new SkillCategoryViewModel
+                    {
+                        Name = g.Key,
+                        Skills = [.. g.Select(s => s.Name)],
+                    }),
+            ];
         }
 
         // Ensure profile skills are in sync with categories initially (for defaults)
@@ -145,7 +161,8 @@ public partial class Profile
 
     private void UpdateProfileSkills()
     {
-        if (_profile == null) return;
+        if (_profile == null)
+            return;
 
         _profile.Skills.Clear();
         foreach (var category in _skillCategories)
@@ -174,12 +191,14 @@ public partial class Profile
         }
     }
 
-    [Inject] public IPdfService PdfService { get; set; } = default!;
+    [Inject]
+    public IPdfService PdfService { get; set; } = default!;
 
     private async Task PrintProfile()
     {
-        if (_profile == null) return;
-        
+        if (_profile == null)
+            return;
+
         try
         {
             var pdfBytes = await PdfService.GenerateCvAsync(_profile);
@@ -193,29 +212,34 @@ public partial class Profile
 
     private static string CalculateDuration(DateTime? start, DateTime? end)
     {
-        if (!start.HasValue) return "";
+        if (!start.HasValue)
+            return "";
 
         var endDate = end ?? DateTime.Now;
-        var totalMonths = ((endDate.Year - start.Value.Year) * 12) + endDate.Month - start.Value.Month + 1;
+        var totalMonths =
+            ((endDate.Year - start.Value.Year) * 12) + endDate.Month - start.Value.Month + 1;
 
         var years = totalMonths / 12;
         var months = totalMonths % 12;
 
         var parts = new List<string>();
-        if (years > 0) parts.Add($"{years} year{(years > 1 ? "s" : "")}");
-        if (months > 0) parts.Add($"{months} month{(months > 1 ? "s" : "")}");
+        if (years > 0)
+            parts.Add($"{years} year{(years > 1 ? "s" : "")}");
+        if (months > 0)
+            parts.Add($"{months} month{(months > 1 ? "s" : "")}");
 
         return string.Join(" ", parts);
     }
 
     private async Task UploadFiles(IBrowserFile file)
     {
-        if (file == null || _profile == null) return;
+        if (file == null || _profile == null)
+            return;
 
         try
         {
-            // Resize image to max 300x300
-            var resizedFile = await file.RequestImageFileAsync(file.ContentType, 300, 300);
+            // Resize image to max 400x400 (approx 3cm at 300dpi is 354px)
+            var resizedFile = await file.RequestImageFileAsync(file.ContentType, 400, 400);
 
             // Ensure uploads directory exists for the specific user
             var uploadPath = Path.Combine(Environment.WebRootPath, "uploads", _profile.UserId);
@@ -230,7 +254,9 @@ public partial class Profile
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await resizedFile.OpenReadStream(maxAllowedSize: 1024 * 1024 * 10).CopyToAsync(stream);
+                await resizedFile
+                    .OpenReadStream(maxAllowedSize: 1024 * 1024 * 10)
+                    .CopyToAsync(stream);
             }
 
             var url = $"/uploads/{_profile.UserId}/{fileName}";
@@ -250,13 +276,19 @@ public partial class Profile
 
     private async Task DeleteProfilePicture()
     {
-        if (_profile == null) return;
+        if (_profile == null)
+            return;
 
         try
         {
             if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
             {
-                var filePath = Path.Combine(Environment.WebRootPath, _profile.ProfilePictureUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                var filePath = Path.Combine(
+                    Environment.WebRootPath,
+                    _profile
+                        .ProfilePictureUrl.TrimStart('/')
+                        .Replace('/', Path.DirectorySeparatorChar)
+                );
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
