@@ -824,8 +824,9 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                     e.PaddingBottom(-1.5f)
                         .Width(10)
                         .Height(10)
-                        .Svg("M9 12l-5 5V7z") // Simple arrow path
-                        .FillColor(PrimaryColor)
+                        .Svg(
+                            $"<svg viewBox=\"0 0 24 24\"><path fill=\"{PrimaryColor}\" d=\"M9 12l-5 5V7z\"/></svg>"
+                        )
                 );
 
                 // Add a small space after
@@ -837,8 +838,9 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                     e.PaddingBottom(-1)
                         .Width(10)
                         .Height(10)
-                        .Svg("M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z") // Checkmark path
-                        .FillColor(AccentColor)
+                        .Svg(
+                            $"<svg viewBox=\"0 0 24 24\"><path fill=\"{AccentColor}\" d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"
+                        )
                 );
 
                 // Add a small space after
