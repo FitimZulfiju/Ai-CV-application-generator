@@ -2,15 +2,25 @@ namespace WebCV.Web.Components.Pages;
 
 public partial class MyApplications
 {
-    [Inject] public ICVService CVService { get; set; } = default!;
-    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] public ISnackbar Snackbar { get; set; } = default!;
-    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] public IDialogService DialogService { get; set; } = default!;
+    [Inject]
+    public ICVService CVService { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    public ISnackbar Snackbar { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public IDialogService DialogService { get; set; } = default!;
 
     private List<GeneratedApplication> _applications = [];
     private bool _isLoading = true;
     private string _userId = string.Empty;
+    private string searchString1 = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,9 +58,11 @@ public partial class MyApplications
     private async Task DeleteApplication(GeneratedApplication app)
     {
         bool? result = await DialogService.ShowMessageBox(
-            "Delete Application", 
-            $"Are you sure you want to delete the application for {app.JobPosting?.CompanyName}?", 
-            yesText: "Delete", cancelText: "Cancel");
+            "Delete Application",
+            $"Are you sure you want to delete the application for {app.JobPosting?.CompanyName}?",
+            yesText: "Delete",
+            cancelText: "Cancel"
+        );
 
         if (result == true)
         {
@@ -65,5 +77,28 @@ public partial class MyApplications
                 Snackbar.Add($"Error deleting application: {ex.Message}", Severity.Error);
             }
         }
+    }
+
+    private bool FilterFunc1(GeneratedApplication element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(GeneratedApplication element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (
+            element.JobPosting?.CompanyName.Contains(
+                searchString,
+                StringComparison.OrdinalIgnoreCase
+            ) == true
+        )
+            return true;
+        if (
+            element.JobPosting?.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+            == true
+        )
+            return true;
+        if ($"{element.JobPosting?.CompanyName} {element.JobPosting?.Title}".Contains(searchString))
+            return true;
+        return false;
     }
 }

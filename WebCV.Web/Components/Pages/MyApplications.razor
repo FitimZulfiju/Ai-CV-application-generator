@@ -16,22 +16,31 @@
     }
     else
     {
-        <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
+        <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info" Filter="new Func<GeneratedApplication,bool>(FilterFunc1)" Dense="true">
+            <ToolBarContent>
+        <MudSpacer />
+                <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Clearable="true"></MudTextField>
+    </ToolBarContent>
             <HeaderContent>
+                <MudTh>#</MudTh>
                 <MudTh>Date</MudTh>
                 <MudTh>Company</MudTh>
                 <MudTh>Job Title</MudTh>
                 <MudTh>Actions</MudTh>
             </HeaderContent>
             <RowTemplate>
+                <MudTd DataLabel="#">@(_applications.IndexOf(context) + 1)</MudTd>
                 <MudTd DataLabel="Date">@context.CreatedDate.ToLocalTime().ToString("g")</MudTd>
                 <MudTd DataLabel="Company">@context.JobPosting?.CompanyName</MudTd>
                 <MudTd DataLabel="Job Title">@context.JobPosting?.Title</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewApplication(context.Id))" Class="mr-2" StartIcon="@Icons.Material.Filled.Visibility">View</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" StartIcon="@Icons.Material.Filled.Visibility">View</MudButton>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => DeleteApplication(context))" aria-label="delete"></MudIconButton>
                 </MudTd>
             </RowTemplate>
+             <PagerContent>
+        <MudTablePager />
+    </PagerContent>
         </MudTable>
     }
 </MudContainer>

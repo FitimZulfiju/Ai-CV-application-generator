@@ -110,13 +110,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                     .FontSize(10);
                                 letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
 
-                                // Subject
-                                letterCol
-                                    .Item()
-                                    .Text($"{jobTitle} Application - {companyName}")
-                                    .Bold()
-                                    .FontSize(11);
-                                letterCol.Item().PaddingBottom(0.6f, Unit.Centimetre);
+                                // Subject removed (included in generated content)
 
                                 // Main content
                                 if (!string.IsNullOrWhiteSpace(letterContent))
@@ -141,11 +135,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                     letterCol.Item().Text("No content provided.").Italic();
                                 }
 
-                                // Sign-off
-                                letterCol.Item().PaddingTop(0.8f, Unit.Centimetre);
-                                letterCol.Item().Text("Sincerely,").FontSize(10);
-                                letterCol.Item().PaddingTop(0.5f, Unit.Centimetre);
-                                letterCol.Item().Text(profile.FullName).FontSize(10);
+                                // Sign-off removed (included in generated content)
                             });
                     });
 
@@ -467,7 +457,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                     .LineHorizontal(1)
                                                     .LineColor(BorderColor);
 
-                                                // Handle HTML tags like <strong style=color:blue;>
+                                                // Handle HTML tags like <strong style=color:blue;font-weight:normal;>
                                                 c.Item()
                                                     .PaddingTop(0.25f, Unit.Centimetre)
                                                     .Text(t =>
