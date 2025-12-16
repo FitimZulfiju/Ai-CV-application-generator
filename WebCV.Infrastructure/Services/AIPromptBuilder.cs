@@ -76,7 +76,7 @@ namespace WebCV.Infrastructure.Services
                 sb.AppendLine("3. Include a professional, concise SUBJECT line (e.g., 'RE: Application for [Job Title]'). Do NOT clutter the subject with the source.");
                 sb.AppendLine("4. Start with a professional salutation (e.g., 'Dear Hiring Manager,' or 'Dear [Name],').");
                 sb.AppendLine("5. Write the body of the letter. CRITICAL: In the VERY FIRST sentence, explicitly mention where the job was found based on the Job URL (e.g., '...as advertised on LinkedIn', '...on Indeed', or '...on your company website'). If no URL is provided, use '...as advertised'.");
-                sb.AppendLine($"6. End with 'Sincerely,' followed by the candidate's name: {profile.FullName}.");
+                sb.AppendLine("6. Do NOT include a sign-off (e.g., 'Sincerely', 'Best regards') or the candidate's name at the end. These are added automatically by the system.");
                 sb.AppendLine("7. Do NOT use placeholders like '[Your Name]', '[Your Address]', or '[Company Address]'.");
             }
 
