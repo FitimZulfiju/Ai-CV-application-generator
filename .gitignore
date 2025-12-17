@@ -97,6 +97,8 @@ appsettings.Development.json
 **/modelAiKey.txt
 **/*apikey*.txt
 **/*api-key*.txt
+**/.env
+**/.env.*
 
 # OS Generated
 .DS_Store
