@@ -12,12 +12,18 @@ else
 {
     <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="pb-4 d-print-none">
-            <MudText Typo="Typo.h5">🧑 Master CV Profile</MudText>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                <MudText Typo="Typo.h5">🧑 Master CV Profile</MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Primary" Size="Size.Small"
+                    OnClick="@(() => _showFormattingHelp = true)" Title="Formatting Help" />
+            </MudStack>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile" StartIcon="@Icons.Material.Filled.Save">Save Profile</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
+                    StartIcon="@Icons.Material.Filled.Save">Save Profile</MudButton>
                 @if (_activeTabIndex == 7)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile" StartIcon="@Icons.Material.Filled.Print">Print CV</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
+                        StartIcon="@Icons.Material.Filled.Print">Print CV</MudButton>
                 }
             </MudStack>
         </MudStack>
@@ -38,56 +44,62 @@ else
                                 }
                                 else
                                 {
-                                    <MudAvatar Size="Size.Large" Color="Color.Primary">@_profile.FullName.FirstOrDefault()</MudAvatar>
+                                    <MudAvatar Size="Size.Large" Color="Color.Primary">@_profile.FullName.FirstOrDefault()
+                                    </MudAvatar>
                                 }
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                                     <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
                                         <ActivatorContent>
-                                            <MudButton Variant="Variant.Filled"
-                                                       Color="Color.Primary"
-                                                       Size="Size.Small"
-                                                       StartIcon="@Icons.Material.Filled.CloudUpload">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                                StartIcon="@Icons.Material.Filled.CloudUpload">
                                                 Upload Picture
                                             </MudButton>
                                         </ActivatorContent>
                                     </MudFileUpload>
                                     @if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
                                     {
-                                        <MudButton Variant="Variant.Outlined"
-                                                   Color="Color.Error"
-                                                   Size="Size.Small"
-                                                   StartIcon="@Icons.Material.Filled.Delete"
-                                                   OnClick="DeleteProfilePicture">
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                                            StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfilePicture">
                                             Delete
                                         </MudButton>
                                     }
-                                    <MudSwitch @bind-Value="_profile.ShowProfilePicture" Color="Color.Primary" Label="Show in CV" />
+                                    <MudSwitch @bind-Value="_profile.ShowProfilePicture" Color="Color.Primary"
+                                        Label="Show in CV" />
                                 </MudStack>
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12" sm="4">
-                            <MudTextField @bind-Value="_profile.FullName" Label="Full Name" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Badge" />
+                            <MudTextField @bind-Value="_profile.FullName" Label="Full Name" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Badge" />
                         </MudItem>
                         <MudItem xs="12" sm="4">
-                            <MudTextField @bind-Value="_profile.Title" Label="Professional Title" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
+                            <MudTextField @bind-Value="_profile.Title" Label="Professional Title" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.Email" Label="Email" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+                            <MudTextField @bind-Value="_profile.Email" Label="Email" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.PhoneNumber" Label="Phone Number" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" />
+                            <MudTextField @bind-Value="_profile.PhoneNumber" Label="Phone Number" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" />
                         </MudItem>
                         <MudItem xs="12" sm="4" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.Location" Label="Location" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+                            <MudTextField @bind-Value="_profile.Location" Label="Location" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                         </MudItem>
                         <MudItem xs="12" sm="6" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.LinkedInUrl" Label="LinkedIn URL" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
+                            <MudTextField @bind-Value="_profile.LinkedInUrl" Label="LinkedIn URL" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
                         </MudItem>
                         <MudItem xs="12" sm="6" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.PortfolioUrl" Label="Portfolio URL" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link" />
+                            <MudTextField @bind-Value="_profile.PortfolioUrl" Label="Portfolio URL"
+                                Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                AdornmentIcon="@Icons.Material.Filled.Link" />
                         </MudItem>
                         <MudItem xs="12" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.ProfessionalSummary" Label="Professional Summary" Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                            <MudTextField @bind-Value="_profile.ProfessionalSummary" Label="Professional Summary"
+                                Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
                         </MudItem>
                     </MudGrid>
                 </MudCard>
@@ -95,20 +107,24 @@ else
 
             @* Tab Experience *@
             <MudTabPanel Text="Experience" Icon="@Icons.Material.Filled.WorkHistory">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddExperience" Class="mb-4" StartIcon="@Icons.Material.Filled.Add">Add Experience</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddExperience" Class="mb-4"
+                    StartIcon="@Icons.Material.Filled.Add">Add Experience</MudButton>
                 <MudStack Spacing="4">
                     @foreach (var exp in _profile.WorkExperience)
                     {
                         <MudCard Class="pa-3" Elevation="2">
                             <MudGrid>
                                 <MudItem xs="12" sm="4">
-                                    <MudTextField @bind-Value="exp.CompanyName" Label="Company" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" />
+                                    <MudTextField @bind-Value="exp.CompanyName" Label="Company" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" />
                                 </MudItem>
                                 <MudItem xs="12" sm="4">
-                                    <MudTextField @bind-Value="exp.JobTitle" Label="Job Title" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
+                                    <MudTextField @bind-Value="exp.JobTitle" Label="Job Title" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
                                 </MudItem>
                                 <MudItem xs="12" sm="4">
-                                    <MudTextField @bind-Value="exp.Location" Label="Location" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+                                    <MudTextField @bind-Value="exp.Location" Label="Location" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                                 </MudItem>
                                 <MudItem xs="12" sm="4">
                                     <MudDatePicker @bind-Date="exp.StartDate" Label="Start Date" />
@@ -120,11 +136,14 @@ else
                                     <MudText Typo="Typo.body2">@CalculateDuration(exp.StartDate, exp.EndDate)</MudText>
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
-                                    <MudTextField @bind-Value="exp.Description" Label="Description" Lines="3" Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                    <MudTextField @bind-Value="exp.Description" Label="Description" Lines="3"
+                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
                                     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                                        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@(() => RemoveExperience(exp))" StartIcon="@Icons.Material.Filled.Delete">Remove</MudButton>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                            OnClick="@(() => RemoveExperience(exp))" StartIcon="@Icons.Material.Filled.Delete">
+                                            Remove</MudButton>
                                         <MudCheckBox @bind-Value="exp.IsCurrentRole" Label="Current Role" />
                                     </MudStack>
                                 </MudItem>
@@ -136,17 +155,20 @@ else
 
             @* Tab Education *@
             <MudTabPanel Text="Education" Icon="@Icons.Material.Filled.School">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEducation" Class="mb-4" StartIcon="@Icons.Material.Filled.Add">Add Education</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEducation" Class="mb-4"
+                    StartIcon="@Icons.Material.Filled.Add">Add Education</MudButton>
                 <MudStack Spacing="4">
                     @foreach (var edu in _profile.Educations)
                     {
                         <MudCard Class="pa-3" Elevation="2">
                             <MudGrid>
                                 <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="edu.InstitutionName" Label="Institution" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.School" />
+                                    <MudTextField @bind-Value="edu.InstitutionName" Label="Institution" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.School" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="edu.Degree" Label="Degree" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.WorkspacePremium" />
+                                    <MudTextField @bind-Value="edu.Degree" Label="Degree" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.WorkspacePremium" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6">
                                     <MudDatePicker @bind-Date="edu.StartDate" Label="Start Date" />
@@ -155,10 +177,14 @@ else
                                     <MudDatePicker @bind-Date="edu.EndDate" Label="End Date" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
-                                    <MudTextField @bind-Value="edu.Description" Label="Description/Recognition" Lines="3" Variant="Variant.Outlined" AutoGrow="true" Clearable="true" HelperText="e.g. Ministry Recognition, Honors, Thesis" />
+                                    <MudTextField @bind-Value="edu.Description" Label="Description/Recognition" Lines="3"
+                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true"
+                                        HelperText="e.g. Ministry Recognition, Honors, Thesis" />
                                 </MudItem>
                                 <MudItem xs="12">
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@(() => RemoveEducation(edu))" StartIcon="@Icons.Material.Filled.Delete">Remove</MudButton>
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                        OnClick="@(() => RemoveEducation(edu))" StartIcon="@Icons.Material.Filled.Delete">Remove
+                                    </MudButton>
                                 </MudItem>
                             </MudGrid>
                         </MudCard>
@@ -169,8 +195,10 @@ else
             @* Tab Skills *@
             <MudTabPanel Text="Skills" Icon="@Icons.Material.Filled.Build">
                 <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-4" StartIcon="@Icons.Material.Filled.Add">Add Category</MudButton>
-                    <MudText Typo="Typo.body2" Class="mb-4">Add skill categories and skills. Click the chip's X to remove a skill.</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-4"
+                        StartIcon="@Icons.Material.Filled.Add">Add Category</MudButton>
+                    <MudText Typo="Typo.body2" Class="mb-4">Add skill categories and skills. Click the chip's X to remove a
+                        skill.</MudText>
                 </MudStack>
                 <MudGrid>
                     @foreach (var category in _skillCategories)
@@ -180,16 +208,19 @@ else
                             <MudCard Class="pa-3" Elevation="2">
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
                                     <MudTextField @bind-Value="category.Name" Label="Category Name" Variant="Variant.Text" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => RemoveCategory(category))" />
-                                    <MudTextField Class="" @bind-Value="category.NewSkillInput" Label="@($"Add {category.Name} Skill")" Variant="Variant.Outlined"
-                                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add"
-                                                  OnAdornmentClick="@(() => AddSkill(category))" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                        OnClick="@(() => RemoveCategory(category))" />
+                                    <MudTextField Class="" @bind-Value="category.NewSkillInput"
+                                        Label="@($"Add {category.Name} Skill")" Variant="Variant.Outlined"
+                                        Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add"
+                                        OnAdornmentClick="@(() => AddSkill(category))" />
                                 </MudStack>
                                 <MudChipSet T="string" Class="mt-1">
                                     @foreach (var skill in category.Skills.ToList())
                                     {
                                         var s = skill;
-                                        <MudChip T="string" Value="@s" Text="@s" OnClose="@((MudChip<string> chip) => RemoveSkill(category, s))" />
+                                        <MudChip T="string" Value="@s" Text="@s"
+                                            OnClose="@((MudChip<string> chip) => RemoveSkill(category, s))" />
                                     }
                                 </MudChipSet>
                             </MudCard>
@@ -200,17 +231,20 @@ else
 
             @* Tab Projects *@
             <MudTabPanel Text="Projects" Icon="@Icons.Material.Filled.Code">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProject" Class="mb-4" StartIcon="@Icons.Material.Filled.Add">Add Project</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProject" Class="mb-4"
+                    StartIcon="@Icons.Material.Filled.Add">Add Project</MudButton>
                 <MudStack Spacing="4">
                     @foreach (var proj in _profile.Projects)
                     {
                         <MudCard Class="pa-3" Elevation="2">
                             <MudGrid>
                                 <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="proj.Name" Label="Project Name" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Label" />
+                                    <MudTextField @bind-Value="proj.Name" Label="Project Name" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Label" />
                                 </MudItem>
                                 <MudItem xs="12" sm="2">
-                                    <MudTextField @bind-Value="proj.Role" Label="Role" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+                                    <MudTextField @bind-Value="proj.Role" Label="Role" Variant="Variant.Text"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
                                 </MudItem>
                                 <MudItem xs="12" sm="2">
                                     <MudDatePicker @bind-Date="proj.StartDate" Label="Start Date" />
@@ -219,16 +253,22 @@ else
                                     <MudDatePicker @bind-Date="proj.EndDate" Label="End Date" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6" Class="pt-2">
-                                    <MudTextField @bind-Value="proj.Link" Label="Link (GitHub/Live)" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link" />
+                                    <MudTextField @bind-Value="proj.Link" Label="Link (GitHub/Live)" Variant="Variant.Outlined"
+                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6" Class="pt-2">
-                                    <MudTextField @bind-Value="proj.Technologies" Label="Technologies Used (Comma separated (e.g. C#, Blazor, SQL))" Variant="Variant.Outlined" />
+                                    <MudTextField @bind-Value="proj.Technologies"
+                                        Label="Technologies Used (Comma separated (e.g. C#, Blazor, SQL))"
+                                        Variant="Variant.Outlined" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-1">
-                                    <MudTextField @bind-Value="proj.Description" Label="Description" Lines="3" Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                    <MudTextField @bind-Value="proj.Description" Label="Description" Lines="3"
+                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-1">
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">Remove</MudButton>
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                        OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">Remove
+                                    </MudButton>
                                 </MudItem>
                             </MudGrid>
                         </MudCard>
@@ -238,7 +278,8 @@ else
 
             @* Tab Languages *@
             <MudTabPanel Text="Languages" Icon="@Icons.Material.Filled.Language">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddLanguage" Class="mb-4" StartIcon="@Icons.Material.Filled.Add">Add Language</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddLanguage" Class="mb-4"
+                    StartIcon="@Icons.Material.Filled.Add">Add Language</MudButton>
                 <MudGrid>
                     @foreach (var lang in _profile.Languages)
                     {
@@ -246,8 +287,11 @@ else
                             <MudCard Class="pa-3" Elevation="2">
                                 <MudStack Spacing="2">
                                     <MudTextField @bind-Value="lang.Name" Label="Language" Variant="Variant.Text" />
-                                    <MudTextField @bind-Value="lang.Proficiency" Label="Proficiency" Variant="Variant.Text" HelperText="e.g. Native, Fluent, Intermediate" />
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@(() => RemoveLanguage(lang))" StartIcon="@Icons.Material.Filled.Delete">Remove</MudButton>
+                                    <MudTextField @bind-Value="lang.Proficiency" Label="Proficiency" Variant="Variant.Text"
+                                        HelperText="e.g. Native, Fluent, Intermediate" />
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                        OnClick="@(() => RemoveLanguage(lang))" StartIcon="@Icons.Material.Filled.Delete">Remove
+                                    </MudButton>
                                 </MudStack>
                             </MudCard>
                         </MudItem>
@@ -257,7 +301,8 @@ else
 
             @* Tab Interests *@
             <MudTabPanel Text="Interests" Icon="@Icons.Material.Filled.Interests">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddInterest" Class="mb-4" StartIcon="@Icons.Material.Filled.Add">Add Interest</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddInterest" Class="mb-4"
+                    StartIcon="@Icons.Material.Filled.Add">Add Interest</MudButton>
                 <MudGrid>
                     @foreach (var interest in _profile.Interests)
                     {
@@ -265,7 +310,9 @@ else
                             <MudCard Class="pa-3" Elevation="2">
                                 <MudStack Spacing="2">
                                     <MudTextField @bind-Value="interest.Name" Label="Interest" Variant="Variant.Text" />
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@(() => RemoveInterest(interest))" StartIcon="@Icons.Material.Filled.Delete">Remove</MudButton>
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                        OnClick="@(() => RemoveInterest(interest))" StartIcon="@Icons.Material.Filled.Delete">
+                                        Remove</MudButton>
                                 </MudStack>
                             </MudCard>
                         </MudItem>
@@ -282,4 +329,88 @@ else
 }
 
 <WebCV.Web.Components.Shared.PrintPreviewModal @ref="_printPreviewModal" />
+
+<MudDialog @bind-Visible="_showFormattingHelp"
+    Options="@(new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true })">
+    <TitleContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Filled.FormatColorText" Color="Color.Primary" />
+            <MudText Typo="Typo.h6">Text Formatting Help</MudText>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudAlert Severity="Severity.Info" Dense="true">
+                Different fields support different formatting. See details below.
+            </MudAlert>
+
+            <MudText Typo="Typo.subtitle1"><strong>Line Breaks</strong></MudText>
+            <MudText Typo="Typo.body2">Each new line in your text becomes a separate line or bullet point.</MudText>
+            <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
+                <code>Line 1<br/>Line 2<br/>Line 3</code>
+            </MudPaper>
+
+            <MudDivider />
+
+            <MudText Typo="Typo.subtitle1"><strong>Bullet Points (Experience & Projects)</strong></MudText>
+            <MudText Typo="Typo.body2">Start lines with <code>-</code> or <code>*</code> to create bullet points.
+            </MudText>
+            <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
+                <code>- Built REST APIs using ASP.NET Core<br/>- Implemented CI/CD pipelines<br/>* Reduced deployment time by 40%</code>
+            </MudPaper>
+
+            <MudDivider />
+
+            <MudText Typo="Typo.subtitle1"><strong>HTML Tags</strong></MudText>
+            <MudText Typo="Typo.body2">You can use HTML directly for styling.</MudText>
+            <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
+                <code>&lt;strong&gt;Bold text&lt;/strong&gt;<br/>&lt;em&gt;Italic text&lt;/em&gt;</code>
+            </MudPaper>
+
+            <MudDivider />
+
+            <MudText Typo="Typo.subtitle1"><strong>Where Each Format Works</strong></MudText>
+            <MudSimpleTable Dense="true" Hover="true" Bordered="true">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Line Breaks</th>
+                        <th>Bullets (- or *)</th>
+                        <th>HTML Tags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Professional Summary</td>
+                        <td>Yes</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Experience Description</td>
+                        <td>Yes (as bullets)</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Project Description</td>
+                        <td>Yes (as bullets)</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Education Description</td>
+                        <td>Yes</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                    </tr>
+                </tbody>
+            </MudSimpleTable>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="@(() => _showFormattingHelp = false)">Got it!</MudButton>
+    </DialogActions>
+</MudDialog>
+
 

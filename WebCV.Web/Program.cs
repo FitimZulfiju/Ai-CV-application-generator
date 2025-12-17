@@ -53,6 +53,46 @@ builder
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// Add External Authentication Providers
+var authBuilder = builder.Services.AddAuthentication();
+
+// Google Authentication
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+    });
+}
+
+// Microsoft Authentication
+var microsoftClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
+var microsoftClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+if (!string.IsNullOrEmpty(microsoftClientId) && !string.IsNullOrEmpty(microsoftClientSecret))
+{
+    authBuilder.AddMicrosoftAccount(options =>
+    {
+        options.ClientId = microsoftClientId;
+        options.ClientSecret = microsoftClientSecret;
+    });
+}
+
+// GitHub Authentication
+var githubClientId = builder.Configuration["Authentication:GitHub:ClientId"];
+var githubClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
+if (!string.IsNullOrEmpty(githubClientId) && !string.IsNullOrEmpty(githubClientSecret))
+{
+    authBuilder.AddGitHub(options =>
+    {
+        options.ClientId = githubClientId;
+        options.ClientSecret = githubClientSecret;
+        options.Scope.Add("user:email");
+    });
+}
+
 // Configure cookie authentication
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -85,15 +125,6 @@ builder.Services.AddScoped<ICVService, CVService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IJobPostScraper, JobPostScraper>();
 builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
-
-// Configure named HttpClient for Local AI with longer timeout
-builder.Services.AddHttpClient(
-    "LocalAI",
-    client =>
-    {
-        client.Timeout = TimeSpan.FromMinutes(10);
-    }
-);
 
 // Configure Forwarded Headers for Docker/Proxy scenarios
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -233,6 +264,97 @@ app.MapPost(
         }
     )
     .DisableAntiforgery();
+
+// External login challenge endpoint
+app.MapGet(
+    "/external-login/{provider}",
+    (string provider, SignInManager<User> signInManager) =>
+    {
+        const string redirectUrl = "/external-login-callback";
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+            provider,
+            redirectUrl
+        );
+        return Results.Challenge(properties, [provider]);
+    }
+);
+
+// External login callback endpoint
+app.MapGet(
+    "/external-login-callback",
+    async (
+        SignInManager<User> signInManager,
+        UserManager<User> userManager,
+        IServiceProvider serviceProvider
+    ) =>
+    {
+        var info = await signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+        {
+            return Results.Redirect("/login?error=External login failed");
+        }
+
+        // Try to sign in with existing external login
+        var signInResult = await signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: false,
+            bypassTwoFactor: true
+        );
+
+        if (signInResult.Succeeded)
+        {
+            return Results.Redirect("/");
+        }
+
+        // Create new user if not exists
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrEmpty(email))
+        {
+            return Results.Redirect("/login?error=Email not provided by external provider");
+        }
+
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            user = new User
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+            };
+
+            var createResult = await userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                return Results.Redirect($"/login?error={Uri.EscapeDataString(errors)}");
+            }
+
+            // Create empty profile for new external user
+            using var scope = serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var profile = new CandidateProfile
+            {
+                UserId = user.Id,
+                FullName = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email.Split('@')[0],
+                Email = email,
+                Skills = [],
+                WorkExperience = [],
+                Educations = [],
+            };
+            dbContext.CandidateProfiles.Add(profile);
+            await dbContext.SaveChangesAsync();
+        }
+
+        // Add external login to user
+        await userManager.AddLoginAsync(user, info);
+
+        // Sign in the user
+        await signInManager.SignInAsync(user, isPersistent: false);
+        return Results.Redirect("/");
+    }
+);
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 

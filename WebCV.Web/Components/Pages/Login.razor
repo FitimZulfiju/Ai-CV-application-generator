@@ -3,7 +3,7 @@
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
     <MudPaper Class="pa-6" Elevation="3">
-        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">WebCV Login</MudText>
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Ai-WebCV Login</MudText>
 
         <form method="post" action="/perform-login">
 
@@ -24,6 +24,7 @@
             </div>
 
             @if (!string.IsNullOrEmpty(Error))
+
             {
                 <MudAlert Severity="Severity.Error" Class="mb-3">@Error</MudAlert>
             }
@@ -33,6 +34,37 @@
         </form>
 
         <MudDivider Class="my-4" />
+
+        @if (HasAnyExternalProvider)
+        {
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mb-3" Color="Color.Secondary">Or sign in with</MudText>
+
+            <MudStack Spacing="2">
+                @if (IsGoogleConfigured)
+                {
+                    <MudButton Href="/external-login/Google" Variant="Variant.Outlined" FullWidth="true"
+                        StartIcon="@Icons.Custom.Brands.Google" Style="border-color: #DB4437; color: #DB4437;">
+                        Continue with Google
+                    </MudButton>
+                }
+                @if (IsMicrosoftConfigured)
+                {
+                    <MudButton Href="/external-login/Microsoft" Variant="Variant.Outlined" FullWidth="true"
+                        StartIcon="@Icons.Custom.Brands.Microsoft" Style="border-color: #00a4ef; color: #00a4ef;">
+                        Continue with Microsoft
+                    </MudButton>
+                }
+                @if (IsGitHubConfigured)
+                {
+                    <MudButton Href="/external-login/GitHub" Variant="Variant.Outlined" FullWidth="true"
+                        StartIcon="@Icons.Custom.Brands.GitHub" Style="border-color: #333; color: #333;">
+                        Continue with GitHub
+                    </MudButton>
+                }
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+        }
 
         <MudText Align="Align.Center">
             Don't have an account? <MudLink Href="/register">Register here</MudLink>

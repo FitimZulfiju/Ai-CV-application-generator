@@ -26,6 +26,7 @@ public partial class Profile
     private Shared.PrintPreviewModal _printPreviewModal = default!;
 
     private int _activeTabIndex;
+    private bool _showFormattingHelp;
     private CandidateProfile? _profile;
 
     public class SkillCategoryViewModel

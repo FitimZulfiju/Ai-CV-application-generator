@@ -1,18 +1,18 @@
 ﻿namespace WebCV.Infrastructure.Services;
 
-public class PdfService(IWebHostEnvironment env) : IPdfService
+public partial class PdfService(IWebHostEnvironment env) : IPdfService
 {
     private readonly IWebHostEnvironment _env = env;
 
     // Define colors
     // Define colors from CSS
-    private static readonly string PrimaryColor = "#2c7be5"; // var(--primary-color)
-    private static readonly string PrimaryDark = "#1e5fae"; // var(--primary-dark)
-    private static readonly string AccentColor = "#10b981"; // var(--accent-color)
-    private static readonly string TextDark = "#1f2937"; // var(--text-dark)
-    private static readonly string TextMedium = "#4b5563"; // var(--text-medium)
-    private static readonly string BackgroundLight = "#f9fafb"; // var(--bg-light)
-    private static readonly string BorderColor = "#e5e7eb"; // var(--border-color)
+    private const string PrimaryColor = "#2c7be5"; // var(--primary-color)
+    private const string PrimaryDark = "#1e5fae"; // var(--primary-dark)
+    private const string AccentColor = "#10b981"; // var(--accent-color)
+    private const string TextDark = "#1f2937"; // var(--text-dark)
+    private const string TextMedium = "#4b5563"; // var(--text-medium)
+    private const string BackgroundLight = "#f9fafb"; // var(--bg-light)
+    private const string BorderColor = "#e5e7eb"; // var(--border-color)
 
     private static readonly Dictionary<string, string> NamedColors = new(
         StringComparer.OrdinalIgnoreCase
@@ -43,7 +43,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         if (string.IsNullOrWhiteSpace(colorName))
             return null;
         colorName = colorName.Trim();
-        if (!colorName.StartsWith("#"))
+        if (!colorName.StartsWith('#'))
         {
             if (NamedColors.TryGetValue(colorName, out var hex))
                 return hex;
@@ -600,10 +600,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 col.Item()
                     .Table(table =>
                     {
-                        table.ColumnsDefinition(columns =>
-                        {
-                            columns.RelativeColumn();
-                        });
+                        table.ColumnsDefinition(columns => columns.RelativeColumn());
 
                         int count = profile.Educations.Count;
                         var eduList = profile
@@ -703,10 +700,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 col.Item()
                     .Table(table =>
                     {
-                        table.ColumnsDefinition(columns =>
-                        {
-                            columns.RelativeColumn();
-                        });
+                        table.ColumnsDefinition(columns => columns.RelativeColumn());
 
                         foreach (var proj in profile.Projects.OrderByDescending(p => p.StartDate))
                         {
@@ -731,10 +725,12 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                                         .FontSize(fontSize + 1)
                                                         .FontColor(TextDark);
 
-                                                    string dateStr = "";
+                                                    var dateStr = "";
                                                     if (proj.StartDate.HasValue)
+                                                    {
                                                         dateStr =
                                                             $"{proj.StartDate.Value:yyyy} - {(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : "Present")}";
+                                                    }
                                                     r.ConstantItem(120)
                                                         .AlignRight()
                                                         .Text(dateStr)
@@ -777,11 +773,13 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                                             }
 
                                             if (!string.IsNullOrEmpty(proj.Role))
+                                            {
                                                 c.Item()
                                                     .Text(StripHtml(proj.Role))
                                                     .FontSize(fontSize)
                                                     .FontColor(PrimaryColor)
                                                     .SemiBold();
+                                            }
 
                                             if (!string.IsNullOrEmpty(proj.Description))
                                             {
@@ -929,10 +927,8 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         if (string.IsNullOrWhiteSpace(input))
             return;
 
-        // Regex to match HTML tags with optional inline styles (supporting unquoted, single-quoted, and double-quoted)
-        var tagPattern =
-            @"<(strong|b|em|i|u|span)(?:\s+style\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+)))?\s*>(.+?)</\1>";
-        var regex = new Regex(tagPattern, RegexOptions.IgnoreCase);
+        // Use generated regex to match HTML tags with optional inline styles
+        var regex = HtmlTagWithStyleRegex();
 
         int lastIndex = 0;
         foreach (Match match in regex.Matches(input))
@@ -941,7 +937,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             if (match.Index > lastIndex)
             {
                 var beforeText = input[lastIndex..match.Index];
-                var cleanBefore = Regex.Replace(beforeText, "<.*?>", string.Empty);
+                var cleanBefore = HtmlTagRegex().Replace(beforeText, string.Empty);
                 if (!string.IsNullOrEmpty(cleanBefore))
                 {
                     textDescriptor.Span(cleanBefore);
@@ -954,7 +950,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             var content = match.Groups[5].Value;
 
             // Strip nested HTML from content (simple handling)
-            var cleanContent = Regex.Replace(content, "<.*?>", string.Empty);
+            var cleanContent = HtmlTagRegex().Replace(content, string.Empty);
 
             // Initial state based on tag
             bool isBold = tagName == "strong" || tagName == "b";
@@ -964,11 +960,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             if (!string.IsNullOrEmpty(styleAttr))
             {
                 // Parse color
-                var colorMatch = Regex.Match(
-                    styleAttr,
-                    @"color\s*:\s*([^;]+)",
-                    RegexOptions.IgnoreCase
-                );
+                var colorMatch = ColorStyleRegex().Match(styleAttr);
                 if (colorMatch.Success)
                 {
                     var rawColor = colorMatch.Groups[1].Value.Trim();
@@ -976,11 +968,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 }
 
                 // Parse font-weight
-                var weightMatch = Regex.Match(
-                    styleAttr,
-                    @"font-weight\s*:\s*([^;]+)",
-                    RegexOptions.IgnoreCase
-                );
+                var weightMatch = FontWeightStyleRegex().Match(styleAttr);
                 if (weightMatch.Success)
                 {
                     var weight = weightMatch.Groups[1].Value.Trim().ToLower();
@@ -991,11 +979,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
                 }
 
                 // Parse font-style
-                var styleMatch = Regex.Match(
-                    styleAttr,
-                    @"font-style\s*:\s*([^;]+)",
-                    RegexOptions.IgnoreCase
-                );
+                var styleMatch = FontStyleStyleRegex().Match(styleAttr);
                 if (styleMatch.Success)
                 {
                     var style = styleMatch.Groups[1].Value.Trim().ToLower();
@@ -1050,7 +1034,7 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
         if (lastIndex < input.Length)
         {
             var remainingText = input[lastIndex..];
-            var cleanRemaining = Regex.Replace(remainingText, "<.*?>", string.Empty);
+            var cleanRemaining = HtmlTagRegex().Replace(remainingText, string.Empty);
             if (!string.IsNullOrEmpty(cleanRemaining))
             {
                 textDescriptor.Span(cleanRemaining);
@@ -1073,25 +1057,25 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             {
                 // Wrap bullet in color span if it's the right arrow or checkmark
                 string coloredBullet = bullet;
-                if (bullet.Contains("\u25B8")) // ▸ Right Arrow
+                if (bullet.Contains('\u25B8')) // ▸ Right Arrow
                 {
                     coloredBullet = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
                 }
-                else if (bullet.Contains("\u2713")) // ✓ Checkmark
+                else if (bullet.Contains('\u2713')) // ✓ Checkmark
                 {
                     coloredBullet = $"<span style='color:{AccentColor}'>\u2713</span> ";
                 }
 
-                pText = Regex.Replace(pText, "<li>", coloredBullet, RegexOptions.IgnoreCase);
+                pText = LiOpenTagRegex().Replace(pText, coloredBullet);
             }
             else
             {
-                pText = Regex.Replace(pText, "<li>", "• ", RegexOptions.IgnoreCase);
+                pText = LiOpenTagRegex().Replace(pText, "• ");
             }
 
             // Replace </li> with newline
-            pText = Regex.Replace(pText, "</li>", "\n", RegexOptions.IgnoreCase);
-            pText = Regex.Replace(pText, "<ul>|</ul>|<ol>|</ol>", "", RegexOptions.IgnoreCase);
+            pText = LiCloseTagRegex().Replace(pText, "\n");
+            pText = ListTagRegex().Replace(pText, "");
             pText = pText.Replace("&#8226;", "• ");
         }
         else if (
@@ -1106,11 +1090,11 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
 
             // Wrap bullet in color span
             string coloredBullet = bullet;
-            if (bullet.Contains("\u25B8")) // ▸ Right Arrow
+            if (bullet.Contains('\u25B8')) // ▸ Right Arrow
             {
                 coloredBullet = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
             }
-            else if (bullet.Contains("\u2713")) // ✓ Checkmark
+            else if (bullet.Contains('\u2713')) // ✓ Checkmark
             {
                 coloredBullet = $"<span style='color:{AccentColor}'>\u2713</span> ";
             }
@@ -1124,11 +1108,10 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
             return sb.ToString().Trim();
         }
 
-        // Convert <br> to newline
-        pText = Regex.Replace(pText, "<br\\s*/?>", "\n", RegexOptions.IgnoreCase);
+        pText = BrTagRegex().Replace(pText, "\n");
         // Convert </p> to newline
-        pText = Regex.Replace(pText, "</p>", "\n", RegexOptions.IgnoreCase);
-        pText = Regex.Replace(pText, "<p.*?>", "", RegexOptions.IgnoreCase);
+        pText = PCloseTagRegex().Replace(pText, "\n");
+        pText = POpenTagRegex().Replace(pText, "");
 
         // Decode HTML entities
         pText = System.Net.WebUtility.HtmlDecode(pText);
@@ -1167,13 +1150,57 @@ public class PdfService(IWebHostEnvironment env) : IPdfService
     {
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
-        return Regex.Replace(input, "<.*?>", string.Empty).Trim();
+        return HtmlTagRegex().Replace(input, string.Empty).Trim();
     }
 
     private static int GetPageCount(byte[] pdfBytes)
     {
         var text = Encoding.Default.GetString(pdfBytes);
-        var matches = Regex.Matches(text, @"/Type\s*/Page\b", RegexOptions.IgnoreCase);
+        var matches = PageTypeRegex().Matches(text);
         return matches.Count;
     }
+
+    // GeneratedRegex patterns
+    [GeneratedRegex(@"<.*?>")]
+    private static partial Regex HtmlTagRegex();
+
+    [GeneratedRegex(@"/Type\s*/Page\b", RegexOptions.IgnoreCase)]
+    private static partial Regex PageTypeRegex();
+
+    // Backreference \1 is not supported by GeneratedRegex, use compiled Regex instead
+#pragma warning disable SYSLIB1045 // Cannot use GeneratedRegex - pattern uses backreference \1
+    private static readonly Regex HtmlTagWithStyleRegexInstance = new(
+        @"<(strong|b|em|i|u|span)(?:\s+style\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+)))?\s*>(.+?)</\1>",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled
+    );
+#pragma warning restore SYSLIB1045
+
+    private static Regex HtmlTagWithStyleRegex() => HtmlTagWithStyleRegexInstance;
+
+    [GeneratedRegex(@"color\s*:\s*([^;]+)", RegexOptions.IgnoreCase)]
+    private static partial Regex ColorStyleRegex();
+
+    [GeneratedRegex(@"font-weight\s*:\s*([^;]+)", RegexOptions.IgnoreCase)]
+    private static partial Regex FontWeightStyleRegex();
+
+    [GeneratedRegex(@"font-style\s*:\s*([^;]+)", RegexOptions.IgnoreCase)]
+    private static partial Regex FontStyleStyleRegex();
+
+    [GeneratedRegex(@"<li>", RegexOptions.IgnoreCase)]
+    private static partial Regex LiOpenTagRegex();
+
+    [GeneratedRegex(@"</li>", RegexOptions.IgnoreCase)]
+    private static partial Regex LiCloseTagRegex();
+
+    [GeneratedRegex(@"<ul>|</ul>|<ol>|</ol>", RegexOptions.IgnoreCase)]
+    private static partial Regex ListTagRegex();
+
+    [GeneratedRegex(@"<br\s*/?>", RegexOptions.IgnoreCase)]
+    private static partial Regex BrTagRegex();
+
+    [GeneratedRegex(@"</p>", RegexOptions.IgnoreCase)]
+    private static partial Regex PCloseTagRegex();
+
+    [GeneratedRegex(@"<p.*?>", RegexOptions.IgnoreCase)]
+    private static partial Regex POpenTagRegex();
 }
