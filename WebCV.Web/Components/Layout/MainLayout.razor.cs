@@ -2,11 +2,20 @@ namespace WebCV.Web.Components.Layout;
 
 public partial class MainLayout : LayoutComponentBase, IDisposable
 {
-    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] public UserManager<User> UserManager { get; set; } = default!;
-    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] public SignInManager<User> SignInManager { get; set; } = default!;
-    [Inject] public ILoadingService LoadingService { get; set; } = default!;
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    public UserManager<User> UserManager { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public SignInManager<User> SignInManager { get; set; } = default!;
+
+    [Inject]
+    public ILoadingService LoadingService { get; set; } = default!;
 
     private bool _drawerOpen = true;
     protected bool IsAuthenticated { get; set; }
