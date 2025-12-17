@@ -77,6 +77,10 @@ if (!string.IsNullOrEmpty(microsoftClientId) && !string.IsNullOrEmpty(microsoftC
     {
         options.ClientId = microsoftClientId;
         options.ClientSecret = microsoftClientSecret;
+        // Use /consumers/ endpoint for personal Microsoft accounts only
+        options.AuthorizationEndpoint =
+            "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize";
+        options.TokenEndpoint = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
     });
 }
 
