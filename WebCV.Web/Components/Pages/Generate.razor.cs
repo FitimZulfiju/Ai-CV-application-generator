@@ -2,16 +2,35 @@ namespace WebCV.Web.Components.Pages;
 
 public partial class Generate
 {
-    [Inject] public ICVService CVService { get; set; } = default!;
-    [Inject] public IJobApplicationOrchestrator JobOrchestrator { get; set; } = default!;
-    [Inject] public IClipboardService ClipboardService { get; set; } = default!;
-    [Inject] public ISnackbar Snackbar { get; set; } = default!;
-    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] public IUserSettingsService UserSettingsService { get; set; } = default!;
-    [Inject] public ILoadingService LoadingService { get; set; } = default!;
-    [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
-    [Inject] public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
-    [Inject] public IDialogService DialogService { get; set; } = default!;
+    [Inject]
+    public ICVService CVService { get; set; } = default!;
+
+    [Inject]
+    public IJobApplicationOrchestrator JobOrchestrator { get; set; } = default!;
+
+    [Inject]
+    public IClipboardService ClipboardService { get; set; } = default!;
+
+    [Inject]
+    public ISnackbar Snackbar { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    public IUserSettingsService UserSettingsService { get; set; } = default!;
+
+    [Inject]
+    public ILoadingService LoadingService { get; set; } = default!;
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
+
+    [Inject]
+    public IDialogService DialogService { get; set; } = default!;
 
     private Shared.PrintPreviewModal _printPreviewModal = default!;
 
@@ -38,7 +57,10 @@ public partial class Generate
     private int _activeTabIndex = 0;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
-    private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+    private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new()
+    {
+        WriteIndented = true,
+    };
 
     private void OnResumePreviewToggled(bool value)
     {
@@ -50,7 +72,8 @@ public partial class Generate
             {
                 if (!string.IsNullOrEmpty(_resumeJson))
                 {
-                    _generatedResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(_resumeJson);
+                    _generatedResume =
+                        System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(_resumeJson);
                 }
             }
             catch (Exception ex)
@@ -64,7 +87,10 @@ public partial class Generate
             // Switch to Edit: Serialize Object to JSON
             if (_generatedResume != null)
             {
-                    _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
+                _resumeJson = System.Text.Json.JsonSerializer.Serialize(
+                    _generatedResume,
+                    _jsonOptions
+                );
             }
         }
     }
@@ -83,9 +109,7 @@ public partial class Generate
         }
         else
         {
-            var pipeline = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
-                .Build();
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             _previewHtml = Markdown.ToHtml(text, pipeline);
         }
     }
@@ -113,7 +137,7 @@ public partial class Generate
         {
             _isLoadingModels = false;
         }
-        
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -144,15 +168,17 @@ public partial class Generate
             await Task.Delay(300); // Simulate network delay
 
             var fetchedJob = await JobOrchestrator.FetchJobDetailsAsync(_job.Url);
-            
+
             LoadingService.Update(60, "Parsing content...");
-            
+
             _job.Description = fetchedJob.Description;
             _showAdvancedEditor = true;
             UpdatePreview(_job.Description);
             // Only overwrite title/company if they are generic placeholders
-            if (string.IsNullOrWhiteSpace(_job.CompanyName)) _job.CompanyName = fetchedJob.CompanyName;
-            if (string.IsNullOrWhiteSpace(_job.Title)) _job.Title = fetchedJob.Title;
+            if (string.IsNullOrWhiteSpace(_job.CompanyName))
+                _job.CompanyName = fetchedJob.CompanyName;
+            if (string.IsNullOrWhiteSpace(_job.Title))
+                _job.Title = fetchedJob.Title;
 
             LoadingService.Update(100, "Done!");
             await Task.Delay(200);
@@ -173,7 +199,8 @@ public partial class Generate
     private async Task GenerateContent()
     {
         await _form!.Validate();
-        if (!_form.IsValid) return;
+        if (!_form.IsValid)
+            return;
 
         _isGenerating = true;
         LoadingService.Show("Generating application...", 0);
@@ -191,54 +218,88 @@ public partial class Generate
 
             LoadingService.Update(10, "Analyzing profile...");
             _cachedProfile = await CVService.GetProfileAsync(userId);
-            
+
             if (_cachedProfile == null)
             {
                 Snackbar.Add("User profile not found. Please log in again.", Severity.Error);
                 return;
             }
 
-            if (string.IsNullOrEmpty(_cachedProfile.ProfessionalSummary) && _cachedProfile.WorkExperience.Count == 0)
+            if (
+                string.IsNullOrEmpty(_cachedProfile.ProfessionalSummary)
+                && _cachedProfile.WorkExperience.Count == 0
+            )
             {
-                Snackbar.Add("Your profile is empty! Please go to the Profile page and fill in your details first.", Severity.Warning);
+                Snackbar.Add(
+                    "Your profile is empty! Please go to the Profile page and fill in your details first.",
+                    Severity.Warning
+                );
                 return;
             }
 
             LoadingService.Update(30, "Generating cover letter...");
-            var (CoverLetter, ResumeResult) = await JobOrchestrator.GenerateApplicationAsync(userId, SelectedProvider, _cachedProfile, _job, _selectedModel, _customPrompt);
+            var (CoverLetter, ResumeResult) = await JobOrchestrator.GenerateApplicationAsync(
+                userId,
+                SelectedProvider,
+                _cachedProfile,
+                _job,
+                _selectedModel,
+                _customPrompt
+            );
 
             LoadingService.Update(70, "Tailoring CV...");
             _generatedCoverLetter = CoverLetter;
             _generatedResume = ResumeResult.Profile;
-                _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
+            _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             _originalResumeJson = _resumeJson;
             _detectedCompanyName = ResumeResult.DetectedCompanyName;
             _detectedJobTitle = ResumeResult.DetectedJobTitle;
 
             // Fallback & Correction: Use AI-detected values if missing OR if they differ (AI is usually smarter)
-            if (!string.IsNullOrWhiteSpace(_detectedCompanyName) &&
-                (string.IsNullOrWhiteSpace(_job.CompanyName) || !_job.CompanyName.Equals(_detectedCompanyName, StringComparison.OrdinalIgnoreCase)))
+            if (
+                !string.IsNullOrWhiteSpace(_detectedCompanyName)
+                && (
+                    string.IsNullOrWhiteSpace(_job.CompanyName)
+                    || !_job.CompanyName.Equals(
+                        _detectedCompanyName,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                )
+            )
             {
                 _job.CompanyName = _detectedCompanyName;
             }
 
-            if (!string.IsNullOrWhiteSpace(_detectedJobTitle) &&
-                (string.IsNullOrWhiteSpace(_job.Title) || !_job.Title.Equals(_detectedJobTitle, StringComparison.OrdinalIgnoreCase)))
+            if (
+                !string.IsNullOrWhiteSpace(_detectedJobTitle)
+                && (
+                    string.IsNullOrWhiteSpace(_job.Title)
+                    || !_job.Title.Equals(_detectedJobTitle, StringComparison.OrdinalIgnoreCase)
+                )
+            )
             {
                 _job.Title = _detectedJobTitle;
             }
 
-            if (!string.IsNullOrWhiteSpace(_detectedCompanyName) || !string.IsNullOrWhiteSpace(_detectedJobTitle))
+            if (
+                !string.IsNullOrWhiteSpace(_detectedCompanyName)
+                || !string.IsNullOrWhiteSpace(_detectedJobTitle)
+            )
             {
-                Snackbar.Add($"AI Detected: {_detectedCompanyName} - {_detectedJobTitle}", Severity.Info);
+                Snackbar.Add(
+                    $"AI Detected: {_detectedCompanyName} - {_detectedJobTitle}",
+                    Severity.Info
+                );
             }
 
             LoadingService.Update(100, "Complete!");
             await Task.Delay(300);
 
-            Snackbar.Add($"Application Generated using {_selectedModel.GetDisplayName()}!", Severity.Success);
+            Snackbar.Add(
+                $"Application Generated using {_selectedModel.GetDisplayName()}!",
+                Severity.Success
+            );
             _previewCoverLetter = true; // Auto-switch to preview
-
         }
         catch (Exception ex)
         {
@@ -273,7 +334,7 @@ public partial class Generate
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -283,7 +344,13 @@ public partial class Generate
 
         try
         {
-            await JobOrchestrator.SaveApplicationAsync(userId, _job, _cachedProfile, _generatedCoverLetter, _generatedResume!);
+            await JobOrchestrator.SaveApplicationAsync(
+                userId,
+                _job,
+                _cachedProfile,
+                _generatedCoverLetter,
+                _generatedResume!
+            );
             Snackbar.Add("Application saved successfully!", Severity.Success);
         }
         catch (Exception ex)
@@ -300,22 +367,25 @@ public partial class Generate
 
     private async Task CopyResumeJson()
     {
-        if (_generatedResume == null) return;
+        if (_generatedResume == null)
+            return;
         var json = System.Text.Json.JsonSerializer.Serialize(_generatedResume);
         await ClipboardService.CopyToClipboardAsync(json);
         Snackbar.Add("Copied JSON to clipboard!", Severity.Success);
     }
 
-    [Inject] public IPdfService PdfService { get; set; } = default!;
-    
+    [Inject]
+    public IPdfService PdfService { get; set; } = default!;
+
     // ... (Keep existing fields)
 
     private async Task PrintResume()
     {
-        if (_generatedResume == null) return;
-        
+        if (_generatedResume == null)
+            return;
+
         LoadingService.Show("Generating PDF...", 0);
-        try 
+        try
         {
             var pdfBytes = await PdfService.GenerateCvAsync(_generatedResume);
             await _printPreviewModal.ShowAsync(pdfBytes, "Resume", _job.Title);
@@ -324,21 +394,31 @@ public partial class Generate
         {
             Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
         }
-        finally 
+        finally
         {
-             LoadingService.Hide();
+            LoadingService.Hide();
         }
     }
 
     private async Task PrintCoverLetter()
     {
-        if (string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume == null) return;
-        
+        if (string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume == null)
+            return;
+
         LoadingService.Show("Generating PDF...", 0);
         try
         {
-             var pdfBytes = await PdfService.GenerateCoverLetterAsync(_generatedCoverLetter, _generatedResume, _job.Title, _job.CompanyName);
-             await _printPreviewModal.ShowAsync(pdfBytes, "Cover Letter", $"{_job.Title} at {_job.CompanyName}");
+            var pdfBytes = await PdfService.GenerateCoverLetterAsync(
+                _generatedCoverLetter,
+                _generatedResume,
+                _job.Title,
+                _job.CompanyName
+            );
+            await _printPreviewModal.ShowAsync(
+                pdfBytes,
+                "Cover Letter",
+                $"{_job.Title} at {_job.CompanyName}"
+            );
         }
         catch (Exception ex)
         {
@@ -351,7 +431,7 @@ public partial class Generate
     }
 
     private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
-    
+
     private static string GetModelDisplayName(AIModel model)
     {
         return model.GetDisplayName();

@@ -245,12 +245,12 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                 .Padding(10)
                                 .Column(letterCol =>
                                 {
-                                    // Date
-                                    letterCol
-                                        .Item()
-                                        .Text(DateTime.Now.ToString("MMMM dd, yyyy"))
-                                        .FontSize(size);
-                                    letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
+                                    // // Date
+                                    // letterCol
+                                    //     .Item()
+                                    //     .Text(DateTime.Now.ToString("MMMM dd, yyyy"))
+                                    //     .FontSize(size);
+                                    // letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
 
                                     // Subject removed (included in generated content)
 
