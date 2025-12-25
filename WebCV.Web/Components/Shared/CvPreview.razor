@@ -133,6 +133,23 @@ else
                                 <ul class="project-features">
                                     @((MarkupString)FormatDescription(proj.Description))
                                 </ul>
+                                @if (!string.IsNullOrEmpty(proj.SectionTitle))
+                                {
+                                    var sectionLines = proj.SectionTitle.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                                    var sectionHeader = sectionLines.FirstOrDefault()?.Trim();
+                                    var sectionDetails = sectionLines.Skip(1).ToArray();
+                                    
+                                    if (!string.IsNullOrEmpty(sectionHeader))
+                                    {
+                                        <h5 class="project-section-title">@sectionHeader</h5>
+                                    }
+                                    if (sectionDetails.Any())
+                                    {
+                                        <ul class="project-features">
+                                            @((MarkupString)FormatDescription(string.Join("\n", sectionDetails)))
+                                        </ul>
+                                    }
+                                }
                             </div>
                         }
                     }

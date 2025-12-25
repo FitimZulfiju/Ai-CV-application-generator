@@ -5,7 +5,7 @@ namespace WebCV.Domain
         public int Id { get; set; }
         public string UserId { get; set; } = string.Empty;
         public User? User { get; set; }
-        
+
         public string FullName { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -29,6 +29,7 @@ namespace WebCV.Domain
     {
         public int Id { get; set; }
         public int CandidateProfileId { get; set; }
+
         [System.Text.Json.Serialization.JsonIgnore]
         public CandidateProfile? CandidateProfile { get; set; }
 
@@ -40,6 +41,7 @@ namespace WebCV.Domain
     {
         public int Id { get; set; }
         public int CandidateProfileId { get; set; }
+
         [System.Text.Json.Serialization.JsonIgnore]
         public CandidateProfile? CandidateProfile { get; set; }
 
@@ -56,6 +58,7 @@ namespace WebCV.Domain
     {
         public int Id { get; set; }
         public int CandidateProfileId { get; set; }
+
         [System.Text.Json.Serialization.JsonIgnore]
         public CandidateProfile? CandidateProfile { get; set; }
 
@@ -70,6 +73,7 @@ namespace WebCV.Domain
     {
         public int Id { get; set; }
         public int CandidateProfileId { get; set; }
+
         [System.Text.Json.Serialization.JsonIgnore]
         public CandidateProfile? CandidateProfile { get; set; }
 
@@ -78,6 +82,7 @@ namespace WebCV.Domain
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string Description { get; set; } = string.Empty;
+        public string SectionTitle { get; set; } = string.Empty;
         public string Technologies { get; set; } = string.Empty; // Comma separated or formatted
         public string Link { get; set; } = string.Empty;
     }
@@ -86,6 +91,7 @@ namespace WebCV.Domain
     {
         public int Id { get; set; }
         public int CandidateProfileId { get; set; }
+
         [System.Text.Json.Serialization.JsonIgnore]
         public CandidateProfile? CandidateProfile { get; set; }
 
@@ -97,6 +103,7 @@ namespace WebCV.Domain
     {
         public int Id { get; set; }
         public int CandidateProfileId { get; set; }
+
         [System.Text.Json.Serialization.JsonIgnore]
         public CandidateProfile? CandidateProfile { get; set; }
 

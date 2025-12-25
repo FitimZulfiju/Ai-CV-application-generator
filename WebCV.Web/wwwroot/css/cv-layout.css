@@ -327,6 +327,14 @@
     color: var(--text-dark);
 }
 
+.cv-container .project-section-title {
+    font-size: 0.938em;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-top: 0.75em;
+    margin-bottom: 0.5em;
+}
+
 .cv-container .project-date {
     font-size: 0.812em;
     color: var(--text-medium);

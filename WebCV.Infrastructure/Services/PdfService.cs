@@ -802,6 +802,55 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                         );
                                                     });
                                             }
+
+                                            // Render SectionTitle if present (AI Analytics, etc.)
+                                            if (!string.IsNullOrEmpty(proj.SectionTitle))
+                                            {
+                                                var sectionLines = proj.SectionTitle.Split(
+                                                    '\n',
+                                                    StringSplitOptions.RemoveEmptyEntries
+                                                );
+                                                var sectionHeader = sectionLines
+                                                    .FirstOrDefault()
+                                                    ?.Trim();
+                                                var sectionDetails = sectionLines.Skip(1).ToArray();
+
+                                                // Render subsection title (like project name style)
+                                                if (!string.IsNullOrEmpty(sectionHeader))
+                                                {
+                                                    c.Item()
+                                                        .PaddingTop(0.2f, Unit.Centimetre)
+                                                        .Text(StripHtml(sectionHeader))
+                                                        .SemiBold()
+                                                        .FontSize(fontSize)
+                                                        .FontColor(PrimaryColor);
+                                                }
+
+                                                // Render subsection details with bullets
+                                                if (sectionDetails.Length > 0)
+                                                {
+                                                    c.Item()
+                                                        .PaddingTop(0.1f, Unit.Centimetre)
+                                                        .Text(t =>
+                                                        {
+                                                            t.DefaultTextStyle(dt =>
+                                                                dt.FontSize(fontSize - 1)
+                                                                    .FontColor(TextMedium)
+                                                                    .LineHeight(1.5f)
+                                                            );
+                                                            FormatHtmlToText(
+                                                                t,
+                                                                PreprocessHtml(
+                                                                    string.Join(
+                                                                        "\n",
+                                                                        sectionDetails
+                                                                    ),
+                                                                    "\u2713 "
+                                                                )
+                                                            );
+                                                        });
+                                                }
+                                            }
                                         });
                                 });
                         }

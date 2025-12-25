@@ -11,16 +11,19 @@
 
 /* Hide App Shell Elements */
 .mud-appbar,
-    .mud-drawer,
-    .mud-overlay,
-    .mud-snackbar-provider,
-    .mud-snackbar,
-    .mud-snackbar-container,
-    .mud-layout .mud-main-content > .mud-container > .mud-stack, /* Hide the main header stack if d-print-none fails */
-    .mud-divider, /* Hide dividers */
-    .mud-fab, /* Hide floating action buttons including scroll-to-top */
-    .mud-scroll-to-top,
-    .d-print-none {
+.mud-drawer,
+.mud-overlay,
+.mud-snackbar-provider,
+.mud-snackbar,
+.mud-snackbar-container,
+.mud-layout .mud-main-content>.mud-container>.mud-stack,
+/* Hide the main header stack if d-print-none fails */
+.mud-divider,
+/* Hide dividers */
+.mud-fab,
+/* Hide floating action buttons including scroll-to-top */
+.mud-scroll-to-top,
+.d-print-none {
   display: none !important;
 }
 
@@ -101,6 +104,7 @@ body,
   box-shadow: none !important;
   background: white !important;
 }
+
 /* } */
 
 /* Reference Print Styles from cv-styles.css */
@@ -134,11 +138,9 @@ body {
   /* Use Absolute Units for Padding so shrinking font doesn't shrink visual margins */
   padding: 1cm 2cm 0.625cm;
   page-break-after: avoid;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--primary-dark) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      var(--primary-color) 0%,
+      var(--primary-dark) 100%) !important;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   color: white !important;
@@ -181,7 +183,8 @@ body {
 /* Profile photo in print */
 body.show-photo .profile-photo-wrapper {
   display: block;
-  left: 2cm; /* Match padding */
+  left: 2cm;
+  /* Match padding */
 }
 
 body.show-photo .profile-photo {
@@ -200,12 +203,14 @@ body.show-photo .header {
 
 /* Reduce section padding */
 .section {
-  padding: 0.75cm 2cm; /* Match padding */
+  padding: 0.75cm 2cm;
+  /* Match padding */
   page-break-inside: avoid;
 }
 
 .summary {
-  padding: 0.75cm 2cm; /* Match padding */
+  padding: 0.75cm 2cm;
+  /* Match padding */
   font-size: 0.75em;
   line-height: 1.6;
 }
@@ -349,6 +354,14 @@ body.show-photo .header {
 .project-date {
   font-size: 0.625em;
   /* Increased from 0.562em */
+}
+
+.project-section-title {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
 }
 
 .project-links {
@@ -497,6 +510,7 @@ body.show-photo .header {
 .section:not(.summary) {
   page-break-inside: auto;
 }
+
 /* } */
 
 /* Remove grey shadow around document edges */
@@ -520,4 +534,5 @@ body.show-photo .header {
   border: none !important;
   outline: none !important;
 }
+
 /* } */
