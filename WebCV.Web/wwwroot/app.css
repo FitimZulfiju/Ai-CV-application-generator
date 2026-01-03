@@ -33,3 +33,107 @@ body {
         background-color: transparent !important;
     }
 }
+
+/* Mobile Responsiveness Utility Classes */
+@media (max-width: 599.98px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
+
+    .stack-on-mobile {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .width-100-mobile {
+        width: 100% !important;
+    }
+
+    .pa-mobile-2 {
+        padding: 8px !important;
+    }
+
+    /* Slightly thinner App Bar on mobile */
+    .mud-appbar {
+        height: 56px !important;
+    }
+
+    .mud-appbar .mud-toolbar {
+        min-height: 56px !important;
+        height: 56px !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .mud-main-content {
+        padding-top: 56px !important;
+    }
+
+    .responsive-app-title {
+        margin-left: 8px !important;
+        font-size: 1rem !important;
+        font-weight: 500;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        line-height: normal !important;
+        height: 56px !important;
+        /* Force capture of toolbar height */
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+
+    .responsive-logo {
+        height: 24px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        display: block !important;
+        align-self: center !important;
+    }
+
+    /* Wrap Toolbar buttons on mobile */
+    .mud-toolbar.mud-toolbar-gutters {
+        flex-wrap: wrap;
+        height: auto;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        gap: 8px;
+    }
+}
+
+.responsive-logo {
+    height: 32px;
+    transition: height 0.2s ease;
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.responsive-app-title {
+    margin-left: 12px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 64px;
+    /* Desktop height */
+}
+
+.cv-paper-container {
+    background-color: white;
+    box-shadow: var(--mud-elevation-4);
+    margin: 0 auto;
+}
+
+@media (max-width: 959.98px) {
+    .cv-paper-container {
+        padding: 10px;
+    }
+}

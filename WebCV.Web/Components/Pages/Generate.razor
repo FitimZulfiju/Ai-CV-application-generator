@@ -13,46 +13,52 @@
                 <MudCard Elevation="3" Class="pa-4">
                     <MudText Typo="Typo.h6" Class="mb-1">📋 Job Details</MudText>
                     <MudForm @ref="_form">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-2">
-                            <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined"
-                                Clearable="true" HelperText="Select the AI model" Disabled="_isLoadingModels">
-                                @if (_isLoadingModels)
-                                {
-                                    <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
-                                }
-                                else
-                                {
-                                    @foreach (var model in _availableModels)
+                        <MudGrid Class="mb-2">
+                            <MudItem xs="12" sm="6" md="3">
+                                <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined"
+                                    Clearable="true" HelperText="Select the AI model" Disabled="_isLoadingModels">
+                                    @if (_isLoadingModels)
                                     {
-                                        <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
+                                        <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
                                     }
-                                }
-                            </MudSelect>
-                            <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business"
-                                Clearable="true" HelperText="Will be Auto-detected and updated by AI" />
-                            <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true"
-                                HelperText="Will be Auto-detected and updated by AI" />
-                            <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Class="mb-6"
-                                Label="Manual Entry Mode" T="bool" />
-                        </MudStack>
+                                    else
+                                    {
+                                        @foreach (var model in _availableModels)
+                                        {
+                                            <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="3">
+                                <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined"
+                                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business"
+                                    Clearable="true" HelperText="Will be Auto-detected" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="3">
+                                <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined"
+                                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true"
+                                    HelperText="Will be Auto-detected" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6" md="3" Class="d-flex align-center pt-md-4">
+                                <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary"
+                                    Label="Manual Entry Mode" T="bool" />
+                            </MudItem>
+                        </MudGrid>
 
                         @if (!_manualEntry)
                         {
-                            <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3" Spacing="2">
-                                <!-- Text Field takes all available space -->
-                                <MudItem Class="flex-grow-1">
+                            <MudGrid Class="mb-3" Spacing="2">
+                                <MudItem xs="12" sm="9" md="10">
                                     <MudTextField @bind-Value="_job.Url" Label="Job URL" Variant="Variant.Outlined"
                                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link"
                                         Required="true" RequiredError="" Clearable="true" />
                                 </MudItem>
 
-                                <!-- Button stays at the end -->
-                                <MudItem Class="d-flex justify-end">
+                                <MudItem xs="12" sm="3" md="2" Class="d-flex align-center">
                                     <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large"
                                         OnClick="FetchJobDetails" Disabled="_isFetching"
-                                        StartIcon="@Icons.Material.Filled.CloudDownload">
+                                        StartIcon="@Icons.Material.Filled.CloudDownload" FullWidth="true" Class="mt-1">
                                         @if (_isFetching)
                                         {
                                             <WebCV.Web.Components.Shared.LoadingIndicator />
@@ -63,7 +69,7 @@
                                         }
                                     </MudButton>
                                 </MudItem>
-                            </MudStack>
+                            </MudGrid>
                         }
 
                         @if (_showAdvancedEditor || _manualEntry)
@@ -71,8 +77,8 @@
                             int _min = 10;
                             int _max = 90;
 
-                            <div class="d-flex flex-grow-1" style="height: 600px; width: 100%;">
-                                <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column" Style="height: 100%;"
+                            <div class="d-flex flex-grow-1 stack-on-mobile" style="min-height: 400px; height: 60vh; width: 100%;">
+                                <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column width-100-mobile" Style="height: 100%;"
                                     Elevation="0">
                                     <div class="d-flex justify-space-between align-center">
                                         <MudText Typo="Typo.caption">Editor (Markdown) | Job Description</MudText>
@@ -89,7 +95,7 @@
                                     </div>
                                 </MudPaper>
 
-                                <MudPaper Width="@($"{100 - _splitterSize}%")" Class="d-flex flex-column pl-1"
+                                <MudPaper Width="@($"{100 - _splitterSize}%")" Class="d-flex flex-column pl-1 width-100-mobile"
                                     Style="height: 100%;" Elevation="0">
                                     <MudText Typo="Typo.caption" Class="mb-1">Preview (HTML)</MudText>
                                     <MudPaper Elevation="0" Outlined="true" Class="pa-4 flex-grow-1"
@@ -116,26 +122,17 @@
                                 HelperText="E.g., 'Focus on leadership skills', 'Use formal tone', 'Keep cover letter under 300 words'"
                                 Class="mb-1 mt-4" />
 
-                            <MudStack Row="true" AlignItems="AlignItems.Center" Class="mt-2"
-                                Style="border:1px solid lightgrey; border-radius:4px; padding:4px;">
-
-                                <!-- LEFT AREA: centered content -->
-                                <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                                    <MudText Typo="Typo.caption" Class="mr-2">Split Ratio: <strong>@_splitterSize</strong>
-                                        (min:@_min | max:@_max)</MudText>
+                            <MudGrid Class="mt-2 py-2" Style="border:1px solid lightgrey; border-radius:4px;">
+                                <MudItem xs="12" md="6" Class="d-flex align-center justify-center">
+                                    <MudText Typo="Typo.caption" Class="mr-2">Split: <strong>@_splitterSize%</strong></MudText>
                                     <MudSlider T="int" @bind-Value="@_splitterSize" Min="_min" Max="_max" Step="1"
                                         Variant="Variant.Filled" Color="Color.Primary" ValueLabel="true"
-                                        Style="width:400px;" />
-                                </div>
-
-                                <!-- CENTER DIVIDER -->
-                                <MudDivider Vertical="true" FlexItem="true" Class="mx-3" />
-
-                                <!-- RIGHT AREA: centered content -->
-                                <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                                        Style="max-width:300px; width:100%;" />
+                                </MudItem>
+                                <MudItem xs="12" md="6" Class="d-flex align-center justify-center">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium"
                                         OnClick="GenerateContent" Disabled="_isGenerating"
-                                        StartIcon="@Icons.Material.Filled.AutoAwesome" Style="min-width:200px;">
+                                        StartIcon="@Icons.Material.Filled.AutoAwesome" FullWidth="true" Style="max-width:300px;">
                                         @if (_isGenerating)
                                         {
                                             <WebCV.Web.Components.Shared.LoadingIndicator />
@@ -146,8 +143,8 @@
                                             <MudText>Generate Application</MudText>
                                         }
                                     </MudButton>
-                                </div>
-                            </MudStack>
+                                </MudItem>
+                            </MudGrid>
                         }
                     </MudForm>
                 </MudCard>
@@ -156,26 +153,26 @@
 
         <MudItem xs="12">
             <MudCard Elevation="3" Class="pa-2" Style="height: 100%;">
-                <MudToolBar Class="d-print-none">
-                    <MudText Class="mb-1" Typo="Typo.h6">✨ Generated Content</MudText>
-                    <MudSpacer />
+                <MudToolBar Class="d-print-none flex-wrap py-2" Style="height: auto; gap: 8px;">
+                    <MudText Typo="Typo.h6">✨ Generated Content</MudText>
+                    <div class="flex-grow-1 hide-on-mobile"></div>
                     <MudSwitch @bind-Value="_previewCoverLetter" Color="Color.Primary" Label="Visual Preview"
-                        Class="mr-4" Style="@GetDisplayStyle(_activeTabIndex == 0)" />
+                        Style="@GetDisplayStyle(_activeTabIndex == 0)" />
                     <MudSwitch T="bool" Value="_previewResume" ValueChanged="OnResumePreviewToggled"
-                        Color="Color.Primary" Label="Visual Preview" Class="mr-4"
+                        Color="Color.Primary" Label="Visual Preview"
                         Style="@GetDisplayStyle(_activeTabIndex == 1)" />
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
                         StartIcon="@Icons.Material.Filled.ContentCopy"
-                        OnClick="@(() => CopyToClipboard(_generatedCoverLetter))" Class="mr-2"
+                        OnClick="@(() => CopyToClipboard(_generatedCoverLetter))"
                         Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
-                        Copy Text</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Class="mr-2"
+                        Copy</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter"
                         Disabled="_isPrintingCoverLetter"
                         Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
                         @if (_isPrintingCoverLetter)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>Generating...</span>
+                            <span>...</span>
                         }
                         else
                         {
@@ -189,7 +186,7 @@
                         @if (_isSaving)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>Saving...</span>
+                            <span>...</span>
                         }
                         else if (_isAlreadySaved)
                         {
@@ -199,12 +196,12 @@
                         else
                         {
                             <MudIcon Icon="@Icons.Material.Filled.Save" Class="mr-2" />
-                            <span>Save Application</span>
+                            <span>Save</span>
                         }
                     </MudButton>
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
-                        StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyResumeJson" Class="mr-2"
-                        Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">Copy JSON Data
+                        StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyResumeJson"
+                        Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">Copy JSON
                     </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume"
                         Disabled="_isPrintingResume"
@@ -212,7 +209,7 @@
                         @if (_isPrintingResume)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>Generating...</span>
+                            <span>...</span>
                         }
                         else
                         {

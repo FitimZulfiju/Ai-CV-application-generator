@@ -11,15 +11,16 @@
 else
 {
     <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
-        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="pb-4 d-print-none">
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
+            Class="pb-4 d-print-none stack-on-mobile" Style="gap: 16px;">
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
                 <MudText Typo="Typo.h5">🧑 Master CV Profile</MudText>
                 <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Primary" Size="Size.Small"
                     OnClick="@(() => _showFormattingHelp = true)" title="Formatting Help" />
             </MudStack>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="width-100-mobile justify-center">
                 <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
-                    Disabled="_isSaving">
+                    Disabled="_isSaving" FullWidth="true" Style="max-width: 200px;">
                     @if (_isSaving)
                     {
                         <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -28,22 +29,22 @@ else
                     else
                     {
                         <MudIcon Icon="@Icons.Material.Filled.Save" Class="mr-2" />
-                        <span>Save Profile</span>
+                        <span>Save</span>
                     }
                 </MudButton>
                 @if (_activeTabIndex == 7)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
-                        Disabled="_isPrinting">
+                        Disabled="_isPrinting" FullWidth="true" Style="max-width: 200px;">
                         @if (_isPrinting)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>Generating...</span>
+                            <span>...</span>
                         }
                         else
                         {
                             <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                            <span>Print CV</span>
+                            <span>Print</span>
                         }
                     </MudButton>
                 }
@@ -56,8 +57,8 @@ else
             <MudTabPanel Text="Personal Details" Icon="@Icons.Material.Filled.Person">
                 <MudCard Class="pa-3" Elevation="2">
                     <MudGrid Justify="Justify.Center">
-                        <MudItem xs="12" sm="4">
-                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4" Class="pt-2">
+                        <MudItem xs="12">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="pt-2">
                                 @if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
                                 {
                                     <MudAvatar Size="Size.Large" Color="Color.Default">
@@ -66,28 +67,29 @@ else
                                 }
                                 else
                                 {
-                                    <MudAvatar Size="Size.Large" Color="Color.Primary">@_profile.FullName.FirstOrDefault()
+                                    <MudAvatar Size="Size.Large" Color="Color.Primary">@(_profile.FullName?.FirstOrDefault() ?? 'U')
                                     </MudAvatar>
                                 }
-                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-                                        <ActivatorContent>
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                                StartIcon="@Icons.Material.Filled.CloudUpload">
-                                                Upload Picture
-                                            </MudButton>
-                                        </ActivatorContent>
-                                    </MudFileUpload>
-                                    @if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
-                                    {
-                                        <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
-                                            StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfilePicture">
-                                            Delete
+
+                                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                                    <ActivatorContent>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                            StartIcon="@Icons.Material.Filled.CloudUpload">
+                                            Upload Picture
                                         </MudButton>
-                                    }
-                                    <MudSwitch @bind-Value="_profile.ShowProfilePicture" Color="Color.Primary"
-                                        Label="Show in CV" />
-                                </MudStack>
+                                    </ActivatorContent>
+                                </MudFileUpload>
+
+                                @if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                                        StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfilePicture">
+                                        Delete
+                                    </MudButton>
+                                }
+
+                                <MudSwitch @bind-Value="_profile.ShowProfilePicture" Color="Color.Primary"
+                                    Label="Show in CV" />
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12" sm="4">
@@ -268,19 +270,18 @@ else
                                     <MudTextField @bind-Value="proj.Role" Label="Role" Variant="Variant.Text"
                                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
                                 </MudItem>
-                                <MudItem xs="12" sm="2">
+                                <MudItem xs="12" sm="6" md="2">
                                     <MudDatePicker @bind-Date="proj.StartDate" Label="Start Date" />
                                 </MudItem>
-                                <MudItem xs="12" sm="2">
+                                <MudItem xs="12" sm="6" md="2">
                                     <MudDatePicker @bind-Date="proj.EndDate" Label="End Date" />
                                 </MudItem>
-                                <MudItem xs="12" sm="6" Class="pt-2">
+                                <MudItem xs="12" sm="12" md="6" Class="pt-2">
                                     <MudTextField @bind-Value="proj.Link" Label="Link (GitHub/Live)" Variant="Variant.Outlined"
                                         Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link" />
                                 </MudItem>
-                                <MudItem xs="12" sm="6" Class="pt-2">
-                                    <MudTextField @bind-Value="proj.Technologies"
-                                        Label="Technologies Used (Comma separated (e.g. C#, Blazor, SQL))"
+                                <MudItem xs="12" sm="12" md="6" Class="pt-2">
+                                    <MudTextField @bind-Value="proj.Technologies" Label="Technologies Used (C#, Blazor, etc.)"
                                         Variant="Variant.Outlined" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-1">
