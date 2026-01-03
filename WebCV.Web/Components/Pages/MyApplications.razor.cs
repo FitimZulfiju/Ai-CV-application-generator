@@ -55,6 +55,8 @@ public partial class MyApplications
         NavigationManager.NavigateTo($"/application/{id}");
     }
 
+    private int? _deletingId;
+
     private async Task DeleteApplication(GeneratedApplication app)
     {
         bool? result = await DialogService.ShowMessageBox(
@@ -66,6 +68,10 @@ public partial class MyApplications
 
         if (result == true)
         {
+            _deletingId = app.Id;
+            StateHasChanged();
+            await Task.Yield();
+
             try
             {
                 await CVService.DeleteApplicationAsync(app.Id);
@@ -76,29 +82,46 @@ public partial class MyApplications
             {
                 Snackbar.Add($"Error deleting application: {ex.Message}", Severity.Error);
             }
+            finally
+            {
+                _deletingId = null;
+                StateHasChanged();
+            }
         }
     }
 
     private bool FilterFunc1(GeneratedApplication element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(GeneratedApplication element, string searchString)
+    private static bool FilterFunc(GeneratedApplication element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
+        {
             return true;
+        }
+
         if (
             element.JobPosting?.CompanyName.Contains(
                 searchString,
                 StringComparison.OrdinalIgnoreCase
             ) == true
         )
+        {
             return true;
+        }
+
         if (
             element.JobPosting?.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase)
             == true
         )
+        {
             return true;
+        }
+
         if ($"{element.JobPosting?.CompanyName} {element.JobPosting?.Title}".Contains(searchString))
+        {
             return true;
+        }
+
         return false;
     }
 }

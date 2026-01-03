@@ -38,15 +38,24 @@
                     <MudTd DataLabel="Job Title">@context.JobPosting?.Title</MudTd>
                     <MudTd DataLabel="Actions">
                         <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
-                            OnClick="@(() => ViewApplication(context.Id))" Class="mr-10"
+                            OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" Disabled="@(_deletingId == context.Id)"
                             StartIcon="@Icons.Material.Filled.Visibility">View</MudButton>
+
+                        @if (_deletingId == context.Id)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Error" />
+                    }
+                    else
+                    {
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                            OnClick="@(() => DeleteApplication(context))" aria-label="delete"></MudIconButton>
-                    </MudTd>
-                </RowTemplate>
-                <PagerContent>
-                    <MudTablePager />
-                </PagerContent>
-            </MudTable>
+                            OnClick="@(() => DeleteApplication(context))" aria-label="delete" Disabled="@(_deletingId != null)">
+                        </MudIconButton>
+                    }
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
     }
 </MudContainer>
