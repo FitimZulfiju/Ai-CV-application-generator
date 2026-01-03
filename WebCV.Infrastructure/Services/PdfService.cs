@@ -557,10 +557,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                 .FontColor(TextMedium)
                                                 .LineHeight(1.5f)
                                         );
-                                        FormatHtmlToText(
-                                            t,
-                                            PreprocessHtml(exp.Description, "\u25B8 ")
-                                        );
+                                        FormatHtmlToText(t, PreprocessHtml(exp.Description, "• "));
                                     });
                             }
 

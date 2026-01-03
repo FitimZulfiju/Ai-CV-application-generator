@@ -19,11 +19,33 @@ else
             </MudStack>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
-                    StartIcon="@Icons.Material.Filled.Save">Save Profile</MudButton>
+                    Disabled="_isSaving">
+                    @if (_isSaving)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Saving...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Save" Class="mr-2" />
+                        <span>Save Profile</span>
+                    }
+                </MudButton>
                 @if (_activeTabIndex == 7)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
-                        StartIcon="@Icons.Material.Filled.Print">Print CV</MudButton>
+                        Disabled="_isPrinting">
+                        @if (_isPrinting)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Generating...</span>
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                            <span>Print CV</span>
+                        }
+                    </MudButton>
                 }
             </MudStack>
         </MudStack>
@@ -264,6 +286,11 @@ else
                                 <MudItem xs="12" Class="pt-1">
                                     <MudTextField @bind-Value="proj.Description" Label="Description" Lines="3"
                                         Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                </MudItem>
+                                <MudItem xs="12" Class="pt-2">
+                                    <MudTextField @bind-Value="proj.SectionTitle" Label="Section Title (Optional)" Lines="3"
+                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true"
+                                        HelperText="First line = section header (e.g. 'AI-Enabled Analytics Module'), following lines = bullet points" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-1">
                                     <MudButton Variant="Variant.Outlined" Color="Color.Error"

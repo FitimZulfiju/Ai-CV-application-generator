@@ -272,13 +272,23 @@ app.MapPost(
 // External login challenge endpoint
 app.MapGet(
     "/external-login/{provider}",
-    (string provider, SignInManager<User> signInManager) =>
+    async (string provider, SignInManager<User> signInManager, HttpContext httpContext) =>
     {
+        // Sign out any existing user to ensure fresh OAuth flow
+        await signInManager.SignOutAsync();
+
+        // Clear any external authentication cookies to prevent caching
+        await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
         const string redirectUrl = "/external-login-callback";
         var properties = signInManager.ConfigureExternalAuthenticationProperties(
             provider,
             redirectUrl
         );
+
+        // Force fresh login prompt for the selected provider
+        properties.Items["prompt"] = "select_account";
+
         return Results.Challenge(properties, [provider]);
     }
 );

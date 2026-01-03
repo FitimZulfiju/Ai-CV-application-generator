@@ -22,11 +22,33 @@
             <MudSpacer />
             @if (_activeTabIndex == 0 && _application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintCoverLetter">Print Cover Letter</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter">
+                    @if (_isPrintingCoverLetter)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Generating...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                        <span>Print Cover Letter</span>
+                    }
+                </MudButton>
             }
             @if (_activeTabIndex == 1 && _tailoredResume != null)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintResume">Print CV</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume" Disabled="_isPrintingResume">
+                    @if (_isPrintingResume)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Generating...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                        <span>Print CV</span>
+                    }
+                </MudButton>
             }
         </MudStack>
 

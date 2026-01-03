@@ -245,7 +245,7 @@
 }
 
 .cv-container .achievements li::before {
-    content: '▸';
+    content: '•';
     color: var(--primary-color);
     font-weight: bold;
     font-size: 1.375em;

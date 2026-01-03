@@ -42,6 +42,12 @@ public partial class Generate
     private CandidateProfile? _cachedProfile;
     private bool _isGenerating = false;
     private bool _isFetching = false;
+    private bool _isPrintingCoverLetter = false;
+    private bool _isPrintingResume = false;
+    private bool _isSaving = false;
+    private bool _isAlreadySaved = false;
+    private string _savedCoverLetter = string.Empty;
+    private string _savedResumeJson = string.Empty;
     private bool _previewCoverLetter = false;
     private bool _previewResume = true;
     private string _resumeJson = string.Empty;
@@ -162,6 +168,10 @@ public partial class Generate
 
         _isFetching = true;
         LoadingService.Show("Fetching job details...", 0);
+
+        // Clear all previous data to prevent mixing cached content
+        ClearPreviousJobData();
+
         try
         {
             LoadingService.Update(20, "Connecting to job site...");
@@ -172,13 +182,10 @@ public partial class Generate
             LoadingService.Update(60, "Parsing content...");
 
             _job.Description = fetchedJob.Description;
+            _job.CompanyName = fetchedJob.CompanyName;
+            _job.Title = fetchedJob.Title;
             _showAdvancedEditor = true;
             UpdatePreview(_job.Description);
-            // Only overwrite title/company if they are generic placeholders
-            if (string.IsNullOrWhiteSpace(_job.CompanyName))
-                _job.CompanyName = fetchedJob.CompanyName;
-            if (string.IsNullOrWhiteSpace(_job.Title))
-                _job.Title = fetchedJob.Title;
 
             LoadingService.Update(100, "Done!");
             await Task.Delay(200);
@@ -194,6 +201,40 @@ public partial class Generate
             _isFetching = false;
             LoadingService.Hide();
         }
+    }
+
+    private void ClearPreviousJobData()
+    {
+        // Clear job details (except URL which is being used for fetch)
+        _job.Description = string.Empty;
+        _job.CompanyName = string.Empty;
+        _job.Title = string.Empty;
+
+        // Clear generated content
+        _generatedCoverLetter = string.Empty;
+        _generatedResume = null;
+        _resumeJson = string.Empty;
+        _originalResumeJson = string.Empty;
+
+        // Clear detected values
+        _detectedCompanyName = null;
+        _detectedJobTitle = null;
+
+        // Reset preview states
+        _previewCoverLetter = false;
+        _previewResume = true;
+        _previewHtml = string.Empty;
+        _customPrompt = string.Empty;
+
+        // Reset to first tab
+        _activeTabIndex = 0;
+
+        // Reset saved state and snapshots
+        _isAlreadySaved = false;
+        _savedCoverLetter = string.Empty;
+        _savedResumeJson = string.Empty;
+
+        StateHasChanged();
     }
 
     private async Task GenerateContent()
@@ -300,6 +341,20 @@ public partial class Generate
                 Severity.Success
             );
             _previewCoverLetter = true; // Auto-switch to preview
+
+            // Only allow saving if content is different from what was previously saved
+            if (
+                _isAlreadySaved
+                && _generatedCoverLetter == _savedCoverLetter
+                && _resumeJson == _savedResumeJson
+            )
+            {
+                // Content is the same as saved, keep saved state
+            }
+            else
+            {
+                _isAlreadySaved = false; // Allow saving new/different content
+            }
         }
         catch (Exception ex)
         {
@@ -314,6 +369,22 @@ public partial class Generate
 
     private async Task SaveApplication()
     {
+        _isSaving = true;
+        StateHasChanged();
+        await Task.Yield();
+
+        // Check if already saved
+        if (_isAlreadySaved)
+        {
+            Snackbar.Add(
+                "This application has already been saved. Generate a new application to save again.",
+                Severity.Info
+            );
+            _isSaving = false;
+            StateHasChanged();
+            return;
+        }
+
         if (string.IsNullOrEmpty(_generatedCoverLetter))
         {
             Snackbar.Add("Please generate a cover letter first.", Severity.Warning);
@@ -351,11 +422,20 @@ public partial class Generate
                 _generatedCoverLetter,
                 _generatedResume!
             );
+            _isAlreadySaved = true;
+            // Store what was saved to compare with future generations
+            _savedCoverLetter = _generatedCoverLetter;
+            _savedResumeJson = _resumeJson;
             Snackbar.Add("Application saved successfully!", Severity.Success);
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Error saving: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isSaving = false;
+            StateHasChanged();
         }
     }
 
@@ -384,6 +464,9 @@ public partial class Generate
         if (_generatedResume == null)
             return;
 
+        _isPrintingResume = true;
+        StateHasChanged();
+        await Task.Yield();
         LoadingService.Show("Generating PDF...", 0);
         try
         {
@@ -397,6 +480,8 @@ public partial class Generate
         finally
         {
             LoadingService.Hide();
+            _isPrintingResume = false;
+            StateHasChanged();
         }
     }
 
@@ -405,6 +490,9 @@ public partial class Generate
         if (string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume == null)
             return;
 
+        _isPrintingCoverLetter = true;
+        StateHasChanged();
+        await Task.Yield();
         LoadingService.Show("Generating PDF...", 0);
         try
         {
@@ -427,6 +515,8 @@ public partial class Generate
         finally
         {
             LoadingService.Hide();
+            _isPrintingCoverLetter = false;
+            StateHasChanged();
         }
     }
 

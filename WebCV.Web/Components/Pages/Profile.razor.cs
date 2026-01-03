@@ -27,6 +27,8 @@ public partial class Profile
 
     private int _activeTabIndex;
     private bool _showFormattingHelp;
+    private bool _isSaving;
+    private bool _isPrinting;
     private CandidateProfile? _profile;
 
     public class SkillCategoryViewModel
@@ -179,6 +181,9 @@ public partial class Profile
     {
         if (_profile != null)
         {
+            _isSaving = true;
+            StateHasChanged();
+            await Task.Yield();
             try
             {
                 UpdateProfileSkills(); // Ensure it's up to date before saving
@@ -188,6 +193,11 @@ public partial class Profile
             catch (Exception ex)
             {
                 Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                _isSaving = false;
+                StateHasChanged();
             }
         }
     }
@@ -200,6 +210,9 @@ public partial class Profile
         if (_profile == null)
             return;
 
+        _isPrinting = true;
+        StateHasChanged();
+        await Task.Yield();
         try
         {
             var pdfBytes = await PdfService.GenerateCvAsync(_profile);
@@ -208,6 +221,11 @@ public partial class Profile
         catch (Exception ex)
         {
             Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isPrinting = false;
+            StateHasChanged();
         }
     }
 
