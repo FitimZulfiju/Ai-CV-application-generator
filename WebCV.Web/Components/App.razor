@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI CV & Applications</title>
     <base href="/" />
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
@@ -15,25 +16,22 @@
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["WebCV.Web.styles.css"]" />
     <!-- <ImportMap /> -->
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="icon" type="image/png" href="favicon.png?v=4" />
+    <link rel="apple-touch-icon" href="icon-512.png" />
     <meta name="theme-color" content="#ffffff" />
-    <link rel="manifest" href="/manifest.json" />
+    <meta name="application-name" content="AI CV & Applications" />
+    <link rel="manifest" href="manifest.json?v=4" />
     <HeadOutlet />
 </head>
 
 <body>
     <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
     <ReconnectModal />
-    <script type="module" src="@Assets["Components/Layout/ReconnectModal.razor.js"]"></script>
-    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
-    <script src="js/cv-scaling.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-    </script>
+    @((MarkupString)@"<script type=""module"" src=""Components/Layout/ReconnectModal.razor.js""></script>")
+    @((MarkupString)@"<script src=""_content/MudBlazor/MudBlazor.min.js""></script>")
+    @((MarkupString)@"<script src=""_framework/blazor.web.js""></script>")
+    @((MarkupString)@"<script src=""js/cv-scaling.js""></script>")
+    @((MarkupString)@"<script src=""js/pwa-init.js?v=4""></script>")
 </body>
 
 </html>
