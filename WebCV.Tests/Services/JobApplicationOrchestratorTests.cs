@@ -120,7 +120,13 @@ public class JobApplicationOrchestratorTests
     {
         // Arrange
         var userId = "user1";
-        var job = new JobPosting { Title = "Job" };
+        var job = new JobPosting
+        {
+            Title = "Job Title",
+            CompanyName = "Test Company",
+            Description = "Job Description",
+            Url = "https://example.com/job",
+        };
         var profile = new CandidateProfile { Id = 1 };
         var coverLetter = "Cover Letter";
         var tailoredResume = new CandidateProfile { FullName = "Tailored" };
@@ -128,13 +134,19 @@ public class JobApplicationOrchestratorTests
         // Act
         await _orchestrator.SaveApplicationAsync(userId, job, profile, coverLetter, tailoredResume);
 
-        // Assert
+        // Assert - Note: The orchestrator creates a fresh JobPosting entity to avoid EF Core tracking issues
+        // so we verify properties match instead of reference equality
         _mockCvService.Verify(
             s =>
                 s.SaveApplicationAsync(
                     It.Is<GeneratedApplication>(app =>
                         app.UserId == userId
-                        && app.JobPosting == job
+                        && app.JobPosting != null
+                        && app.JobPosting.Title == job.Title
+                        && app.JobPosting.CompanyName == job.CompanyName
+                        && app.JobPosting.Description == job.Description
+                        && app.JobPosting.Url == job.Url
+                        && app.JobPosting.Id == 0 // Fresh entity should have Id = 0
                         && app.CandidateProfileId == profile.Id
                         && app.CoverLetterContent == coverLetter
                         && !string.IsNullOrEmpty(app.TailoredResumeJson)
