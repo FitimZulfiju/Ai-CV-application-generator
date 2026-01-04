@@ -1,12 +1,15 @@
 namespace WebCV.Web.Components.Pages;
 
-public partial class Profile
+public partial class Profile : IDisposable
 {
     [Inject]
     public ICVService CVService { get; set; } = default!;
 
     [Inject]
     public ISnackbar Snackbar { get; set; } = default!;
+
+    [Inject]
+    public IPdfService PdfService { get; set; } = default!;
 
     [Inject]
     public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
@@ -23,7 +26,12 @@ public partial class Profile
     [Inject]
     public IDialogService DialogService { get; set; } = default!;
 
-    private Shared.PrintPreviewModal _printPreviewModal = default!;
+    [Inject]
+    public ClientPersistenceService PersistenceService { get; set; } = default!;
+
+    private Timer? _autoSaveTimer;
+
+    private PrintPreviewModal _printPreviewModal = default!;
 
     private int _activeTabIndex;
     private bool _showFormattingHelp;
@@ -44,7 +52,7 @@ public partial class Profile
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -188,6 +196,7 @@ public partial class Profile
             {
                 UpdateProfileSkills(); // Ensure it's up to date before saving
                 await CVService.SaveProfileAsync(_profile);
+                await PersistenceService.ClearDraftAsync("profile_draft");
                 Snackbar.Add("Profile saved successfully!", Severity.Success);
             }
             catch (Exception ex)
@@ -201,9 +210,6 @@ public partial class Profile
             }
         }
     }
-
-    [Inject]
-    public IPdfService PdfService { get; set; } = default!;
 
     private async Task PrintProfile()
     {
@@ -271,7 +277,7 @@ public partial class Profile
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
             var filePath = Path.Combine(uploadPath, fileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            await using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await resizedFile
                     .OpenReadStream(maxAllowedSize: 1024 * 1024 * 10)
@@ -323,5 +329,69 @@ public partial class Profile
         {
             Snackbar.Add($"Error removing profile picture: {ex.Message}", Severity.Error);
         }
+    }
+
+    // Track previous state hash or simply save periodically if _profile is not null
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Try to restore draft
+            var draft = await PersistenceService.GetDraftAsync<CandidateProfile>("profile_draft");
+            if (draft != null && _profile != null)
+            {
+                // Simple Restoration Strategy:
+                // If the server profile is "empty" (new) OR we want to prioritize draft.
+                // Given the requirement is "don't lose work on crash", we assume the draft is more recent/valuable
+                // if it exists.
+
+                // We map draft to _profile
+                _profile = draft;
+
+                // Re-initialize view models
+                if (_profile.Skills != null)
+                {
+                    _skillCategories =
+                    [
+                        .. _profile
+                            .Skills.GroupBy(s => s.Category)
+                            .Select(g => new SkillCategoryViewModel
+                            {
+                                Name = g.Key,
+                                Skills = [.. g.Select(s => s.Name)],
+                            }),
+                    ];
+                }
+
+                StateHasChanged();
+                Snackbar.Add("Draft restored from browser storage.", Severity.Info);
+            }
+
+            // Start Auto-Save Timer (every 5 seconds)
+            _autoSaveTimer = new Timer(
+                async _ =>
+                {
+                    if (_profile != null)
+                    {
+                        await InvokeAsync(async () =>
+                        {
+                            // Sync ViewModels to Profile before saving
+                            UpdateProfileSkills();
+                            await PersistenceService.SaveDraftAsync("profile_draft", _profile);
+                        });
+                    }
+                },
+                null,
+                5000,
+                5000
+            );
+        }
+    }
+
+    public void Dispose()
+    {
+        _autoSaveTimer?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

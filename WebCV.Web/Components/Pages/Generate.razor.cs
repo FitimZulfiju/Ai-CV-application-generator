@@ -1,6 +1,6 @@
 namespace WebCV.Web.Components.Pages;
 
-public partial class Generate
+public partial class Generate : IDisposable
 {
     [Inject]
     public ICVService CVService { get; set; } = default!;
@@ -10,6 +10,9 @@ public partial class Generate
 
     [Inject]
     public IClipboardService ClipboardService { get; set; } = default!;
+
+    [Inject]
+    public ClientPersistenceService PersistenceService { get; set; } = default!;
 
     [Inject]
     public ISnackbar Snackbar { get; set; } = default!;
@@ -32,8 +35,11 @@ public partial class Generate
     [Inject]
     public IDialogService DialogService { get; set; } = default!;
 
-    private Shared.PrintPreviewModal _printPreviewModal = default!;
+    [Inject]
+    public IPdfService PdfService { get; set; } = default!;
 
+    private PrintPreviewModal _printPreviewModal = default!;
+    private Timer? _autoSaveTimer;
     private readonly JobPosting _job = new();
     private string _generatedCoverLetter = string.Empty;
     private CandidateProfile? _generatedResume;
@@ -53,6 +59,9 @@ public partial class Generate
     private string _resumeJson = string.Empty;
     private string _originalResumeJson = string.Empty;
     private bool _manualEntry = false;
+
+    private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
+
     private MudForm? _form;
     private AIProvider SelectedProvider => _selectedModel.GetProvider();
     private AIModel _selectedModel = AIModel.Gpt4o;
@@ -233,6 +242,9 @@ public partial class Generate
         _isAlreadySaved = false;
         _savedCoverLetter = string.Empty;
         _savedResumeJson = string.Empty;
+
+        // Clear persistence
+        _ = PersistenceService.ClearDraftAsync("generate_draft");
 
         StateHasChanged();
     }
@@ -426,6 +438,7 @@ public partial class Generate
             // Store what was saved to compare with future generations
             _savedCoverLetter = _generatedCoverLetter;
             _savedResumeJson = _resumeJson;
+            await PersistenceService.ClearDraftAsync("generate_draft");
             Snackbar.Add("Application saved successfully!", Severity.Success);
         }
         catch (Exception ex)
@@ -453,11 +466,6 @@ public partial class Generate
         await ClipboardService.CopyToClipboardAsync(json);
         Snackbar.Add("Copied JSON to clipboard!", Severity.Success);
     }
-
-    [Inject]
-    public IPdfService PdfService { get; set; } = default!;
-
-    // ... (Keep existing fields)
 
     private async Task PrintResume()
     {
@@ -520,10 +528,88 @@ public partial class Generate
         }
     }
 
-    private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
-
     private static string GetModelDisplayName(AIModel model)
     {
         return model.GetDisplayName();
+    }
+
+    public class GenerateDraft
+    {
+        public JobPosting Job { get; set; } = new();
+        public string CustomPrompt { get; set; } = string.Empty;
+        public bool ManualEntry { get; set; }
+        public AIModel SelectedModel { get; set; }
+        public bool ShowAdvancedEditor { get; set; }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Restore draft
+            var draft = await PersistenceService.GetDraftAsync<GenerateDraft>("generate_draft");
+            if (draft != null)
+            {
+                if (
+                    string.IsNullOrWhiteSpace(_job.Url)
+                    && string.IsNullOrWhiteSpace(_job.Description)
+                )
+                {
+                    // Only restore if the current form is empty (fresh load)
+                    _job.Url = draft.Job.Url;
+                    _job.CompanyName = draft.Job.CompanyName;
+                    _job.Title = draft.Job.Title;
+                    _job.Description = draft.Job.Description;
+                    _customPrompt = draft.CustomPrompt;
+                    _manualEntry = draft.ManualEntry;
+                    _selectedModel = draft.SelectedModel;
+                    _showAdvancedEditor = draft.ShowAdvancedEditor;
+
+                    if (!string.IsNullOrEmpty(_job.Description))
+                    {
+                        UpdatePreview(_job.Description);
+                    }
+
+                    StateHasChanged();
+                    Snackbar.Add("Job details restored from browser storage.", Severity.Info);
+                }
+            }
+
+            // Start Timer
+            _autoSaveTimer = new Timer(
+                async _ =>
+                {
+                    // Check if data exists worth saving (url or description)
+                    if (
+                        !string.IsNullOrWhiteSpace(_job.Url)
+                        || !string.IsNullOrWhiteSpace(_job.Description)
+                        || !string.IsNullOrWhiteSpace(_job.CompanyName)
+                    )
+                    {
+                        await InvokeAsync(async () =>
+                        {
+                            var currentDraft = new GenerateDraft
+                            {
+                                Job = _job,
+                                CustomPrompt = _customPrompt,
+                                ManualEntry = _manualEntry,
+                                SelectedModel = _selectedModel,
+                                ShowAdvancedEditor = _showAdvancedEditor,
+                            };
+                            await PersistenceService.SaveDraftAsync("generate_draft", currentDraft);
+                        });
+                    }
+                },
+                null,
+                5000,
+                5000
+            );
+        }
+    }
+
+    public void Dispose()
+    {
+        _autoSaveTimer?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -148,6 +148,7 @@ builder.Services.AddScoped<ILoadingService, LoadingService>();
 builder.Services.AddScoped<IAdminStatisticsService, AdminStatisticsService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ISystemLogService, SystemLogService>();
+builder.Services.AddScoped<ClientPersistenceService>();
 
 var app = builder.Build();
 
@@ -383,5 +384,18 @@ app.MapGet(
 );
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+// Add version endpoint for auto-refresh
+app.MapGet(
+        "/api/version",
+        () =>
+        {
+            var version =
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+                ?? "1.0.0.0";
+            return Results.Ok(new { version });
+        }
+    )
+    .AllowAnonymous(); // Allow polling without auth
 
 app.Run();
