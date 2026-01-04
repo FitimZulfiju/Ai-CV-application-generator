@@ -17,6 +17,7 @@ global using WebCV.Application.Common;
 global using WebCV.Application.DTOs;
 global using WebCV.Application.Interfaces;
 global using WebCV.Domain;
+global using WebCV.Domain.Entities;
 global using WebCV.Infrastructure.Data;
 global using WebCV.Infrastructure.Services;
 global using WebCV.Web.Components;

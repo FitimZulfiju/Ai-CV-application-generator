@@ -33,9 +33,4 @@
     </DialogActions>
 </MudDialog>
 
-@code {
-    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
-    [Parameter] public SystemLog Log { get; set; } = default!;
 
-    void Cancel() => MudDialog.Cancel();
-}
