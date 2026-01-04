@@ -1,0 +1,41 @@
+@using WebCV.Domain.Entities
+@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField Label="Timestamp" Value="@Log.Timestamp.ToString("G")" ReadOnly="true" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Label="Level" Value="@Log.Level" ReadOnly="true" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Label="User ID" Value="@Log.UserId" ReadOnly="true" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Label="Path" Value="@Log.RequestPath" ReadOnly="true" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField Label="Source" Value="@Log.Source" ReadOnly="true" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField Label="Message" Value="@Log.Message" Lines="2" ReadOnly="true" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField Label="Stack Trace" Value="@Log.StackTrace" Lines="15" ReadOnly="true"
+                    Style="font-family: monospace;" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public SystemLog Log { get; set; } = default!;
+
+    void Cancel() => MudDialog.Cancel();
+}

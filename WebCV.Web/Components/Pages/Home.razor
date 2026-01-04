@@ -15,13 +15,19 @@
             <MudText Typo="Typo.h6" Align="Align.Center">
                 Your AI-powered career assistant.
             </MudText>
+            <MudStack Row="true" Justify="Justify.Center" Class="mt-4">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Help"
+                    OnClick="OpenUserGuideDialog">
+                    How it Works
+                </MudButton>
+            </MudStack>
         </MudItem>
     </MudGrid>
 
     <MudDivider DividerType="DividerType.FullWidth" Class="my-8" />
 
     <MudGrid Justify="Justify.Center">
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" sm="6" md="4">
             <MudCard Elevation="4" Class="pa-4 hover-card" @onclick="@(() => Navigation.NavigateTo("/profile"))"
                 Style="cursor: pointer; height: 100%;">
                 <MudCardHeader>
@@ -42,7 +48,7 @@
             </MudCard>
         </MudItem>
 
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" sm="6" md="4">
             <MudCard Elevation="4" Class="pa-4 hover-card" @onclick="@(() => Navigation.NavigateTo("/generate"))"
                 Style="cursor: pointer; height: 100%;">
                 <MudCardHeader>
@@ -59,6 +65,28 @@
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/generate">Start Generating
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="4" Class="pa-4 hover-card" @onclick="OpenSampleCvDialog"
+                Style="cursor: pointer; height: 100%;">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudIcon Icon="@Icons.Material.Filled.Visibility" Size="Size.Large" Color="Color.Info" />
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">View Sample CV</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>See an example of a complete, well-filled CV profile. Use it as a reference when building
+                        your own.</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Info" OnClick="OpenSampleCvDialog">View Example
                     </MudButton>
                 </MudCardActions>
             </MudCard>

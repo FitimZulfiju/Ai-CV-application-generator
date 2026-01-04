@@ -1,0 +1,106 @@
+@inject IDialogService DialogService
+
+<MudDialog>
+    <TitleContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center">
+            <MudIcon Icon="@Icons.Material.Filled.Help" Class="mr-2" />
+            <MudText Typo="Typo.h6">How It Works & Guide</MudText>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+            <!-- Tab 1: Workflow -->
+            <MudTabPanel Text="How It Works" Icon="@Icons.Material.Filled.Work">
+                <MudTimeline TimelineOrientation="TimelineOrientation.Vertical"
+                    TimelinePosition="TimelinePosition.Start">
+                    <MudTimelineItem Color="Color.Primary" Size="Size.Medium">
+                        <ItemOpposite>
+                            <MudText Color="Color.Primary" Typo="Typo.h6">Step 1</MudText>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <MudText Typo="Typo.h6">Build Master CV</MudText>
+                            <MudText Typo="Typo.body2">
+                                Go to the <strong>Profile</strong> page and fill in your details. This is your "Source
+                                of Truth" - add everything you've ever done.
+                            </MudText>
+                        </ItemContent>
+                    </MudTimelineItem>
+
+                    <MudTimelineItem Color="Color.Warning" Size="Size.Medium">
+                        <ItemOpposite>
+                            <MudText Color="Color.Warning" Typo="Typo.h6">Step 2</MudText>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <MudText Typo="Typo.h6">Connect AI Keys</MudText>
+                            <MudText Typo="Typo.body2">
+                                Ensure your API keys (OpenAI, Gemini, etc.) are set in <strong>Settings</strong>. The
+                                app needs these to generate content.
+                            </MudText>
+                        </ItemContent>
+                    </MudTimelineItem>
+
+                    <MudTimelineItem Color="Color.Secondary" Size="Size.Medium">
+                        <ItemOpposite>
+                            <MudText Color="Color.Secondary" Typo="Typo.h6">Step 3</MudText>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <MudText Typo="Typo.h6">Generate Application</MudText>
+                            <MudText Typo="Typo.body2">
+                                Go to <strong>Generate</strong>, paste a Job URL or description. The AI will read your
+                                Master CV and the Job Description to create a perfectly tailored Resume and Cover
+                                Letter.
+                            </MudText>
+                        </ItemContent>
+                    </MudTimelineItem>
+                </MudTimeline>
+            </MudTabPanel>
+
+            <!-- Tab 2: Formatting -->
+            <MudTabPanel Text="HTML Formatting" Icon="@Icons.Material.Filled.FormatBold">
+                <MudAlert Severity="Severity.Info" Class="mb-4">
+                    You can use HTML tags in Description fields (Summary, Work Experience, etc.) to format your text.
+                </MudAlert>
+
+                <MudTable Items="_formattingExamples" Hover="true" Breakpoint="Breakpoint.None" Dense="true">
+                    <HeaderContent>
+                        <MudTh>Description</MudTh>
+                        <MudTh>Code to Write</MudTh>
+                        <MudTh>Result Preview</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.Description</MudTd>
+                        <MudTd>
+                            <MudText
+                                Style="font-family:monospace; background:#f5f5f5; padding:2px 4px; border-radius:4px;">
+                                @context.Code
+                            </MudText>
+                        </MudTd>
+                        <MudTd>
+                            @((MarkupString)context.Preview)
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close" Variant="Variant.Filled" Color="Color.Primary">Got it</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private void Close() => MudDialog.Close();
+
+    private record FormattingExample(string Description, string Code, string Preview);
+
+    private List<FormattingExample> _formattingExamples = new()
+{
+new("Bold Text", "<b>Leader</b>", "<b>Leader</b>"),
+new("Italic Text", "<i>Innovative</i>", "<i>Innovative</i>"),
+new("Colored Text", "<span style=\"color:blue\">Blue Text</span>", "<span style=\"color:blue\">Blue Text</span>"),
+new("Bullet List", "• Item 1<br>• Item 2", "• Item 1<br>• Item 2"),
+new("Line Break", "Line 1<br>Line 2", "Line 1<br>Line 2")
+};
+}

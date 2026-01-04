@@ -1,0 +1,281 @@
+@page "/admin"
+@attribute [Authorize(Roles = Roles.Admin)]
+
+<PageTitle>Your AI-powered career assistant</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+        <MudText Typo="Typo.h5">🛡️ Admin Dashboard</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download"
+            OnClick="ExportCsv">Export CSV</MudButton>
+    </MudStack>
+
+    @if (_loading)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+    }
+    else if (_statistics != null)
+    {
+        <MudGrid Spacing="3">
+            <!-- Statistics Cards -->
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" />
+                        <MudText Typo="Typo.h3" Color="Color.Primary">@_statistics.TotalUsers</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Total Users</MudText>
+                    </MudStack>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.Badge" Size="Size.Large" Color="Color.Success" />
+                        <MudText Typo="Typo.h3" Color="Color.Success">@_statistics.TotalProfiles</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Profiles Created</MudText>
+                    </MudStack>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.Description" Size="Size.Large" Color="Color.Info" />
+                        <MudText Typo="Typo.h3" Color="Color.Info">@_statistics.TotalApplicationsGenerated</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Applications Generated</MudText>
+                    </MudStack>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Large" Color="Color.Warning" />
+                        <MudText Typo="Typo.h3" Color="Color.Warning">@_statistics.ApplicationsThisMonth</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">This Month</MudText>
+                    </MudStack>
+                </MudCard>
+            </MudItem>
+
+            <!-- Usage Trends Chart (Line Chart) -->
+            <MudItem xs="12" md="8">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="mr-2" />
+                        <MudText Typo="Typo.h6">Applications - Last 30 Days</MudText>
+                    </MudStack>
+                    <MudChart ChartType="ChartType.Line" ChartSeries="@_dailyChartSeries" XAxisLabels="@_dailyLabels"
+                        Width="100%" Height="250px" ChartOptions="@_chartOptions" />
+                </MudCard>
+            </MudItem>
+
+            <!-- Top Users Chart (Bar Chart) -->
+            <MudItem xs="12" md="4">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Class="mr-2" />
+                        <MudText Typo="Typo.h6">Top Users</MudText>
+                    </MudStack>
+                    @if (_statistics.TopUsersByApplications.Count == 0)
+                    {
+                        <MudAlert Severity="Severity.Info" Dense="true">No applications yet</MudAlert>
+                    }
+                    else
+                    {
+                        <MudList T="string" Dense="true">
+                            @foreach (var (user, index) in _statistics.TopUsersByApplications.Select((u, i) => (u, i)))
+                            {
+                                <MudListItem T="string">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                            <MudAvatar Size="Size.Small" Color="@GetRankColor(index)">@(index + 1)</MudAvatar>
+                                                <MudText Typo="Typo.body2">@user.FullName</MudText>
+                                            </MudStack>
+                                            <MudChip T="string" Size="Size.Small" Color="Color.Primary">@user.ApplicationCount</MudChip>
+                                        </MudStack>
+                                    </MudListItem>
+                            }
+                        </MudList>
+                    }
+                </MudCard>
+            </MudItem>
+
+            <!-- Activity Stats -->
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudText Typo="Typo.h6" Class="mb-3">Activity Overview</MudText>
+                    <MudSimpleTable Hover="true" Dense="true">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <MudIcon Icon="@Icons.Material.Filled.Today" Size="Size.Small" Class="mr-2" /> Today
+                                </td>
+                                <td>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Primary">
+                                        @_statistics.ApplicationsToday</MudChip>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Small" Class="mr-2" /> This
+                                    Week
+                                </td>
+                                <td>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Info">
+                                        @_statistics.ApplicationsThisWeek</MudChip>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="Size.Small" Class="mr-2" />
+                                    This Month
+                                </td>
+                                <td>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Success">
+                                        @_statistics.ApplicationsThisMonth</MudChip>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                </MudCard>
+            </MudItem>
+
+            <!-- System Overview Donut -->
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudText Typo="Typo.h6" Class="mb-3">System Overview</MudText>
+                    <MudChart ChartType="ChartType.Donut"
+                        InputData="@(new double[] { _statistics.TotalUsers, _statistics.TotalProfiles, _statistics.TotalApplicationsGenerated })"
+                        InputLabels="@(new string[] { "Users", "Profiles", "Applications" })" Width="200px"
+                        Height="200px" />
+                </MudCard>
+            </MudItem>
+
+            <!-- All Users Table with Management -->
+            <MudItem xs="12">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Group" Class="mr-2" />
+                        <MudText Typo="Typo.h6">User Management (@_statistics.Users.Count users)</MudText>
+                    </MudStack>
+
+                    <MudTable Items="@_statistics.Users" Hover="true" Dense="true" Striped="true">
+                        <HeaderContent>
+                            <MudTh>Status</MudTh>
+                            <MudTh>Email</MudTh>
+                            <MudTh>Full Name</MudTh>
+                            <MudTh>Roles</MudTh>
+                            <MudTh>Profile</MudTh>
+                            <MudTh>API Keys</MudTh>
+                            <MudTh>Apps</MudTh>
+                            <MudTh>Actions</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Status">
+                                @if (context.IsLockedOut)
+                                {
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Error"
+                                        Icon="@Icons.Material.Filled.Lock">Locked</MudChip>
+                                }
+                                else
+                                {
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Success"
+                                        Icon="@Icons.Material.Filled.CheckCircle">Active</MudChip>
+                                }
+                            </MudTd>
+                            <MudTd DataLabel="Email">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                    <MudIcon
+                                        Icon="@(context.EmailConfirmed ? Icons.Material.Filled.Verified : Icons.Material.Filled.Cancel)"
+                                        Color="@(context.EmailConfirmed ? Color.Success : Color.Error)" Size="Size.Small" />
+                                    @context.Email
+                                </MudStack>
+                            </MudTd>
+                            <MudTd DataLabel="Full Name">@context.FullName</MudTd>
+                            <MudTd DataLabel="Roles">
+                                @foreach (var role in context.Roles)
+                                {
+                                    <MudChip T="string" Size="Size.Small"
+                                        Color="@(role == "Admin" ? Color.Warning : Color.Default)">@role</MudChip>
+                                }
+                            </MudTd>
+                            <MudTd DataLabel="Profile">
+                                <MudIcon
+                                    Icon="@(context.HasProfile ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)"
+                                    Color="@(context.HasProfile ? Color.Success : Color.Error)" />
+                            </MudTd>
+                            <MudTd DataLabel="API Keys">
+                                <MudIcon
+                                    Icon="@(context.HasApiKeys ? Icons.Material.Filled.Key : Icons.Material.Filled.KeyOff)"
+                                    Color="@(context.HasApiKeys ? Color.Success : Color.Default)" />
+                            </MudTd>
+                            <MudTd DataLabel="Apps">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Info">@context.ApplicationsGenerated
+                                </MudChip>
+                            </MudTd>
+                            <MudTd DataLabel="Actions">
+                                @if (!context.Roles.Contains("Admin"))
+                                {
+                                    @if (context.IsLockedOut)
+                                    {
+                                        <MudButton Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined"
+                                            OnClick="@(() => ToggleUserLockout(context.Id, false))">
+                                            <MudIcon Icon="@Icons.Material.Filled.LockOpen" Size="Size.Small" Class="mr-1" />
+                                            Unlock
+                                        </MudButton>
+                                    }
+                                    else
+                                    {
+                                        <MudButton Size="Size.Small" Color="Color.Error" Variant="Variant.Outlined"
+                                            OnClick="@(() => ToggleUserLockout(context.Id, true))">
+                                            <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Small" Class="mr-1" />
+                                            Lock
+                                        </MudButton>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Admin</MudText>
+                                }
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudCard>
+            </MudItem>
+
+            <!-- Recent Applications Table -->
+            <MudItem xs="12">
+                <MudCard Elevation="3" Class="pa-4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.History" Class="mr-2" />
+                        <MudText Typo="Typo.h6">Recent Applications</MudText>
+                    </MudStack>
+
+                    @if (_statistics.RecentApplications.Count == 0)
+                    {
+                        <MudAlert Severity="Severity.Info">No applications generated yet.</MudAlert>
+                    }
+                    else
+                    {
+                        <MudTable Items="@_statistics.RecentApplications" Hover="true" Dense="true" Striped="true">
+                            <HeaderContent>
+                                <MudTh>User</MudTh>
+                                <MudTh>Job Title</MudTh>
+                                <MudTh>Company</MudTh>
+                                <MudTh>Date</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="User">@context.UserEmail</MudTd>
+                                <MudTd DataLabel="Job Title">@context.JobTitle</MudTd>
+                                <MudTd DataLabel="Company">@context.CompanyName</MudTd>
+                                <MudTd DataLabel="Date">@context.CreatedDate.ToString("MMM dd, yyyy HH:mm")</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    }
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>

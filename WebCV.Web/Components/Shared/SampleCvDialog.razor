@@ -1,0 +1,113 @@
+@inject IDialogService DialogService
+
+<MudDialog>
+    <TitleContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center">
+            <MudIcon Icon="@Icons.Material.Filled.Description" Class="mr-2" />
+            <MudText Typo="Typo.h6">Sample CV - Reference</MudText>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <MudAlert Severity="Severity.Info" Dense="true" Class="mb-4">
+            This is a sample CV showing how a complete profile looks. Use it as a reference when filling your own profile.
+        </MudAlert>
+        
+        <MudPaper Elevation="2" Class="pa-4" Style="max-height: 60vh; overflow-y: auto;">
+            <!-- Header -->
+            <MudStack AlignItems="AlignItems.Center" Class="mb-4">
+                <MudAvatar Size="Size.Large" Color="Color.Primary">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" />
+                </MudAvatar>
+                <MudText Typo="Typo.h5">@_profile.FullName</MudText>
+                <MudText Typo="Typo.subtitle1" Color="Color.Primary">@_profile.Title</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">@_profile.Location</MudText>
+            </MudStack>
+
+            <MudDivider Class="my-3" />
+
+            <!-- Contact Info -->
+            <MudStack Row="true" Justify="Justify.Center" Spacing="3" Class="mb-4">
+                <MudChip T="string" Icon="@Icons.Material.Filled.Email" Size="Size.Small">@_profile.Email</MudChip>
+                <MudChip T="string" Icon="@Icons.Material.Filled.Phone" Size="Size.Small">@_profile.PhoneNumber</MudChip>
+            </MudStack>
+
+            <!-- Professional Summary -->
+            <MudText Typo="Typo.h6" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1" /> Professional Summary
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)_profile.ProfessionalSummary)</MudText>
+
+            <MudDivider Class="my-3" />
+
+            <!-- Skills -->
+            <MudText Typo="Typo.h6" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Small" Class="mr-1" /> Skills
+            </MudText>
+            <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="1" Class="mb-4">
+                @foreach (var skill in _profile.Skills)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">@skill.Name</MudChip>
+                }
+            </MudStack>
+
+            <MudDivider Class="my-3" />
+
+            <!-- Experience -->
+            <MudText Typo="Typo.h6" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.Work" Size="Size.Small" Class="mr-1" /> Experience
+            </MudText>
+            @foreach (var exp in _profile.WorkExperience)
+            {
+                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle1"><strong>@exp.JobTitle</strong></MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary">@exp.CompanyName</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                        @exp.StartDate?.ToString("MMM yyyy") - @(exp.IsCurrentRole ? "Present" : exp.EndDate?.ToString("MMM yyyy"))
+                    </MudText>
+                    <MudText Typo="Typo.body2" Style="white-space: pre-line;">@exp.Description</MudText>
+                </MudCard>
+            }
+
+            <MudDivider Class="my-3" />
+
+            <!-- Education -->
+            <MudText Typo="Typo.h6" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.School" Size="Size.Small" Class="mr-1" /> Education
+            </MudText>
+            @foreach (var edu in _profile.Educations)
+            {
+                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle1"><strong>@edu.Degree</strong></MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary">@edu.InstitutionName</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@edu.EndDate?.ToString("yyyy")</MudText>
+                </MudCard>
+            }
+
+            <MudDivider Class="my-3" />
+
+            <!-- Projects -->
+            <MudText Typo="Typo.h6" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Small" Class="mr-1" /> Projects
+            </MudText>
+            @foreach (var project in _profile.Projects)
+            {
+                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle1"><strong>@project.Name</strong></MudText>
+                    <MudText Typo="Typo.body2">@project.Description</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Info">@project.Technologies</MudChip>
+                </MudCard>
+            }
+        </MudPaper>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close" Variant="Variant.Filled" Color="Color.Primary">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+    
+    private readonly CandidateProfile _profile = DemoProfileData.GetSampleProfile();
+
+    private void Close() => MudDialog.Close();
+}

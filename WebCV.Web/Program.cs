@@ -145,6 +145,9 @@ builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddScoped<IJobApplicationOrchestrator, JobApplicationOrchestrator>();
 builder.Services.AddScoped<IModelAvailabilityService, ModelAvailabilityService>();
 builder.Services.AddScoped<ILoadingService, LoadingService>();
+builder.Services.AddScoped<IAdminStatisticsService, AdminStatisticsService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<ISystemLogService, SystemLogService>();
 
 var app = builder.Build();
 
@@ -157,6 +160,8 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseForwardedHeaders(); // Must be before UseHttpsRedirection
 
@@ -175,7 +180,8 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<User>>();
-        await DbInitializer.InitializeAsync(context, userManager);
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbInitializer.InitializeAsync(context, userManager, roleManager);
     }
     catch (Exception ex)
     {
@@ -243,6 +249,9 @@ app.MapPost(
 
             if (result.Succeeded)
             {
+                // Assign User role to new registrations
+                await userManager.AddToRoleAsync(user, Roles.User);
+
                 // Create empty profile for new user
                 var profile = new CandidateProfile
                 {
@@ -344,6 +353,9 @@ app.MapGet(
                 var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
                 return Results.Redirect($"/login?error={Uri.EscapeDataString(errors)}");
             }
+
+            // Assign User role to new external registrations
+            await userManager.AddToRoleAsync(user, Roles.User);
 
             // Create empty profile for new external user
             using var scope = serviceProvider.CreateScope();

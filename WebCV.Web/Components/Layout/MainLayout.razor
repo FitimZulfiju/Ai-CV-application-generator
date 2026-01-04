@@ -37,9 +37,18 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent Class="pt-16 pa-4">
+        @if (_showBetaWarning)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Style="margin-bottom: 20px;" Class="my-2"
+                ShowCloseIcon="true" CloseIconClicked="(() => _showBetaWarning = false)">
+                <strong>🚧 Beta Version:</strong> This application is currently in development. Data persistence is not
+                guaranteed, and the database may be reset at any time during updates.
+            </MudAlert>
+        }
         @Body
     </MudMainContent>
 </MudLayout>
+
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.

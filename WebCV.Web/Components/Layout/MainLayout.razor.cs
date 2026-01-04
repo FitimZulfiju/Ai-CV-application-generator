@@ -19,6 +19,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
 
     private bool _drawerOpen = true;
     protected bool IsAuthenticated { get; set; }
+    private bool _showBetaWarning = true;
 
     protected override void OnInitialized()
     {

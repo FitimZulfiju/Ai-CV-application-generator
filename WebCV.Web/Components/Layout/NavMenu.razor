@@ -4,7 +4,7 @@
 <MudNavMenu>
     @* <MudText Typo="Typo.h6" Class="px-4 py-2">WebCV</MudText> *@
     <MudDivider Class="mb-2" />
-    
+
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
 
     <AuthorizeView>
@@ -13,13 +13,27 @@
             <MudNavLink Href="/generate" Icon="@Icons.Material.Filled.AutoAwesome">Generate</MudNavLink>
             <MudNavLink Href="/my-applications" Icon="@Icons.Material.Filled.List">My Applications</MudNavLink>
             <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
-            
+
+            <AuthorizeView Roles="Admin">
+    <Authorized Context="adminContext">
+                    <MudDivider Class="my-2" />
+        <MudNavLink Href="/admin" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AdminPanelSettings"
+                        Style="color: var(--mud-palette-warning);">
+            Admin Dashboard
+                    </MudNavLink>
+                    <MudNavLink Href="/admin/logs" Icon="@Icons.Material.Filled.BugReport"
+                        Style="color: var(--mud-palette-error);">
+                        System Logs
+                    </MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+
             <MudDivider Class="my-2" />
-            
+
             <MudText Typo="Typo.body2" Class="px-4 py-2">Logged in as: @context.User.Identity?.Name</MudText>
-            
+
             <MudNavLink OnClick="Logout" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
-            
+
             <form action="/logout" method="post" id="logout-form" style="display:none;">
             </form>
         </Authorized>
