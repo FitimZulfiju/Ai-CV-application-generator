@@ -37,126 +37,142 @@ export function startAutoRefresh() {
         notificationShown = true;
         const isPending = type === 'pending';
 
-        // 1. Suppress Blazor Overlay (only if update is already applied and connection is likely broken)
-        if (!isPending) {
-            setInterval(() => {
-                const reconnectModal = document.querySelector('#components-reconnect-modal');
-                if (reconnectModal) {
-                    reconnectModal.style.display = 'none';
-                    reconnectModal.style.visibility = 'hidden';
-                    reconnectModal.style.opacity = '0';
-                    reconnectModal.style.pointerEvents = 'none';
-                }
-                const reconnectContainer = document.querySelector('.components-reconnect-container');
-                if (reconnectContainer) {
-                    reconnectContainer.style.display = 'none';
-                }
-            }, 500);
-        }
+        // 1. Completely Suppress Blazor UI
+        // We do this aggressively because we are taking over the UX
+        const suppressBlazorStyle = document.createElement('style');
+        suppressBlazorStyle.innerHTML = `
+            #components-reconnect-modal, 
+            .components-reconnect-modal,
+            .components-reconnect-container { 
+                display: none !important; 
+                visibility: hidden !important; 
+                opacity: 0 !important; 
+                pointer-events: none !important; 
+            }
+        `;
+        document.head.appendChild(suppressBlazorStyle);
 
-        // 2. Create Banner (MudBlazor "Filled Warning" Look-alike)
+        // 2. Create Banner (MudBlazor "Filled Warning" Style)
         const banner = document.createElement('div');
-
-        // Material Design Elevation 4
         banner.style.boxShadow = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)';
         banner.style.position = 'fixed';
         banner.style.top = '0';
         banner.style.left = '0';
         banner.style.width = '100%';
-        banner.style.zIndex = '2000000000'; // Max z-index
-        banner.style.backgroundColor = '#ff9800'; // MudBlazor Warning Color
+        banner.style.zIndex = '2147483647'; // Max z-index
+        banner.style.backgroundColor = '#ff9800';
         banner.style.color = '#ffffff';
         banner.style.display = 'flex';
         banner.style.alignItems = 'center';
         banner.style.padding = '12px 24px';
-        banner.style.fontFamily = '"Roboto", "Helvetica", "Arial", sans-serif';
+        banner.style.fontFamily = 'Roboto, Helvetica, Arial, sans-serif';
         banner.style.fontSize = '1rem';
-        banner.style.fontWeight = '400';
-        banner.style.letterSpacing = '0.00938em';
         banner.style.lineHeight = '1.5';
         banner.id = 'update-notification-banner';
 
-        // Icon Container
+        // Icon
         const iconDiv = document.createElement('div');
         iconDiv.style.marginRight = '22px';
         iconDiv.style.display = 'flex';
         iconDiv.style.alignItems = 'center';
-
-        // SVG Icon (Warning Triangle)
-        iconDiv.innerHTML = `<svg class="mud-icon-root mud-svg-icon mud-inherit-text mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true" style="width: 24px; height: 24px; fill: white;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>`;
+        iconDiv.innerHTML = `<svg style="width: 24px; height: 24px; fill: white;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>`;
         banner.appendChild(iconDiv);
 
-        // Message Container
+        // Message
         const messageDiv = document.createElement('div');
         messageDiv.style.flex = '1';
-        messageDiv.style.padding = '8px 0';
 
         const titleText = document.createElement('div');
-        titleText.innerText = isPending ? 'Planned maintenance: A new version is ready' : `New version applied (${version})`;
+        titleText.innerText = isPending ? 'Update Available' : `New version applied (${version})`;
         titleText.style.fontWeight = '500';
         messageDiv.appendChild(titleText);
 
         const subText = document.createElement('div');
         subText.innerText = isPending
-            ? 'A new version is available. Your work is safely stored locally. Restarting in 5 minutes.'
-            : 'The application has been updated. Please reload to see the changes.';
+            ? 'We are improving the system. Your work is saved locally. Brief restart in 5 minutes.'
+            : 'The application has been updated. Please reload to load the new version.';
         subText.style.fontSize = '0.875rem';
         subText.style.opacity = '0.9';
         messageDiv.appendChild(subText);
 
         banner.appendChild(messageDiv);
 
-        // Action Container
+        // Action / Countdown
         const actionDiv = document.createElement('div');
         actionDiv.style.marginLeft = 'auto';
-        actionDiv.style.display = 'flex';
-        actionDiv.style.alignItems = 'center';
-        actionDiv.style.gap = '16px';
 
-        // Countdown
         const countdownSpan = document.createElement('span');
-        let secondsLeft = 300;
+        let secondsLeft = 300; // 5 minutes
 
-        function formatTime(seconds) {
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return `${m}:${s.toString().padStart(2, '0')}`;
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return `${m}:${sec.toString().padStart(2, '0')}`;
         }
 
-        countdownSpan.innerText = isPending ? `Restart in ${formatTime(secondsLeft)}` : `Reload in ${formatTime(secondsLeft)}`;
-        countdownSpan.style.fontSize = '0.875rem';
-        countdownSpan.style.marginRight = '16px';
+        countdownSpan.innerText = isPending ? `Updating in ${formatTime(secondsLeft)}` : 'Ready to reload';
+        countdownSpan.style.fontWeight = 'bold';
         actionDiv.appendChild(countdownSpan);
+        banner.appendChild(actionDiv);
+        document.body.appendChild(banner);
+
+        async function waitForServerAndReload() {
+            // Update UI to show we are waiting
+            countdownSpan.innerText = "Installing updates...";
+            subText.innerText = "The server is restarting. We will reload you automatically when it's back...";
+
+            // Poll every 2 seconds
+            const pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/version', { cache: 'no-store' });
+                    if (response.ok) {
+                        const data = await response.json();
+                        // If we get a valid version back, the server is up!
+                        if (data.version) {
+                            console.log('Server is back! Reloading...');
+                            clearInterval(pollInterval);
+                            location.reload();
+                        }
+                    }
+                } catch (e) {
+                    console.log('Waiting for server...');
+                }
+            }, 2000);
+        }
 
         async function triggerUpdate() {
             if (isPending) {
                 try {
-                    // Trigger Watchtower update via backend
-                    const response = await fetch('/api/trigger-update', { method: 'POST' });
-                    if (response.ok) {
-                        console.log('Update triggered successfully.');
-                    }
+                    await fetch('/api/trigger-update', { method: 'POST' });
+                    // Immediately enter waiting mode
+                    waitForServerAndReload();
                 } catch (error) {
-                    console.error('Failed to trigger update:', error);
-                    location.reload(); // Fallback
+                    // Even if trigger fails (network dead?), wait for server
+                    waitForServerAndReload();
                 }
             } else {
                 location.reload();
             }
         }
 
-        banner.appendChild(actionDiv);
-        document.body.appendChild(banner);
-
-        // 3. Start Countdown
-        reloadTimer = setInterval(() => {
-            secondsLeft--;
-            countdownSpan.innerText = isPending ? `Restart in ${formatTime(secondsLeft)}` : `Reload in ${formatTime(secondsLeft)}`;
-            if (secondsLeft <= 0) {
-                clearInterval(reloadTimer);
-                triggerUpdate();
-            }
-        }, 1000);
+        // Start Countdown if pending
+        if (isPending) {
+            reloadTimer = setInterval(() => {
+                secondsLeft--;
+                countdownSpan.innerText = `Updating in ${formatTime(secondsLeft)}`;
+                if (secondsLeft <= 0) {
+                    clearInterval(reloadTimer);
+                    triggerUpdate();
+                }
+            }, 1000);
+        } else {
+            // If already applied, just wait a moment then reload or let user click? 
+            // Logic in original code was just showing banner for applied.
+            // We can let them reload manually or auto-reload after a short delay if preferred.
+            // For now, let's auto-reload after 10s for "applied" case to be helpful?
+            // Or stick to manual to be safe. Original code implied manual or simple message.
+            // Let's keep it simple: no auto-timer for 'applied' unless requested.
+        }
     }
 
     checkVersion();
