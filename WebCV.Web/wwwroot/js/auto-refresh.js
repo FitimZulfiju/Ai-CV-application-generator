@@ -96,9 +96,8 @@ export function startAutoRefresh() {
         titleText.style.fontWeight = '500';
         messageDiv.appendChild(titleText);
 
-        const subText = document.createElement('div');
         subText.innerText = isPending
-            ? 'A new version is available. Your work is safely stored locally. Restarting in 60s.'
+            ? 'A new version is available. Your work is safely stored locally. Restarting in 5 minutes.'
             : 'The application has been updated. Please reload to see the changes.';
         subText.style.fontSize = '0.875rem';
         subText.style.opacity = '0.9';
@@ -115,8 +114,15 @@ export function startAutoRefresh() {
 
         // Countdown
         const countdownSpan = document.createElement('span');
-        let secondsLeft = 60;
-        countdownSpan.innerText = isPending ? `Restart in ${secondsLeft}s` : `Reload in ${secondsLeft}s`;
+        let secondsLeft = 300;
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        countdownSpan.innerText = isPending ? `Restart in ${formatTime(secondsLeft)}` : `Reload in ${formatTime(secondsLeft)}`;
         countdownSpan.style.fontSize = '0.875rem';
         countdownSpan.style.marginRight = '16px';
         actionDiv.appendChild(countdownSpan);
@@ -144,7 +150,7 @@ export function startAutoRefresh() {
         // 3. Start Countdown
         reloadTimer = setInterval(() => {
             secondsLeft--;
-            countdownSpan.innerText = isPending ? `Restart in ${secondsLeft}s` : `Reload in ${secondsLeft}s`;
+            countdownSpan.innerText = isPending ? `Restart in ${formatTime(secondsLeft)}` : `Reload in ${formatTime(secondsLeft)}`;
             if (secondsLeft <= 0) {
                 clearInterval(reloadTimer);
                 triggerUpdate();
