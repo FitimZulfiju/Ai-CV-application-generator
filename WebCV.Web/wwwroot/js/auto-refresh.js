@@ -96,6 +96,7 @@ export function startAutoRefresh() {
         titleText.style.fontWeight = '500';
         messageDiv.appendChild(titleText);
 
+        const subText = document.createElement('div');
         subText.innerText = isPending
             ? 'A new version is available. Your work is safely stored locally. Restarting in 5 minutes.'
             : 'The application has been updated. Please reload to see the changes.';
