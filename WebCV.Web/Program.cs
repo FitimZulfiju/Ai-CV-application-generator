@@ -401,7 +401,15 @@ app.MapGet(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 ?? "1.0.0.0";
             var isUpdateAvailable = updateCheckService.IsUpdateAvailable;
-            return Results.Ok(new { version, isUpdateAvailable });
+            var newVersionTag = updateCheckService.NewVersionTag;
+            return Results.Ok(
+                new
+                {
+                    version,
+                    isUpdateAvailable,
+                    newVersionTag,
+                }
+            );
         }
     )
     .AllowAnonymous(); // Allow polling without auth

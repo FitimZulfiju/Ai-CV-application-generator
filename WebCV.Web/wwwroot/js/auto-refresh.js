@@ -12,6 +12,7 @@ export function startAutoRefresh() {
                 const data = await response.json();
                 const newVersion = data.version;
                 const isUpdateAvailable = data.isUpdateAvailable;
+                const newVersionTag = data.newVersionTag;
 
                 if (currentVersion === null) {
                     currentVersion = newVersion;
@@ -25,7 +26,7 @@ export function startAutoRefresh() {
                 // Case 2: Update pending in registry
                 else if (isUpdateAvailable) {
                     console.log(`New version found in registry. Triggering pending update notification...`);
-                    showUpdateNotification('pending');
+                    showUpdateNotification('pending', newVersionTag);
                 }
             }
         } catch (error) {
@@ -83,7 +84,8 @@ export function startAutoRefresh() {
         messageDiv.style.flex = '1';
 
         const titleText = document.createElement('div');
-        titleText.innerText = isPending ? 'Update Available' : `New version applied (${version})`;
+        const versionString = version ? ` (${version})` : '';
+        titleText.innerText = isPending ? `Update Available${versionString}` : `New version applied${versionString}`;
         titleText.style.fontWeight = '500';
         messageDiv.appendChild(titleText);
 

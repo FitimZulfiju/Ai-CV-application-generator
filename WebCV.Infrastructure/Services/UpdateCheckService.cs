@@ -6,6 +6,7 @@ public interface IUpdateCheckService
 {
     bool IsUpdateAvailable { get; }
     string? NewVersionDigest { get; }
+    string? NewVersionTag { get; }
     Task<bool> TriggerUpdateAsync();
 }
 
@@ -19,10 +20,12 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     private readonly string _watchtowerToken;
     private string? _currentDigest;
     private string? _newVersionDigest;
+    private string? _newVersionTag;
     private bool _isUpdateAvailable;
 
     public bool IsUpdateAvailable => _isUpdateAvailable;
     public string? NewVersionDigest => _newVersionDigest;
+    public string? NewVersionTag => _newVersionTag;
 
     public UpdateCheckService(
         IHttpClientFactory httpClientFactory,
@@ -65,9 +68,14 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                 {
                     if (!_isUpdateAvailable)
                     {
+                        // Try to find semantic version (e.g. 1.0.5) matching this digest
+                        var semanticVersion = await GetSemanticVersionByDigestAsync(latestDigest);
+                        _newVersionTag = semanticVersion ?? "latest";
+
                         _logger.LogWarning(
-                            "New version detected on registry! Digest: {Digest}",
-                            latestDigest
+                            "New version detected on registry! Digest: {Digest}, Version: {Version}",
+                            latestDigest,
+                            _newVersionTag
                         );
                         _isUpdateAvailable = true;
                         _newVersionDigest = latestDigest;
@@ -109,6 +117,64 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         catch (Exception ex)
         {
             _logger.LogDebug(ex, "Failed to fetch digest from Docker Hub");
+        }
+        return null;
+    }
+
+    private async Task<string?> GetSemanticVersionByDigestAsync(string digest)
+    {
+        try
+        {
+            using var client = _httpClientFactory.CreateClient();
+            // Fetch recent tags to find one that matches the digest
+            var url = $"https://hub.docker.com/v2/repositories/{_repository}/tags?page_size=20";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(content);
+                if (doc.RootElement.TryGetProperty("results", out var results))
+                {
+                    foreach (var tag in results.EnumerateArray())
+                    {
+                        var name = tag.GetProperty("name").GetString();
+                        if (name == "latest")
+                            continue;
+
+                        // Check direct digest match
+                        if (
+                            tag.TryGetProperty("digest", out var tagDigest)
+                            && tagDigest.GetString() == digest
+                        )
+                        {
+                            return name;
+                        }
+
+                        // Check matches in 'images' array (multi-arch)
+                        if (
+                            tag.TryGetProperty("images", out var images)
+                            && images.ValueKind == JsonValueKind.Array
+                        )
+                        {
+                            foreach (var img in images.EnumerateArray())
+                            {
+                                if (
+                                    img.TryGetProperty("digest", out var imgDigest)
+                                    && imgDigest.GetString() == digest
+                                )
+                                {
+                                    return name;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Failed to resolve semantic version from digest");
         }
         return null;
     }
