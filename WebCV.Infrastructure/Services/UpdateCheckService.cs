@@ -42,14 +42,20 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation(
-            "UpdateCheckService starting for repository: {Repository}",
-            _repository
-        );
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation(
+                "UpdateCheckService starting for repository: {Repository}",
+                _repository
+            );
+        }
 
         // Initial check to establish baseline
         _currentDigest = await GetLatestDigestAsync();
-        _logger.LogInformation("Initial image digest: {Digest}", _currentDigest ?? "unknown");
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Initial image digest: {Digest}", _currentDigest ?? "unknown");
+        }
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -72,11 +78,14 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                         var semanticVersion = await GetSemanticVersionByDigestAsync(latestDigest);
                         _newVersionTag = semanticVersion ?? "latest";
 
-                        _logger.LogWarning(
-                            "New version detected on registry! Digest: {Digest}, Version: {Version}",
-                            latestDigest,
-                            _newVersionTag
-                        );
+                        if (_logger.IsEnabled(LogLevel.Warning))
+                        {
+                            _logger.LogWarning(
+                                "New version detected on registry! Digest: {Digest}, Version: {Version}",
+                                latestDigest,
+                                _newVersionTag
+                            );
+                        }
                         _isUpdateAvailable = true;
                         _newVersionDigest = latestDigest;
                     }
@@ -116,7 +125,10 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         }
         catch (Exception ex)
         {
-            _logger.LogDebug(ex, "Failed to fetch digest from Docker Hub");
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug(ex, "Failed to fetch digest from Docker Hub");
+            }
         }
         return null;
     }
@@ -174,7 +186,10 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         }
         catch (Exception ex)
         {
-            _logger.LogDebug(ex, "Failed to resolve semantic version from digest");
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug(ex, "Failed to resolve semantic version from digest");
+            }
         }
         return null;
     }
@@ -207,16 +222,22 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                _logger.LogError(
-                    "Failed to signal Watchtower. Status: {Status}, Error: {Error}",
-                    response.StatusCode,
-                    error
-                );
+                if (_logger.IsEnabled(LogLevel.Error))
+                {
+                    _logger.LogError(
+                        "Failed to signal Watchtower. Status: {Status}, Error: {Error}",
+                        response.StatusCode,
+                        error
+                    );
+                }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending signal to Watchtower");
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error sending signal to Watchtower");
+            }
         }
         return false;
     }
