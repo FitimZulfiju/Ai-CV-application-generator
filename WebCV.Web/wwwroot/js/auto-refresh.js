@@ -171,7 +171,6 @@ export function startAutoRefresh() {
             // We can let them reload manually or auto-reload after a short delay if preferred.
             // For now, let's auto-reload after 10s for "applied" case to be helpful?
             // Or stick to manual to be safe. Original code implied manual or simple message.
-            // Let's keep it simple: no auto-timer for 'applied' unless requested.
         }
     }
 
