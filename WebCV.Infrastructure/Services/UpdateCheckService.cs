@@ -52,8 +52,8 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         {
             try
             {
-                // Wait for interval (default 1 minute)
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                // Wait for interval (default 5 minutes)
+                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
 
                 var latestDigest = await GetLatestDigestAsync();
 
