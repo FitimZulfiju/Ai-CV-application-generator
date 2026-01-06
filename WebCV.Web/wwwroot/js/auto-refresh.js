@@ -134,7 +134,7 @@ export function startAutoRefresh() {
                     // Trigger Watchtower update via backend
                     const response = await fetch('/api/trigger-update', { method: 'POST' });
                     if (response.ok) {
-                        console.log('Update triggered successfully');
+                        console.log('Update triggered successfully.');
                     }
                 } catch (error) {
                     console.error('Failed to trigger update:', error);
