@@ -20,9 +20,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, IServiceScopeFact
             // Get current user if available
             var userId =
                 context.User?.Identity?.IsAuthenticated == true
-                    ? context
-                        .User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)
-                        ?.Value
+                    ? context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                     : null;
 
             await logService.LogErrorAsync(
