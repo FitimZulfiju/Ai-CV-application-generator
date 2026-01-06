@@ -98,7 +98,7 @@ export function startAutoRefresh() {
 
         const subText = document.createElement('div');
         subText.innerText = isPending
-            ? 'Please save your work. The application will restart automatically to apply updates.'
+            ? 'A new version is available. Your work is safely stored locally. Restarting in 60s.'
             : 'The application has been updated. Please reload to see the changes.';
         subText.style.fontSize = '0.875rem';
         subText.style.opacity = '0.9';
