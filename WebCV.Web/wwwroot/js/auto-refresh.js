@@ -121,26 +121,6 @@ export function startAutoRefresh() {
         countdownSpan.style.marginRight = '16px';
         actionDiv.appendChild(countdownSpan);
 
-        // Reload Button (MudButton Look-alike: Filled, White Text on Darker Orange)
-        const reloadBtn = document.createElement('button');
-        reloadBtn.innerText = 'RELOAD NOW';
-        reloadBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'; // Semi-transparent white overlay
-        reloadBtn.style.color = '#ffffff';
-        reloadBtn.style.border = 'none';
-        reloadBtn.style.borderRadius = '4px';
-        reloadBtn.style.padding = '6px 16px';
-        reloadBtn.style.fontFamily = 'inherit';
-        reloadBtn.style.fontWeight = '500';
-        reloadBtn.style.fontSize = '0.875rem';
-        reloadBtn.style.textTransform = 'uppercase';
-        reloadBtn.style.letterSpacing = '0.02857em';
-        reloadBtn.style.cursor = 'pointer';
-        reloadBtn.style.transition = 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1)';
-
-        // Hover effect
-        reloadBtn.onmouseover = () => reloadBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
-        reloadBtn.onmouseout = () => reloadBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-
         async function triggerUpdate() {
             if (isPending) {
                 try {
@@ -148,8 +128,6 @@ export function startAutoRefresh() {
                     const response = await fetch('/api/trigger-update', { method: 'POST' });
                     if (response.ok) {
                         console.log('Update triggered successfully');
-                        reloadBtn.disabled = true;
-                        reloadBtn.innerText = 'RESTARTING...';
                     }
                 } catch (error) {
                     console.error('Failed to trigger update:', error);
@@ -160,11 +138,7 @@ export function startAutoRefresh() {
             }
         }
 
-        reloadBtn.onclick = triggerUpdate;
-
-        actionDiv.appendChild(reloadBtn);
         banner.appendChild(actionDiv);
-
         document.body.appendChild(banner);
 
         // 3. Start Countdown
