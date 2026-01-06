@@ -11,12 +11,21 @@ export function startAutoRefresh() {
             if (response.ok) {
                 const data = await response.json();
                 const newVersion = data.version;
+                const isUpdateAvailable = data.isUpdateAvailable;
 
                 if (currentVersion === null) {
                     currentVersion = newVersion;
-                } else if (currentVersion !== newVersion) {
-                    console.log(`Version changed from ${currentVersion} to ${newVersion}. Triggering notification...`);
-                    showUpdateNotification(newVersion);
+                }
+
+                // Case 1: Update already applied (version mismatch)
+                if (currentVersion !== newVersion) {
+                    console.log(`Version changed from ${currentVersion} to ${newVersion}. Triggering reload notification...`);
+                    showUpdateNotification('applied', newVersion);
+                }
+                // Case 2: Update pending in registry
+                else if (isUpdateAvailable) {
+                    console.log(`New version found in registry. Triggering pending update notification...`);
+                    showUpdateNotification('pending');
                 }
             }
         } catch (error) {
@@ -24,23 +33,26 @@ export function startAutoRefresh() {
         }
     }
 
-    function showUpdateNotification(newVersion) {
+    function showUpdateNotification(type, version = '') {
         notificationShown = true;
+        const isPending = type === 'pending';
 
-        // 1. Suppress Blazor Overlay
-        setInterval(() => {
-            const reconnectModal = document.querySelector('#components-reconnect-modal');
-            if (reconnectModal) {
-                reconnectModal.style.display = 'none';
-                reconnectModal.style.visibility = 'hidden';
-                reconnectModal.style.opacity = '0';
-                reconnectModal.style.pointerEvents = 'none';
-            }
-            const reconnectContainer = document.querySelector('.components-reconnect-container');
-            if (reconnectContainer) {
-                reconnectContainer.style.display = 'none';
-            }
-        }, 500);
+        // 1. Suppress Blazor Overlay (only if update is already applied and connection is likely broken)
+        if (!isPending) {
+            setInterval(() => {
+                const reconnectModal = document.querySelector('#components-reconnect-modal');
+                if (reconnectModal) {
+                    reconnectModal.style.display = 'none';
+                    reconnectModal.style.visibility = 'hidden';
+                    reconnectModal.style.opacity = '0';
+                    reconnectModal.style.pointerEvents = 'none';
+                }
+                const reconnectContainer = document.querySelector('.components-reconnect-container');
+                if (reconnectContainer) {
+                    reconnectContainer.style.display = 'none';
+                }
+            }, 500);
+        }
 
         // 2. Create Banner (MudBlazor "Filled Warning" Look-alike)
         const banner = document.createElement('div');
@@ -80,12 +92,14 @@ export function startAutoRefresh() {
         messageDiv.style.padding = '8px 0';
 
         const titleText = document.createElement('div');
-        titleText.innerText = `New update available (${newVersion})`;
+        titleText.innerText = isPending ? 'Planned maintenance: A new version is ready' : `New version applied (${version})`;
         titleText.style.fontWeight = '500';
         messageDiv.appendChild(titleText);
 
         const subText = document.createElement('div');
-        subText.innerText = `Connection has been reset. Please copy your work before reloading.`;
+        subText.innerText = isPending
+            ? 'Please save your work. The application will restart automatically to apply updates.'
+            : 'The application has been updated. Please reload to see the changes.';
         subText.style.fontSize = '0.875rem';
         subText.style.opacity = '0.9';
         messageDiv.appendChild(subText);
@@ -102,7 +116,7 @@ export function startAutoRefresh() {
         // Countdown
         const countdownSpan = document.createElement('span');
         let secondsLeft = 60;
-        countdownSpan.innerText = `Auto-reload in ${secondsLeft}s`;
+        countdownSpan.innerText = isPending ? `Restart in ${secondsLeft}s` : `Reload in ${secondsLeft}s`;
         countdownSpan.style.fontSize = '0.875rem';
         countdownSpan.style.marginRight = '16px';
         actionDiv.appendChild(countdownSpan);
@@ -126,7 +140,27 @@ export function startAutoRefresh() {
         // Hover effect
         reloadBtn.onmouseover = () => reloadBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
         reloadBtn.onmouseout = () => reloadBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-        reloadBtn.onclick = () => location.reload();
+
+        async function triggerUpdate() {
+            if (isPending) {
+                try {
+                    // Trigger Watchtower update via backend
+                    const response = await fetch('/api/trigger-update', { method: 'POST' });
+                    if (response.ok) {
+                        console.log('Update triggered successfully');
+                        reloadBtn.disabled = true;
+                        reloadBtn.innerText = 'RESTARTING...';
+                    }
+                } catch (error) {
+                    console.error('Failed to trigger update:', error);
+                    location.reload(); // Fallback
+                }
+            } else {
+                location.reload();
+            }
+        }
+
+        reloadBtn.onclick = triggerUpdate;
 
         actionDiv.appendChild(reloadBtn);
         banner.appendChild(actionDiv);
@@ -136,10 +170,10 @@ export function startAutoRefresh() {
         // 3. Start Countdown
         reloadTimer = setInterval(() => {
             secondsLeft--;
-            countdownSpan.innerText = `Auto-reload in ${secondsLeft}s`;
+            countdownSpan.innerText = isPending ? `Restart in ${secondsLeft}s` : `Reload in ${secondsLeft}s`;
             if (secondsLeft <= 0) {
                 clearInterval(reloadTimer);
-                location.reload();
+                triggerUpdate();
             }
         }, 1000);
     }

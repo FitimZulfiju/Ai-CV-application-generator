@@ -150,6 +150,13 @@ builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ISystemLogService, SystemLogService>();
 builder.Services.AddScoped<ClientPersistenceService>();
 
+// Update Check Service
+builder.Services.AddSingleton<UpdateCheckService>();
+builder.Services.AddSingleton<IUpdateCheckService>(sp =>
+    sp.GetRequiredService<UpdateCheckService>()
+);
+builder.Services.AddHostedService(sp => sp.GetRequiredService<UpdateCheckService>());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -388,14 +395,26 @@ app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 // Add version endpoint for auto-refresh
 app.MapGet(
         "/api/version",
-        () =>
+        (IUpdateCheckService updateCheckService) =>
         {
             var version =
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 ?? "1.0.0.0";
-            return Results.Ok(new { version });
+            var isUpdateAvailable = updateCheckService.IsUpdateAvailable;
+            return Results.Ok(new { version, isUpdateAvailable });
         }
     )
     .AllowAnonymous(); // Allow polling without auth
+
+// Add update trigger endpoint
+app.MapPost(
+        "/api/trigger-update",
+        async (IUpdateCheckService updateCheckService) =>
+        {
+            var success = await updateCheckService.TriggerUpdateAsync();
+            return success ? Results.Ok() : Results.Problem("Failed to trigger update");
+        }
+    )
+    .RequireAuthorization(); // Admin only recommended, but keeping simple for now
 
 app.Run();
