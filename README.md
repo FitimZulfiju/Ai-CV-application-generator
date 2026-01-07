@@ -1,4 +1,4 @@
-# WebCV Application Generator
+# AiCV Application Generator
 
 A powerful Blazor Server application designed to help job seekers generate tailored CVs and Cover Letters using advanced AI (OpenAI GPT-4o and Google Gemini).
 
@@ -23,7 +23,7 @@ A powerful Blazor Server application designed to help job seekers generate tailo
 
 Use these credentials to log in and test the application:
 
-- **Email:** `testuser@ai-webcv.com`
+- **Email:** `testuser@ai-aicv.com`
 - **Password:** `TestUser123!`
 
 ## 🏁 Getting Started
@@ -37,20 +37,20 @@ Use these credentials to log in and test the application:
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/yourusername/WebCV.git
-    cd WebCV
+    git clone https://github.com/yourusername/AiCV.git
+    cd AiCV
     ```
 
 2. **Build the solution**:
 
     ```bash
-    dotnet build WebCV.sln
+    dotnet build AiCV.sln
     ```
 
 3. **Run the application**:
 
     ```bash
-    cd WebCV.Web
+    cd AiCV.Web
     dotnet run
     ```
 

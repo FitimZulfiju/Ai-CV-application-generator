@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiCV.Domain", "AiCV.Domain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiCV.Application", "AiCV.Application\AiCV.Application.csproj", "{41E32915-5AC9-46D6-A2B2-1A15BD391ADF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiCV.Infrastructure", "aiCV.Infrastructure\AiCV.Infrastructure.csproj", "{664D90EC-6651-4299-ABAF-2D8213ADAA35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiCV.Infrastructure", "AiCV.Infrastructure\AiCV.Infrastructure.csproj", "{664D90EC-6651-4299-ABAF-2D8213ADAA35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiCV.Web", "AiCV.Web\AiCV.Web.csproj", "{72C0E25F-AC68-47F7-A5EE-43D35A3933B4}"
 EndProject

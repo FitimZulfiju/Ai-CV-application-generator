@@ -1,1 +1,1 @@
-﻿global using WebCV.Domain;
+﻿global using AiCV.Domain;
