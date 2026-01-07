@@ -1,0 +1,57 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudScrollToTop TopOffset="400">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+</MudScrollToTop>
+
+<MudLayout
+    Style="background-image: url('/mbg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh;">
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@((e) => DrawerToggle())" />
+        <MudImage Src="/logoWhiteSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
+        @onclick="NavigateToHome" />
+        <MudText Typo="Typo.h6" Class="responsive-app-title">AI CV & Applications</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"
+            Href="https://github.com/fitimzulfiju/Web-CV-application-generator" Target="_blank" />
+    </MudAppBar>
+    @if (LoadingService.IsVisible)
+    {
+        <AiCV.Web.Components.Shared.LoadingIndicator Color="Color.Info" Size="Size.Large"
+            Value="@LoadingService.Percentage" Indeterminate="@(LoadingService.Percentage <= 0)" Class="width-100"
+            Style="position: fixed; top: 64px; z-index: 2000;">
+            <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                <b>
+
+                    @LoadingService.Percentage
+                    %
+                </b>
+            </MudText>
+        </AiCV.Web.Components.Shared.LoadingIndicator>
+    }
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Class="responsive-drawer">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Class="pt-16 pa-4">
+        @if (_showBetaWarning)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Style="margin-bottom: 20px;" Class="my-2"
+                ShowCloseIcon="true" CloseIconClicked="(() => _showBetaWarning = false)">
+                <strong>🚧 Beta Version:</strong> This application is currently in development. Data persistence is not
+                guaranteed, and the database may be reset at any time during updates.
+            </MudAlert>
+        }
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>

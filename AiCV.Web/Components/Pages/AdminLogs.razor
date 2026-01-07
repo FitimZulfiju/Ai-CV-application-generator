@@ -1,0 +1,74 @@
+@page "/admin/logs"
+@using AiCV.Application.Interfaces
+@using AiCV.Domain.Entities
+@using AiCV.Application.Common
+@attribute [Authorize(Roles = Roles.Admin)]
+@inject ISystemLogService LogService
+@inject IDialogService DialogService
+
+<PageTitle>System Logs</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h5">📋 System Logs</MudText>
+        <MudSpacer />
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"
+                OnClick="ClearLogs">Clear Old Logs</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh"
+                OnClick="RefreshLogs">Refresh</MudButton>
+        </MudStack>
+    </MudStack>
+
+    <MudCard Elevation="3">
+        <MudTable ServerData="@ServerReload" Dense="true" Hover="true" Striped="true" @ref="_table" T="SystemLog"
+            Elevation="0">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Log Entries</MudText>
+                <MudSpacer />
+                <MudSelect T="string" Label="Level" @bind-Value="_filterLevel"
+                    AdornmentIcon="@Icons.Material.Filled.FilterList" SelectedValuesChanged="OnFilterChanged"
+                    Class="d-flex" Style="min-width: 150px;">
+                    <MudSelectItem Value="@((string?)null)">All Levels</MudSelectItem>
+                    <MudSelectItem Value="@("Error")">Error</MudSelectItem>
+                    <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
+                    <MudSelectItem Value="@("Info")">Info</MudSelectItem>
+                </MudSelect>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Timestamp</MudTh>
+                <MudTh>Level</MudTh>
+                <MudTh>Message</MudTh>
+                <MudTh>Source</MudTh>
+                <MudTh>Path</MudTh>
+                <MudTh>User</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Timestamp">@context.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</MudTd>
+                <MudTd DataLabel="Level">
+                    <MudChip T="string" Size="Size.Small" Color="@GetLevelColor(context.Level)">@context.Level
+                    </MudChip>
+                </MudTd>
+                <MudTd DataLabel="Message">
+                    <MudText Typo="Typo.body2"
+                        Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">
+                        @context.Message
+                    </MudText>
+                </MudTd>
+                <MudTd DataLabel="Source">@context.Source</MudTd>
+                <MudTd DataLabel="Path">@context.RequestPath</MudTd>
+                <MudTd DataLabel="User">@(context.UserId ?? "Anonymous")</MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudIconButton Icon="@Icons.Material.Filled.Visibility" Size="Size.Small"
+                            OnClick="@(() => ShowDetails(context))" />
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </MudCard>
+    </MudContainer>
+
+
