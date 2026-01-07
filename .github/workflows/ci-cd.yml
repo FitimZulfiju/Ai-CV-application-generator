@@ -22,13 +22,13 @@ jobs:
           dotnet-version: 10.0.x # Adjust if using a different version
 
       - name: Restore dependencies
-        run: dotnet restore WebCV.sln
+        run: dotnet restore AiCV.sln
 
       - name: Build
-        run: dotnet build WebCV.sln --no-restore
+        run: dotnet build AiCV.sln --no-restore
 
       - name: Test
-        run: dotnet test WebCV.sln --no-build --verbosity normal
+        run: dotnet test AiCV.sln --no-build --verbosity normal
 
   docker-push:
     needs: build-and-test
@@ -79,8 +79,8 @@ jobs:
           build-args: |
             BUILD_VERSION=${{ steps.version.outputs.version }}
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/webcv:latest
-            ${{ secrets.DOCKER_USERNAME }}/webcv:${{ steps.version.outputs.version }}
+            ${{ secrets.DOCKER_USERNAME }}/aicv:latest
+            ${{ secrets.DOCKER_USERNAME }}/aicv:${{ steps.version.outputs.version }}
 
       - name: Tag Repository
         if: steps.version.outputs.version != ''
