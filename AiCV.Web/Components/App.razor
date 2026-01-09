@@ -27,13 +27,13 @@
 <body>
     <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
     <ReconnectModal />
-    @((MarkupString)@"<script type=""module"" src=""Components/Layout/ReconnectModal.razor.js""></script>")
-    @((MarkupString)@"<script src=""_content/MudBlazor/MudBlazor.min.js""></script>")
-    @((MarkupString)@"<script src=""_framework/blazor.web.js""></script>")
-    @((MarkupString)@"<script src=""js/cv-scaling.js""></script>")
-    @((MarkupString)@"<script src=""js/pwa-init.js?v=4""></script>")
-    @((MarkupString)@"<script src=""js/download.js""></script>")
-    @((MarkupString)@"<script type=""module"" src=""js/auto-refresh.js""></script>")
+    <script type="module" src="Components/Layout/ReconnectModal.razor.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="_framework/blazor.web.js"></script>
+    <script src="js/cv-scaling.js"></script>
+    <script src="js/pwa-init.js?v=4"></script>
+    <script src="js/download.js"></script>
+    <script type="module" src="js/auto-refresh.js"></script>
 </body>
 
 </html>
