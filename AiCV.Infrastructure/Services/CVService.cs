@@ -50,24 +50,36 @@ namespace AiCV.Infrastructure.Services
             {
                 // Delete existing child collections that will be replaced
                 // This prevents duplication when skills/experiences/etc are recreated with Id=0
-                await context
+                // Using RemoveRange instead of ExecuteDeleteAsync for in-memory database compatibility
+                var existingSkills = await context
                     .Skills.Where(s => s.CandidateProfileId == profile.Id)
-                    .ExecuteDeleteAsync();
-                await context
+                    .ToListAsync();
+                context.Skills.RemoveRange(existingSkills);
+
+                var existingExperiences = await context
                     .Experiences.Where(e => e.CandidateProfileId == profile.Id)
-                    .ExecuteDeleteAsync();
-                await context
+                    .ToListAsync();
+                context.Experiences.RemoveRange(existingExperiences);
+
+                var existingEducations = await context
                     .Educations.Where(e => e.CandidateProfileId == profile.Id)
-                    .ExecuteDeleteAsync();
-                await context
+                    .ToListAsync();
+                context.Educations.RemoveRange(existingEducations);
+
+                var existingProjects = await context
                     .Projects.Where(p => p.CandidateProfileId == profile.Id)
-                    .ExecuteDeleteAsync();
-                await context
+                    .ToListAsync();
+                context.Projects.RemoveRange(existingProjects);
+
+                var existingLanguages = await context
                     .Languages.Where(l => l.CandidateProfileId == profile.Id)
-                    .ExecuteDeleteAsync();
-                await context
+                    .ToListAsync();
+                context.Languages.RemoveRange(existingLanguages);
+
+                var existingInterests = await context
                     .Interests.Where(i => i.CandidateProfileId == profile.Id)
-                    .ExecuteDeleteAsync();
+                    .ToListAsync();
+                context.Interests.RemoveRange(existingInterests);
 
                 // Ensure all child entities have correct profile ID and are new (Id=0)
                 foreach (var skill in profile.Skills)
