@@ -44,6 +44,7 @@ namespace AiCV.Infrastructure.Services
 
             if (profile.Id == 0)
             {
+                profile.User = null;
                 context.CandidateProfiles.Add(profile);
             }
             else
@@ -112,6 +113,10 @@ namespace AiCV.Infrastructure.Services
                     interest.Id = 0;
                     interest.CandidateProfileId = profile.Id;
                 }
+
+                // Ensure we don't try to update the Identity User table
+                // This prevents issues with detached entities and specialized column types
+                profile.User = null;
 
                 context.CandidateProfiles.Update(profile);
             }
