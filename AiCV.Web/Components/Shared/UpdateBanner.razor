@@ -62,9 +62,13 @@
     private Timer? _pollTimer;
     private Timer? _countdownTimer;
     private bool _disposed = false;
+    private string? _baseUri;
 
     protected override async Task OnInitializedAsync()
     {
+        // Get the base URI from NavigationManager for API calls
+        _baseUri = NavigationManager.BaseUri.TrimEnd('/');
+
         // Start polling for updates
         _pollTimer = new Timer(3000); // Check every 3 seconds
         _pollTimer.Elapsed += async (sender, e) => await CheckForUpdates();
@@ -77,11 +81,11 @@
 
     private async Task CheckForUpdates()
     {
-        if (_disposed) return;
+        if (_disposed || string.IsNullOrEmpty(_baseUri)) return;
 
         try
         {
-            var response = await Http.GetFromJsonAsync<VersionResponse>("/api/version");
+            var response = await Http.GetFromJsonAsync<VersionResponse>($"{_baseUri}/api/version");
             if (response == null) return;
 
             // Store current version on first check
@@ -130,9 +134,11 @@
 
     private async Task ScheduleUpdate()
     {
+        if (string.IsNullOrEmpty(_baseUri)) return;
+
         try
         {
-            var response = await Http.PostAsync("/api/schedule-update", null);
+            var response = await Http.PostAsync($"{_baseUri}/api/schedule-update", null);
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadFromJsonAsync<ScheduleResponse>();
