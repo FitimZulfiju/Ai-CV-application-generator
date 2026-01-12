@@ -1,6 +1,6 @@
 # AiCV Application Generator
 
-🚀 **AiCV** is a powerful AI career assistant built with Blazor Server & .NET 10. Automatically generate tailored CVs and Cover Letters optimized for specific job postings using OpenAI GPT-4o and Google Gemini.
+🚀 **AiCV** is a powerful AI career assistant built with Blazor Server & .NET 10. Automatically generate tailored CVs and Cover Letters optimized for specific job postings using various Large Language Models (LLMs).
 
 AiCV Application Generator is a self-hosted platform designed to streamline the job application process. It uses Large Language Models to analyze job descriptions (scraped directly from URLs) and re-align your professional profile to meet specific role requirements.
 
@@ -18,7 +18,7 @@ AiCV Application Generator is a self-hosted platform designed to streamline the 
 - **Framework**: .NET 10 (Blazor Server)
 - **UI Library**: MudBlazor
 - **Database**: SQL Server with Entity Framework Core
-- **AI Integration**: OpenAI API & Google Gemini API
+- **AI Integration**: Support for multiple AI Providers (OpenAI, Google Gemini, Groq, etc.)
 - **Authentication**: ASP.NET Core Identity
 
 ## 🔑 Default Admin Credentials
