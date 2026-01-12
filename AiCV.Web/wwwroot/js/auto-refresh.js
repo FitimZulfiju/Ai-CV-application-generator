@@ -156,11 +156,16 @@ export function startAutoRefresh() {
                     const response = await fetch('/api/version', { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
-                        // If we get a valid version back, the server is up!
-                        if (data.version) {
-                            console.log('Server is back! Reloading...');
+                        // Only reload if:
+                        // 1. Server is back (has a version)
+                        // 2. Version has CHANGED from what we started with
+                        // 3. No update is currently scheduled or available (to avoid loop)
+                        if (data.version && data.version !== currentVersion && !data.isUpdateScheduled && !data.isUpdateAvailable) {
+                            console.log(`Server is back with new version ${data.version}! Reloading...`);
                             clearInterval(pollInterval);
                             location.reload();
+                        } else if (data.version) {
+                            console.log(`Server responded but conditions not met. Version: ${data.version}, isUpdateScheduled: ${data.isUpdateScheduled}, isUpdateAvailable: ${data.isUpdateAvailable}`);
                         }
                     }
                 } catch (e) {
