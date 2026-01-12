@@ -75,17 +75,18 @@ public partial class Profile : IDisposable
             _skillCategories =
             [
                 .. _profile
-                    .Skills.GroupBy(s => s.Category)
+                    .Skills.GroupBy(s => s.Category ?? "Uncategorized")
                     .Select(g => new SkillCategoryViewModel
                     {
                         Name = g.Key,
-                        Skills = [.. g.Select(s => s.Name)],
+                        // Use Distinct to prevent any duplicates
+                        Skills = [.. g.Select(s => s.Name).Distinct()],
                     }),
             ];
         }
-
-        // Ensure profile skills are in sync with categories initially (for defaults)
-        UpdateProfileSkills();
+        // Note: Do NOT call UpdateProfileSkills() here - it would replace
+        // the loaded skills (with real IDs) with new objects (Id=0),
+        // breaking EF Core entity tracking.
     }
 
     private void AddCategory()
@@ -355,11 +356,12 @@ public partial class Profile : IDisposable
                     _skillCategories =
                     [
                         .. _profile
-                            .Skills.GroupBy(s => s.Category)
+                            .Skills.GroupBy(s => s.Category ?? "Uncategorized")
                             .Select(g => new SkillCategoryViewModel
                             {
                                 Name = g.Key,
-                                Skills = [.. g.Select(s => s.Name)],
+                                // Use Distinct to prevent any duplicates from draft
+                                Skills = [.. g.Select(s => s.Name).Distinct()],
                             }),
                     ];
                 }
