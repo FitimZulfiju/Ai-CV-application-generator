@@ -150,7 +150,7 @@ builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ISystemLogService, SystemLogService>();
 builder.Services.AddScoped<ClientPersistenceService>();
 
-// Update Check Service
+// Update Check Service (Handles automatic detection and scheduling of container updates)
 builder.Services.AddSingleton<UpdateCheckService>();
 builder.Services.AddSingleton<IUpdateCheckService>(sp =>
     sp.GetRequiredService<UpdateCheckService>()
