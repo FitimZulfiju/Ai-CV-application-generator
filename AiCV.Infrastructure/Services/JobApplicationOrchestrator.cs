@@ -25,7 +25,8 @@ namespace AiCV.Infrastructure.Services
 
         public async Task<(
             string CoverLetter,
-            TailoredResumeResult ResumeResult
+            TailoredResumeResult ResumeResult,
+            string ApplicationEmail
         )> GenerateApplicationAsync(
             string userId,
             AIProvider provider,
@@ -43,13 +44,24 @@ namespace AiCV.Infrastructure.Services
                 model?.GetDisplayName() ?? "default"
             );
 
-            // Run in parallel for all cloud providers
+            // Run cover letter and resume in parallel
             var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job, customPrompt);
             var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job, customPrompt);
 
             await Task.WhenAll(coverLetterTask, resumeTask);
 
-            return (await coverLetterTask, await resumeTask);
+            var coverLetter = await coverLetterTask;
+            var resumeResult = await resumeTask;
+
+            // Generate email after cover letter is ready (needs cover letter content)
+            var email = await aiService.GenerateApplicationEmailAsync(
+                profile,
+                job,
+                coverLetter,
+                customPrompt
+            );
+
+            return (coverLetter, resumeResult, email);
         }
 
         public async Task SaveApplicationAsync(
@@ -57,7 +69,8 @@ namespace AiCV.Infrastructure.Services
             JobPosting job,
             CandidateProfile profile,
             string coverLetter,
-            CandidateProfile tailoredResume
+            CandidateProfile tailoredResume,
+            string applicationEmail
         )
         {
             // Create a fresh JobPosting entity to avoid EF Core tracking issues
@@ -79,6 +92,7 @@ namespace AiCV.Infrastructure.Services
                 CandidateProfileId = profile.Id,
                 CoverLetterContent = coverLetter,
                 TailoredResumeJson = JsonSerializer.Serialize(tailoredResume, JsonOptions),
+                ApplicationEmailContent = applicationEmail,
                 CreatedDate = DateTime.UtcNow,
             };
 

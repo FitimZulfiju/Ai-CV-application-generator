@@ -8,19 +8,23 @@ namespace AiCV.Infrastructure.Services
         private const string Model = "claude-3-5-haiku-20241022";
         private const string ApiVersion = "2023-06-01";
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<string> GenerateCoverLetterAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
-            string prompt = $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
-            
+            string prompt =
+                $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
+
             var requestPayload = new
             {
                 model = Model,
                 max_tokens = 4096,
-                system = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.CoverLetterSystemPrompt : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                messages = new[]
-                {
-                    new { role = "user", content = BuildPrompt(profile, job) }
-                }
+                system = string.IsNullOrWhiteSpace(customPrompt)
+                    ? AISystemPrompts.CoverLetterSystemPrompt
+                    : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                messages = new[] { new { role = "user", content = BuildPrompt(profile, job) } },
             };
 
             var jsonPayload = JsonSerializer.Serialize(requestPayload);
@@ -41,23 +45,29 @@ namespace AiCV.Infrastructure.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
 
-            return claudeResponse?.Content?[0]?.Text 
-                ?? "Error: No content generated.";
+            return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
-            var prompt = $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
-            
+            var prompt =
+                $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
+
             var requestPayload = new
             {
                 model = Model,
                 max_tokens = 4096,
-                system = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.ResumeTailoringSystemPrompt : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                system = string.IsNullOrWhiteSpace(customPrompt)
+                    ? AISystemPrompts.ResumeTailoringSystemPrompt
+                    : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
                 messages = new[]
                 {
-                    new { role = "user", content = BuildPrompt(profile, job, isResume: true) }
-                }
+                    new { role = "user", content = BuildPrompt(profile, job, isResume: true) },
+                },
             };
 
             var jsonPayload = JsonSerializer.Serialize(requestPayload);
@@ -90,7 +100,62 @@ namespace AiCV.Infrastructure.Services
             return AIResponseParser.ParseTailoredResume(textResponse, profile);
         }
 
-        private static string BuildPrompt(CandidateProfile profile, JobPosting job, bool isResume = false)
+        public async Task<string> GenerateApplicationEmailAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string coverLetter,
+            string? customPrompt = null
+        )
+        {
+            var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+
+            var userPrompt = $"""
+                Candidate Name: {profile.FullName}
+                Position: {job.Title}
+                Company: {job.CompanyName}
+
+                Cover Letter Summary:
+                {coverLetter[..Math.Min(500, coverLetter.Length)]}...
+
+                Write a brief professional email to accompany this application.
+                """;
+
+            var requestPayload = new
+            {
+                model = Model,
+                max_tokens = 1024,
+                system = systemPrompt,
+                messages = new[] { new { role = "user", content = userPrompt } },
+            };
+
+            var jsonPayload = JsonSerializer.Serialize(requestPayload);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+            _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
+
+            var response = await _httpClient.PostAsync(ApiUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Claude API Error: {response.StatusCode} - {error}");
+            }
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+            var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
+
+            return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
+        }
+
+        private static string BuildPrompt(
+            CandidateProfile profile,
+            JobPosting job,
+            bool isResume = false
+        )
         {
             return AIPromptBuilder.Build(profile, job, isResume);
         }

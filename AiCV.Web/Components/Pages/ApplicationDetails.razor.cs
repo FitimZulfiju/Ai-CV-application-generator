@@ -20,6 +20,9 @@ public partial class ApplicationDetails
     [Inject]
     public IDialogService DialogService { get; set; } = default!;
 
+    [Inject]
+    public IClipboardService ClipboardService { get; set; } = default!;
+
     private Shared.PrintPreviewModal _printPreviewModal = default!;
 
     [Parameter]
@@ -190,5 +193,11 @@ public partial class ApplicationDetails
             _isPrintingResume = false;
             StateHasChanged();
         }
+    }
+
+    private async Task CopyToClipboard(string text)
+    {
+        await ClipboardService.CopyToClipboardAsync(text);
+        Snackbar.Add("Copied to clipboard!", Severity.Success);
     }
 }

@@ -7,24 +7,39 @@ namespace AiCV.Infrastructure.Services
         private readonly string ApiUrl = "https://api.groq.com/openai/v1/chat/completions";
         private const string Model = "llama-3.3-70b-versatile"; // Updated from deprecated 3.1 to 3.3
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<string> GenerateCoverLetterAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
-            var prompt = $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
-            
+            var prompt =
+                $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
+
             var requestPayload = new
             {
                 model = Model,
                 messages = new[]
                 {
-                    new { role = "system", content = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.CoverLetterSystemPrompt : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}" },
-                    new { role = "user", content = BuildPrompt(profile, job) }
+                    new
+                    {
+                        role = "system",
+                        content = string.IsNullOrWhiteSpace(customPrompt)
+                            ? AISystemPrompts.CoverLetterSystemPrompt
+                            : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                    },
+                    new { role = "user", content = BuildPrompt(profile, job) },
                 },
                 temperature = 0.7,
-                max_tokens = 4096
+                max_tokens = 4096,
             };
 
             var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+            var content = new StringContent(
+                jsonPayload,
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
@@ -40,28 +55,42 @@ namespace AiCV.Infrastructure.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
 
-            return groqResponse?.Choices?[0]?.Message?.Content 
-                ?? "Error: No content generated.";
+            return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
-            var prompt = $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
-            
+            var prompt =
+                $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
+
             var requestPayload = new
             {
                 model = Model,
                 messages = new[]
                 {
-                    new { role = "system", content = string.IsNullOrWhiteSpace(customPrompt) ? AISystemPrompts.ResumeTailoringSystemPrompt : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}" },
-                    new { role = "user", content = BuildPrompt(profile, job, isResume: true) }
+                    new
+                    {
+                        role = "system",
+                        content = string.IsNullOrWhiteSpace(customPrompt)
+                            ? AISystemPrompts.ResumeTailoringSystemPrompt
+                            : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                    },
+                    new { role = "user", content = BuildPrompt(profile, job, isResume: true) },
                 },
                 temperature = 0.7,
-                max_tokens = 4096
+                max_tokens = 4096,
             };
 
             var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+            var content = new StringContent(
+                jsonPayload,
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
@@ -89,7 +118,69 @@ namespace AiCV.Infrastructure.Services
             return AIResponseParser.ParseTailoredResume(textResponse, profile);
         }
 
-        private static string BuildPrompt(CandidateProfile profile, JobPosting job, bool isResume = false)
+        public async Task<string> GenerateApplicationEmailAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string coverLetter,
+            string? customPrompt = null
+        )
+        {
+            var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+
+            var userPrompt = $"""
+                Candidate Name: {profile.FullName}
+                Position: {job.Title}
+                Company: {job.CompanyName}
+
+                Cover Letter Summary:
+                {coverLetter[..Math.Min(500, coverLetter.Length)]}...
+
+                Write a brief professional email to accompany this application.
+                """;
+
+            var requestPayload = new
+            {
+                model = Model,
+                messages = new[]
+                {
+                    new { role = "system", content = systemPrompt },
+                    new { role = "user", content = userPrompt },
+                },
+                temperature = 0.7,
+                max_tokens = 1024,
+            };
+
+            var jsonPayload = JsonSerializer.Serialize(requestPayload);
+            var content = new StringContent(
+                jsonPayload,
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+
+            var response = await _httpClient.PostAsync(ApiUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Groq API Error: {response.StatusCode} - {error}");
+            }
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+            var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
+
+            return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
+        }
+
+        private static string BuildPrompt(
+            CandidateProfile profile,
+            JobPosting job,
+            bool isResume = false
+        )
         {
             return AIPromptBuilder.Build(profile, job, isResume);
         }

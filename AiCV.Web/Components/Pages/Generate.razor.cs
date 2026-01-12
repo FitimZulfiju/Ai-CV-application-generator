@@ -54,6 +54,8 @@ public partial class Generate : IDisposable
     private bool _isAlreadySaved = false;
     private string _savedCoverLetter = string.Empty;
     private string _savedResumeJson = string.Empty;
+    private string _generatedEmail = string.Empty;
+    private string _savedEmail = string.Empty;
     private bool _previewCoverLetter = false;
     private bool _previewResume = true;
     private string _resumeJson = string.Empty;
@@ -291,18 +293,20 @@ public partial class Generate : IDisposable
             }
 
             LoadingService.Update(30, "Generating cover letter...");
-            var (CoverLetter, ResumeResult) = await JobOrchestrator.GenerateApplicationAsync(
-                userId,
-                SelectedProvider,
-                _cachedProfile,
-                _job,
-                _selectedModel,
-                _customPrompt
-            );
+            var (CoverLetter, ResumeResult, ApplicationEmail) =
+                await JobOrchestrator.GenerateApplicationAsync(
+                    userId,
+                    SelectedProvider,
+                    _cachedProfile,
+                    _job,
+                    _selectedModel,
+                    _customPrompt
+                );
 
             LoadingService.Update(70, "Tailoring CV...");
             _generatedCoverLetter = CoverLetter;
             _generatedResume = ResumeResult.Profile;
+            _generatedEmail = ApplicationEmail;
             _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             _originalResumeJson = _resumeJson;
             _detectedCompanyName = ResumeResult.DetectedCompanyName;
@@ -359,6 +363,7 @@ public partial class Generate : IDisposable
                 _isAlreadySaved
                 && _generatedCoverLetter == _savedCoverLetter
                 && _resumeJson == _savedResumeJson
+                && _generatedEmail == _savedEmail
             )
             {
                 // Content is the same as saved, keep saved state
@@ -432,12 +437,14 @@ public partial class Generate : IDisposable
                 _job,
                 _cachedProfile,
                 _generatedCoverLetter,
-                _generatedResume!
+                _generatedResume!,
+                _generatedEmail
             );
             _isAlreadySaved = true;
             // Store what was saved to compare with future generations
             _savedCoverLetter = _generatedCoverLetter;
             _savedResumeJson = _resumeJson;
+            _savedEmail = _generatedEmail;
             await PersistenceService.ClearDraftAsync("generate_draft");
             Snackbar.Add("Application saved successfully!", Severity.Success);
         }

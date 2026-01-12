@@ -4,9 +4,16 @@ namespace AiCV.Infrastructure.Services
     {
         private readonly ChatClient _chatClient = new("gpt-4o", new ApiKeyCredential(apiKey));
 
-        private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+        };
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<string> GenerateCoverLetterAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
             var systemPrompt = AISystemPrompts.CoverLetterSystemPrompt;
             if (!string.IsNullOrWhiteSpace(customPrompt))
@@ -24,25 +31,32 @@ namespace AiCV.Infrastructure.Services
             return completion.Content[0].Text;
         }
 
-        public async Task<Application.DTOs.TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<Application.DTOs.TailoredResumeResult> GenerateTailoredResumeAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
             var systemPrompt = AISystemPrompts.ResumeTailoringSystemPrompt;
-        if (!string.IsNullOrWhiteSpace(customPrompt))
-        {
-            systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-        }
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+            {
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+            }
 
             var userPrompt = BuildPrompt(profile, job, isResume: true);
 
             var messages = new List<ChatMessage>
             {
                 new SystemChatMessage(systemPrompt),
-                new UserChatMessage(userPrompt)
+                new UserChatMessage(userPrompt),
             };
 
             ChatCompletion completion = await _chatClient.CompleteChatAsync(
                 messages,
-                new ChatCompletionOptions { ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat() }
+                new ChatCompletionOptions
+                {
+                    ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat(),
+                }
             );
 
             var textResponse = completion.Content[0].Text;
@@ -50,7 +64,43 @@ namespace AiCV.Infrastructure.Services
             return AIResponseParser.ParseTailoredResume(textResponse, profile);
         }
 
-        private static string BuildPrompt(CandidateProfile profile, JobPosting job, bool isResume = false)
+        public async Task<string> GenerateApplicationEmailAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string coverLetter,
+            string? customPrompt = null
+        )
+        {
+            var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+            {
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+            }
+
+            var userPrompt = $"""
+                Candidate Name: {profile.FullName}
+                Position: {job.Title}
+                Company: {job.CompanyName}
+
+                Cover Letter Summary:
+                {coverLetter[..Math.Min(500, coverLetter.Length)]}...
+
+                Write a brief professional email to accompany this application.
+                """;
+
+            ChatCompletion completion = await _chatClient.CompleteChatAsync(
+                new SystemChatMessage(systemPrompt),
+                new UserChatMessage(userPrompt)
+            );
+
+            return completion.Content[0].Text;
+        }
+
+        private static string BuildPrompt(
+            CandidateProfile profile,
+            JobPosting job,
+            bool isResume = false
+        )
         {
             return AIPromptBuilder.Build(profile, job, isResume);
         }

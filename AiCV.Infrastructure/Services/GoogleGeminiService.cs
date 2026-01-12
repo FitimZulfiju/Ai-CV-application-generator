@@ -6,33 +6,33 @@ namespace AiCV.Infrastructure.Services
         private readonly string _apiKey = apiKey;
         private const string Model = "gemini-2.0-flash"; // Using available model from list
 
-        private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+        };
 
-        public async Task<string> GenerateCoverLetterAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<string> GenerateCoverLetterAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
             var systemPrompt = AISystemPrompts.CoverLetterSystemPrompt;
-        if (!string.IsNullOrWhiteSpace(customPrompt)) systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-        var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job)}";
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+            var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job)}";
             var requestBody = new
             {
-                contents = new[]
-                {
-                    new
-                    {
-                        parts = new[]
-                        {
-                            new { text = prompt }
-                        }
-                    }
-                }
+                contents = new[] { new { parts = new[] { new { text = prompt } } } },
             };
 
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}", 
-                content);
+                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}",
+                content
+            );
 
             if (!response.IsSuccessStatusCode)
             {
@@ -43,35 +43,32 @@ namespace AiCV.Infrastructure.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             var geminiResponse = JsonSerializer.Deserialize<GeminiResponse>(responseJson);
 
-            return geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text 
-                   ?? "Error: No content generated.";
+            return geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text
+                ?? "Error: No content generated.";
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(CandidateProfile profile, JobPosting job, string? customPrompt = null)
+        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string? customPrompt = null
+        )
         {
             var systemPrompt = AISystemPrompts.ResumeTailoringSystemPrompt;
-        if (!string.IsNullOrWhiteSpace(customPrompt)) systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-        var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+            var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
             var requestBody = new
             {
-                contents = new[]
-                {
-                    new
-                    {
-                        parts = new[]
-                        {
-                            new { text = prompt }
-                        }
-                    }
-                }
+                contents = new[] { new { parts = new[] { new { text = prompt } } } },
             };
 
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}", 
-                content);
+                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}",
+                content
+            );
 
             if (!response.IsSuccessStatusCode)
             {
@@ -94,7 +91,61 @@ namespace AiCV.Infrastructure.Services
             return AIResponseParser.ParseTailoredResume(textResponse, profile);
         }
 
-        private static string BuildPrompt(CandidateProfile profile, JobPosting job, bool isResume = false)
+        public async Task<string> GenerateApplicationEmailAsync(
+            CandidateProfile profile,
+            JobPosting job,
+            string coverLetter,
+            string? customPrompt = null
+        )
+        {
+            var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
+            if (!string.IsNullOrWhiteSpace(customPrompt))
+                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+
+            var userPrompt = $"""
+                Candidate Name: {profile.FullName}
+                Position: {job.Title}
+                Company: {job.CompanyName}
+
+                Cover Letter Summary:
+                {coverLetter[..Math.Min(500, coverLetter.Length)]}...
+
+                Write a brief professional email to accompany this application.
+                """;
+
+            var prompt = $"{systemPrompt}\n\n{userPrompt}";
+
+            var requestBody = new
+            {
+                contents = new[] { new { parts = new[] { new { text = prompt } } } },
+            };
+
+            var json = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(
+                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}",
+                content
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Google Gemini API Error: {response.StatusCode} - {error}");
+            }
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+            var geminiResponse = JsonSerializer.Deserialize<GeminiResponse>(responseJson);
+
+            return geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text
+                ?? "Error: No content generated.";
+        }
+
+        private static string BuildPrompt(
+            CandidateProfile profile,
+            JobPosting job,
+            bool isResume = false
+        )
         {
             return AIPromptBuilder.Build(profile, job, isResume);
         }
@@ -123,6 +174,5 @@ namespace AiCV.Infrastructure.Services
             [JsonPropertyName("text")]
             public string? Text { get; set; }
         }
-
     }
 }

@@ -279,6 +279,26 @@
                             }
                         }
                     </MudTabPanel>
+                    <MudTabPanel Text="Application Email" Icon="@Icons.Material.Filled.Email">
+                        @if (string.IsNullOrEmpty(_generatedEmail))
+                        {
+                            <MudAlert Severity="Severity.Info">Enter job details and click Generate to create an application
+                                email.</MudAlert>
+                        }
+                        else
+                        {
+                            <MudStack Row="true" Class="mb-2" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                StartIcon="@Icons.Material.Filled.ContentCopy"
+                                OnClick="@(() => CopyToClipboard(_generatedEmail))">
+                                    Copy Email
+                                </MudButton>
+                            </MudStack>
+                            <MudTextField @bind-Value="_generatedEmail" Variant="Variant.Outlined" Lines="12"
+                            Class="mb-2 d-print-none" Label="Application Email"
+                            HelperText="Edit the email if needed before copying." />
+                        }
+                    </MudTabPanel>
                 </MudTabs>
             </MudCard>
         </MudItem>

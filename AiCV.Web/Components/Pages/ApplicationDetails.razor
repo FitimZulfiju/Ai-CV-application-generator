@@ -81,6 +81,25 @@
                             <MudAlert Severity="Severity.Warning">Unable to load tailored CV.</MudAlert>
                 }
                 </MudTabPanel>
+                <MudTabPanel Text="Application Email" Icon="@Icons.Material.Filled.Email">
+                    @if (_application != null && !string.IsNullOrEmpty(_application.ApplicationEmailContent))
+                    {
+                        <MudStack Row="true" Class="mb-2" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                StartIcon="@Icons.Material.Filled.ContentCopy" 
+                                OnClick="@(() => CopyToClipboard(_application.ApplicationEmailContent))">
+                                Copy Email
+                            </MudButton>
+                        </MudStack>
+                        <MudPaper Elevation="1" Class="pa-4">
+                            <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.ApplicationEmailContent</MudText>
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info">No application email was saved for this application.</MudAlert>
+                    }
+                </MudTabPanel>
                 <MudTabPanel Text="Job Description" Icon="@Icons.Material.Filled.DocumentScanner">
                     <MudPaper Elevation="1" Class="pa-4">
                     @if (!string.IsNullOrEmpty(_application.JobPosting?.Url))
