@@ -192,13 +192,19 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                         if (_logger.IsEnabled(LogLevel.Warning))
                         {
                             _logger.LogWarning(
-                                "New version detected on registry! Digest: {Digest}, Version: {Version}",
+                                "New version detected on registry! Digest: {Digest}, Version: {Version}. Auto-scheduling update.",
                                 latestDigest,
                                 _newVersionTag
                             );
                         }
                         _isUpdateAvailable = true;
                         _newVersionDigest = latestDigest;
+
+                        // Auto-schedule update (3 minutes) if not already scheduled
+                        if (!IsUpdateScheduled)
+                        {
+                            ScheduleUpdate(180);
+                        }
                     }
                 }
             }

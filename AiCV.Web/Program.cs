@@ -428,12 +428,17 @@ app.MapGet(
 // Add schedule-update endpoint (starts server-side countdown)
 app.MapPost(
         "/api/schedule-update",
-        (IUpdateCheckService updateCheckService, IWebHostEnvironment _env) =>
+        (
+            IUpdateCheckService updateCheckService,
+            IWebHostEnvironment _env,
+            ILogger<Program> logger
+        ) =>
         {
             if (_env.IsDevelopment())
             {
                 return Results.BadRequest("Scheduled updates are disabled in Development.");
             }
+            logger.LogWarning("Manual update schedule requested via API.");
             updateCheckService.ScheduleUpdate(180); // 3 minutes
 
             var attempt = 0;
