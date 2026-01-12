@@ -125,7 +125,7 @@ export function startAutoRefresh() {
 
         const subText = document.createElement('div');
         subText.innerText = isPending
-            ? 'We are improving the system. Your work is saved locally. Brief restart in 5 minutes.'
+            ? 'We are improving the system. Your work is saved locally. Brief restart in 3 minutes.'
             : 'The application has been updated. Please reload to load the new version.';
         subText.style.fontSize = '0.875rem';
         subText.style.opacity = '0.9';
