@@ -137,3 +137,25 @@ body {
         padding: 10px;
     }
 }
+
+/* Fix for Generate page preview overflow on mobile */
+@media (max-width: 599.98px) {
+    .stack-on-mobile {
+        height: auto !important;
+        min-height: 0;
+    }
+
+    .stack-on-mobile>.mud-paper {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 200px;
+        max-height: 50vh;
+    }
+
+    /* Ensure the preview HTML container is scrollable and contained */
+    .markdown-body {
+        overflow-x: auto;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}

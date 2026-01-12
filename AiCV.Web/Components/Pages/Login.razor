@@ -1,7 +1,7 @@
 @page "/login"
 
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+<MudContainer MaxWidth="MaxWidth.Small" Class="py-4">
     <MudPaper Class="pa-6" Elevation="3">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Ai-CV Login</MudText>
 
@@ -43,21 +43,21 @@
                 @if (IsGoogleConfigured)
                 {
                     <MudButton Href="/external-login/Google" Variant="Variant.Outlined" FullWidth="true"
-                        StartIcon="@Icons.Custom.Brands.Google" Style="border-color: #DB4437; color: #DB4437;">
+                StartIcon="@Icons.Custom.Brands.Google" Style="border-color: #DB4437; color: #DB4437;">
                         Continue with Google
                     </MudButton>
                 }
                 @if (IsMicrosoftConfigured)
                 {
                     <MudButton Href="/external-login/Microsoft" Variant="Variant.Outlined" FullWidth="true"
-                        StartIcon="@Icons.Custom.Brands.Microsoft" Style="border-color: #00a4ef; color: #00a4ef;">
+                StartIcon="@Icons.Custom.Brands.Microsoft" Style="border-color: #00a4ef; color: #00a4ef;">
                         Continue with Microsoft
                     </MudButton>
                 }
                 @if (IsGitHubConfigured)
                 {
                     <MudButton Href="/external-login/GitHub" Variant="Variant.Outlined" FullWidth="true"
-                        StartIcon="@Icons.Custom.Brands.GitHub" Style="border-color: #333; color: #333;">
+                StartIcon="@Icons.Custom.Brands.GitHub" Style="border-color: #333; color: #333;">
                         Continue with GitHub
                     </MudButton>
                 }
@@ -71,5 +71,3 @@
         </MudText>
     </MudPaper>
 </MudContainer>
-
-

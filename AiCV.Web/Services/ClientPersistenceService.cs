@@ -50,8 +50,23 @@ public class ClientPersistenceService(IJSRuntime jsRuntime) : IAsyncDisposable
     {
         if (_moduleTask.IsValueCreated)
         {
-            var module = await _moduleTask.Value;
-            await module.DisposeAsync();
+            try
+            {
+                var module = await _moduleTask.Value;
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // Circuit is disconnected, module is already disposed
+            }
+            catch (ObjectDisposedException)
+            {
+                // JS runtime is already disposed
+            }
+            catch (InvalidOperationException)
+            {
+                // JS interop calls cannot be made (prerendering or disconnected)
+            }
         }
 
         GC.SuppressFinalize(this);

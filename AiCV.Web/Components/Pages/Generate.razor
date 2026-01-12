@@ -15,8 +15,9 @@
                     <MudForm @ref="_form">
                         <MudGrid Class="mb-2">
                             <MudItem xs="12" sm="6" md="3">
-                                <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel" Variant="Variant.Outlined"
-                                    Clearable="true" HelperText="Select the AI model" Disabled="_isLoadingModels">
+                                <MudSelect T="AIModel" Label="Model" @bind-Value="_selectedModel"
+                                    Variant="Variant.Outlined" Clearable="true" HelperText="Select the AI model"
+                                    Disabled="_isLoadingModels">
                                     @if (_isLoadingModels)
                                     {
                                         <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
@@ -31,18 +32,19 @@
                                 </MudSelect>
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
-                                <MudTextField @bind-Value="_job.CompanyName" Label="Company Name" Variant="Variant.Outlined"
-                                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business"
-                                    Clearable="true" HelperText="Will be Auto-detected" />
+                                <MudTextField @bind-Value="_job.CompanyName" Label="Company Name"
+                                    Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                    AdornmentIcon="@Icons.Material.Filled.Business" Clearable="true"
+                                    HelperText="Will be Auto-detected" />
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
                                 <MudTextField @bind-Value="_job.Title" Label="Job Title" Variant="Variant.Outlined"
-                                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true"
-                                    HelperText="Will be Auto-detected" />
+                                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work"
+                                    Clearable="true" HelperText="Will be Auto-detected" />
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3" Class="d-flex align-center pt-md-4">
-                                <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary"
-                                    Label="Manual Entry Mode" T="bool" />
+                                <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Label="Manual Entry Mode"
+                                    T="bool" />
                             </MudItem>
                         </MudGrid>
 
@@ -51,14 +53,14 @@
                             <MudGrid Class="mb-3" Spacing="2">
                                 <MudItem xs="12" sm="9" md="10">
                                     <MudTextField @bind-Value="_job.Url" Label="Job URL" Variant="Variant.Outlined"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link"
-                                        Required="true" RequiredError="" Clearable="true" />
+                                    Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link"
+                                    Required="true" RequiredError="" Clearable="true" />
                                 </MudItem>
 
                                 <MudItem xs="12" sm="3" md="2" Class="d-flex align-center">
                                     <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large"
-                                        OnClick="FetchJobDetails" Disabled="_isFetching"
-                                        StartIcon="@Icons.Material.Filled.CloudDownload" FullWidth="true" Class="mt-1">
+                                    OnClick="FetchJobDetails" Disabled="_isFetching"
+                                    StartIcon="@Icons.Material.Filled.CloudDownload" FullWidth="true" Class="mt-1">
                                         @if (_isFetching)
                                         {
                                             <AiCV.Web.Components.Shared.LoadingIndicator />
@@ -77,29 +79,30 @@
                             int _min = 10;
                             int _max = 90;
 
-                            <div class="d-flex flex-grow-1 stack-on-mobile" style="min-height: 400px; height: 60vh; width: 100%;">
-                                <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column width-100-mobile" Style="height: 100%;"
-                                    Elevation="0">
+                            <div class="d-flex flex-grow-1 stack-on-mobile"
+                            style="min-height: 400px; height: 60vh; width: 100%;">
+                                <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column width-100-mobile"
+                                Style="height: 100%;" Elevation="0">
                                     <div class="d-flex justify-space-between align-center">
                                         <MudText Typo="Typo.caption">Editor (Markdown) | Job Description</MudText>
                                         <MudTooltip Text="Clear Content">
                                             <MudIconButton Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small"
-                                                Color="Color.Error" OnClick="ClearEditor" />
+                                            Color="Color.Error" OnClick="ClearEditor" />
                                         </MudTooltip>
                                     </div>
                                     <div class="flex-grow-1" style="overflow-y: auto;">
                                         <MudTextField @bind-Value="_job.Description" Variant="Variant.Outlined"
-                                            Required="true" RequiredError="" AutoGrow="true" Class="flex-grow-1"
-                                            Style="min-height: 100%;" Immediate="true" DebounceInterval="300"
-                                            TextChanged="UpdatePreview" />
+                                        Required="true" RequiredError="" AutoGrow="true" Class="flex-grow-1"
+                                        Style="min-height: 100%;" Immediate="true" DebounceInterval="300"
+                                        TextChanged="UpdatePreview" />
                                     </div>
                                 </MudPaper>
 
-                                <MudPaper Width="@($"{100 - _splitterSize}%")" Class="d-flex flex-column pl-1 width-100-mobile"
-                                    Style="height: 100%;" Elevation="0">
+                                <MudPaper Width="@($"{100 - _splitterSize}%")"
+                                Class="d-flex flex-column pl-1 width-100-mobile" Style="height: 100%;" Elevation="0">
                                     <MudText Typo="Typo.caption" Class="mb-1">Preview (HTML)</MudText>
                                     <MudPaper Elevation="0" Outlined="true" Class="pa-4 flex-grow-1"
-                                        Style="overflow-y: auto; background-color: var(--mud-palette-background-grey);">
+                                    Style="overflow: hidden; overflow-y: auto; background-color: var(--mud-palette-background-grey);">
                                         @if (string.IsNullOrWhiteSpace(_previewHtml))
                                         {
                                             <MudText Typo="Typo.body2" Color="Color.Secondary">Preview will appear here...
@@ -117,22 +120,24 @@
 
                             <!--Custom Prompt Field -->
                             <MudTextField @bind-Value="_customPrompt" Label="Custom Instructions (Optional)"
-                                Variant="Variant.Outlined" AutoGrow="true" Adornment="Adornment.Start"
-                                AdornmentIcon="@Icons.Material.Filled.Edit" Clearable="true" Counter="1000" MaxLength="1000"
-                                HelperText="E.g., 'Focus on leadership skills', 'Use formal tone', 'Keep cover letter under 300 words'"
-                                Class="mb-1 mt-4" />
+                            Variant="Variant.Outlined" AutoGrow="true" Adornment="Adornment.Start"
+                            AdornmentIcon="@Icons.Material.Filled.Edit" Clearable="true" Counter="1000" MaxLength="1000"
+                            HelperText="E.g., 'Focus on leadership skills', 'Use formal tone', 'Keep cover letter under 300 words'"
+                            Class="mb-1 mt-4" />
 
                             <MudGrid Class="mt-2 py-2" Style="border:1px solid lightgrey; border-radius:4px;">
                                 <MudItem xs="12" md="6" Class="d-flex align-center justify-center">
-                                    <MudText Typo="Typo.caption" Class="mr-2">Split: <strong>@_splitterSize%</strong></MudText>
+                                    <MudText Typo="Typo.caption" Class="mr-2">Split: <strong>@_splitterSize%</strong>
+                                    </MudText>
                                     <MudSlider T="int" @bind-Value="@_splitterSize" Min="_min" Max="_max" Step="1"
-                                        Variant="Variant.Filled" Color="Color.Primary" ValueLabel="true"
-                                        Style="max-width:300px; width:100%;" />
+                                    Variant="Variant.Filled" Color="Color.Primary" ValueLabel="true"
+                                    Style="max-width:300px; width:100%;" />
                                 </MudItem>
                                 <MudItem xs="12" md="6" Class="d-flex align-center justify-center">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium"
-                                        OnClick="GenerateContent" Disabled="_isGenerating"
-                                        StartIcon="@Icons.Material.Filled.AutoAwesome" FullWidth="true" Style="max-width:300px;">
+                                    OnClick="GenerateContent" Disabled="_isGenerating"
+                                    StartIcon="@Icons.Material.Filled.AutoAwesome" FullWidth="true"
+                                    Style="max-width:300px;">
                                         @if (_isGenerating)
                                         {
                                             <AiCV.Web.Components.Shared.LoadingIndicator />
@@ -159,8 +164,7 @@
                     <MudSwitch @bind-Value="_previewCoverLetter" Color="Color.Primary" Label="Visual Preview"
                         Style="@GetDisplayStyle(_activeTabIndex == 0)" />
                     <MudSwitch T="bool" Value="_previewResume" ValueChanged="OnResumePreviewToggled"
-                        Color="Color.Primary" Label="Visual Preview"
-                        Style="@GetDisplayStyle(_activeTabIndex == 1)" />
+                        Color="Color.Primary" Label="Visual Preview" Style="@GetDisplayStyle(_activeTabIndex == 1)" />
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
                         StartIcon="@Icons.Material.Filled.ContentCopy"
                         OnClick="@(() => CopyToClipboard(_generatedCoverLetter))"
@@ -231,15 +235,15 @@
                             @if (_previewCoverLetter)
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
-                                    Style="overflow-y: auto; max-height: calc(100vh - 250px);">
+                            Style="overflow-y: auto; max-height: calc(100vh - 250px);">
                                     <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile"
-                                        LetterContent="@_generatedCoverLetter" />
+                                LetterContent="@_generatedCoverLetter" />
                                 </MudPaper>
                             }
                             else
                             {
                                 <MudTextField @bind-Value="_generatedCoverLetter" Variant="Variant.Outlined" Lines="25"
-                                    Class="mb-2 d-print-none" />
+                            Class="mb-2 d-print-none" />
                             }
                         }
                     </MudTabPanel>
@@ -254,7 +258,7 @@
                             @if (_previewResume)
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
-                                    Style="overflow-y: auto; max-height: calc(100vh - 250px);">
+                            Style="overflow-y: auto; max-height: calc(100vh - 250px);">
                                     <AiCV.Web.Components.Shared.CvPreview Profile="_generatedResume" />
                                 </MudPaper>
                             }
@@ -265,12 +269,12 @@
                                         the raw data structure. Syntax errors will prevent the CV from rendering.</MudText>
                                     <MudSpacer />
                                     <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Error"
-                                        StartIcon="@Icons.Material.Filled.Restore" OnClick="ResetResumeJson">Reset Changes
+                                StartIcon="@Icons.Material.Filled.Restore" OnClick="ResetResumeJson">Reset Changes
                                     </MudButton>
                                 </MudStack>
                                 <MudTextField @bind-Value="_resumeJson" Label="Edit Resume JSON" Variant="Variant.Outlined"
-                                    Lines="25" Class="mb-2 d-print-none"
-                                    HelperText="Edit the JSON structure directly. Ensure all keys and string values are quoted." />
+                            Lines="25" Class="mb-2 d-print-none"
+                            HelperText="Edit the JSON structure directly. Ensure all keys and string values are quoted." />
                             }
                         }
                     </MudTabPanel>

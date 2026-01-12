@@ -7,97 +7,97 @@
 
     @if (_isLoading)
     {
-        <AiCV.Web.Components.Shared.LoadingIndicator />
+            <AiCV.Web.Components.Shared.LoadingIndicator />
     }
     else if (_application == null)
     {
-        <MudAlert Severity="Severity.Error">Application not found.</MudAlert>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" Class="mt-4">Back to List</MudButton>
+            <MudAlert Severity="Severity.Error">Application not found.</MudAlert>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" Class="mt-4">Back to List</MudButton>
     }
     else
     {
-        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
-            <div class="d-flex align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
-                <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
-            </div>
-            <MudSpacer Class="hide-on-mobile" />
-            <div class="d-flex gap-2 width-100-mobile justify-center">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
+                <div class="d-flex align-center">
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
+                    <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
+                </div>
+                <div class="hide-on-mobile" style="flex: 1 1 auto;"></div>
+                <div class="d-flex gap-2 width-100-mobile justify-center">
                 @if (_activeTabIndex == 0 && _application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter" FullWidth="true" Style="max-width: 200px;">
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter" FullWidth="true" Style="max-width: 200px;">
                         @if (_isPrintingCoverLetter)
                         {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>...</span>
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                        <span>...</span>
                         }
                         else
                         {
-                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                            <span>Print</span>
+                                        <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                                        <span>Print</span>
                         }
-                    </MudButton>
+                            </MudButton>
                 }
                 @if (_activeTabIndex == 1 && _tailoredResume != null)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume" Disabled="_isPrintingResume" FullWidth="true" Style="max-width: 200px;">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume" Disabled="_isPrintingResume" FullWidth="true" Style="max-width: 200px;">
                         @if (_isPrintingResume)
                         {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>...</span>
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                        <span>...</span>
                         }
                         else
                         {
-                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                            <span>Print CV</span>
+                                        <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                                        <span>Print CV</span>
                         }
-                    </MudButton>
+                            </MudButton>
                 }
-            </div>
-        </MudStack>
+                </div>
+            </MudStack>
 
-        <MudTabs Elevation="2"  Rounded="true" PanelClass="pt-4" @bind-ActivePanelIndex="_activeTabIndex">
-            <MudTabPanel Text="Cover Letter" Icon="@Icons.Material.Filled.Description">
+            <MudTabs Elevation="2"  Rounded="true" PanelClass="pt-4" @bind-ActivePanelIndex="_activeTabIndex">
+                <MudTabPanel Text="Cover Letter" Icon="@Icons.Material.Filled.Description">
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
-                    <MudPaper Elevation="0" Class="cv-paper-container">
-                        <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" />
-                    </MudPaper>
+                            <MudPaper Elevation="0" Class="cv-paper-container">
+                                <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" />
+                            </MudPaper>
                 }
                 else
                 {
-                    <MudAlert Severity="Severity.Warning">Unable to load cover letter.</MudAlert>
+                            <MudAlert Severity="Severity.Warning">Unable to load cover letter.</MudAlert>
                 }
-            </MudTabPanel>
-            <MudTabPanel Text="Tailored CV" Icon="@Icons.Material.Filled.ContactPage">
+                </MudTabPanel>
+                <MudTabPanel Text="Tailored CV" Icon="@Icons.Material.Filled.ContactPage">
                 @if (_tailoredResume != null)
                 {
-                    <MudPaper Elevation="1" Class="cv-paper-container">
-                        <AiCV.Web.Components.Shared.CvPreview Profile="_tailoredResume" />
-                    </MudPaper>
+                            <MudPaper Elevation="1" Class="cv-paper-container">
+                                <AiCV.Web.Components.Shared.CvPreview Profile="_tailoredResume" />
+                            </MudPaper>
                 }
                 else
                 {
-                    <MudAlert Severity="Severity.Warning">Unable to load tailored CV.</MudAlert>
+                            <MudAlert Severity="Severity.Warning">Unable to load tailored CV.</MudAlert>
                 }
-            </MudTabPanel>
-            <MudTabPanel Text="Job Description" Icon="@Icons.Material.Filled.DocumentScanner">
-                <MudPaper Elevation="1" Class="pa-4">
+                </MudTabPanel>
+                <MudTabPanel Text="Job Description" Icon="@Icons.Material.Filled.DocumentScanner">
+                    <MudPaper Elevation="1" Class="pa-4">
                     @if (!string.IsNullOrEmpty(_application.JobPosting?.Url))
                     {
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
-                            <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Primary" />
-                            <MudText Typo="Typo.subtitle2">Source:</MudText>
-                            <MudLink Href="@_application.JobPosting.Url" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+                                    <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Primary" />
+                                    <MudText Typo="Typo.subtitle2">Source:</MudText>
+                                    <MudLink Href="@_application.JobPosting.Url" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
                                 @_application.JobPosting.Url
-                            </MudLink>
-                        </MudStack>
-                        <MudDivider Class="mb-4" />
+                                    </MudLink>
+                                </MudStack>
+                                <MudDivider Class="mb-4" />
                     }
-                    <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.JobPosting?.Description</MudText>
-                </MudPaper>
-            </MudTabPanel>
-        </MudTabs>
+                        <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.JobPosting?.Description</MudText>
+                    </MudPaper>
+                </MudTabPanel>
+            </MudTabs>
     }
 </MudContainer>
 
