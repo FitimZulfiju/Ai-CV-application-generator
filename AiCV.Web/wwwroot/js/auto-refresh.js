@@ -151,22 +151,30 @@ export function startAutoRefresh() {
             countdownSpan.innerText = "Installing updates...";
             subText.innerText = "The server is restarting. We will reload you automatically when it's back...";
 
+            const startTime = Date.now();
+            const timeoutMs = 60000; // 60 second timeout
+
             // Poll every 2.5 seconds
             const pollInterval = setInterval(async () => {
+                // Check for timeout
+                if (Date.now() - startTime > timeoutMs) {
+                    clearInterval(pollInterval);
+                    countdownSpan.innerText = "Update complete";
+                    subText.innerHTML = 'Please <a href="#" onclick="location.reload(); return false;" style="color: white; text-decoration: underline;">click here to refresh</a> or press F5.';
+                    return;
+                }
+
                 try {
                     const response = await fetch('/api/version', { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
-                        // Only reload if:
-                        // 1. Server is back (has a version)
-                        // 2. Version has CHANGED from what we started with
-                        // 3. No update is currently scheduled or available (to avoid loop)
-                        if (data.version && data.version !== currentVersion && !data.isUpdateScheduled && !data.isUpdateAvailable) {
+                        // Simply reload if version has changed from what we started with
+                        if (data.version && data.version !== currentVersion) {
                             console.log(`Server is back with new version ${data.version}! Reloading...`);
                             clearInterval(pollInterval);
                             location.reload();
                         } else if (data.version) {
-                            console.log(`Server responded but conditions not met. Version: ${data.version}, isUpdateScheduled: ${data.isUpdateScheduled}, isUpdateAvailable: ${data.isUpdateAvailable}`);
+                            console.log(`Server responded with same version ${data.version}, waiting...`);
                         }
                     }
                 } catch (e) {
