@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Logging;
-using Moq;
 using AiCV.Application.DTOs;
 using AiCV.Application.Interfaces;
 using AiCV.Domain;
 using AiCV.Infrastructure.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace AiCV.Tests.Services;
 
@@ -89,17 +89,26 @@ public class JobApplicationOrchestratorTests
             )
             .ReturnsAsync(expectedResume);
 
+        const string expectedEmail = "Dear Hiring Manager, I am excited to apply...";
+        _mockAiService
+            .Setup(a =>
+                a.GenerateApplicationEmailAsync(
+                    It.IsAny<CandidateProfile>(),
+                    It.IsAny<JobPosting>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()
+                )
+            )
+            .ReturnsAsync(expectedEmail);
+
         // Act
-        var (coverLetter, resumeResult) = await _orchestrator.GenerateApplicationAsync(
-            userId,
-            provider,
-            profile,
-            job
-        );
+        var (coverLetter, resumeResult, applicationEmail) =
+            await _orchestrator.GenerateApplicationAsync(userId, provider, profile, job);
 
         // Assert
         Assert.Equal(expectedCoverLetter, coverLetter);
         Assert.Equal(expectedResume, resumeResult);
+        Assert.Equal(expectedEmail, applicationEmail);
 
         _mockAiFactory.Verify(
             f => f.GetServiceAsync(provider, userId, It.IsAny<AIModel?>()),
@@ -111,6 +120,16 @@ public class JobApplicationOrchestratorTests
         );
         _mockAiService.Verify(
             a => a.GenerateTailoredResumeAsync(profile, job, It.IsAny<string>()),
+            Times.Once
+        );
+        _mockAiService.Verify(
+            a =>
+                a.GenerateApplicationEmailAsync(
+                    profile,
+                    job,
+                    expectedCoverLetter,
+                    It.IsAny<string>()
+                ),
             Times.Once
         );
     }
@@ -130,9 +149,17 @@ public class JobApplicationOrchestratorTests
         var profile = new CandidateProfile { Id = 1 };
         var coverLetter = "Cover Letter";
         var tailoredResume = new CandidateProfile { FullName = "Tailored" };
+        var applicationEmail = "Dear Hiring Manager...";
 
         // Act
-        await _orchestrator.SaveApplicationAsync(userId, job, profile, coverLetter, tailoredResume);
+        await _orchestrator.SaveApplicationAsync(
+            userId,
+            job,
+            profile,
+            coverLetter,
+            tailoredResume,
+            applicationEmail
+        );
 
         // Assert - Note: The orchestrator creates a fresh JobPosting entity to avoid EF Core tracking issues
         // so we verify properties match instead of reference equality
@@ -150,6 +177,7 @@ public class JobApplicationOrchestratorTests
                         && app.CandidateProfileId == profile.Id
                         && app.CoverLetterContent == coverLetter
                         && !string.IsNullOrEmpty(app.TailoredResumeJson)
+                        && app.ApplicationEmailContent == applicationEmail
                     )
                 ),
             Times.Once
