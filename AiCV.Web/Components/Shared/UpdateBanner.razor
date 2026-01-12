@@ -1,6 +1,6 @@
 @using System.Timers
 @implements IDisposable
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager NavigationManager
 
 @if (_showBanner)
@@ -85,7 +85,8 @@
 
         try
         {
-            var response = await Http.GetFromJsonAsync<VersionResponse>($"{_baseUri}/api/version");
+            using var http = HttpClientFactory.CreateClient();
+            var response = await http.GetFromJsonAsync<VersionResponse>($"{_baseUri}/api/version");
             if (response == null) return;
 
             // Store current version on first check
@@ -138,7 +139,8 @@
 
         try
         {
-            var response = await Http.PostAsync($"{_baseUri}/api/schedule-update", null);
+            using var http = HttpClientFactory.CreateClient();
+            var response = await http.PostAsync($"{_baseUri}/api/schedule-update", null);
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadFromJsonAsync<ScheduleResponse>();
