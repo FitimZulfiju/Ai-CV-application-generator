@@ -33,8 +33,8 @@ export function startAutoRefresh() {
                 // Case 3: Update pending in registry but not yet scheduled - schedule it
                 else if (isUpdateAvailable) {
                     console.log(`New version found in registry. Scheduling update on server...`);
-                    await scheduleUpdateOnServer();
-                    showUpdateNotification('pending', newVersionTag, null);
+                    const actualTime = await scheduleUpdateOnServer();
+                    showUpdateNotification('pending', newVersionTag, actualTime);
                 }
             }
         } catch (error) {
@@ -48,8 +48,11 @@ export function startAutoRefresh() {
             if (response.ok) {
                 const data = await response.json();
                 console.log(`Update scheduled on server for: ${data.scheduledUpdateTime}`);
-                // Return actual Date object
-                return new Date(data.scheduledUpdateTime);
+
+                // Ensure we parse the time correctly
+                if (data.scheduledUpdateTime) {
+                    return new Date(data.scheduledUpdateTime);
+                }
             }
         } catch (error) {
             console.warn('Failed to schedule update on server:', error);
@@ -60,6 +63,13 @@ export function startAutoRefresh() {
     function showUpdateNotification(type, version = '', serverScheduledTime = null) {
         notificationShown = true;
         const isPending = type === 'pending';
+
+        // If no server time provided, fallback to 5 minutes from now for local display
+        let localCountdownEnd = null;
+        if (isPending && !serverScheduledTime) {
+            localCountdownEnd = new Date();
+            localCountdownEnd.setMinutes(localCountdownEnd.getMinutes() + 5);
+        }
 
         // 1. Completely Suppress Blazor UI
         // We do this aggressively because we are taking over the UX
@@ -162,14 +172,15 @@ export function startAutoRefresh() {
             }, 2500);
         }
 
-        // Calculate seconds left based on server's scheduled time
+        // Calculate seconds left based on server's scheduled time or local fallback
         function getSecondsLeft() {
-            if (serverScheduledTime) {
+            const targetTime = serverScheduledTime || localCountdownEnd;
+            if (targetTime) {
                 const now = new Date();
-                const diff = (serverScheduledTime.getTime() - now.getTime()) / 1000;
+                const diff = (targetTime.getTime() - now.getTime()) / 1000;
                 return Math.max(0, Math.floor(diff));
             }
-            return 300; // Default 5 minutes if no server time
+            return 0;
         }
 
         // Start Countdown if pending
