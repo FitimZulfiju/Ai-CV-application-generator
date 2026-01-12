@@ -64,6 +64,13 @@ export function startAutoRefresh() {
     }
 
     function showUpdateNotification(type, version = '', serverScheduledTime = null, initialSecondsRemaining = null) {
+        // Check if banner already exists (Blazor navigation might re-run initialization)
+        const existingBanner = document.getElementById('update-notification-banner');
+        if (existingBanner) {
+            console.log('Update banner already exists, skipping creation.');
+            return;
+        }
+
         notificationShown = true;
         const isPending = type === 'pending';
 
@@ -81,8 +88,6 @@ export function startAutoRefresh() {
 
         // 1. (Validation) We removed the suppression of Blazor UI to verify if the app is disconnected
         // If the server restarts early, the user should see 'Attempting to reconnect...'
-
-        // 2. Create Banner (MudBlazor "Filled Warning" Style)
 
         // 2. Create Banner (MudBlazor "Filled Warning" Style)
         const banner = document.createElement('div');
@@ -229,16 +234,36 @@ export function startAutoRefresh() {
                 if (data.isUpdateScheduled && data.secondsRemaining > 0) {
                     console.log(`Update already scheduled. Showing countdown immediately...`);
                     showUpdateNotification('pending', data.newVersionTag, null, data.secondsRemaining);
-                    return; // Don't start regular polling, notification will handle reload
+                    // Don't return - continue to set up banner restoration monitoring
                 }
             }
         } catch (e) {
             console.warn('Initial version check failed:', e);
         }
 
-        // No scheduled update - wait 60s then start regular polling
+        // Set up periodic check to restore banner if it was removed (Blazor navigation)
+        setInterval(async () => {
+            const banner = document.getElementById('update-notification-banner');
+            if (!banner) {
+                // Banner was removed, check if there's still a scheduled update
+                try {
+                    const response = await fetch('/api/version', { cache: 'no-store' });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.isUpdateScheduled && data.secondsRemaining > 0) {
+                            console.log('Banner was removed, restoring...');
+                            notificationShown = false; // Reset flag to allow recreation
+                            showUpdateNotification('pending', data.newVersionTag, null, data.secondsRemaining);
+                        }
+                    }
+                } catch (e) {
+                    // Ignore errors during restoration check
+                }
+            }
+        }, 2000);
+
+        // Wait 60s then start regular polling for NEW updates
         setTimeout(() => {
-            checkVersion();
             setInterval(checkVersion, 15000);
         }, 60000);
     }
