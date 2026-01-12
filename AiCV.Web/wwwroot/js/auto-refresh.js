@@ -72,20 +72,10 @@ export function startAutoRefresh() {
             localCountdownEnd.setMinutes(localCountdownEnd.getMinutes() + 3);
         }
 
-        // 1. Completely Suppress Blazor UI
-        // We do this aggressively because we are taking over the UX
-        const suppressBlazorStyle = document.createElement('style');
-        suppressBlazorStyle.innerHTML = `
-            #components-reconnect-modal, 
-            .components-reconnect-modal,
-            .components-reconnect-container { 
-                display: none !important; 
-                visibility: hidden !important; 
-                opacity: 0 !important; 
-                pointer-events: none !important; 
-            }
-        `;
-        document.head.appendChild(suppressBlazorStyle);
+        // 1. (Validation) We removed the suppression of Blazor UI to verify if the app is disconnected
+        // If the server restarts early, the user should see 'Attempting to reconnect...'
+
+        // 2. Create Banner (MudBlazor "Filled Warning" Style)
 
         // 2. Create Banner (MudBlazor "Filled Warning" Style)
         const banner = document.createElement('div');
