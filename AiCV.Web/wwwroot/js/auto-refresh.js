@@ -48,7 +48,8 @@ export function startAutoRefresh() {
             if (response.ok) {
                 const data = await response.json();
                 console.log(`Update scheduled on server for: ${data.scheduledUpdateTime}`);
-                return data.scheduledUpdateTime;
+                // Return actual Date object
+                return new Date(data.scheduledUpdateTime);
             }
         } catch (error) {
             console.warn('Failed to schedule update on server:', error);
@@ -77,9 +78,9 @@ export function startAutoRefresh() {
 
         // 2. Create Banner (MudBlazor "Filled Warning" Style)
         const banner = document.createElement('div');
-        banner.style.boxShadow = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)';
+        banner.style.boxShadow = '0px -2px 10px rgba(0,0,0,0.3)';
         banner.style.position = 'fixed';
-        banner.style.top = '0';
+        banner.style.bottom = '0'; // Moved to bottom
         banner.style.left = '0';
         banner.style.width = '100%';
         banner.style.zIndex = '2147483647'; // Max z-index
@@ -95,7 +96,7 @@ export function startAutoRefresh() {
 
         // Icon
         const iconDiv = document.createElement('div');
-        iconDiv.style.marginRight = '22px';
+        iconDiv.style.marginRight = '20px';
         iconDiv.style.display = 'flex';
         iconDiv.style.alignItems = 'center';
         iconDiv.innerHTML = `<svg style="width: 24px; height: 24px; fill: white;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>`;
@@ -142,7 +143,7 @@ export function startAutoRefresh() {
             countdownSpan.innerText = "Installing updates...";
             subText.innerText = "The server is restarting. We will reload you automatically when it's back...";
 
-            // Poll every 2 seconds
+            // Poll every 2.5 seconds
             const pollInterval = setInterval(async () => {
                 try {
                     const response = await fetch('/api/version', { cache: 'no-store' });
@@ -158,7 +159,7 @@ export function startAutoRefresh() {
                 } catch (e) {
                     console.log('Waiting for server...');
                 }
-            }, 2000);
+            }, 2500);
         }
 
         // Calculate seconds left based on server's scheduled time
@@ -188,17 +189,13 @@ export function startAutoRefresh() {
             }, 1000);
         } else {
             countdownSpan.innerText = 'Ready to reload';
-            // If already applied, just wait a moment then reload or let user click? 
-            // Logic in original code was just showing banner for applied.
-            // We can let them reload manually or auto-reload after a short delay if preferred.
-            // For now, let's auto-reload after 10s for "applied" case to be helpful?
-            // Or stick to manual to be safe. Original code implied manual or simple message.
+            // Auto-reload after versions change if type is applied
+            setTimeout(() => location.reload(), 5000);
         }
     }
 
     checkVersion();
-    setInterval(checkVersion, 10000);
+    setInterval(checkVersion, 15000);
 }
 
 startAutoRefresh();
-
