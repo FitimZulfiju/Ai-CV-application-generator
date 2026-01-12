@@ -138,24 +138,22 @@ body {
     }
 }
 
-/* Fix for Generate page preview overflow on mobile */
+/* Fix for Generate page on mobile */
 @media (max-width: 599.98px) {
-    .stack-on-mobile {
-        height: auto !important;
-        min-height: 0;
-    }
 
-    .stack-on-mobile>.mud-paper {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 200px;
-        max-height: 50vh;
-    }
 
-    /* Ensure the preview HTML container is scrollable and contained */
+
+    /* Ensure the preview HTML stays contained */
     .markdown-body {
         overflow-x: auto;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    /* Editor/Preview panels on mobile */
+    .stack-on-mobile>.mud-paper {
+        max-height: 40vh;
+        overflow-y: auto;
     }
 }
