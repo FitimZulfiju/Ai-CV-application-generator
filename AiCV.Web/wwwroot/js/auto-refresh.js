@@ -214,12 +214,34 @@ export function startAutoRefresh() {
         }
     }
 
-    // Wait 60 seconds after page load before first check (cooldown after update)
-    // This prevents immediate re-triggering when multiple versions are pushed quickly
-    setTimeout(() => {
-        checkVersion();
-        setInterval(checkVersion, 15000);
-    }, 60000);
+    // Immediately check if an update is already scheduled (so countdown shows after refresh)
+    // Then wait 60 seconds before regular polling to prevent re-triggering loops
+    async function initialCheck() {
+        try {
+            const response = await fetch('/api/version', { cache: 'no-store' });
+            if (response.ok) {
+                const data = await response.json();
+                currentVersion = data.version;
+
+                // Only show notification immediately if update is ALREADY scheduled
+                if (data.isUpdateScheduled && data.secondsRemaining > 0) {
+                    console.log(`Update already scheduled. Showing countdown immediately...`);
+                    showUpdateNotification('pending', data.newVersionTag, null, data.secondsRemaining);
+                    return; // Don't start regular polling, notification will handle reload
+                }
+            }
+        } catch (e) {
+            console.warn('Initial version check failed:', e);
+        }
+
+        // No scheduled update - wait 60s then start regular polling
+        setTimeout(() => {
+            checkVersion();
+            setInterval(checkVersion, 15000);
+        }, 60000);
+    }
+
+    initialCheck();
 }
 
 startAutoRefresh();
