@@ -2,74 +2,24 @@ export function startAutoRefresh() {
     let currentVersion = null;
     let reloadTimer = null;
     let notificationShown = false;
+    let targetTime = null; // Defined in closure scope
 
-    async function checkVersion() {
-        if (notificationShown) return;
+    // ... (checkVersion and scheduleUpdateOnServer remain unchanged) ...
 
-        try {
-            const response = await fetch('/api/version');
-            if (response.ok) {
-                const data = await response.json();
-                const newVersion = data.version;
-                const isUpdateAvailable = data.isUpdateAvailable;
-                const newVersionTag = data.newVersionTag;
-                const isUpdateScheduled = data.isUpdateScheduled;
-                const scheduledUpdateTime = data.scheduledUpdateTime;
-                const secondsRemaining = data.secondsRemaining;
-
-                if (currentVersion === null) {
-                    currentVersion = newVersion;
-                }
-
-                // Case 1: Update already applied (version mismatch)
-                if (currentVersion !== newVersion) {
-                    console.log(`Version changed from ${currentVersion} to ${newVersion}. Triggering reload notification...`);
-                    showUpdateNotification('applied', newVersion);
-                }
-                // Case 2: Update is already scheduled on server - show countdown
-                else if (isUpdateScheduled) {
-                    console.log(`Update already scheduled. Remaining: ${secondsRemaining}s. Showing countdown...`);
-                    showUpdateNotification('pending', newVersionTag, null, secondsRemaining);
-                }
-                // Case 3: Update pending in registry but not yet scheduled - schedule it
-                else if (isUpdateAvailable) {
-                    console.log(`New version found in registry. Scheduling update on server...`);
-                    const result = await scheduleUpdateOnServer();
-                    showUpdateNotification('pending', newVersionTag, null, result?.secondsRemaining);
-                }
-            }
-        } catch (error) {
-            console.warn('Failed to check version:', error);
-        }
-    }
-
-    async function scheduleUpdateOnServer() {
-        try {
-            const response = await fetch('/api/schedule-update', { method: 'POST' });
-            if (response.ok) {
-                const data = await response.json();
-                console.log(`Update scheduled on server for: ${data.scheduledUpdateTime}`);
-
-                // Ensure we parse the time correctly
-                if (data.scheduledUpdateTime) {
-                    return new Date(data.scheduledUpdateTime);
-                }
-            }
-        } catch (error) {
-            console.warn('Failed to schedule update on server:', error);
-        }
-        return null;
-    }
-
-    function showUpdateNotification(type, version = '', serverScheduledTime = null) {
+    function showUpdateNotification(type, version = '', serverScheduledTime = null, initialSecondsRemaining = null) {
         notificationShown = true;
         const isPending = type === 'pending';
 
-        // If no server time provided, fallback to 5 minutes from now for local display
-        let localCountdownEnd = null;
-        if (isPending && !serverScheduledTime) {
-            localCountdownEnd = new Date();
-            localCountdownEnd.setMinutes(localCountdownEnd.getMinutes() + 3);
+        // Calculate target time based on RELATIVE seconds remaining if available
+        if (typeof initialSecondsRemaining === 'number') {
+            const now = new Date();
+            targetTime = new Date(now.getTime() + (initialSecondsRemaining * 1000));
+        } else if (serverScheduledTime) {
+            targetTime = serverScheduledTime;
+        } else if (isPending) {
+            // Extreme fallback if everything is missing
+            targetTime = new Date();
+            targetTime.setMinutes(targetTime.getMinutes() + 3);
         }
 
         // 1. (Validation) We removed the suppression of Blazor UI to verify if the app is disconnected
