@@ -152,9 +152,9 @@ export function startAutoRefresh() {
             subText.innerText = "The server is restarting. We will reload you automatically when it's back...";
 
             const startTime = Date.now();
-            const timeoutMs = 60000; // 60 second timeout
+            const timeoutMs = 90000; // 90 second timeout (Watchtower can take a while)
 
-            // Poll every 2.5 seconds
+            // Poll every 3 seconds
             const pollInterval = setInterval(async () => {
                 // Check for timeout - show manual refresh option as fallback
                 if (Date.now() - startTime > timeoutMs) {
@@ -168,18 +168,20 @@ export function startAutoRefresh() {
                     const response = await fetch('/api/version', { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
-                        // Server is back - reload immediately
-                        // The 60-second cooldown after page load prevents re-triggering loops
-                        if (data.version) {
-                            console.log(`Server is back with version ${data.version}! Reloading...`);
+                        // Only reload when version has ACTUALLY changed
+                        // This ensures Watchtower has finished updating the container
+                        if (data.version && data.version !== currentVersion) {
+                            console.log(`Server updated from ${currentVersion} to ${data.version}! Reloading...`);
                             clearInterval(pollInterval);
                             location.reload();
+                        } else if (data.version) {
+                            console.log(`Still on version ${data.version}, waiting for update...`);
                         }
                     }
                 } catch (e) {
                     console.log('Waiting for server...');
                 }
-            }, 2500);
+            }, 3000);
         }
 
         // Calculate seconds left based on targetTime
