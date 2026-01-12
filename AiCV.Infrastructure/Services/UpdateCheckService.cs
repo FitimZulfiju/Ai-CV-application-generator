@@ -57,7 +57,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     /// Schedules an update to trigger after the specified delay.
     /// Once scheduled, the update WILL happen regardless of client state.
     /// </summary>
-    public void ScheduleUpdate(int delaySeconds = 300)
+    public void ScheduleUpdate(int delaySeconds = 180)
     {
         lock (_scheduleLock)
         {

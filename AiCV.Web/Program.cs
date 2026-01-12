@@ -427,7 +427,7 @@ app.MapPost(
             {
                 return Results.BadRequest("Scheduled updates are disabled in Development.");
             }
-            updateCheckService.ScheduleUpdate(300); // 5 minutes
+            updateCheckService.ScheduleUpdate(180); // 3 minutes
             return Results.Ok(new { scheduledUpdateTime = updateCheckService.ScheduledUpdateTime });
         }
     )

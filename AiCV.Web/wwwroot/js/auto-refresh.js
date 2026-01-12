@@ -68,7 +68,7 @@ export function startAutoRefresh() {
         let localCountdownEnd = null;
         if (isPending && !serverScheduledTime) {
             localCountdownEnd = new Date();
-            localCountdownEnd.setMinutes(localCountdownEnd.getMinutes() + 5);
+            localCountdownEnd.setMinutes(localCountdownEnd.getMinutes() + 3);
         }
 
         // 1. Completely Suppress Blazor UI
