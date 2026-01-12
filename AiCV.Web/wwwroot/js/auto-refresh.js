@@ -156,7 +156,7 @@ export function startAutoRefresh() {
 
             // Poll every 2.5 seconds
             const pollInterval = setInterval(async () => {
-                // Check for timeout
+                // Check for timeout - show manual refresh option as fallback
                 if (Date.now() - startTime > timeoutMs) {
                     clearInterval(pollInterval);
                     countdownSpan.innerText = "Update complete";
@@ -168,13 +168,12 @@ export function startAutoRefresh() {
                     const response = await fetch('/api/version', { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
-                        // Simply reload if version has changed from what we started with
-                        if (data.version && data.version !== currentVersion) {
-                            console.log(`Server is back with new version ${data.version}! Reloading...`);
+                        // Server is back - reload immediately
+                        // The 60-second cooldown after page load prevents re-triggering loops
+                        if (data.version) {
+                            console.log(`Server is back with version ${data.version}! Reloading...`);
                             clearInterval(pollInterval);
                             location.reload();
-                        } else if (data.version) {
-                            console.log(`Server responded with same version ${data.version}, waiting...`);
                         }
                     }
                 } catch (e) {
