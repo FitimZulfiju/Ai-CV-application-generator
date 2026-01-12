@@ -402,19 +402,34 @@ app.MapGet(
                 ?? "1.0.0.0";
             var isUpdateAvailable = updateCheckService.IsUpdateAvailable;
             var newVersionTag = updateCheckService.NewVersionTag;
+            var isUpdateScheduled = updateCheckService.IsUpdateScheduled;
+            var scheduledUpdateTime = updateCheckService.ScheduledUpdateTime;
             return Results.Ok(
                 new
                 {
                     version,
                     isUpdateAvailable,
                     newVersionTag,
+                    isUpdateScheduled,
+                    scheduledUpdateTime,
                 }
             );
         }
     )
     .AllowAnonymous(); // Allow polling without auth
 
-// Add update trigger endpoint
+// Add schedule-update endpoint (starts server-side countdown)
+app.MapPost(
+        "/api/schedule-update",
+        (IUpdateCheckService updateCheckService) =>
+        {
+            updateCheckService.ScheduleUpdate(300); // 5 minutes
+            return Results.Ok(new { scheduledUpdateTime = updateCheckService.ScheduledUpdateTime });
+        }
+    )
+    .RequireAuthorization();
+
+// Add update trigger endpoint (immediate, for emergencies or internal use)
 app.MapPost(
         "/api/trigger-update",
         async (IUpdateCheckService updateCheckService) =>
@@ -423,6 +438,6 @@ app.MapPost(
             return success ? Results.Ok() : Results.Problem("Failed to trigger update");
         }
     )
-    .RequireAuthorization(); // Admin only recommended, but keeping simple for now
+    .RequireAuthorization();
 
 app.Run();

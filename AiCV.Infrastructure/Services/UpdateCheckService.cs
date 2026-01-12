@@ -7,6 +7,10 @@ public interface IUpdateCheckService
     bool IsUpdateAvailable { get; }
     string? NewVersionDigest { get; }
     string? NewVersionTag { get; }
+    DateTime? ScheduledUpdateTime { get; }
+    bool IsUpdateScheduled { get; }
+    void ScheduleUpdate(int delaySeconds = 300);
+    void CancelScheduledUpdate();
     Task<bool> TriggerUpdateAsync();
 }
 
@@ -23,9 +27,17 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     private string? _newVersionTag;
     private bool _isUpdateAvailable;
 
+    // Server-side scheduling fields
+    private DateTime? _scheduledUpdateTime;
+    private CancellationTokenSource? _scheduledUpdateCts;
+    private readonly object _scheduleLock = new();
+
     public bool IsUpdateAvailable => _isUpdateAvailable;
     public string? NewVersionDigest => _newVersionDigest;
     public string? NewVersionTag => _newVersionTag;
+    public DateTime? ScheduledUpdateTime => _scheduledUpdateTime;
+    public bool IsUpdateScheduled =>
+        _scheduledUpdateTime.HasValue && _scheduledUpdateTime > DateTime.UtcNow;
 
     public UpdateCheckService(
         IHttpClientFactory httpClientFactory,
@@ -38,6 +50,89 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         _logger = logger;
         _repository = _configuration["DOCKER_REPOSITORY"] ?? "timi74/aicv";
         _watchtowerToken = _configuration["WATCHTOWER_HTTP_API_TOKEN"] ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Schedules an update to trigger after the specified delay.
+    /// Once scheduled, the update WILL happen regardless of client state.
+    /// </summary>
+    public void ScheduleUpdate(int delaySeconds = 300)
+    {
+        lock (_scheduleLock)
+        {
+            // If already scheduled, don't reset the timer
+            if (_scheduledUpdateTime.HasValue && _scheduledUpdateTime > DateTime.UtcNow)
+            {
+                _logger.LogInformation(
+                    "Update already scheduled for {ScheduledTime}. Not resetting.",
+                    _scheduledUpdateTime
+                );
+                return;
+            }
+
+            _scheduledUpdateTime = DateTime.UtcNow.AddSeconds(delaySeconds);
+            _scheduledUpdateCts?.Cancel();
+            _scheduledUpdateCts = new CancellationTokenSource();
+
+            _logger.LogWarning(
+                "Update scheduled for {ScheduledTime} (in {Seconds} seconds). This WILL proceed regardless of client state.",
+                _scheduledUpdateTime,
+                delaySeconds
+            );
+
+            // Start background task to trigger update when time comes
+            _ = ExecuteScheduledUpdateAsync(_scheduledUpdateCts.Token);
+        }
+    }
+
+    /// <summary>
+    /// Cancels a scheduled update (only if needed for emergencies).
+    /// </summary>
+    public void CancelScheduledUpdate()
+    {
+        lock (_scheduleLock)
+        {
+            if (_scheduledUpdateCts != null)
+            {
+                _logger.LogWarning("Scheduled update cancelled.");
+                _scheduledUpdateCts.Cancel();
+                _scheduledUpdateCts = null;
+                _scheduledUpdateTime = null;
+            }
+        }
+    }
+
+    private async Task ExecuteScheduledUpdateAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!_scheduledUpdateTime.HasValue)
+                return;
+
+            var delay = _scheduledUpdateTime.Value - DateTime.UtcNow;
+            if (delay > TimeSpan.Zero)
+            {
+                _logger.LogInformation(
+                    "Waiting {Delay} before triggering scheduled update...",
+                    delay
+                );
+                await Task.Delay(delay, cancellationToken);
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
+            _logger.LogWarning("Scheduled update time reached. Triggering Watchtower now!");
+            await TriggerUpdateAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Scheduled update was cancelled.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in scheduled update execution");
+        }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

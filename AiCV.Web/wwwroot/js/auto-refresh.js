@@ -13,6 +13,8 @@ export function startAutoRefresh() {
                 const newVersion = data.version;
                 const isUpdateAvailable = data.isUpdateAvailable;
                 const newVersionTag = data.newVersionTag;
+                const isUpdateScheduled = data.isUpdateScheduled;
+                const scheduledUpdateTime = data.scheduledUpdateTime;
 
                 if (currentVersion === null) {
                     currentVersion = newVersion;
@@ -23,10 +25,16 @@ export function startAutoRefresh() {
                     console.log(`Version changed from ${currentVersion} to ${newVersion}. Triggering reload notification...`);
                     showUpdateNotification('applied', newVersion);
                 }
-                // Case 2: Update pending in registry
+                // Case 2: Update is already scheduled on server - show countdown
+                else if (isUpdateScheduled && scheduledUpdateTime) {
+                    console.log(`Update already scheduled for ${scheduledUpdateTime}. Showing countdown...`);
+                    showUpdateNotification('pending', newVersionTag, new Date(scheduledUpdateTime));
+                }
+                // Case 3: Update pending in registry but not yet scheduled - schedule it
                 else if (isUpdateAvailable) {
-                    console.log(`New version found in registry. Triggering pending update notification...`);
-                    showUpdateNotification('pending', newVersionTag);
+                    console.log(`New version found in registry. Scheduling update on server...`);
+                    await scheduleUpdateOnServer();
+                    showUpdateNotification('pending', newVersionTag, null);
                 }
             }
         } catch (error) {
@@ -34,7 +42,21 @@ export function startAutoRefresh() {
         }
     }
 
-    function showUpdateNotification(type, version = '') {
+    async function scheduleUpdateOnServer() {
+        try {
+            const response = await fetch('/api/schedule-update', { method: 'POST' });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`Update scheduled on server for: ${data.scheduledUpdateTime}`);
+                return data.scheduledUpdateTime;
+            }
+        } catch (error) {
+            console.warn('Failed to schedule update on server:', error);
+        }
+        return null;
+    }
+
+    function showUpdateNotification(type, version = '', serverScheduledTime = null) {
         notificationShown = true;
         const isPending = type === 'pending';
 
@@ -104,19 +126,16 @@ export function startAutoRefresh() {
         actionDiv.style.marginLeft = 'auto';
 
         const countdownSpan = document.createElement('span');
-        let secondsLeft = 300; // 5 minutes
+        countdownSpan.style.fontWeight = 'bold';
+        actionDiv.appendChild(countdownSpan);
+        banner.appendChild(actionDiv);
+        document.body.appendChild(banner);
 
         function formatTime(s) {
             const m = Math.floor(s / 60);
             const sec = s % 60;
             return `${m}:${sec.toString().padStart(2, '0')}`;
         }
-
-        countdownSpan.innerText = isPending ? `Updating in ${formatTime(secondsLeft)}` : 'Ready to reload';
-        countdownSpan.style.fontWeight = 'bold';
-        actionDiv.appendChild(countdownSpan);
-        banner.appendChild(actionDiv);
-        document.body.appendChild(banner);
 
         async function waitForServerAndReload() {
             // Update UI to show we are waiting
@@ -142,32 +161,33 @@ export function startAutoRefresh() {
             }, 2000);
         }
 
-        async function triggerUpdate() {
-            if (isPending) {
-                try {
-                    await fetch('/api/trigger-update', { method: 'POST' });
-                    // Immediately enter waiting mode
-                    waitForServerAndReload();
-                } catch (error) {
-                    // Even if trigger fails (network dead?), wait for server
-                    waitForServerAndReload();
-                }
-            } else {
-                location.reload();
+        // Calculate seconds left based on server's scheduled time
+        function getSecondsLeft() {
+            if (serverScheduledTime) {
+                const now = new Date();
+                const diff = (serverScheduledTime.getTime() - now.getTime()) / 1000;
+                return Math.max(0, Math.floor(diff));
             }
+            return 300; // Default 5 minutes if no server time
         }
 
         // Start Countdown if pending
         if (isPending) {
+            let secondsLeft = getSecondsLeft();
+            countdownSpan.innerText = `Updating in ${formatTime(secondsLeft)}`;
+
             reloadTimer = setInterval(() => {
-                secondsLeft--;
-                countdownSpan.innerText = `Updating in ${formatTime(secondsLeft)}`;
+                secondsLeft = getSecondsLeft();
                 if (secondsLeft <= 0) {
                     clearInterval(reloadTimer);
-                    triggerUpdate();
+                    // Server is triggering the update - wait for it to come back
+                    waitForServerAndReload();
+                } else {
+                    countdownSpan.innerText = `Updating in ${formatTime(secondsLeft)}`;
                 }
             }, 1000);
         } else {
+            countdownSpan.innerText = 'Ready to reload';
             // If already applied, just wait a moment then reload or let user click? 
             // Logic in original code was just showing banner for applied.
             // We can let them reload manually or auto-reload after a short delay if preferred.
@@ -181,3 +201,4 @@ export function startAutoRefresh() {
 }
 
 startAutoRefresh();
+
