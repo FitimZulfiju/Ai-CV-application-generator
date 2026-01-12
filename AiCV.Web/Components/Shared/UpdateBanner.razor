@@ -1,0 +1,208 @@
+@using System.Timers
+@implements IDisposable
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (_showBanner)
+{
+    <MudPaper Class="update-banner" Elevation="4"
+    Style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; background-color: #ff9800; color: white; padding: 12px 24px;">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.subtitle1" Style="font-weight: 500;">
+                        @if (_isInstalling)
+                        {
+                            <span>Installing updates...</span>
+                        }
+                        else
+                        {
+                            <span>Update Available @(!string.IsNullOrEmpty(_newVersionTag) ? $"({_newVersionTag})" : "")</span>
+                        }
+                    </MudText>
+                    <MudText Typo="Typo.body2" Style="opacity: 0.9;">
+                        @if (_isInstalling)
+                        {
+                            <span>The server is restarting. Please wait...</span>
+                        }
+                        else
+                        {
+                            <span>We are improving the system. Your work is saved locally. Brief restart in
+                                @FormatTime(_secondsRemaining).</span>
+                        }
+                    </MudText>
+                </MudStack>
+            </MudStack>
+            <MudText Typo="Typo.h6" Style="font-weight: bold;">
+                @if (_isInstalling)
+                {
+                    <MudProgressCircular Color="Color.Inherit" Size="Size.Small" Indeterminate="true" />
+                }
+                else
+                {
+                    <span>@FormatTime(_secondsRemaining)</span>
+                }
+            </MudText>
+        </MudStack>
+    </MudPaper>
+    <style>
+        body {
+            padding-bottom: 70px !important;
+        }
+    </style>
+}
+
+@code {
+    private bool _showBanner = false;
+    private bool _isInstalling = false;
+    private int _secondsRemaining = 0;
+    private string? _newVersionTag;
+    private string? _currentVersion;
+    private Timer? _pollTimer;
+    private Timer? _countdownTimer;
+    private bool _disposed = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Start polling for updates
+        _pollTimer = new Timer(3000); // Check every 3 seconds
+        _pollTimer.Elapsed += async (sender, e) => await CheckForUpdates();
+        _pollTimer.AutoReset = true;
+        _pollTimer.Start();
+
+        // Initial check
+        await CheckForUpdates();
+    }
+
+    private async Task CheckForUpdates()
+    {
+        if (_disposed) return;
+
+        try
+        {
+            var response = await Http.GetFromJsonAsync<VersionResponse>("/api/version");
+            if (response == null) return;
+
+            // Store current version on first check
+            if (_currentVersion == null)
+            {
+                _currentVersion = response.Version;
+            }
+
+            // Check if version changed (update was applied) - reload
+            if (_currentVersion != response.Version && !_isInstalling)
+            {
+                // Version changed! Reload the page
+                await InvokeAsync(() => NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true));
+                return;
+            }
+
+            // Check if update is scheduled
+            if (response.IsUpdateScheduled && response.SecondsRemaining > 0)
+            {
+                _secondsRemaining = (int)response.SecondsRemaining;
+                _newVersionTag = response.NewVersionTag;
+
+                if (!_showBanner)
+                {
+                    _showBanner = true;
+                    StartCountdown();
+                }
+
+                await InvokeAsync(StateHasChanged);
+            }
+            else if (response.IsUpdateAvailable && !_showBanner)
+            {
+                // Schedule update on server
+                await ScheduleUpdate();
+            }
+        }
+        catch
+        {
+            // If we're installing and can't reach server, that's expected
+            if (_isInstalling)
+            {
+                // Keep showing installing state
+            }
+        }
+    }
+
+    private async Task ScheduleUpdate()
+    {
+        try
+        {
+            var response = await Http.PostAsync("/api/schedule-update", null);
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<ScheduleResponse>();
+                if (data != null)
+                {
+                    _secondsRemaining = (int)(data.SecondsRemaining ?? 180);
+                    _showBanner = true;
+                    StartCountdown();
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
+        catch
+        {
+            // Ignore scheduling errors
+        }
+    }
+
+    private void StartCountdown()
+    {
+        _countdownTimer?.Stop();
+        _countdownTimer?.Dispose();
+
+        _countdownTimer = new Timer(1000);
+        _countdownTimer.Elapsed += (sender, e) =>
+        {
+            if (_disposed) return;
+
+            _secondsRemaining--;
+
+            if (_secondsRemaining <= 0)
+            {
+                _isInstalling = true;
+                _countdownTimer?.Stop();
+            }
+
+            InvokeAsync(StateHasChanged);
+        };
+        _countdownTimer.AutoReset = true;
+        _countdownTimer.Start();
+    }
+
+    private string FormatTime(int seconds)
+    {
+        if (seconds < 0) seconds = 0;
+        var minutes = seconds / 60;
+        var secs = seconds % 60;
+        return $"{minutes}:{secs:D2}";
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        _pollTimer?.Stop();
+        _pollTimer?.Dispose();
+        _countdownTimer?.Stop();
+        _countdownTimer?.Dispose();
+    }
+
+    private class VersionResponse
+    {
+        public string? Version { get; set; }
+        public bool IsUpdateAvailable { get; set; }
+        public string? NewVersionTag { get; set; }
+        public bool IsUpdateScheduled { get; set; }
+        public double? SecondsRemaining { get; set; }
+    }
+
+    private class ScheduleResponse
+    {
+        public double? SecondsRemaining { get; set; }
+    }
+}
