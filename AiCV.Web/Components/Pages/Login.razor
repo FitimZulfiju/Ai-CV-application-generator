@@ -1,8 +1,10 @@
 @page "/login"
+@using MudBlazor
 
-
-<MudContainer MaxWidth="MaxWidth.Small" Class="py-4">
-    <MudPaper Class="pa-6" Elevation="3">
+<PageTitle>Login - Ai-CV</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Small" Class="py-4 d-flex flex-column align-center justify-center"
+    Style="min-height: 80vh;">
+    <MudPaper Class="pa-6" Elevation="3" Style="width: 100%;">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Ai-CV Login</MudText>
 
         <form method="post" action="/perform-login">

@@ -24,3 +24,4 @@ global using AiCV.Application.Interfaces;
 global using AiCV.Domain;
 global using AiCV.Domain.Entities;
 global using AiCV.Infrastructure.Data;
+global using Microsoft.Extensions.Hosting;

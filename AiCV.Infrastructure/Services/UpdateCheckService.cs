@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Hosting;
-
 namespace AiCV.Infrastructure.Services;
 
 public interface IUpdateCheckService
@@ -19,6 +17,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
     private readonly ILogger<UpdateCheckService> _logger;
+    private readonly IHostEnvironment _environment;
     private readonly string _repository;
     private readonly string _tag = "latest";
     private readonly string _watchtowerToken;
@@ -30,7 +29,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     // Server-side scheduling fields
     private DateTime? _scheduledUpdateTime;
     private CancellationTokenSource? _scheduledUpdateCts;
-    private readonly object _scheduleLock = new();
+    private readonly Lock _scheduleLock = new();
 
     public bool IsUpdateAvailable => _isUpdateAvailable;
     public string? NewVersionDigest => _newVersionDigest;
@@ -42,12 +41,14 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     public UpdateCheckService(
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration,
-        ILogger<UpdateCheckService> logger
+        ILogger<UpdateCheckService> logger,
+        IHostEnvironment environment
     )
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
         _logger = logger;
+        _environment = environment;
         _repository = _configuration["DOCKER_REPOSITORY"] ?? "timi74/aicv";
         _watchtowerToken = _configuration["WATCHTOWER_HTTP_API_TOKEN"] ?? string.Empty;
     }
@@ -63,10 +64,13 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             // If already scheduled, don't reset the timer
             if (_scheduledUpdateTime.HasValue && _scheduledUpdateTime > DateTime.UtcNow)
             {
-                _logger.LogInformation(
-                    "Update already scheduled for {ScheduledTime}. Not resetting.",
-                    _scheduledUpdateTime
-                );
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation(
+                        "Update already scheduled for {ScheduledTime}. Not resetting.",
+                        _scheduledUpdateTime
+                    );
+                }
                 return;
             }
 
@@ -74,11 +78,14 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             _scheduledUpdateCts?.Cancel();
             _scheduledUpdateCts = new CancellationTokenSource();
 
-            _logger.LogWarning(
-                "Update scheduled for {ScheduledTime} (in {Seconds} seconds). This WILL proceed regardless of client state.",
-                _scheduledUpdateTime,
-                delaySeconds
-            );
+            if (_logger.IsEnabled(LogLevel.Warning))
+            {
+                _logger.LogWarning(
+                    "Update scheduled for {ScheduledTime} (in {Seconds} seconds). This WILL proceed regardless of client state.",
+                    _scheduledUpdateTime,
+                    delaySeconds
+                );
+            }
 
             // Start background task to trigger update when time comes
             _ = ExecuteScheduledUpdateAsync(_scheduledUpdateCts.Token);
@@ -112,10 +119,13 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             var delay = _scheduledUpdateTime.Value - DateTime.UtcNow;
             if (delay > TimeSpan.Zero)
             {
-                _logger.LogInformation(
-                    "Waiting {Delay} before triggering scheduled update...",
-                    delay
-                );
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation(
+                        "Waiting {Delay} before triggering scheduled update...",
+                        delay
+                    );
+                }
                 await Task.Delay(delay, cancellationToken);
             }
 
@@ -137,6 +147,12 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        if (_environment.IsDevelopment())
+        {
+            _logger.LogInformation("UpdateCheckService is disabled in Development environment.");
+            return;
+        }
+
         if (_logger.IsEnabled(LogLevel.Information))
         {
             _logger.LogInformation(

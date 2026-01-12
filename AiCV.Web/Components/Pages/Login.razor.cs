@@ -26,9 +26,12 @@ public partial class Login
     private void TogglePasswordVisibility() => _showPassword = !_showPassword;
 
     // Check if OAuth providers are configured (with real values, not placeholders)
-    private bool IsConfigured(string key) =>
-        !string.IsNullOrEmpty(Configuration[key])
-        && !Configuration[key]!.StartsWith("your_", StringComparison.OrdinalIgnoreCase);
+    private bool IsConfigured(string key)
+    {
+        var value = Configuration[key];
+        return !string.IsNullOrEmpty(value)
+            && !value.StartsWith("your_", StringComparison.OrdinalIgnoreCase);
+    }
 
     private bool IsGoogleConfigured => IsConfigured("Authentication:Google:ClientId");
     private bool IsMicrosoftConfigured => IsConfigured("Authentication:Microsoft:ClientId");
