@@ -46,11 +46,7 @@
             </MudText>
         </MudStack>
     </MudPaper>
-    <style>
-        body {
-            padding-bottom: 70px !important;
-        }
-    </style>
+    @* Removed forced body padding that caused extra scrollbar *@
 }
 
 @code {
@@ -96,7 +92,7 @@
             }
 
             // Check if version changed (update was applied) - reload
-            if (_currentVersion != response.Version && !_isInstalling)
+            if (_currentVersion != response.Version)
             {
                 // Version changed! Reload the page
                 await InvokeAsync(() => NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true));
