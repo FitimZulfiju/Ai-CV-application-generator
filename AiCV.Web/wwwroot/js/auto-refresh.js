@@ -215,8 +215,12 @@ export function startAutoRefresh() {
         }
     }
 
-    checkVersion();
-    setInterval(checkVersion, 15000);
+    // Wait 60 seconds after page load before first check (cooldown after update)
+    // This prevents immediate re-triggering when multiple versions are pushed quickly
+    setTimeout(() => {
+        checkVersion();
+        setInterval(checkVersion, 15000);
+    }, 60000);
 }
 
 startAutoRefresh();
