@@ -404,6 +404,12 @@ app.MapGet(
             var newVersionTag = updateCheckService.NewVersionTag;
             var isUpdateScheduled = updateCheckService.IsUpdateScheduled;
             var scheduledUpdateTime = updateCheckService.ScheduledUpdateTime;
+            double? secondsRemaining = null;
+            if (scheduledUpdateTime.HasValue)
+            {
+                secondsRemaining = (scheduledUpdateTime.Value - DateTime.UtcNow).TotalSeconds;
+            }
+
             return Results.Ok(
                 new
                 {
@@ -412,6 +418,7 @@ app.MapGet(
                     newVersionTag,
                     isUpdateScheduled,
                     scheduledUpdateTime,
+                    secondsRemaining, // Add relative time
                 }
             );
         }
@@ -428,7 +435,30 @@ app.MapPost(
                 return Results.BadRequest("Scheduled updates are disabled in Development.");
             }
             updateCheckService.ScheduleUpdate(180); // 3 minutes
-            return Results.Ok(new { scheduledUpdateTime = updateCheckService.ScheduledUpdateTime });
+
+            var attempt = 0;
+            // Short wait to ensure time is set if lock contention (rare)
+            while (updateCheckService.ScheduledUpdateTime == null && attempt < 5)
+            {
+                System.Threading.Thread.Sleep(50);
+                attempt++;
+            }
+
+            double? seconds = null;
+            if (updateCheckService.ScheduledUpdateTime.HasValue)
+            {
+                seconds = (
+                    updateCheckService.ScheduledUpdateTime.Value - DateTime.UtcNow
+                ).TotalSeconds;
+            }
+
+            return Results.Ok(
+                new
+                {
+                    scheduledUpdateTime = updateCheckService.ScheduledUpdateTime,
+                    secondsRemaining = seconds,
+                }
+            );
         }
     )
     .RequireAuthorization();

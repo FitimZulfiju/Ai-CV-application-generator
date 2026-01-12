@@ -15,6 +15,7 @@ export function startAutoRefresh() {
                 const newVersionTag = data.newVersionTag;
                 const isUpdateScheduled = data.isUpdateScheduled;
                 const scheduledUpdateTime = data.scheduledUpdateTime;
+                const secondsRemaining = data.secondsRemaining;
 
                 if (currentVersion === null) {
                     currentVersion = newVersion;
@@ -26,15 +27,15 @@ export function startAutoRefresh() {
                     showUpdateNotification('applied', newVersion);
                 }
                 // Case 2: Update is already scheduled on server - show countdown
-                else if (isUpdateScheduled && scheduledUpdateTime) {
-                    console.log(`Update already scheduled for ${scheduledUpdateTime}. Showing countdown...`);
-                    showUpdateNotification('pending', newVersionTag, new Date(scheduledUpdateTime));
+                else if (isUpdateScheduled) {
+                    console.log(`Update already scheduled. Remaining: ${secondsRemaining}s. Showing countdown...`);
+                    showUpdateNotification('pending', newVersionTag, null, secondsRemaining);
                 }
                 // Case 3: Update pending in registry but not yet scheduled - schedule it
                 else if (isUpdateAvailable) {
                     console.log(`New version found in registry. Scheduling update on server...`);
-                    const actualTime = await scheduleUpdateOnServer();
-                    showUpdateNotification('pending', newVersionTag, actualTime);
+                    const result = await scheduleUpdateOnServer();
+                    showUpdateNotification('pending', newVersionTag, null, result?.secondsRemaining);
                 }
             }
         } catch (error) {
@@ -172,9 +173,8 @@ export function startAutoRefresh() {
             }, 2500);
         }
 
-        // Calculate seconds left based on server's scheduled time or local fallback
+        // Calculate seconds left based on targetTime
         function getSecondsLeft() {
-            const targetTime = serverScheduledTime || localCountdownEnd;
             if (targetTime) {
                 const now = new Date();
                 const diff = (targetTime.getTime() - now.getTime()) / 1000;
