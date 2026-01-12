@@ -49,12 +49,13 @@ export function startAutoRefresh() {
             const response = await fetch('/api/schedule-update', { method: 'POST' });
             if (response.ok) {
                 const data = await response.json();
-                console.log(`Update scheduled on server for: ${data.scheduledUpdateTime}`);
+                console.log(`Update scheduled on server for: ${data.scheduledUpdateTime}, seconds remaining: ${data.secondsRemaining}`);
 
-                // Ensure we parse the time correctly
-                if (data.scheduledUpdateTime) {
-                    return new Date(data.scheduledUpdateTime);
-                }
+                // Return the full data object so caller can access secondsRemaining
+                return {
+                    time: data.scheduledUpdateTime ? new Date(data.scheduledUpdateTime) : null,
+                    secondsRemaining: data.secondsRemaining
+                };
             }
         } catch (error) {
             console.warn('Failed to schedule update on server:', error);
