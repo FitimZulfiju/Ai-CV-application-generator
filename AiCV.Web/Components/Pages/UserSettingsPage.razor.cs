@@ -144,6 +144,15 @@ public partial class UserSettingsPage
 
     private void OnModelSelected()
     {
+        // Only update if the current ModelId is actually a valid available model
+        // (This prevents search text from overwriting the Name while typing)
+        if (
+            string.IsNullOrWhiteSpace(_newConfig.ModelId)
+            || !_availableModels.Contains(_newConfig.ModelId)
+        )
+        {
+            return;
+        }
         // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
         if (
             !string.IsNullOrWhiteSpace(_newConfig.ModelId)
