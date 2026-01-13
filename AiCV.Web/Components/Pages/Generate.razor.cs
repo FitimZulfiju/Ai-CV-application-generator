@@ -312,6 +312,15 @@ public partial class Generate : IDisposable
                 );
                 return;
             }
+
+            if (activeConfig.ApiKey == "DECRYPTION_FAILED")
+            {
+                Snackbar.Add(
+                    "Error: The selected API Key could not be decrypted. Please go to Settings and re-enter your API Key.",
+                    Severity.Error
+                );
+                return;
+            }
             var (CoverLetter, ResumeResult, ApplicationEmail) =
                 await JobOrchestrator.GenerateApplicationAsync(
                     userId,

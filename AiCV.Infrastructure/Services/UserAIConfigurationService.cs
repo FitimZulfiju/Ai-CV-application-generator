@@ -167,6 +167,23 @@ public class UserAIConfigurationService(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to unprotect API Key.");
+
+            // Fail-safe: If the DB contained a plain key (e.g. from manual edit or failed protection),
+            // and it looks valid, return it instead of blocking.
+            if (
+                !string.IsNullOrEmpty(input)
+                && (
+                    input.StartsWith("sk-")
+                    || // OpenAI
+                    input.StartsWith("AIza")
+                    || // Google
+                    input.StartsWith("gsk_") // Groq
+                )
+            )
+            {
+                return input;
+            }
+
             return "DECRYPTION_FAILED"; // Use token to distinguish in UI
         }
     }

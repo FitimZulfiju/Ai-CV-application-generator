@@ -161,7 +161,7 @@ if (!Directory.Exists(keysPath))
 builder
     .Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
-    .SetApplicationName("AiCV.Web");
+    .SetApplicationName("AiCV.Web.v2");
 
 builder.Services.AddLocalization();
 
