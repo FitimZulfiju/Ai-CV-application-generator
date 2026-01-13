@@ -65,7 +65,7 @@ public class JobApplicationOrchestratorTests
 
         _mockAiFactory
             .Setup(f =>
-                f.GetServiceAsync(It.IsAny<AIProvider>(), It.IsAny<string>(), It.IsAny<AIModel?>())
+                f.GetServiceAsync(It.IsAny<AIProvider>(), It.IsAny<string>(), It.IsAny<string?>())
             )
             .ReturnsAsync(_mockAiService.Object);
 
@@ -111,7 +111,7 @@ public class JobApplicationOrchestratorTests
         Assert.Equal(expectedEmail, applicationEmail);
 
         _mockAiFactory.Verify(
-            f => f.GetServiceAsync(provider, userId, It.IsAny<AIModel?>()),
+            f => f.GetServiceAsync(provider, userId, It.IsAny<string?>()),
             Times.Once
         );
         _mockAiService.Verify(

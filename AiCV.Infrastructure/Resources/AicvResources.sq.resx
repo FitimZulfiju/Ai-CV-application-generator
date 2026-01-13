@@ -1,0 +1,911 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Settings" xml:space="preserve">
+    <value>Cilësimet</value>
+  </data>
+  <data name="OpenRouterApiKey" xml:space="preserve">
+    <value>Çelësi i API për OpenRouter</value>
+  </data>
+  <data name="DefaultModel" xml:space="preserve">
+    <value>Modeli i Paracaktuar</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Ruaj Cilësimet</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Cilësimet</value>
+  </data>
+  <data name="UseOpenRouter" xml:space="preserve">
+    <value>Përdorni OpenRouter për përzgjedhjen dinamike të modelit</value>
+  </data>
+  <data name="ModelDiscoveryHelper" xml:space="preserve">
+    <value>Çelësi i OpenRouter ju lejon të zbuloni dhe përdorni çdo LLM të disponueshëm.</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Mirë se vini në Gjeneratorin e CV-së dhe Letrës Shoqëruese</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Menaxho Profilin</value>
+  </data>
+  <data name="GenerateApplication" xml:space="preserve">
+    <value>Gjenero Aplikimin</value>
+  </data>
+  <data name="ViewSampleCv" xml:space="preserve">
+    <value>Shiko Shembull të CV-së</value>
+  </data>
+  <data name="GoToProfile" xml:space="preserve">
+    <value>Shko te Profili</value>
+  </data>
+  <data name="StartGenerating" xml:space="preserve">
+    <value>Fillo Gjenerimin</value>
+  </data>
+  <data name="HowItWorks" xml:space="preserve">
+    <value>Si Funksionon</value>
+  </data>
+  <data name="JobDetails" xml:space="preserve">
+    <value>Detajet e Punës</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modeli</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Emri i Kompanisë</value>
+  </data>
+  <data name="JobTitle" xml:space="preserve">
+    <value>Titulli i Punës</value>
+  </data>
+  <data name="ManualEntryMode" xml:space="preserve">
+    <value>Mënyra e Futjes Manuale</value>
+  </data>
+  <data name="JobUrl" xml:space="preserve">
+    <value>URL e Punës</value>
+  </data>
+  <data name="Fetch" xml:space="preserve">
+    <value>Merre</value>
+  </data>
+  <data name="MarkdownEditor" xml:space="preserve">
+    <value>Redaktori (Markdown)</value>
+  </data>
+  <data name="JobDescription" xml:space="preserve">
+    <value>Përshkrimi i Punës</value>
+  </data>
+  <data name="PreviewHtml" xml:space="preserve">
+    <value>Parashikimi (HTML)</value>
+  </data>
+  <data name="CustomInstructions" xml:space="preserve">
+    <value>Udhëzime të Personalizuara (Opsionale)</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>Ndarja</value>
+  </data>
+  <data name="GeneratedContent" xml:space="preserve">
+    <value>Përmbajtja e Gjeneruar</value>
+  </data>
+  <data name="VisualPreview" xml:space="preserve">
+    <value>Parashikimi Vizual</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Kopjo</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Printo</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Ruaj</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>U Ruajt</value>
+  </data>
+  <data name="CoverLetterAndApplication" xml:space="preserve">
+    <value>Letra Shoqëruese &amp; Aplikimi</value>
+  </data>
+  <data name="TailoredCv" xml:space="preserve">
+    <value>CV e Përshtatur</value>
+  </data>
+  <data name="ApplicationEmail" xml:space="preserve">
+    <value>Email i Aplikimit</value>
+  </data>
+  <data name="Generating" xml:space="preserve">
+    <value>Duke u gjeneruar...</value>
+  </data>
+  <data name="Fetching" xml:space="preserve">
+    <value>Duke u marrë...</value>
+  </data>
+  <data name="MasterCvProfile" xml:space="preserve">
+    <value>Profili Kryesor i CV-së</value>
+  </data>
+  <data name="FormattingHelp" xml:space="preserve">
+    <value>Ndihmë për Formatimin</value>
+  </data>
+  <data name="PersonalDetails" xml:space="preserve">
+    <value>Detajet Personale</value>
+  </data>
+  <data name="UploadPicture" xml:space="preserve">
+    <value>Ngarko Fotografi</value>
+  </data>
+  <data name="ProfessionalTitle" xml:space="preserve">
+    <value>Titulli Profesional</value>
+  </data>
+  <data name="ProfessionalSummary" xml:space="preserve">
+    <value>Përmbledhja Profesionale</value>
+  </data>
+  <data name="Experience" xml:space="preserve">
+    <value>Përvoja</value>
+  </data>
+  <data name="AddExperience" xml:space="preserve">
+    <value>Shto Përvojë</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Kompania</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Data e Fillimit</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Data e Përfundimit</value>
+  </data>
+  <data name="CurrentRole" xml:space="preserve">
+    <value>Roli Aktual</value>
+  </data>
+  <data name="Education" xml:space="preserve">
+    <value>Edukimi</value>
+  </data>
+  <data name="AddEducation" xml:space="preserve">
+    <value>Shto Edukim</value>
+  </data>
+  <data name="Institution" xml:space="preserve">
+    <value>Institucioni</value>
+  </data>
+  <data name="Degree" xml:space="preserve">
+    <value>Diploma/Titulli</value>
+  </data>
+  <data name="Skills" xml:space="preserve">
+    <value>Aftësitë</value>
+  </data>
+  <data name="AddCategory" xml:space="preserve">
+    <value>Shto Kategori</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>Emri i Kategorisë</value>
+  </data>
+  <data name="AddSkill" xml:space="preserve">
+    <value>Shto Aftësi</value>
+  </data>
+  <data name="Projects" xml:space="preserve">
+    <value>Projektet</value>
+  </data>
+  <data name="AddProject" xml:space="preserve">
+    <value>Shto Projekt</value>
+  </data>
+  <data name="ProjectName" xml:space="preserve">
+    <value>Emri i Projektit</value>
+  </data>
+  <data name="TechnologiesUsed" xml:space="preserve">
+    <value>Teknologjitë e Përdorura</value>
+  </data>
+  <data name="LinkGitHubLive" xml:space="preserve">
+    <value>Linku (GitHub/Live)</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Gjuhët</value>
+  </data>
+  <data name="AddLanguage" xml:space="preserve">
+    <value>Shto Gjuhë</value>
+  </data>
+  <data name="Proficiency" xml:space="preserve">
+    <value>Aftësia</value>
+  </data>
+  <data name="Interests" xml:space="preserve">
+    <value>Interesat</value>
+  </data>
+  <data name="AddInterest" xml:space="preserve">
+    <value>Shto Interes</value>
+  </data>
+  <data name="CvPreview" xml:space="preserve">
+    <value>Parashikimi i CV-së</value>
+  </data>
+  <data name="FormattingHelpTitle" xml:space="preserve">
+    <value>Ndihmë për Formatimin e Tekstit</value>
+  </data>
+  <data name="LineBreaks" xml:space="preserve">
+    <value>Ndarjet e Rreshtave</value>
+  </data>
+  <data name="BulletPoints" xml:space="preserve">
+    <value>Pikat (Bullets)</value>
+  </data>
+  <data name="HtmlTags" xml:space="preserve">
+    <value>Etiketat HTML</value>
+  </data>
+  <data name="GotIt" xml:space="preserve">
+    <value>E kuptova!</value>
+  </data>
+  <data name="AlbanianOnly" xml:space="preserve">
+    <value>Vetëm Shqip</value>
+  </data>
+  <data name="CostDisclaimer" xml:space="preserve">
+    <value>Celesat e API-se tuaj lidhen me llogarite tuaja personale (OpenRouter, OpenAI, etj.). Kostot e perdorimit do te faturohen direkt nga ata ofrues bazuar ne konsumin tuaj.</value>
+  </data>
+  <data name="ConfiguredModels" xml:space="preserve">
+    <value>Modelet e Konfiguruara</value>
+  </data>
+  <data name="NoConfigurationsYet" xml:space="preserve">
+    <value>Asnjë model AI nuk është konfiguruar ende.</value>
+  </data>
+  <data name="Models" xml:space="preserve">
+    <value>Modelet</value>
+  </data>
+  <data name="OpenRouterModel" xml:space="preserve">
+    <value>Modeli i OpenRouter</value>
+  </data>
+  <data name="AddConfiguration" xml:space="preserve">
+    <value>Shto Konfigurim</value>
+  </data>
+  <data name="Provider" xml:space="preserve">
+    <value>Ofruesi</value>
+  </data>
+  <data name="Validate" xml:space="preserve">
+    <value>Valido</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="SetAsActive" xml:space="preserve">
+    <value>Vendos si Aktiv</value>
+  </data>
+  <data name="ActiveConfigChanged" xml:space="preserve">
+    <value>Konfigurimi aktiv u ndryshua në {0}</value>
+  </data>
+  <data name="ConfigurationUpdated" xml:space="preserve">
+    <value>Konfigurimi u përditësua me sukses</value>
+  </data>
+  <data name="ConfigurationDeleted" xml:space="preserve">
+    <value>Konfigurimi u fshi me sukses</value>
+  </data>
+  <data name="DeleteConfiguration" xml:space="preserve">
+    <value>Fshi Konfigurimin</value>
+  </data>
+  <data name="DeleteConfigConfirmation" xml:space="preserve">
+    <value>A jeni i sigurt që dëshironi të fshini këtë konfigurim?</value>
+  </data>
+  <data name="ConfigurationSaved" xml:space="preserve">
+    <value>Konfigurimi u ruajt me sukses</value>
+  </data>
+  <data name="EditConfiguration" xml:space="preserve">
+    <value>Ndrysho Konfigurimin</value>
+  </data>
+  <data name="ConfigurationName" xml:space="preserve">
+    <value>Emri i Konfigurimit</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>Çelësi API</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anulo</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Fshi</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Emri</value>
+  </data>
+  <!-- Home Page -->
+  <data name="WelcomeTo" xml:space="preserve">
+    <value>Mirë se vini në</value>
+  </data>
+  <data name="CvAndCoverLetter" xml:space="preserve">
+    <value>Gjenerator i</value>
+  </data>
+  <data name="Generator" xml:space="preserve">
+    <value>CV &amp; Letër Motivimi</value>
+  </data>
+  <data name="AiPoweredCareerAssistant" xml:space="preserve">
+    <value>Asistenti juaj i karrierës i fuqizuar nga AI.</value>
+  </data>
+  <data name="DevelopedBy" xml:space="preserve">
+    <value>Zhvilluar nga</value>
+  </data>
+  <!-- Generate Page -->
+  <data name="EnterJobDetailsForCoverLetter" xml:space="preserve">
+    <value>Vendosni detajet e punës dhe klikoni Gjenero për të krijuar një letër motivimi.</value>
+  </data>
+  <data name="EnterJobDetailsForCv" xml:space="preserve">
+    <value>Vendosni detajet e punës dhe klikoni Gjenero për të krijuar një CV të personalizuar.</value>
+  </data>
+  <data name="EnterJobDetailsForEmail" xml:space="preserve">
+    <value>Vendosni detajet e punës dhe klikoni Gjenero për të krijuar një email aplikimi.</value>
+  </data>
+  <!-- My Applications Page -->
+  <data name="NoApplicationsYet" xml:space="preserve">
+    <value>Nuk keni krijuar ende asnjë aplikim. Shkoni te</value>
+  </data>
+  <data name="ToCreateOne" xml:space="preserve">
+    <value>për të krijuar një!</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Shiko</value>
+  </data>
+  <!-- Admin Dashboard Page -->
+  <data name="AdminDashboard" xml:space="preserve">
+    <value>Paneli i Administratorit</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Eksporto CSV</value>
+  </data>
+  <data name="TotalUsers" xml:space="preserve">
+    <value>Totali i Përdoruesve</value>
+  </data>
+  <data name="ProfilesCreated" xml:space="preserve">
+    <value>Profile të Krijuara</value>
+  </data>
+  <data name="ApplicationsGenerated" xml:space="preserve">
+    <value>Aplikime të Gjeneruara</value>
+  </data>
+  <!-- System Logs Page -->
+  <data name="SystemLogs" xml:space="preserve">
+    <value>Regjistrat e Sistemit</value>
+  </data>
+  <data name="ClearOldLogs" xml:space="preserve">
+    <value>Pastro Regjistrat e Vjetër</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Rifresko</value>
+  </data>
+  <data name="LogEntries" xml:space="preserve">
+    <value>Hyrjet e Regjistrit</value>
+  </data>
+  <data name="AllLevels" xml:space="preserve">
+    <value>Të Gjitha Nivelet</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Gabim</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Paralajmërim</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Informacion</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Koha</value>
+  </data>
+  <data name="Level" xml:space="preserve">
+    <value>Niveli</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Mesazhi</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Burimi</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Rruga</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Përdoruesi</value>
+  </data>
+  <data name="Anonymous" xml:space="preserve">
+    <value>Anonim</value>
+  </data>
+  <!-- NavMenu -->
+  <data name="Home" xml:space="preserve">
+    <value>Kryefaqja</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profili</value>
+  </data>
+  <data name="LoggedInAs" xml:space="preserve">
+    <value>Kyçur si</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Kyçu</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Regjistrohu</value>
+  </data>
+  <!-- Home Card Descriptions -->
+  <data name="ProfileCardDescription" xml:space="preserve">
+    <value>Përditësoni CV-në tuaj kryesore, përvojën, arsimin dhe aftësitë. Kjo është burimi i vërtetë për të gjitha aplikimet tuaja.</value>
+  </data>
+  <data name="GenerateCardDescription" xml:space="preserve">
+    <value>Vendosni një përshkrim pune dhe lini AI-në të krijojë një letër motivimi dhe CV të personalizuar për atë rol.</value>
+  </data>
+  <data name="SampleCvCardDescription" xml:space="preserve">
+    <value>Shikoni një shembull të një profili CV të plotë dhe të mirëmbushur. Përdoreni si referencë kur ndërtoni tuajin.</value>
+  </data>
+  <data name="LinkedInUrl" xml:space="preserve">
+    <value>LinkedIn URL</value>
+  </data>
+  <data name="PortfolioUrl" xml:space="preserve">
+    <value>URL e Portofolios</value>
+  </data>
+  <data name="EducationDescriptionHelper" xml:space="preserve">
+    <value>p.sh. Njohja nga Ministria, Nderime, Teza</value>
+  </data>
+  <data name="SkillsHelper" xml:space="preserve">
+    <value>Shtoni kategori aftësish dhe aftësi. Klikoni X-in e çipit për të hequr një aftësi.</value>
+  </data>
+  <data name="ProjectSectionTitleHelper" xml:space="preserve">
+    <value>Linja e parë = koka e seksionit (p.sh. 'Moduli i Analitikës së mundësuar nga AI'), linjat pasuese = pika (bullet points)</value>
+  </data>
+  <data name="LanguageProficiencyHelper" xml:space="preserve">
+    <value>p.sh. Amtare, rrjedhshëm, mesatare</value>
+  </data>
+  <data name="Field" xml:space="preserve">
+    <value>Fusha</value>
+  </data>
+  <data name="FormattingHelpDescription" xml:space="preserve" >
+    <value>Fusha të ndryshme mbështesin formatime të ndryshme. Shihni detajet më poshtë.</value>
+  </data>
+  <data name="LineBreaksDescription" xml:space="preserve">
+    <value>Çdo linjë e re në tekstin tuaj bëhet një linjë e veçantë ose pikë (bullet point).</value>
+  </data>
+  <data name="BulletPointsDescription" xml:space="preserve">
+    <value>Filloni linjat me - ose * për të krijuar pika (bullet points).</value>
+  </data>
+  <data name="HtmlTagsDescription" xml:space="preserve">
+    <value>Ju mund të përdorni HTML direkt për stilim.</value>
+  </data>
+  <data name="WhereEachFormatWorks" xml:space="preserve">
+    <value>Ku Funksionon Çdo Format</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Po</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Jo</value>
+  </data>
+  <data name="AsBullets" xml:space="preserve">
+    <value>si pika</value>
+  </data>
+  <data name="ExperienceDescription" xml:space="preserve">
+    <value>Përshkrimi i Përvojës</value>
+  </data>
+  <data name="ProjectDescription" xml:space="preserve">
+    <value>Përshkrimi i Projektit</value>
+  </data>
+  <data name="EducationDescription" xml:space="preserve">
+    <value>Përshkrimi i Edukimit</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Këtë Muaj</value>
+  </data>
+  <data name="ApplicationsLast30Days" xml:space="preserve">
+    <value>Aplikimet - 30 Ditët e Fundit</value>
+  </data>
+  <data name="TopUsers" xml:space="preserve">
+    <value>Përdoruesit Kryesorë</value>
+  </data>
+  <data name="NoApplicationsYetSimple" xml:space="preserve">
+    <value>Asnjë aplikim ende</value>
+  </data>
+  <data name="ActivityOverview" xml:space="preserve">
+    <value>Përmbledhja e Aktivitetit</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Sot</value>
+  </data>
+  <data name="ThisWeek" xml:space="preserve">
+    <value>Këtë Javë</value>
+  </data>
+  <data name="SystemOverview" xml:space="preserve">
+    <value>Përmbledhja e Sistemit</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Përdoruesit</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>Profilet</value>
+  </data>
+  <data name="Applications" xml:space="preserve">
+    <value>Aplikimet</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>Menaxhimi i Përdoruesve</value>
+  </data>
+  <data name="UsersCountSuffix" xml:space="preserve">
+    <value>përdorues</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statusi</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Emri i Plotë</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rolet</value>
+  </data>
+  <data name="ApiKeys" xml:space="preserve">
+    <value>Çelësat API</value>
+  </data>
+  <data name="Apps" xml:space="preserve">
+    <value>Apps</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Veprimet</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>I Bllokuar</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Zhblloko</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Blloko</value>
+  </data>
+  <data name="RecentApplications" xml:space="preserve">
+    <value>Aplikimet e Fundit</value>
+  </data>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Aplikimi nuk u gjet.</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Kthehu te Lista</value>
+  </data>
+  <data name="PrintCv" xml:space="preserve">
+    <value>Printo CV</value>
+  </data>
+  <data name="CoverLetter" xml:space="preserve">
+    <value>Letra e Motivimit</value>
+  </data>
+  <data name="UnableToLoadCoverLetter" xml:space="preserve">
+    <value>Nuk mund të ngarkohet letra e motivimit.</value>
+  </data>
+  <data name="UnableToLoadTailoredCv" xml:space="preserve">
+    <value>Nuk mund të ngarkohet CV-ja e përshtatur.</value>
+  </data>
+  <data name="CopyEmail" xml:space="preserve">
+    <value>Kopjo Email-in</value>
+  </data>
+  <data name="NoApplicationEmailSaved" xml:space="preserve">
+    <value>Nuk është ruajtur asnjë email aplikimi për këtë aplikim.</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>ID e Përdoruesit</value>
+  </data>
+  <data name="Stacktrace" xml:space="preserve">
+    <value>Gjurma e Gabimit</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Mbyll</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>Ai-CV Hyrja</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Më kujto</value>
+  </data>
+  <data name="OrSignInWith" xml:space="preserve">
+    <value>Ose hyni me</value>
+  </data>
+  <data name="ContinueWithGoogle" xml:space="preserve">
+    <value>Vazhdo me Google</value>
+  </data>
+  <data name="ContinueWithMicrosoft" xml:space="preserve">
+    <value>Vazhdo me Microsoft</value>
+  </data>
+  <data name="ContinueWithGitHub" xml:space="preserve">
+    <value>Vazhdo me GitHub</value>
+  </data>
+  <data name="DontHaveAccount" xml:space="preserve">
+    <value>Nuk keni llogari?</value>
+  </data>
+  <data name="RegisterHere" xml:space="preserve">
+    <value>Regjistrohuni këtu</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Krijo Llogari</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Konfirmo Fjalëkalimin</value>
+  </data>
+  <data name="AlreadyHaveAccount" xml:space="preserve">
+    <value>Keni llogari?</value>
+  </data>
+  <data name="LoginHere" xml:space="preserve">
+    <value>Hyni këtu</value>
+  </data>
+  <data name="PasswordRequirementHelper" xml:space="preserve">
+    <value>Minimumi 6 karaktere, të paktën një shkronjë të madhe, të vogël dhe një shifër</value>
+  </data>
+  <data name="HowItWorksGuide" xml:space="preserve">
+    <value>Si Funksionon &amp; Guida</value>
+  </data>
+  <data name="Step1" xml:space="preserve">
+    <value>Hapi 1</value>
+  </data>
+  <data name="BuildMasterCv" xml:space="preserve">
+    <value>Ndërtoni CV-në Master</value>
+  </data>
+  <data name="BuildMasterCvDescription" xml:space="preserve">
+    <value>Shkoni te faqja e Profilit dhe plotësoni detajet tuaja. Ky është "Burimi i së Vërtetës" - shtoni çdo gjë që keni bërë ndonjëherë.</value>
+  </data>
+  <data name="Step2" xml:space="preserve">
+    <value>Hapi 2</value>
+  </data>
+  <data name="ConnectAiKeys" xml:space="preserve">
+    <value>Lidhni Çelësat AI</value>
+  </data>
+  <data name="ConnectAiKeysDescription" xml:space="preserve">
+    <value>Sigurohuni që çelësat tuaj API (OpenAI, Gemini, etj.) janë vendosur te Cilësimet. Aplikacioni ka nevojë për këto për të gjeneruar përmbajtje.</value>
+  </data>
+  <data name="Step3" xml:space="preserve">
+    <value>Hapi 3</value>
+  </data>
+  <data name="GenerateApplicationDescription" xml:space="preserve">
+    <value>Shkoni te Gjenero, ngjitni një URL të punës ose përshkrimin. AI do të lexojë CV-në tuaj Master dhe Përshkrimin e Punës për të krijuar një CV dhe Letër Motivimi të përshtatur në mënyrë perfektë.</value>
+  </data>
+  <data name="HtmlFormatting" xml:space="preserve">
+    <value>Formatimi HTML</value>
+  </data>
+  <data name="HtmlFormattingDescription" xml:space="preserve">
+    <value>Ju mund të përdorni etiketat HTML në fushat e Përshkrimit (Përmbledhja, Përvoja e Punës, etj.) për të formatuar tekstin tuaj.</value>
+  </data>
+  <data name="CodeToWrite" xml:space="preserve">
+    <value>Kodi Për të Shkruar</value>
+  </data>
+  <data name="ResultPreview" xml:space="preserve">
+    <value>Parapamja e Rezultatit</value>
+  </data>
+  <data name="InstallingUpdates" xml:space="preserve">
+    <value>Duke instaluar përditësimet...</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Përditësim i Disponueshëm</value>
+  </data>
+  <data name="ServerRestartingWait" xml:space="preserve">
+    <value>Serveri po riniset. Ju lutem pritni...</value>
+  </data>
+  <data name="ImprovingSystemWorkSavedRestart" xml:space="preserve">
+    <value>Ne po përmirësojmë sistemin. Puna juaj është ruajtur lokalisht. Rinisje e shkurtër në {0}.</value>
+  </data>
+  <data name="BoldText" xml:space="preserve">
+    <value>Tekst i Trashë</value>
+  </data>
+  <data name="ItalicText" xml:space="preserve">
+    <value>Tekst i Pjerrët</value>
+  </data>
+  <data name="ColoredText" xml:space="preserve">
+    <value>Tekst me Ngjyrë</value>
+  </data>
+  <data name="BulletList" xml:space="preserve">
+    <value>Listë me Pika</value>
+  </data>
+  <data name="LineBreak" xml:space="preserve">
+    <value>Ndërprerje e Rreshtit</value>
+  </data>
+  <data name="BetaWarning" xml:space="preserve">
+    <value>Beta - Të dhënat mund të fshihen gjatë përditësimeve</value>
+  </data>
+  <data name="UnhandledError" xml:space="preserve">
+    <value>Ka ndodhur një gabim i paparashikuar.</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Rifresko</value>
+  </data>
+  <data name="AiCvApplications" xml:space="preserve">
+    <value>AI CV &amp; Aplikimet</value>
+  </data>
+  <data name="NoProfileDataToPreview" xml:space="preserve">
+    <value>Nuk ka të dhëna të profilit të disponueshme për parapamje.</value>
+  </data>
+  <data name="NoProfileData" xml:space="preserve">
+    <value>Nuk ka të dhëna të profilit të disponueshme.</value>
+  </data>
+  <data name="CoreCompetencies" xml:space="preserve">
+    <value>KOMPETENCAT KRYESORE</value>
+  </data>
+  <data name="NoSkillsListed" xml:space="preserve">
+    <value>Nuk ka aftësi të listuara.</value>
+  </data>
+  <data name="WorkExperienceCv" xml:space="preserve">
+    <value>PËRVOJA E PUNËS</value>
+  </data>
+  <data name="NoWorkExperienceListed" xml:space="preserve">
+    <value>Nuk ka përvojë pune të listuar.</value>
+  </data>
+  <data name="EducationCv" xml:space="preserve">
+    <value>EDUKIMI</value>
+  </data>
+  <data name="NoEducationListed" xml:space="preserve">
+    <value>Nuk ka edukim të listuar.</value>
+  </data>
+  <data name="PersonalProjectsCv" xml:space="preserve">
+    <value>PROJEKTET PERSONALE</value>
+  </data>
+  <data name="NoPersonalProjectsListed" xml:space="preserve">
+    <value>Nuk ka projekte personale të listuara.</value>
+  </data>
+  <data name="LanguagesCv" xml:space="preserve">
+    <value>GJUHËT</value>
+  </data>
+  <data name="NoLanguagesListed" xml:space="preserve">
+    <value>Nuk ka gjuhë të listuara.</value>
+  </data>
+  <data name="InterestsCv" xml:space="preserve">
+    <value>INTERESAT</value>
+  </data>
+  <data name="NoInterestsListed" xml:space="preserve">
+    <value>Nuk ka interesa të listuara.</value>
+  </data>
+  <data name="ReferencesAvailableUponRequest" xml:space="preserve">
+    <value>Referencat disponohen sipas kërkesës</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email:</value>
+  </data>
+  <data name="PhoneLabel" xml:space="preserve">
+    <value>Telefoni:</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Vendndodhja:</value>
+  </data>
+  <data name="LinkedInLabel" xml:space="preserve">
+    <value>LinkedIn:</value>
+  </data>
+  <data name="GitHubLabel" xml:space="preserve">
+    <value>GitHub:</value>
+  </data>
+  <data name="TechnologiesLabel" xml:space="preserve">
+    <value>Teknologjitë:</value>
+  </data>
+  <data name="ShowInCv" xml:space="preserve">
+    <value>Shfaq në CV</value>
+  </data>
+  <data name="WillBeAutoDetected" xml:space="preserve">
+    <value>Do të zbulohet automatikisht</value>
+  </data>
+  <data name="PreviewWillAppearHere" xml:space="preserve">
+    <value>Parapamja do të shfaqet këtu...</value>
+  </data>
+  <data name="at" xml:space="preserve">
+    <value>në</value>
+  </data>
+  <data name="DownloadPdf" xml:space="preserve">
+    <value>Shkarko PDF</value>
+  </data>
+  <data name="NoPdfData" xml:space="preserve">
+    <value>Nuk ka të dhëna PDF</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Parapamje</value>
+  </data>
+  <data name="ResetChanges" xml:space="preserve">
+    <value>Rikthe Ndryshimet</value>
+  </data>
+  <data name="EditResumeJson" xml:space="preserve">
+    <value>Ndrysho JSON e CV-së</value>
+  </data>
+  <data name="EditResumeJsonHelper" xml:space="preserve">
+    <value>Paralajmërim: Redaktimi manual i strukturës JSON mund të rezultojë në gabime ose thyerje të pamjes paraprake nëse struktura është e pavlefshme. Përdoreni me kujdes.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Vendndodhja</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Numri i Telefonit</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Përshkrimi</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Roli</value>
+  </data>
+  <data name="SectionTitle" xml:space="preserve">
+    <value>Titulli i Seksionit</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Gjuha</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Hiqe</value>
+  </data>
+  <data name="Generate" xml:space="preserve">
+    <value>Gjenero</value>
+  </data>
+  <data name="MyApplications" xml:space="preserve">
+    <value>Aplikimet e Mia</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Kërko</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>vit</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>vite</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>muaj</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>muaj</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>Tani</value>
+  </data>
+  <data name="JobDescriptionInstructions" xml:space="preserve">
+    <value>Psh., 'Fokusohuni në aftësitë udhëheqëse', 'Përdorni ton formal', 'Mbajeni letrën e motivimit nën 300 fjalë'</value>
+  </data>
+  <data name="RawDataWarning" xml:space="preserve">
+    <value>Paralajmërim: Ju po redaktoni strukturën e të dhënave të papërpunuara. Gabimet sintaksore do të parandalojnë renderimin e CV-së.</value>
+  </data>
+  <data name="EditEmailHelper" xml:space="preserve">
+    <value>Ndryshoni email-in nese eshte e nevojshme para se ta kopjoni.</value>
+  </data>
+  <data name="GitHubPortfolioUrl" xml:space="preserve">
+    <value>URL e GitHub/Portofolit</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="LanguageName" xml:space="preserve">
+    <value>Emri i Gjuhës</value>
+  </data>
+  <data name="InterestName" xml:space="preserve">
+    <value>Emri i Interesit</value>
+  </data>
+</root>

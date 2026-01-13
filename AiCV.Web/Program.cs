@@ -129,6 +129,7 @@ builder.Services.AddScoped<ICVService, CVService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IJobPostScraper, JobPostScraper>();
 builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
+builder.Services.AddScoped<IUserAIConfigurationService, UserAIConfigurationService>();
 
 // Configure Forwarded Headers for Docker/Proxy scenarios
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -148,7 +149,31 @@ builder.Services.AddScoped<ILoadingService, LoadingService>();
 builder.Services.AddScoped<IAdminStatisticsService, AdminStatisticsService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ISystemLogService, SystemLogService>();
+builder.Services.AddScoped<IModelDiscoveryService, ModelDiscoveryService>();
 builder.Services.AddScoped<ClientPersistenceService>();
+
+// Data Protection - Persist keys to file system to prevent API key loss on app restart
+var keysPath = Path.Combine(builder.Environment.ContentRootPath, "DataProtectionKeys");
+if (!Directory.Exists(keysPath))
+{
+    Directory.CreateDirectory(keysPath);
+}
+builder
+    .Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
+    .SetApplicationName("AiCV.Web");
+
+builder.Services.AddLocalization();
+
+// Configure supported cultures for localization
+var supportedCultures = new[] { "en", "sq" };
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options
+        .SetDefaultCulture(supportedCultures[0])
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
 
 // Update Check Service (Handles automatic detection and scheduling of container updates)
 builder.Services.AddSingleton<UpdateCheckService>();
@@ -179,6 +204,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAntiforgery();
+
+app.UseRequestLocalization();
 
 // Seed Database
 using (var scope = app.Services.CreateScope())
@@ -478,5 +505,22 @@ app.MapPost(
         }
     )
     .RequireAuthorization();
+
+// Add culture set endpoint
+app.MapGet(
+    "/culture/set",
+    (string culture, string redirectUri, HttpContext httpContext) =>
+    {
+        if (culture != null)
+        {
+            httpContext.Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture))
+            );
+        }
+
+        return Results.Redirect(redirectUri);
+    }
+);
 
 app.Run();

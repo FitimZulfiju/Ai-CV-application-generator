@@ -1,6 +1,7 @@
 namespace AiCV.Infrastructure.Services
 {
-    public class UserSettingsService(IDbContextFactory<ApplicationDbContext> contextFactory) : IUserSettingsService
+    public class UserSettingsService(IDbContextFactory<ApplicationDbContext> contextFactory)
+        : IUserSettingsService
     {
         private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
 
@@ -8,8 +9,8 @@ namespace AiCV.Infrastructure.Services
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
             Console.WriteLine($"[UserSettingsService] Getting settings for userId: {userId}");
-            var settings = await context.UserSettings
-                .AsNoTracking()
+            var settings = await context
+                .UserSettings.AsNoTracking()
                 .FirstOrDefaultAsync(s => s.UserId == userId);
 
             if (settings == null)
@@ -44,16 +45,30 @@ namespace AiCV.Infrastructure.Services
                 settings.DeepSeekApiKey = Decrypt(settings.DeepSeekApiKey);
             }
 
- Console.WriteLine($"[UserSettingsService] Settings retrieved.");
+            if (!string.IsNullOrEmpty(settings.OpenRouterApiKey))
+            {
+                settings.OpenRouterApiKey = Decrypt(settings.OpenRouterApiKey);
+            }
+
+            Console.WriteLine($"[UserSettingsService] Settings retrieved.");
             return settings;
         }
 
-        public async Task SaveUserSettingsAsync(string userId, string openAiApiKey, string googleGeminiApiKey, string claudeApiKey, string groqApiKey, string deepSeekApiKey, AIModel defaultModel)
+        public async Task SaveUserSettingsAsync(
+            string userId,
+            string? openAiApiKey,
+            string? googleGeminiApiKey,
+            string? claudeApiKey,
+            string? groqApiKey,
+            string? deepSeekApiKey,
+            string? openRouterApiKey,
+            AIProvider defaultProvider,
+            string? defaultModelId
+        )
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
-            Console.WriteLine($"[UserSettingsService] Saving settings for userId: {userId}. Gemini Key Input Length: {googleGeminiApiKey?.Length ?? 0}");
-            var settings = await context.UserSettings
-                .FirstOrDefaultAsync(s => s.UserId == userId);
+            Console.WriteLine($"[UserSettingsService] Saving settings for userId: {userId}.");
+            var settings = await context.UserSettings.FirstOrDefaultAsync(s => s.UserId == userId);
 
             if (settings == null)
             {
@@ -61,64 +76,35 @@ namespace AiCV.Infrastructure.Services
                 var userExists = await context.Users.AnyAsync(u => u.Id == userId);
                 if (!userExists)
                 {
-                    Console.WriteLine($"[UserSettingsService] User {userId} not found. Cannot save settings.");
+                    Console.WriteLine(
+                        $"[UserSettingsService] User {userId} not found. Cannot save settings."
+                    );
                     throw new InvalidOperationException("User not found.");
                 }
 
-                settings = new UserSettings
-                {
-                    UserId = userId,
-                    CreatedDate = DateTime.UtcNow
-                };
+                settings = new UserSettings { UserId = userId, CreatedDate = DateTime.UtcNow };
                 context.UserSettings.Add(settings);
             }
 
-            if (!string.IsNullOrEmpty(openAiApiKey))
-            {
-                settings.OpenAIApiKey = Encrypt(openAiApiKey);
-            }
-            else
-            {
-                settings.OpenAIApiKey = null;
-            }
+            settings.OpenAIApiKey = !string.IsNullOrEmpty(openAiApiKey)
+                ? Encrypt(openAiApiKey)
+                : null;
+            settings.GoogleGeminiApiKey = !string.IsNullOrEmpty(googleGeminiApiKey)
+                ? Encrypt(googleGeminiApiKey)
+                : null;
+            settings.ClaudeApiKey = !string.IsNullOrEmpty(claudeApiKey)
+                ? Encrypt(claudeApiKey)
+                : null;
+            settings.GroqApiKey = !string.IsNullOrEmpty(groqApiKey) ? Encrypt(groqApiKey) : null;
+            settings.DeepSeekApiKey = !string.IsNullOrEmpty(deepSeekApiKey)
+                ? Encrypt(deepSeekApiKey)
+                : null;
+            settings.OpenRouterApiKey = !string.IsNullOrEmpty(openRouterApiKey)
+                ? Encrypt(openRouterApiKey)
+                : null;
 
-            if (!string.IsNullOrEmpty(googleGeminiApiKey))
-            {
-                settings.GoogleGeminiApiKey = Encrypt(googleGeminiApiKey);
-            }
-            else
-            {
-                settings.GoogleGeminiApiKey = null;
-            }
-
-            if (!string.IsNullOrEmpty(claudeApiKey))
-            {
-                settings.ClaudeApiKey = Encrypt(claudeApiKey);
-            }
-            else
-            {
-                settings.ClaudeApiKey = null;
-            }
-
-            if (!string.IsNullOrEmpty(groqApiKey))
-            {
-                settings.GroqApiKey = Encrypt(groqApiKey);
-            }
-            else
-            {
-                settings.GroqApiKey = null;
-            }
-
-            if (!string.IsNullOrEmpty(deepSeekApiKey))
-            {
-                settings.DeepSeekApiKey = Encrypt(deepSeekApiKey);
-            }
-            else
-            {
-                settings.DeepSeekApiKey = null;
-            }
-
-            settings.DefaultModel = defaultModel;
+            settings.DefaultProvider = defaultProvider;
+            settings.DefaultModelId = defaultModelId;
             settings.UpdatedDate = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
@@ -132,7 +118,9 @@ namespace AiCV.Infrastructure.Services
             {
                 var bytes = Encoding.UTF8.GetBytes(clearText);
                 var result = Convert.ToBase64String(bytes);
-                Console.WriteLine($"[UserSettingsService] Encrypting '{clearText[..Math.Min(3, clearText.Length)]}...' -> '{result[..Math.Min(3, result.Length)]}...'");
+                Console.WriteLine(
+                    $"[UserSettingsService] Encrypting '{clearText[..Math.Min(3, clearText.Length)]}...' -> '{result[..Math.Min(3, result.Length)]}...'"
+                );
                 return result;
             }
             catch (Exception ex)
@@ -149,7 +137,9 @@ namespace AiCV.Infrastructure.Services
             {
                 var bytes = Convert.FromBase64String(cipherText);
                 var result = Encoding.UTF8.GetString(bytes);
-                Console.WriteLine($"[UserSettingsService] Decrypting '{cipherText[..Math.Min(3, cipherText.Length)]}...' -> '{result[..Math.Min(3, result.Length)]}...'");
+                Console.WriteLine(
+                    $"[UserSettingsService] Decrypting '{cipherText[..Math.Min(3, cipherText.Length)]}...' -> '{result[..Math.Min(3, result.Length)]}...'"
+                );
                 return result;
             }
             catch (Exception ex)

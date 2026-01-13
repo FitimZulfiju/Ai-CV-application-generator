@@ -2,6 +2,7 @@
 @implements IDisposable
 @inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 @if (_showBanner)
 {
@@ -14,22 +15,23 @@
                     <MudText Typo="Typo.subtitle1" Style="font-weight: 500;">
                         @if (_isInstalling)
                         {
-                            <span>Installing updates...</span>
+                            <span>@Localizer["InstallingUpdates"]</span>
                         }
                         else
                         {
-                            <span>Update Available @(!string.IsNullOrEmpty(_newVersionTag) ? $"({_newVersionTag})" : "")</span>
+                            <span>@Localizer["UpdateAvailable"] @(!string.IsNullOrEmpty(_newVersionTag) ? $"({_newVersionTag})"
+                        : "")</span>
                         }
                     </MudText>
                     <MudText Typo="Typo.body2" Style="opacity: 0.9;">
                         @if (_isInstalling)
                         {
-                            <span>The server is restarting. Please wait...</span>
+                            <span>@Localizer["ServerRestartingWait"]</span>
                         }
                         else
                         {
-                            <span>We are improving the system. Your work is saved locally. Brief restart in
-                                @FormatTime(_secondsRemaining).</span>
+                            <span>@string.Format(Localizer["ImprovingSystemWorkSavedRestart"].Value,
+                        FormatTime(_secondsRemaining))</span>
                         }
                     </MudText>
                 </MudStack>

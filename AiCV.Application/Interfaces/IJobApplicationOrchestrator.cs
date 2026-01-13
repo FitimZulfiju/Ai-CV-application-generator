@@ -12,7 +12,7 @@ namespace AiCV.Application.Interfaces
             AIProvider provider,
             CandidateProfile profile,
             JobPosting job,
-            AIModel? model = null,
+            string? modelId = null,
             string? customPrompt = null
         );
         Task SaveApplicationAsync(

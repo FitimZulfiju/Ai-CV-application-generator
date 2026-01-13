@@ -1,36 +1,35 @@
 @using AiCV.Domain.Entities
 @using MudBlazor
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 <MudDialog>
     <DialogContent>
         <MudGrid>
             <MudItem xs="12" md="6">
-                <MudTextField Label="Timestamp" Value="@Log.Timestamp.ToString("G")" ReadOnly="true" />
+                <MudTextField Label="@Localizer["Timestamp"]" Value="@Log.Timestamp.ToString("G")" ReadOnly="true" />
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField Label="Level" Value="@Log.Level" ReadOnly="true" />
+                <MudTextField Label="@Localizer["Level"]" Value="@Log.Level" ReadOnly="true" />
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField Label="User ID" Value="@Log.UserId" ReadOnly="true" />
+                <MudTextField Label="@Localizer["UserId"]" Value="@Log.UserId" ReadOnly="true" />
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField Label="Path" Value="@Log.RequestPath" ReadOnly="true" />
+                <MudTextField Label="@Localizer["Path"]" Value="@Log.RequestPath" ReadOnly="true" />
             </MudItem>
             <MudItem xs="12">
-                <MudTextField Label="Source" Value="@Log.Source" ReadOnly="true" />
+                <MudTextField Label="@Localizer["Source"]" Value="@Log.Source" ReadOnly="true" />
             </MudItem>
             <MudItem xs="12">
-                <MudTextField Label="Message" Value="@Log.Message" Lines="2" ReadOnly="true" />
+                <MudTextField Label="@Localizer["Message"]" Value="@Log.Message" Lines="2" ReadOnly="true" />
             </MudItem>
             <MudItem xs="12">
-                <MudTextField Label="Stack Trace" Value="@Log.StackTrace" Lines="15" ReadOnly="true"
+                <MudTextField Label="@Localizer["Stacktrace"]" Value="@Log.StackTrace" Lines="15" ReadOnly="true"
                     Style="font-family: monospace;" />
             </MudItem>
         </MudGrid>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Close</MudButton>
+        <MudButton OnClick="Cancel">@Localizer["Close"]</MudButton>
     </DialogActions>
 </MudDialog>
-
-

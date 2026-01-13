@@ -103,3 +103,6 @@ appsettings.Development.json
 # OS Generated
 .DS_Store
 Thumbs.db
+
+# Data Protection Keys
+AiCV.Web/DataProtectionKeys/

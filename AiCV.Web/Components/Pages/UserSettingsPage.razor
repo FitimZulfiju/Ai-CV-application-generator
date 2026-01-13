@@ -1,166 +1,160 @@
-﻿@page "/settings"
-@attribute [Authorize]
+@page "/settings"
+@using AiCV.Domain
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
-<PageTitle>Your AI-powered career assistant</PageTitle>
+<PageTitle>@Localizer["Settings"]</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
-    <MudPaper Class="pa-6" Elevation="3">
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-0">
 
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-            <MudText Typo="Typo.h5">⚙️ Settings</MudText>
+    <div class="d-flex align-center justify-space-between pb-3">
+        <MudText Typo="Typo.h5">⚙️ @Localizer["Settings"]</MudText>
+    </div>
 
-            <MudText Typo="Typo.body1">
-                Manage your API keys for AI services. These keys are encrypted before being stored.
-            </MudText>
-        </MudStack>
+    @if (_showCostAlert)
+    {
+        <MudAlert Severity="Severity.Info" Class="mb-4" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true"
+        CloseIconClicked="() => _showCostAlert = false">
+            @Localizer["CostDisclaimer"]
+        </MudAlert>
+    }
 
-        <EditForm Model="@_model" OnValidSubmit="SaveSettings">
-            <DataAnnotationsValidator />
+    @if (_isLoading)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+    }
+    else
+    {
+        @* Add New Configuration Panel *@
+        <MudPaper Elevation="4" Class="pa-4 mb-4">
+            <MudText Typo="Typo.h6" GutterBottom="true">@Localizer["AddConfiguration"]</MudText>
 
-            <MudCard Class="mb-2">
-                <MudCardHeader Class="pb-0">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">⚛️ OpenAI</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="pt-2">
-                    <MudTextField @bind-Value="_model.OpenAIApiKey"
-                                  Label="API Key"
-                                  Variant="Variant.Outlined"
-                                  InputType="@(_showOpenAiKey? InputType.Text: InputType.Password)"
-                                  Adornment="Adornment.End"
-                                  AdornmentIcon="@(_showOpenAiKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
-                                  OnAdornmentClick="ToggleOpenAiVisibility"
-                                  HelperText="Required for OpenAI models (GPT-4, etc.)" />
-                    <MudText Typo="Typo.caption" Class="mt-1">
-                        Get your key from <MudLink Href="https://platform.openai.com/api-keys" Target="_blank">OpenAI Platform</MudLink>
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Class="mb-2">
-                <MudCardHeader Class="pb-0">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">⚛️ Google Gemini</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="pt-2">
-                    <MudTextField @bind-Value="_model.GoogleGeminiApiKey"
-                                  Label="API Key"
-                                  Variant="Variant.Outlined"
-                                  InputType="@(_showGoogleKey? InputType.Text: InputType.Password)"
-                                  Adornment="Adornment.End"
-                                  AdornmentIcon="@(_showGoogleKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
-                                  OnAdornmentClick="ToggleGoogleVisibility"
-                                  HelperText="Required for Gemini models" />
-                    <MudText Typo="Typo.caption" Class="mt-1">
-                        Get your key from <MudLink Href="https://aistudio.google.com/app/apikey" Target="_blank">Google AI Studio</MudLink>
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Class="mb-2">
-                <MudCardHeader Class="pb-0">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">🤖 Anthropic Claude</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="pt-2">
-                    <MudTextField @bind-Value="_model.ClaudeApiKey"
-                                  Label="API Key"
-                                  Variant="Variant.Outlined"
-                                  InputType="@(_showClaudeKey? InputType.Text: InputType.Password)"
-                                  Adornment="Adornment.End"
-                                  AdornmentIcon="@(_showClaudeKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
-                                  OnAdornmentClick="ToggleClaudeVisibility"
-                                  HelperText="Required for Claude models" />
-                    <MudText Typo="Typo.caption" Class="mt-1">
-                        Get your key from <MudLink Href="https://console.anthropic.com/" Target="_blank">Anthropic Console</MudLink> ($5 free credit)
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Class="mb-2">
-                <MudCardHeader Class="pb-0">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">⚡ Groq</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="pt-2">
-                    <MudTextField @bind-Value="_model.GroqApiKey"
-                                  Label="API Key"
-                                  Variant="Variant.Outlined"
-                                  InputType="@(_showGroqKey? InputType.Text: InputType.Password)"
-                                  Adornment="Adornment.End"
-                                  AdornmentIcon="@(_showGroqKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
-                                  OnAdornmentClick="ToggleGroqVisibility"
-                                  HelperText="Required for Llama models via Groq" />
-                    <MudText Typo="Typo.caption" Class="mt-1">
-                        Get your key from <MudLink Href="https://console.groq.com/" Target="_blank">Groq Console</MudLink> (14,400 requests/day free)
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Class="mb-2">
-                <MudCardHeader Class="pb-0">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">🚀 DeepSeek</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="pt-2">
-                    <MudTextField @bind-Value="_model.DeepSeekApiKey"
-                                  Label="API Key"
-                                  Variant="Variant.Outlined"
-                                  InputType="@(_showDeepSeekKey? InputType.Text: InputType.Password)"
-                                  Adornment="Adornment.End"
-                                  AdornmentIcon="@(_showDeepSeekKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
-                                  OnAdornmentClick="ToggleDeepSeekVisibility"
-                                  HelperText="Required for DeepSeek models" />
-                    <MudText Typo="Typo.caption" Class="mt-1">
-                        Get your key from <MudLink Href="https://platform.deepseek.com/" Target="_blank">DeepSeek Platform</MudLink> (Very affordable: $0.14-$0.42 per million tokens)
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
-
-            <MudCard Class="mb-3">
-                <MudCardHeader Class="pb-0">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Default AI Model</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent Class="pt-2">
-                    <MudSelect T="AIModel" @bind-Value="_model.DefaultModel" Label="Select Default Model" Variant="Variant.Outlined" Disabled="_isLoadingModels">
-                        @if (_isLoadingModels)
+            <MudGrid>
+                <MudItem xs="12" md="2">
+                    <MudSelect T="AIProvider" Label="@Localizer["Provider"]" @bind-Value="_newConfig.Provider"
+                    Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var provider in _availableProviders)
                         {
-                            <MudSelectItem Value="AIModel.Gpt4o">Loading models...</MudSelectItem>
+                            <MudSelectItem Value="@provider">
+                                <div class="d-flex align-center gap-2">
+                                    <MudIcon Icon="@GetProviderIcon(provider)" Size="Size.Small"
+                                Color="@GetProviderColor(provider)" />
+                                    @provider.ToString()
+                                </div>
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="_newConfig.ApiKey" Variant="Variant.Outlined"
+                    Margin="Margin.Dense" InputType="@(_showNewApiKey ? InputType.Text : InputType.Password)"
+                    Adornment="Adornment.End"
+                    AdornmentIcon="@(_showNewApiKey ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                    OnAdornmentClick="() => _showNewApiKey = !_showNewApiKey" Immediate="true" />
+                </MudItem>
+
+                <MudItem xs="12" md="2" Class="d-flex align-end pb-1">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                    StartIcon="@(_isValidating ? null : Icons.Material.Filled.CloudSync)"
+                    OnClick="ValidateAndLoadModels"
+                    Disabled="@(_isValidating || string.IsNullOrEmpty(_newConfig.ApiKey))" FullWidth="true"
+                    Style="height: 40px;">
+                        @if (_isValidating)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <MudText>Checking...</MudText>
                         }
                         else
                         {
-                            @foreach (var model in _availableModels)
-                            {
-                                <MudSelectItem Value="@model">@GetModelDisplayName(model)</MudSelectItem>
-                            }
+                            @Localizer["Validate"]
                         }
-                    </MudSelect>
-                    <MudText Typo="Typo.caption" Class="mt-1">
-                        Select the model that will be selected by default when generating applications.
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
+                    </MudButton>
+                </MudItem>
 
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" Disabled="_isLoading" StartIcon="@Icons.Material.Filled.Save">
-                @if (_isLoading)
-                {
-                    <AiCV.Web.Components.Shared.LoadingIndicator />
-                    <MudText Class="ms-2">Saving...</MudText>
-                }
-                else
-                {
-                    <MudText>Save Settings</MudText>
-                }
-            </MudButton>
-        </EditForm>
-    </MudPaper>
+                <MudItem xs="12" md="3">
+                    <MudAutocomplete T="string"
+                    Label="@(_availableModels.Count == 0 ? Localizer["Model"].Value : $"{Localizer["Models"]} ({_availableModels.Count})")"
+                    @bind-Value="_newConfig.ModelId" @bind-Value:after="OnModelSelected" SearchFunc="@SearchModels"
+                    Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="@(!_modelsLoaded)" CoerceValue="true"
+                    ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary" Dense="true" MaxItems="50"
+                    Clearable="true" ResetValueOnEmptyText="true" />
+                </MudItem>
+
+                <MudItem xs="12" md="2">
+                    <MudTextField T="string" Label="@Localizer["ConfigurationName"]" @bind-Value="_newConfig.Name"
+                    Variant="Variant.Outlined" Margin="Margin.Dense" Placeholder="e.g. My GPT-4 Key" />
+                </MudItem>
+            </MudGrid>
+
+            <div class="d-flex justify-end mt-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                OnClick="AddConfiguration" Disabled="@(!CanAddConfiguration)">
+                    @Localizer["Save"]
+                </MudButton>
+            </div>
+        </MudPaper>
+
+        @* Grid of Configured Models *@
+        <MudPaper Elevation="4" Class="pa-4">
+            <MudText Typo="Typo.h6" GutterBottom="true">@Localizer["ConfiguredModels"]</MudText>
+
+            @if (_configurations.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                    @Localizer["NoConfigurationsYet"]
+                </MudAlert>
+            }
+            else
+            {
+                <MudDataGrid T="UserAIConfiguration" Items="_configurations" Dense="true" Hover="true" Striped="true">
+                    <Columns>
+                        <PropertyColumn Property="x => x.Provider" Title="@Localizer["Provider"]">
+                            <CellTemplate>
+                                <div class="d-flex align-center gap-2">
+                                    <MudAvatar Color="@GetProviderColor(context.Item.Provider)" Size="Size.Small">
+                                        <MudIcon Icon="@GetProviderIcon(context.Item.Provider)" Size="Size.Small" />
+                                    </MudAvatar>
+                                    @context.Item.Provider.ToString()
+                                </div>
+                            </CellTemplate>
+                        </PropertyColumn>
+                        <PropertyColumn Property="x => x.ModelId" Title="@Localizer["Model"]" />
+                        <PropertyColumn Property="x => x.Name" Title="@Localizer["Name"]" />
+                        <PropertyColumn Property="x => x.IsActive" Title="@Localizer["Active"]">
+                            <CellTemplate>
+                                @if (context.Item.IsActive)
+                                {
+                                    <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.Star">
+                                        @Localizer["Active"]
+                                    </MudChip>
+                                }
+                            </CellTemplate>
+                        </PropertyColumn>
+                        <TemplateColumn Title="@Localizer["Actions"]">
+                            <CellTemplate>
+                                <MudStack Row="true" Spacing="1">
+                                    @if (!context.Item.IsActive)
+                                    {
+                                        <MudTooltip Text="@Localizer["SetAsActive"]">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Star" Size="Size.Small"
+                                    Color="Color.Warning" OnClick="() => ActivateConfiguration(context.Item)" />
+                                        </MudTooltip>
+                                    }
+                                    <MudTooltip Text="@Localizer["EditConfiguration"]">
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
+                                    Color="Color.Primary" OnClick="() => EditConfiguration(context.Item)" />
+                                    </MudTooltip>
+                                    <MudTooltip Text="@Localizer["Delete"]">
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
+                                    Color="Color.Error" OnClick="() => DeleteConfiguration(context.Item)" />
+                                    </MudTooltip>
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            }
+        </MudPaper>
+    }
 </MudContainer>
-
-

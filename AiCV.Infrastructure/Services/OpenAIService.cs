@@ -1,8 +1,8 @@
 namespace AiCV.Infrastructure.Services
 {
-    public class OpenAIService(string apiKey) : IAIService
+    public class OpenAIService(string apiKey, string modelId) : IAIService
     {
-        private readonly ChatClient _chatClient = new("gpt-4o", new ApiKeyCredential(apiKey));
+        private readonly ChatClient _chatClient = new(modelId, new ApiKeyCredential(apiKey));
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {

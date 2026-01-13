@@ -459,6 +459,42 @@ namespace AiCV.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("AiCV.Domain.UserAIConfiguration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApiKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModelId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Provider")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserAIConfigurations");
+                });
+
             modelBuilder.Entity("AiCV.Domain.UserSettings", b =>
                 {
                     b.Property<int>("Id")
@@ -476,7 +512,10 @@ namespace AiCV.Infrastructure.Migrations
                     b.Property<string>("DeepSeekApiKey")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DefaultModel")
+                    b.Property<string>("DefaultModelId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DefaultProvider")
                         .HasColumnType("int");
 
                     b.Property<string>("GoogleGeminiApiKey")
@@ -486,6 +525,9 @@ namespace AiCV.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OpenAIApiKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OpenRouterApiKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")

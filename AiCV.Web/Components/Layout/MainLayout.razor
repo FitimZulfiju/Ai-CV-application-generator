@@ -1,5 +1,6 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 <MudThemeProvider />
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -14,16 +15,17 @@
             OnClick="@((e) => DrawerToggle())" />
         <MudImage Src="/logoWhiteSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
             @onclick="NavigateToHome" />
-        <MudText Typo="Typo.h6" Class="responsive-app-title">AI CV & Applications</MudText>
+        <MudText Typo="Typo.h6" Class="responsive-app-title">@Localizer["AiCvApplications"]</MudText>
         <MudSpacer />
         @if (_showBetaWarning)
         {
             <MudChip T="string" Color="Color.Warning" Size="Size.Small" OnClose="@(() => _showBetaWarning = false)"
-            Class="hide-on-mobile">
-                🚧 Beta - Data may reset during updates
+            Class="hide-on-mobile" Icon="@Icons.Material.Filled.Warning">
+                @Localizer["BetaWarning"]
             </MudChip>
         }
         <MudSpacer />
+        <LanguageSwitcher />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"
             Href="https://github.com/fitimzulfiju/Web-CV-application-generator" Target="_blank" />
     </MudAppBar>
@@ -52,7 +54,7 @@
 
 
 <div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+    @Localizer["UnhandledError"]
+    <a href="." class="reload">@Localizer["Reload"]</a>
+    <span class="dismiss">X</span>
 </div>

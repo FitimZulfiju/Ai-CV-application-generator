@@ -7,7 +7,7 @@ public class ModelAvailabilityService : IModelAvailabilityService
     private readonly string _ollamaEndpoint;
 
     // Cache to avoid hitting Ollama API repeatedly
-    private List<AIModel>? _cachedModels;
+    private List<string>? _cachedModels;
     private DateTime _cacheExpiry = DateTime.MinValue;
     private readonly TimeSpan _cacheTime = TimeSpan.FromMinutes(5);
 
@@ -28,7 +28,7 @@ public class ModelAvailabilityService : IModelAvailabilityService
         }
     }
 
-    public Task<List<AIModel>> GetAvailableModelsAsync()
+    public Task<List<string>> GetAvailableModelsAsync()
     {
         // Check cache first
         if (_cachedModels != null && DateTime.UtcNow < _cacheExpiry)
@@ -36,14 +36,13 @@ public class ModelAvailabilityService : IModelAvailabilityService
             return Task.FromResult(_cachedModels);
         }
 
-        var models = new List<AIModel>
+        var models = new List<string>
         {
-            // All cloud models are always available
-            AIModel.Gpt4o,
-            AIModel.Gemini20Flash,
-            AIModel.Claude35Haiku,
-            AIModel.Llama3370B,
-            AIModel.DeepSeekV3,
+            "gpt-4o",
+            "gemini-2.0-flash-exp",
+            "claude-3-5-haiku-20241022",
+            "llama-3.3-70b-versatile",
+            "deepseek-chat",
         };
 
         // Cache the result

@@ -1,11 +1,11 @@
 namespace AiCV.Infrastructure.Services
 {
-    public class ClaudeService(HttpClient httpClient, string apiKey) : IAIService
+    public class ClaudeService(HttpClient httpClient, string apiKey, string modelId) : IAIService
     {
         private readonly HttpClient _httpClient = httpClient;
         private readonly string _apiKey = apiKey;
+        private readonly string _modelId = modelId;
         private const string ApiUrl = "https://api.anthropic.com/v1/messages";
-        private const string Model = "claude-3-5-haiku-20241022";
         private const string ApiVersion = "2023-06-01";
 
         public async Task<string> GenerateCoverLetterAsync(
@@ -19,7 +19,7 @@ namespace AiCV.Infrastructure.Services
 
             var requestPayload = new
             {
-                model = Model,
+                model = _modelId,
                 max_tokens = 4096,
                 system = string.IsNullOrWhiteSpace(customPrompt)
                     ? AISystemPrompts.CoverLetterSystemPrompt
@@ -59,7 +59,7 @@ namespace AiCV.Infrastructure.Services
 
             var requestPayload = new
             {
-                model = Model,
+                model = _modelId,
                 max_tokens = 4096,
                 system = string.IsNullOrWhiteSpace(customPrompt)
                     ? AISystemPrompts.ResumeTailoringSystemPrompt
@@ -124,7 +124,7 @@ namespace AiCV.Infrastructure.Services
 
             var requestPayload = new
             {
-                model = Model,
+                model = _modelId,
                 max_tokens = 1024,
                 system = systemPrompt,
                 messages = new[] { new { role = "user", content = userPrompt } },

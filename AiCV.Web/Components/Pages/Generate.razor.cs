@@ -30,13 +30,16 @@ public partial class Generate : IDisposable
     public IJSRuntime JSRuntime { get; set; } = default!;
 
     [Inject]
-    public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
+    public IModelDiscoveryService DiscoveryService { get; set; } = default!;
 
     [Inject]
     public IDialogService DialogService { get; set; } = default!;
 
     [Inject]
     public IPdfService PdfService { get; set; } = default!;
+
+    [Inject]
+    public IUserAIConfigurationService ConfigurationService { get; set; } = default!;
 
     private PrintPreviewModal _printPreviewModal = default!;
     private Timer? _autoSaveTimer;
@@ -65,15 +68,15 @@ public partial class Generate : IDisposable
     private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
 
     private MudForm? _form;
-    private AIProvider SelectedProvider => _selectedModel.GetProvider();
-    private AIModel _selectedModel = AIModel.Gpt4o;
-    private List<AIModel> _availableModels = [];
-    private bool _isLoadingModels = true;
+    private int? _activeConfigId;
+    private List<UserAIConfiguration> _configuredProviders = [];
+    private bool _hasConfiguredProvider = false;
     private bool _showAdvancedEditor = false;
     private int _splitterSize = 30;
     private int _activeTabIndex = 0;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
+    private string _userId = string.Empty;
     private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
@@ -139,34 +142,41 @@ public partial class Generate : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        // Load available models first
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+        if (!string.IsNullOrEmpty(_userId))
+        {
+            await LoadConfiguredProviders();
+        }
+    }
+
+    private async Task LoadConfiguredProviders()
+    {
         try
         {
-            _availableModels = await ModelAvailabilityService.GetAvailableModelsAsync();
+            var configs = await ConfigurationService.GetConfigurationsAsync(_userId);
+            _configuredProviders =
+                configs?.Where(c => !string.IsNullOrEmpty(c.ApiKey)).ToList() ?? [];
+            _hasConfiguredProvider = _configuredProviders.Count != 0;
+
+            if (_hasConfiguredProvider && _activeConfigId == null)
+            {
+                var defaultConf =
+                    _configuredProviders.FirstOrDefault(c => c.IsActive) ?? _configuredProviders[0];
+                _activeConfigId = defaultConf.Id;
+            }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Failed to load available models: {ex.Message}", Severity.Warning);
-            // Fallback to cloud models only
-            _availableModels = [AIModel.Gpt4o, AIModel.Gemini20Flash];
+            Snackbar.Add($"Error loading AI configurations: {ex.Message}", Severity.Error);
         }
-        finally
-        {
-            _isLoadingModels = false;
-        }
+    }
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (!string.IsNullOrEmpty(userId))
-        {
-            var settings = await UserSettingsService.GetUserSettingsAsync(userId);
-            if (settings != null)
-            {
-                _selectedModel = settings.DefaultModel;
-            }
-        }
+    private UserAIConfiguration? GetActiveConfiguration()
+    {
+        return _configuredProviders.FirstOrDefault(c => c.Id == _activeConfigId);
     }
 
     private async Task FetchJobDetails()
@@ -293,13 +303,22 @@ public partial class Generate : IDisposable
             }
 
             LoadingService.Update(30, "Generating cover letter...");
+            var activeConfig = GetActiveConfiguration();
+            if (activeConfig == null)
+            {
+                Snackbar.Add(
+                    "No AI configuration selected. Please configure a provider in Settings.",
+                    Severity.Warning
+                );
+                return;
+            }
             var (CoverLetter, ResumeResult, ApplicationEmail) =
                 await JobOrchestrator.GenerateApplicationAsync(
                     userId,
-                    SelectedProvider,
+                    activeConfig.Provider,
                     _cachedProfile,
                     _job,
-                    _selectedModel,
+                    activeConfig.ModelId,
                     _customPrompt
                 );
 
@@ -352,10 +371,7 @@ public partial class Generate : IDisposable
             LoadingService.Update(100, "Complete!");
             await Task.Delay(300);
 
-            Snackbar.Add(
-                $"Application Generated using {_selectedModel.GetDisplayName()}!",
-                Severity.Success
-            );
+            Snackbar.Add($"Application Generated!", Severity.Success);
             _previewCoverLetter = true; // Auto-switch to preview
 
             // Only allow saving if content is different from what was previously saved
@@ -535,17 +551,12 @@ public partial class Generate : IDisposable
         }
     }
 
-    private static string GetModelDisplayName(AIModel model)
-    {
-        return model.GetDisplayName();
-    }
-
     public class GenerateDraft
     {
         public JobPosting Job { get; set; } = new();
         public string CustomPrompt { get; set; } = string.Empty;
         public bool ManualEntry { get; set; }
-        public AIModel SelectedModel { get; set; }
+        public int? SelectedConfigId { get; set; }
         public bool ShowAdvancedEditor { get; set; }
     }
 
@@ -569,7 +580,7 @@ public partial class Generate : IDisposable
                     _job.Description = draft.Job.Description;
                     _customPrompt = draft.CustomPrompt;
                     _manualEntry = draft.ManualEntry;
-                    _selectedModel = draft.SelectedModel;
+                    _activeConfigId = draft.SelectedConfigId;
                     _showAdvancedEditor = draft.ShowAdvancedEditor;
 
                     if (!string.IsNullOrEmpty(_job.Description))
@@ -600,7 +611,7 @@ public partial class Generate : IDisposable
                                 Job = _job,
                                 CustomPrompt = _customPrompt,
                                 ManualEntry = _manualEntry,
-                                SelectedModel = _selectedModel,
+                                SelectedConfigId = _activeConfigId,
                                 ShowAdvancedEditor = _showAdvancedEditor,
                             };
                             await PersistenceService.SaveDraftAsync("generate_draft", currentDraft);
@@ -613,6 +624,28 @@ public partial class Generate : IDisposable
             );
         }
     }
+
+    private static Color GetProviderColor(AIProvider provider) =>
+        provider switch
+        {
+            AIProvider.GoogleGemini => Color.Primary,
+            AIProvider.OpenAI => Color.Success,
+            AIProvider.Claude => Color.Warning,
+            AIProvider.Groq => Color.Info,
+            AIProvider.DeepSeek => Color.Secondary,
+            _ => Color.Default,
+        };
+
+    private static string GetProviderIcon(AIProvider provider) =>
+        provider switch
+        {
+            AIProvider.GoogleGemini => Icons.Material.Filled.AutoAwesome,
+            AIProvider.OpenAI => Icons.Material.Filled.Psychology,
+            AIProvider.Claude => Icons.Material.Filled.SmartToy,
+            AIProvider.Groq => Icons.Material.Filled.Speed,
+            AIProvider.DeepSeek => Icons.Material.Filled.Explore,
+            _ => Icons.Material.Filled.Memory,
+        };
 
     public void Dispose()
     {

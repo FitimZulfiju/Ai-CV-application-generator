@@ -1,0 +1,54 @@
+@using AiCV.Domain
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            @Localizer["EditConfiguration"]
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudTextField Label="@Localizer["ConfigurationName"]" @bind-Value="Configuration.Name"
+                Variant="Variant.Outlined" Margin="Margin.Dense" />
+
+            <MudSelect T="string" Label="@Localizer["Model"]" @bind-Value="Configuration.ModelId"
+                Variant="Variant.Outlined" Margin="Margin.Dense">
+                @foreach (var model in AvailableModels)
+                {
+                    <MudSelectItem Value="@model">@model</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="Configuration.ApiKey" Variant="Variant.Outlined"
+                Margin="Margin.Dense" InputType="@(_showApiKey ? InputType.Text : InputType.Password)"
+                Adornment="Adornment.End"
+                AdornmentIcon="@(_showApiKey ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                OnAdornmentClick="() => _showApiKey = !_showApiKey" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@Localizer["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@Localizer["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public UserAIConfiguration Configuration { get; set; } = new();
+
+    [Parameter]
+    public List<string> AvailableModels { get; set; } = [];
+
+    private bool _showApiKey = false;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(Configuration));
+}

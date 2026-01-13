@@ -4,8 +4,9 @@ namespace AiCV.Domain
     {
         OpenAI,
         GoogleGemini,
-        Anthropic,
+        Claude,
         Groq,
-        DeepSeek
+        DeepSeek,
+        OpenRouter,
     }
 }

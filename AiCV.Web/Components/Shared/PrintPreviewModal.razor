@@ -1,12 +1,11 @@
-@using MudBlazor
-@inject IJSRuntime JS
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 @if (_isVisible)
 {
     <div class="print-preview-modal-overlay">
         <div class="print-preview-modal-container">
             <div class="print-preview-modal-header">
-                <MudText Typo="Typo.h6">@DocumentType Preview</MudText>
+                <MudText Typo="Typo.h6">@DocumentType @Localizer["Preview"]</MudText>
                 <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="Close" />
             </div>
 
@@ -18,14 +17,14 @@
                 }
                 else
                 {
-                    <MudText>No PDF Data</MudText>
+                    <MudText>@Localizer["NoPdfData"]</MudText>
                 }
             </div>
 
             <div class="print-preview-modal-footer">
-                <MudButton OnClick="Close" Variant="Variant.Text" Color="Color.Secondary">Close</MudButton>
+                <MudButton OnClick="Close" Variant="Variant.Text" Color="Color.Secondary">@Localizer["Close"]</MudButton>
                 <MudButton OnClick="DownloadPdf" Variant="Variant.Filled" Color="Color.Primary"
-                    StartIcon="@Icons.Material.Filled.Download">Download PDF</MudButton>
+                StartIcon="@Icons.Material.Filled.Download">@Localizer["DownloadPdf"]</MudButton>
             </div>
         </div>
     </div>
@@ -80,5 +79,3 @@
         }
     </style>
 }
-
-

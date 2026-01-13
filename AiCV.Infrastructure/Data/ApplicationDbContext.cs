@@ -13,6 +13,7 @@ namespace AiCV.Infrastructure.Data
         public DbSet<JobPosting> JobPostings { get; set; } = default!;
         public DbSet<GeneratedApplication> GeneratedApplications { get; set; } = default!;
         public DbSet<UserSettings> UserSettings { get; set; } = default!;
+        public DbSet<UserAIConfiguration> UserAIConfigurations { get; set; } = default!;
         public DbSet<SystemLog> SystemLogs { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,7 +1,8 @@
 @page "/application/{Id:int}"
 @attribute [Authorize]
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
-<PageTitle>Your AI-powered career assistant</PageTitle>
+<PageTitle>@Localizer["AiCvApplications"]</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
 
@@ -11,15 +12,15 @@
     }
     else if (_application == null)
     {
-            <MudAlert Severity="Severity.Error">Application not found.</MudAlert>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" Class="mt-4">Back to List</MudButton>
+            <MudAlert Severity="Severity.Error">@Localizer["ApplicationNotFound"]</MudAlert>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" Class="mt-4">@Localizer["BackToList"]</MudButton>
     }
     else
     {
             <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
                 <div class="d-flex align-center">
                     <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
-                    <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title at @_application.JobPosting?.CompanyName</MudText>
+                    <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title @Localizer["at"] @_application.JobPosting?.CompanyName</MudText>
                 </div>
                 <div class="hide-on-mobile" style="flex: 1 1 auto;"></div>
                 <div class="d-flex gap-2 width-100-mobile justify-center">
@@ -34,7 +35,7 @@
                         else
                         {
                                         <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                                        <span>Print</span>
+                                        <span>@Localizer["Print"]</span>
                         }
                             </MudButton>
                 }
@@ -49,7 +50,7 @@
                         else
                         {
                                         <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                                        <span>Print CV</span>
+                                        <span>@Localizer["PrintCv"]</span>
                         }
                             </MudButton>
                 }
@@ -57,7 +58,7 @@
             </MudStack>
 
             <MudTabs Elevation="2"  Rounded="true" PanelClass="pt-4" @bind-ActivePanelIndex="_activeTabIndex">
-                <MudTabPanel Text="Cover Letter" Icon="@Icons.Material.Filled.Description">
+                <MudTabPanel Text="@Localizer["CoverLetter"]" Icon="@Icons.Material.Filled.Description">
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
                             <MudPaper Elevation="0" Class="cv-paper-container">
@@ -66,10 +67,10 @@
                 }
                 else
                 {
-                            <MudAlert Severity="Severity.Warning">Unable to load cover letter.</MudAlert>
+                            <MudAlert Severity="Severity.Warning">@Localizer["UnableToLoadCoverLetter"]</MudAlert>
                 }
                 </MudTabPanel>
-                <MudTabPanel Text="Tailored CV" Icon="@Icons.Material.Filled.ContactPage">
+                <MudTabPanel Text="@Localizer["TailoredCv"]" Icon="@Icons.Material.Filled.ContactPage">
                 @if (_tailoredResume != null)
                 {
                             <MudPaper Elevation="1" Class="cv-paper-container">
@@ -78,17 +79,17 @@
                 }
                 else
                 {
-                            <MudAlert Severity="Severity.Warning">Unable to load tailored CV.</MudAlert>
+                            <MudAlert Severity="Severity.Warning">@Localizer["UnableToLoadTailoredCv"]</MudAlert>
                 }
                 </MudTabPanel>
-                <MudTabPanel Text="Application Email" Icon="@Icons.Material.Filled.Email">
+                <MudTabPanel Text="@Localizer["ApplicationEmail"]" Icon="@Icons.Material.Filled.Email">
                     @if (_application != null && !string.IsNullOrEmpty(_application.ApplicationEmailContent))
                     {
                         <MudStack Row="true" Class="mb-2" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
                             <MudButton Variant="Variant.Outlined" Color="Color.Primary"
                                 StartIcon="@Icons.Material.Filled.ContentCopy" 
                                 OnClick="@(() => CopyToClipboard(_application.ApplicationEmailContent))">
-                                Copy Email
+                                @Localizer["CopyEmail"]
                             </MudButton>
                         </MudStack>
                         <MudPaper Elevation="1" Class="pa-4">
@@ -97,16 +98,16 @@
                     }
                     else
                     {
-                        <MudAlert Severity="Severity.Info">No application email was saved for this application.</MudAlert>
+                        <MudAlert Severity="Severity.Info">@Localizer["NoApplicationEmailSaved"]</MudAlert>
                     }
                 </MudTabPanel>
-                <MudTabPanel Text="Job Description" Icon="@Icons.Material.Filled.DocumentScanner">
+                <MudTabPanel Text="@Localizer["JobDescription"]" Icon="@Icons.Material.Filled.DocumentScanner">
                     <MudPaper Elevation="1" Class="pa-4">
                     @if (!string.IsNullOrEmpty(_application.JobPosting?.Url))
                     {
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
                                     <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Primary" />
-                                    <MudText Typo="Typo.subtitle2">Source:</MudText>
+                                    <MudText Typo="Typo.subtitle2">@Localizer["Source"]</MudText>
                                     <MudLink Href="@_application.JobPosting.Url" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
                                 @_application.JobPosting.Url
                                     </MudLink>

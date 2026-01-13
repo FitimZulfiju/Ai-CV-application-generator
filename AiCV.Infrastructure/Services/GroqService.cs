@@ -1,11 +1,11 @@
 namespace AiCV.Infrastructure.Services
 {
-    public class GroqService(HttpClient httpClient, string apiKey) : IAIService
+    public class GroqService(HttpClient httpClient, string apiKey, string modelId) : IAIService
     {
         private readonly HttpClient _httpClient = httpClient;
         private readonly string _apiKey = apiKey;
         private readonly string ApiUrl = "https://api.groq.com/openai/v1/chat/completions";
-        private const string Model = "llama-3.3-70b-versatile"; // Updated from deprecated 3.1 to 3.3
+        private readonly string _modelId = modelId;
 
         public async Task<string> GenerateCoverLetterAsync(
             CandidateProfile profile,
@@ -18,7 +18,7 @@ namespace AiCV.Infrastructure.Services
 
             var requestPayload = new
             {
-                model = Model,
+                model = _modelId,
                 messages = new[]
                 {
                     new
@@ -69,7 +69,7 @@ namespace AiCV.Infrastructure.Services
 
             var requestPayload = new
             {
-                model = Model,
+                model = _modelId,
                 messages = new[]
                 {
                     new
@@ -142,7 +142,7 @@ namespace AiCV.Infrastructure.Services
 
             var requestPayload = new
             {
-                model = Model,
+                model = _modelId,
                 messages = new[]
                 {
                     new { role = "system", content = systemPrompt },

@@ -32,16 +32,17 @@ namespace AiCV.Infrastructure.Services
             AIProvider provider,
             CandidateProfile profile,
             JobPosting job,
-            AIModel? model = null,
+            string? modelId = null,
             string? customPrompt = null
         )
         {
             // Get the AI service for the selected model
-            var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, model);
+            var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, modelId);
             _logger.LogInformation(
-                "Starting application generation for Job {JobTitle} using {Model}",
+                "Starting application generation for Job {JobTitle} using {ModelId} from provider {Provider}",
                 job.Title,
-                model?.GetDisplayName() ?? "default"
+                modelId ?? "default",
+                provider
             );
 
             // Run cover letter and resume in parallel

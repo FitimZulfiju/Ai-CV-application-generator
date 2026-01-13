@@ -1,6 +1,7 @@
-﻿@page "/"
+@page "/"
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
-<PageTitle>Your AI-powered career assistant</PageTitle>
+<PageTitle>@Localizer["WelcomeMessage"]</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
 
@@ -9,16 +10,18 @@
             <MudImage Src="/logoSloganSvg.svg" Alt="AI Web CV Logo" Style="max-width: 30%; height: auto;" />
         </MudItem>
         <MudItem xs="12" md="6">
-            <MudText Typo="Typo.h4" Align="Align.Center" Class="d-flex justify-center">
-                Welcome to<br>CV & Cover Letter<br>Generator
+            <MudText Typo="Typo.h3" Align="Align.Center" Style="font-weight: 700;">
+                @Localizer["WelcomeTo"]<br>
+                @Localizer["CvAndCoverLetter"]<br>
+                @Localizer["Generator"]
             </MudText>
-            <MudText Typo="Typo.h6" Align="Align.Center">
-                Your AI-powered career assistant.
+            <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-2" Color="Color.Secondary">
+                @Localizer["AiPoweredCareerAssistant"]
             </MudText>
             <MudStack Row="true" Justify="Justify.Center" Class="mt-4">
                 <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Help"
                     OnClick="OpenUserGuideDialog">
-                    How it Works
+                    @Localizer["HowItWorks"]
                 </MudButton>
             </MudStack>
         </MudItem>
@@ -35,15 +38,14 @@
                         <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" Color="Color.Primary" />
                     </CardHeaderAvatar>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Manage Profile</MudText>
+                        <MudText Typo="Typo.h6">@Localizer["ManageProfile"]</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudText>Update your Master CV, experience, education, and skills. This is the source of truth for
-                        all your applications.</MudText>
+                    <MudText>@Localizer["ProfileCardDescription"]</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/profile">Go to Profile</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/profile">@Localizer["GoToProfile"]</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -56,15 +58,14 @@
                         <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Size="Size.Large" Color="Color.Secondary" />
                     </CardHeaderAvatar>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Generate Application</MudText>
+                        <MudText Typo="Typo.h6">@Localizer["GenerateApplication"]</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudText>Paste a job description and let AI tailor a cover letter and resume specifically for that
-                        role.</MudText>
+                    <MudText>@Localizer["GenerateCardDescription"]</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/generate">Start Generating
+                    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/generate">@Localizer["StartGenerating"]
                     </MudButton>
                 </MudCardActions>
             </MudCard>
@@ -78,15 +79,14 @@
                         <MudIcon Icon="@Icons.Material.Filled.Visibility" Size="Size.Large" Color="Color.Info" />
                     </CardHeaderAvatar>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h6">View Sample CV</MudText>
+                        <MudText Typo="Typo.h6">@Localizer["ViewSampleCv"]</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudText>See an example of a complete, well-filled CV profile. Use it as a reference when building
-                        your own.</MudText>
+                    <MudText>@Localizer["SampleCvCardDescription"]</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Info" OnClick="OpenSampleCvDialog">View Example
+                    <MudButton Variant="Variant.Text" Color="Color.Info" OnClick="OpenSampleCvDialog">@Localizer["ViewSampleCv"]
                     </MudButton>
                 </MudCardActions>
             </MudCard>
@@ -97,7 +97,7 @@
 
     <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="2" Class="mb-8">
         <MudText Typo="Typo.body2" Color="Color.Secondary" Style="opacity: 0.7;">
-            Developed by <b>Fitim Zulfiju</b>
+            @Localizer["DevelopedBy"] <b>Fitim Zulfiju</b>
         </MudText>
         <MudStack Row="true" Spacing="4" Justify="Justify.Center">
             <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Size="Size.Small"

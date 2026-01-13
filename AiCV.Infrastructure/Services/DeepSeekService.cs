@@ -1,11 +1,11 @@
 namespace AiCV.Infrastructure.Services;
 
-public class DeepSeekService(HttpClient httpClient, string apiKey) : IAIService
+public class DeepSeekService(HttpClient httpClient, string apiKey, string modelId) : IAIService
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly string _apiKey = apiKey;
     private readonly string ApiUrl = "https://api.deepseek.com/v1/chat/completions";
-    private const string Model = "deepseek-chat";
+    private readonly string _modelId = modelId;
 
     public async Task<string> GenerateCoverLetterAsync(
         CandidateProfile profile,
@@ -78,7 +78,7 @@ public class DeepSeekService(HttpClient httpClient, string apiKey) : IAIService
     {
         var requestBody = new
         {
-            model = Model,
+            model = _modelId,
             messages = new[] { new { role = "user", content = prompt } },
             temperature = 0.7,
         };

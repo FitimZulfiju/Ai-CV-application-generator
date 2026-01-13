@@ -5,6 +5,10 @@ public partial class CvPreview
     [Inject]
     public IJSRuntime JSRuntime { get; set; } = default!;
 
+    [Inject]
+    public IStringLocalizer<Infrastructure.Resources.AicvResources> Localizer { get; set; } =
+        default!;
+
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 
@@ -56,7 +60,7 @@ public partial class CvPreview
         return sb.ToString();
     }
 
-    private static string CalculateDuration(DateTime? start, DateTime? end)
+    private string CalculateDuration(DateTime? start, DateTime? end)
     {
         if (!start.HasValue)
             return "";
@@ -70,9 +74,15 @@ public partial class CvPreview
 
         var parts = new List<string>();
         if (years > 0)
-            parts.Add($"{years} year{(years > 1 ? "s" : "")}");
+        {
+            var yearKey = years > 1 ? "Years" : "Year";
+            parts.Add($"{years} {Localizer[yearKey]}");
+        }
         if (months > 0)
-            parts.Add($"{months} month{(months > 1 ? "s" : "")}");
+        {
+            var monthKey = months > 1 ? "Months" : "Month";
+            parts.Add($"{months} {Localizer[monthKey]}");
+        }
 
         return string.Join(" ", parts);
     }

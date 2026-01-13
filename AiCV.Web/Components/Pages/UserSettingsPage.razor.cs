@@ -2,40 +2,52 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class UserSettingsPage
 {
-    [Inject] public IUserSettingsService UserSettingsService { get; set; } = default!;
-    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] public ISnackbar Snackbar { get; set; } = default!;
-    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] public IModelAvailabilityService ModelAvailabilityService { get; set; } = default!;
+    [Inject]
+    public IUserAIConfigurationService ConfigurationService { get; set; } = default!;
 
-    private SettingsModel _model = new();
-    private bool _isLoading = false;
+    [Inject]
+    public IUserSettingsService UserSettingsService { get; set; } = default!; // Kept if needed for other settings, but might be removed if empty
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    public ISnackbar Snackbar { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public IModelDiscoveryService DiscoveryService { get; set; } = default!;
+
+    [Inject]
+    public IDialogService DialogService { get; set; } = default!;
+
     private string _userId = string.Empty;
-    private List<AIModel> _availableModels = new();
-    private bool _isLoadingModels = true;
+    private bool _isLoading = true;
 
-    private bool _showOpenAiKey = false;
-    private bool _showGoogleKey = false;
-    private bool _showClaudeKey = false;
-    private bool _showGroqKey = false;
-    private bool _showDeepSeekKey = false;
+    // List of saved configurations
+    private List<UserAIConfiguration> _configurations = [];
+
+    // Form model for adding NEW configuration
+    private UserAIConfiguration _newConfig = new();
+
+    private List<string> _availableModels = [];
+    private bool _modelsLoaded = false;
+    private bool _isValidating = false;
+    private bool _showNewApiKey = false;
+    private bool _showCostAlert = true;
+
+    // Available providers for dropdown
+    private List<AIProvider> _availableProviders = Enum.GetValues<AIProvider>().ToList();
+
+    private bool CanAddConfiguration =>
+        !string.IsNullOrWhiteSpace(_newConfig.ApiKey)
+        && !string.IsNullOrWhiteSpace(_newConfig.ModelId)
+        && !string.IsNullOrWhiteSpace(_newConfig.Name);
 
     protected override async Task OnInitializedAsync()
     {
-        // Load available models first
-        try
-        {
-            _availableModels = await ModelAvailabilityService.GetAvailableModelsAsync();
-        }
-        catch
-        {
-            _availableModels = new List<AIModel> { AIModel.Gpt4o, AIModel.Gemini20Flash, AIModel.Claude35Haiku, AIModel.Llama3370B, AIModel.DeepSeekV3 };
-        }
-        finally
-        {
-            _isLoadingModels = false;
-        }
-        
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -44,30 +56,25 @@ public partial class UserSettingsPage
             _userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
             if (!string.IsNullOrEmpty(_userId))
             {
-                await LoadSettings();
+                await LoadConfigurations();
             }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
         }
     }
 
-    private async Task LoadSettings()
+    private async Task LoadConfigurations()
     {
         _isLoading = true;
         try
         {
-            var settings = await UserSettingsService.GetUserSettingsAsync(_userId);
-            if (settings != null)
-            {
-                _model.OpenAIApiKey = settings.OpenAIApiKey ?? string.Empty;
-                _model.GoogleGeminiApiKey = settings.GoogleGeminiApiKey ?? string.Empty;
-                _model.ClaudeApiKey = settings.ClaudeApiKey ?? string.Empty;
-                _model.GroqApiKey = settings.GroqApiKey ?? string.Empty;
-                _model.DeepSeekApiKey = settings.DeepSeekApiKey ?? string.Empty;
-                _model.DefaultModel = settings.DefaultModel;
-            }
+            _configurations = await ConfigurationService.GetConfigurationsAsync(_userId);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading settings: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Error loading configurations: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -75,76 +82,293 @@ public partial class UserSettingsPage
         }
     }
 
-    private async Task SaveSettings()
+    private async Task ValidateAndLoadModels()
     {
-        _isLoading = true;
+        if (string.IsNullOrWhiteSpace(_newConfig.ApiKey))
+            return;
+
+        _isValidating = true;
+        _modelsLoaded = false;
+        _availableModels.Clear();
+
         try
         {
-            await UserSettingsService.SaveUserSettingsAsync(
-                _userId, 
-                _model.OpenAIApiKey, 
-                _model.GoogleGeminiApiKey,
-                _model.ClaudeApiKey,
-                _model.GroqApiKey,
-                _model.DeepSeekApiKey,
-                _model.DefaultModel);
-            Snackbar.Add("Settings saved successfully!", Severity.Success);
+            // If OpenRouter, user might have entered a modelId manually in a previous step?
+            // Actually, for OpenRouter we discover models.
+            // For others, if key is invalid, discovery fails.
+
+            var result = await DiscoveryService.DiscoverModelsAsync(
+                _newConfig.Provider,
+                _newConfig.ApiKey
+            );
+
+            if (result?.Success == true)
+            {
+                _availableModels = result.Models;
+                _modelsLoaded = true;
+
+                if (_availableModels.Count > 0)
+                {
+                    _newConfig.ModelId = _availableModels[0];
+                    OnModelSelected();
+                }
+
+                Snackbar.Add($"Found {_availableModels.Count} models", Severity.Success);
+            }
+            else
+            {
+                // Fallback for providers that might not support discovery or if API is down but key is OK?
+                // Actually DiscoveryService handles fallbacks internally if discovery fails but exception treated?
+                // No, DiscoveryService returns Success=false if API error.
+                // We should show error.
+                Snackbar.Add(
+                    result?.ErrorMessage ?? "Failed to validate API Key or fetch models.",
+                    Severity.Error
+                );
+
+                // Optional: Allow manual entry or fallback list anyway?
+                // Let's allow fallback if discovery fails, so user isn't blocked?
+                // _availableModels = DiscoveryService.GetFallbackModels(_newConfig.Provider);
+                // _modelsLoaded = true;
+            }
         }
         catch (Exception ex)
         {
-            if (ex.Message.Contains("User not found") || (ex.InnerException != null && ex.InnerException.Message.Contains("User not found")))
-            {
-                 NavigationManager.NavigateTo("/logout", true);
-                 return;
-            }
-
-            var message = ex.InnerException?.Message ?? ex.Message;
-            Snackbar.Add($"Error saving settings: {message}", Severity.Error);
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
         finally
         {
-            _isLoading = false;
-            await InvokeAsync(StateHasChanged);
+            _isValidating = false;
         }
     }
 
-    private void ToggleOpenAiVisibility()
+    private void OnModelSelected()
     {
-        _showOpenAiKey = !_showOpenAiKey;
+        // Auto-generate name if empty
+        if (
+            !string.IsNullOrWhiteSpace(_newConfig.ModelId)
+            && (
+                string.IsNullOrWhiteSpace(_newConfig.Name)
+                || _newConfig.Name.Contains(_newConfig.Provider.ToString())
+            )
+        )
+        {
+            _newConfig.Name = $"{_newConfig.Provider} - {_newConfig.ModelId}";
+        }
     }
 
-    private void ToggleGoogleVisibility()
+    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken token)
     {
-        _showGoogleKey = !_showGoogleKey;
+        // If text is empty, show all models
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult(_availableModels.AsEnumerable());
+        }
+
+        // Filter models by search text (case-insensitive)
+        var filtered = _availableModels.Where(m =>
+            m.Contains(value, StringComparison.OrdinalIgnoreCase)
+        );
+
+        return Task.FromResult(filtered);
     }
 
-    private void ToggleClaudeVisibility()
+    private async Task AddConfiguration()
     {
-        _showClaudeKey = !_showClaudeKey;
+        if (!CanAddConfiguration)
+            return;
+
+        try
+        {
+            _newConfig.UserId = _userId;
+            // IsActive logic handled by service (first one matches)
+
+            var saved = await ConfigurationService.SaveConfigurationAsync(_newConfig);
+            if (saved != null)
+            {
+                // Refresh list to get correct IDs and active status
+                await LoadConfigurations();
+                ResetNewConfig();
+                Snackbar.Add(Localizer["ConfigurationSaved"], Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
     }
 
-    private void ToggleGroqVisibility()
+    private async Task ActivateConfiguration(UserAIConfiguration config)
     {
-        _showGroqKey = !_showGroqKey;
+        try
+        {
+            var result = await ConfigurationService.ActivateConfigurationAsync(config.Id, _userId);
+            if (result != null)
+            {
+                // Update local state mechanism without full reload if possible?
+                // Accessing _configurations directly
+                foreach (var c in _configurations)
+                {
+                    c.IsActive = (c.Id == config.Id);
+                }
+
+                Snackbar.Add(
+                    string.Format(Localizer["ActiveConfigChanged"], config.Name),
+                    Severity.Success
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
     }
 
-    private void ToggleDeepSeekVisibility()
+    private async Task EditConfiguration(UserAIConfiguration config)
     {
-        _showDeepSeekKey = !_showDeepSeekKey;
-    }
-    
-    private string GetModelDisplayName(AIModel model)
-    {
-        return model.GetDisplayName();
+        // We need to fetch models for this config to populate dropdown in dialog
+        // Fallback first to avoid delay
+        var models = DiscoveryService.GetFallbackModels(config.Provider);
+
+        // If we want real discovery on edit, we might need a "Refresh Models" button in dialog
+        // or try to discover immediately if we have the key (which we do, unprotectd).
+        // Let's try discovery if key is present.
+        if (!string.IsNullOrEmpty(config.ApiKey))
+        {
+            try
+            {
+                var discoveryResult = await DiscoveryService.DiscoverModelsAsync(
+                    config.Provider,
+                    config.ApiKey
+                );
+                if (discoveryResult.Success && discoveryResult.Models.Count > 0)
+                {
+                    models = discoveryResult.Models;
+                }
+            }
+            catch
+            { /* ignore, stick to fallback */
+            }
+        }
+        else
+        {
+            Snackbar.Add(
+                "Warning: API Key is missing or could not be decrypted. Please re-enter it.",
+                Severity.Warning
+            );
+        }
+
+        // Clone config for editing to prevent modifying the list directly before saving
+        var configToEdit = new UserAIConfiguration
+        {
+            Id = config.Id,
+            UserId = config.UserId,
+            Provider = config.Provider,
+            Name = config.Name,
+            ApiKey = config.ApiKey,
+            ModelId = config.ModelId,
+            IsActive = config.IsActive,
+            CreatedAt = config.CreatedAt,
+        };
+
+        var parameters = new DialogParameters<AISettingsEditDialog>
+        {
+            { x => x.Configuration, configToEdit },
+            { x => x.AvailableModels, models },
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+        };
+
+        var dialog = await DialogService.ShowAsync<AISettingsEditDialog>(
+            Localizer["EditConfiguration"],
+            parameters,
+            options
+        );
+        var result = await dialog.Result;
+
+        if (result?.Canceled == false && result.Data is UserAIConfiguration updatedConfig)
+        {
+            try
+            {
+                // ensure UserID is set (should be)
+                updatedConfig.UserId = _userId;
+                await ConfigurationService.SaveConfigurationAsync(updatedConfig);
+
+                // Refresh list
+                await LoadConfigurations();
+                Snackbar.Add(Localizer["ConfigurationUpdated"], Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error updating: {ex.Message}", Severity.Error);
+            }
+        }
     }
 
-    private class SettingsModel
+    private async Task DeleteConfiguration(UserAIConfiguration config)
     {
-        public string OpenAIApiKey { get; set; } = string.Empty;
-        public string GoogleGeminiApiKey { get; set; } = string.Empty;
-        public string ClaudeApiKey { get; set; } = string.Empty;
-        public string GroqApiKey { get; set; } = string.Empty;
-        public string DeepSeekApiKey { get; set; } = string.Empty;
-        public AIModel DefaultModel { get; set; } = AIModel.Gpt4o;
+        var confirmed = await DialogService.ShowMessageBox(
+            Localizer["DeleteConfiguration"],
+            Localizer["DeleteConfigConfirmation"],
+            yesText: Localizer["Delete"],
+            cancelText: Localizer["Cancel"]
+        );
+
+        if (confirmed == true)
+        {
+            try
+            {
+                var success = await ConfigurationService.DeleteConfigurationAsync(
+                    config.Id,
+                    _userId
+                );
+                if (success)
+                {
+                    _configurations.Remove(config);
+                    // If active was deleted, service might have activated another. Reload to be safe.
+                    await LoadConfigurations();
+                    Snackbar.Add(Localizer["ConfigurationDeleted"], Severity.Success);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error deleting: {ex.Message}", Severity.Error);
+            }
+        }
     }
+
+    private void ResetNewConfig()
+    {
+        _newConfig = new UserAIConfiguration { Provider = AIProvider.OpenAI }; // Default provider
+        _availableModels.Clear();
+        _modelsLoaded = false;
+        _showNewApiKey = false;
+    }
+
+    private static Color GetProviderColor(AIProvider provider) =>
+        provider switch
+        {
+            AIProvider.GoogleGemini => Color.Primary,
+            AIProvider.OpenAI => Color.Success,
+            AIProvider.Claude => Color.Warning,
+            AIProvider.Groq => Color.Info,
+            AIProvider.DeepSeek => Color.Secondary,
+            _ => Color.Default,
+        };
+
+    private static string GetProviderIcon(AIProvider provider) =>
+        provider switch
+        {
+            AIProvider.GoogleGemini => Icons.Material.Filled.AutoAwesome,
+            AIProvider.OpenAI => Icons.Material.Filled.Psychology,
+            AIProvider.Claude => Icons.Material.Filled.SmartToy,
+            AIProvider.Groq => Icons.Material.Filled.Speed,
+            AIProvider.DeepSeek => Icons.Material.Filled.Explore,
+            _ => Icons.Material.Filled.Memory,
+        };
 }

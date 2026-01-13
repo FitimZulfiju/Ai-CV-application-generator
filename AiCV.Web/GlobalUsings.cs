@@ -26,3 +26,7 @@ global using System.Collections.Generic;
 global using System.Diagnostics;
 global using System.Security.Claims;
 global using System.Threading.Tasks;
+global using Microsoft.Extensions.Localization;
+global using AiCV.Infrastructure.Resources;
+global using Microsoft.AspNetCore.DataProtection;
+global using Microsoft.AspNetCore.Localization;

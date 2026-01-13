@@ -1,10 +1,11 @@
 namespace AiCV.Infrastructure.Services
 {
-    public class GoogleGeminiService(HttpClient httpClient, string apiKey) : IAIService
+    public class GoogleGeminiService(HttpClient httpClient, string apiKey, string modelId)
+        : IAIService
     {
         private readonly HttpClient _httpClient = httpClient;
         private readonly string _apiKey = apiKey;
-        private const string Model = "gemini-2.0-flash"; // Using available model from list
+        private readonly string _modelId = modelId;
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
@@ -30,7 +31,7 @@ namespace AiCV.Infrastructure.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}",
+                $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
                 content
             );
 
@@ -66,7 +67,7 @@ namespace AiCV.Infrastructure.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}",
+                $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
                 content
             );
 
@@ -124,7 +125,7 @@ namespace AiCV.Infrastructure.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}",
+                $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
                 content
             );
 

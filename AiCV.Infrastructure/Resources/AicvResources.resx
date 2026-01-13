@@ -1,0 +1,911 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="OpenRouterApiKey" xml:space="preserve">
+    <value>OpenRouter API Key</value>
+  </data>
+  <data name="DefaultModel" xml:space="preserve">
+    <value>Default Model</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Save Settings</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="UseOpenRouter" xml:space="preserve">
+    <value>Use OpenRouter for dynamic model selection</value>
+  </data>
+  <data name="ModelDiscoveryHelper" xml:space="preserve">
+    <value>OpenRouter key allows you to discover and use any available LLM.</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Welcome to CV &amp; Cover Letter Generator</value>
+  </data>
+  <data name="ManageProfile" xml:space="preserve">
+    <value>Manage Profile</value>
+  </data>
+  <data name="GenerateApplication" xml:space="preserve">
+    <value>Generate Application</value>
+  </data>
+  <data name="ViewSampleCv" xml:space="preserve">
+    <value>View Sample CV</value>
+  </data>
+  <data name="GoToProfile" xml:space="preserve">
+    <value>Go to Profile</value>
+  </data>
+  <data name="StartGenerating" xml:space="preserve">
+    <value>Start Generating</value>
+  </data>
+  <data name="HowItWorks" xml:space="preserve">
+    <value>How it Works</value>
+  </data>
+  <data name="JobDetails" xml:space="preserve">
+    <value>Job Details</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Company Name</value>
+  </data>
+  <data name="JobTitle" xml:space="preserve">
+    <value>Job Title</value>
+  </data>
+  <data name="ManualEntryMode" xml:space="preserve">
+    <value>Manual Entry Mode</value>
+  </data>
+  <data name="JobUrl" xml:space="preserve">
+    <value>Job URL</value>
+  </data>
+  <data name="Fetch" xml:space="preserve">
+    <value>Fetch</value>
+  </data>
+  <data name="MarkdownEditor" xml:space="preserve">
+    <value>Editor (Markdown)</value>
+  </data>
+  <data name="JobDescription" xml:space="preserve">
+    <value>Job Description</value>
+  </data>
+  <data name="PreviewHtml" xml:space="preserve">
+    <value>Preview (HTML)</value>
+  </data>
+  <data name="CustomInstructions" xml:space="preserve">
+    <value>Custom Instructions (Optional)</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>Split</value>
+  </data>
+  <data name="GeneratedContent" xml:space="preserve">
+    <value>Generated Content</value>
+  </data>
+  <data name="VisualPreview" xml:space="preserve">
+    <value>Visual Preview</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Saved</value>
+  </data>
+  <data name="CoverLetterAndApplication" xml:space="preserve">
+    <value>Cover Letter &amp; Application</value>
+  </data>
+  <data name="TailoredCv" xml:space="preserve">
+    <value>Tailored CV</value>
+  </data>
+  <data name="ApplicationEmail" xml:space="preserve">
+    <value>Application Email</value>
+  </data>
+  <data name="Generating" xml:space="preserve">
+    <value>Generating...</value>
+  </data>
+  <data name="Fetching" xml:space="preserve">
+    <value>Fetching...</value>
+  </data>
+  <data name="MasterCvProfile" xml:space="preserve">
+    <value>Master CV Profile</value>
+  </data>
+  <data name="FormattingHelp" xml:space="preserve">
+    <value>Formatting Help</value>
+  </data>
+  <data name="PersonalDetails" xml:space="preserve">
+    <value>Personal Details</value>
+  </data>
+  <data name="UploadPicture" xml:space="preserve">
+    <value>Upload Picture</value>
+  </data>
+  <data name="ProfessionalTitle" xml:space="preserve">
+    <value>Professional Title</value>
+  </data>
+  <data name="ProfessionalSummary" xml:space="preserve">
+    <value>Professional Summary</value>
+  </data>
+  <data name="Experience" xml:space="preserve">
+    <value>Experience</value>
+  </data>
+  <data name="AddExperience" xml:space="preserve">
+    <value>Add Experience</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="CurrentRole" xml:space="preserve">
+    <value>Current Role</value>
+  </data>
+  <data name="Education" xml:space="preserve">
+    <value>Education</value>
+  </data>
+  <data name="AddEducation" xml:space="preserve">
+    <value>Add Education</value>
+  </data>
+  <data name="Institution" xml:space="preserve">
+    <value>Institution</value>
+  </data>
+  <data name="Degree" xml:space="preserve">
+    <value>Degree</value>
+  </data>
+  <data name="Skills" xml:space="preserve">
+    <value>Skills</value>
+  </data>
+  <data name="AddCategory" xml:space="preserve">
+    <value>Add Category</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="AddSkill" xml:space="preserve">
+    <value>Add Skill</value>
+  </data>
+  <data name="Projects" xml:space="preserve">
+    <value>Projects</value>
+  </data>
+  <data name="AddProject" xml:space="preserve">
+    <value>Add Project</value>
+  </data>
+  <data name="ProjectName" xml:space="preserve">
+    <value>Project Name</value>
+  </data>
+  <data name="TechnologiesUsed" xml:space="preserve">
+    <value>Technologies Used</value>
+  </data>
+  <data name="LinkGitHubLive" xml:space="preserve">
+    <value>Link (GitHub/Live)</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Languages</value>
+  </data>
+  <data name="AddLanguage" xml:space="preserve">
+    <value>Add Language</value>
+  </data>
+  <data name="Proficiency" xml:space="preserve">
+    <value>Proficiency</value>
+  </data>
+  <data name="Interests" xml:space="preserve">
+    <value>Interests</value>
+  </data>
+  <data name="AddInterest" xml:space="preserve">
+    <value>Add Interest</value>
+  </data>
+  <data name="CvPreview" xml:space="preserve">
+    <value>CV Preview</value>
+  </data>
+  <data name="FormattingHelpTitle" xml:space="preserve">
+    <value>Text Formatting Help</value>
+  </data>
+  <data name="LineBreaks" xml:space="preserve">
+    <value>Line Breaks</value>
+  </data>
+  <data name="BulletPoints" xml:space="preserve">
+    <value>Bullet Points</value>
+  </data>
+  <data name="HtmlTags" xml:space="preserve">
+    <value>HTML Tags</value>
+  </data>
+  <data name="GotIt" xml:space="preserve">
+    <value>Got it!</value>
+  </data>
+  <data name="AlbanianOnly" xml:space="preserve">
+    <value>Albanian Only</value>
+  </data>
+  <data name="CostDisclaimer" xml:space="preserve">
+    <value>Your AI provider API keys are linked to your personal accounts (OpenRouter, OpenAI, etc.). Usage costs will be billed directly to you by those providers based on your consumption.</value>
+  </data>
+  <data name="ConfiguredModels" xml:space="preserve">
+    <value>Configured Models</value>
+  </data>
+  <data name="NoConfigurationsYet" xml:space="preserve">
+    <value>No AI models have been configured yet.</value>
+  </data>
+  <data name="Models" xml:space="preserve">
+    <value>Models</value>
+  </data>
+  <data name="OpenRouterModel" xml:space="preserve">
+    <value>OpenRouter Model</value>
+  </data>
+  <data name="AddConfiguration" xml:space="preserve">
+    <value>Add Configuration</value>
+  </data>
+  <data name="Provider" xml:space="preserve">
+    <value>Provider</value>
+  </data>
+  <data name="Validate" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SetAsActive" xml:space="preserve">
+    <value>Set as Active</value>
+  </data>
+  <data name="ActiveConfigChanged" xml:space="preserve">
+    <value>Active configuration changed to {0}</value>
+  </data>
+  <data name="ConfigurationUpdated" xml:space="preserve">
+    <value>Configuration updated successfully</value>
+  </data>
+  <data name="ConfigurationDeleted" xml:space="preserve">
+    <value>Configuration deleted successfully</value>
+  </data>
+  <data name="DeleteConfiguration" xml:space="preserve">
+    <value>Delete Configuration</value>
+  </data>
+  <data name="DeleteConfigConfirmation" xml:space="preserve">
+    <value>Are you sure you want to delete this configuration?</value>
+  </data>
+  <data name="ConfigurationSaved" xml:space="preserve">
+    <value>Configuration saved successfully</value>
+  </data>
+  <data name="EditConfiguration" xml:space="preserve">
+    <value>Edit Configuration</value>
+  </data>
+  <data name="ConfigurationName" xml:space="preserve">
+    <value>Configuration Name</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <!-- Home Page -->
+  <data name="WelcomeTo" xml:space="preserve">
+    <value>Welcome to</value>
+  </data>
+  <data name="CvAndCoverLetter" xml:space="preserve">
+    <value>CV &amp; Cover Letter</value>
+  </data>
+  <data name="Generator" xml:space="preserve">
+    <value>Generator</value>
+  </data>
+  <data name="AiPoweredCareerAssistant" xml:space="preserve">
+    <value>Your AI-powered career assistant.</value>
+  </data>
+  <data name="DevelopedBy" xml:space="preserve">
+    <value>Developed by</value>
+  </data>
+  <!-- Generate Page -->
+  <data name="EnterJobDetailsForCoverLetter" xml:space="preserve">
+    <value>Enter job details and click Generate to create a cover letter.</value>
+  </data>
+  <data name="EnterJobDetailsForCv" xml:space="preserve">
+    <value>Enter job details and click Generate to create a tailored CV.</value>
+  </data>
+  <data name="EnterJobDetailsForEmail" xml:space="preserve">
+    <value>Enter job details and click Generate to create an application email.</value>
+  </data>
+  <!-- My Applications Page -->
+  <data name="NoApplicationsYet" xml:space="preserve">
+    <value>You haven't generated any applications yet. Go to</value>
+  </data>
+  <data name="ToCreateOne" xml:space="preserve">
+    <value>to create one!</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <!-- Admin Dashboard Page -->
+  <data name="AdminDashboard" xml:space="preserve">
+    <value>Admin Dashboard</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Export CSV</value>
+  </data>
+  <data name="TotalUsers" xml:space="preserve">
+    <value>Total Users</value>
+  </data>
+  <data name="ProfilesCreated" xml:space="preserve">
+    <value>Profiles Created</value>
+  </data>
+  <data name="ApplicationsGenerated" xml:space="preserve">
+    <value>Applications Generated</value>
+  </data>
+  <!-- System Logs Page -->
+  <data name="SystemLogs" xml:space="preserve">
+    <value>System Logs</value>
+  </data>
+  <data name="ClearOldLogs" xml:space="preserve">
+    <value>Clear Old Logs</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="LogEntries" xml:space="preserve">
+    <value>Log Entries</value>
+  </data>
+  <data name="AllLevels" xml:space="preserve">
+    <value>All Levels</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Timestamp</value>
+  </data>
+  <data name="Level" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Anonymous" xml:space="preserve">
+    <value>Anonymous</value>
+  </data>
+  <!-- NavMenu -->
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="LoggedInAs" xml:space="preserve">
+    <value>Logged in as</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <!-- Home Card Descriptions -->
+  <data name="ProfileCardDescription" xml:space="preserve">
+    <value>Update your Master CV, experience, education, and skills. This is the source of truth for all your applications.</value>
+  </data>
+  <data name="GenerateCardDescription" xml:space="preserve">
+    <value>Paste a job description and let AI tailor a cover letter and resume specifically for that role.</value>
+  </data>
+  <data name="SampleCvCardDescription" xml:space="preserve">
+    <value>See an example of a complete, well-filled CV profile. Use it as a reference when building your own.</value>
+  </data>
+  <data name="LinkedInUrl" xml:space="preserve">
+    <value>LinkedIn URL</value>
+  </data>
+  <data name="PortfolioUrl" xml:space="preserve">
+    <value>Portfolio URL</value>
+  </data>
+  <data name="EducationDescriptionHelper" xml:space="preserve">
+    <value>e.g. Ministry Recognition, Honors, Thesis</value>
+  </data>
+  <data name="SkillsHelper" xml:space="preserve">
+    <value>Add skill categories and skills. Click the chip's X to remove a skill.</value>
+  </data>
+  <data name="ProjectSectionTitleHelper" xml:space="preserve">
+    <value>First line = section header (e.g. 'AI-Enabled Analytics Module'), following lines = bullet points</value>
+  </data>
+  <data name="LanguageProficiencyHelper" xml:space="preserve">
+    <value>e.g. Native, Fluent, Intermediate</value>
+  </data>
+  <data name="Field" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="FormattingHelpDescription" xml:space="preserve">
+    <value>Different fields support different formatting. See details below.</value>
+  </data>
+  <data name="LineBreaksDescription" xml:space="preserve">
+    <value>Each new line in your text becomes a separate line or bullet point.</value>
+  </data>
+  <data name="BulletPointsDescription" xml:space="preserve">
+    <value>Start lines with - or * to create bullet points.</value>
+  </data>
+  <data name="HtmlTagsDescription" xml:space="preserve">
+    <value>You can use HTML directly for styling.</value>
+  </data>
+  <data name="WhereEachFormatWorks" xml:space="preserve">
+    <value>Where Each Format Works</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="AsBullets" xml:space="preserve">
+    <value>as bullets</value>
+  </data>
+  <data name="ExperienceDescription" xml:space="preserve">
+    <value>Experience Description</value>
+  </data>
+  <data name="ProjectDescription" xml:space="preserve">
+    <value>Project Description</value>
+  </data>
+  <data name="EducationDescription" xml:space="preserve">
+    <value>Education Description</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>This Month</value>
+  </data>
+  <data name="ApplicationsLast30Days" xml:space="preserve">
+    <value>Applications - Last 30 Days</value>
+  </data>
+  <data name="TopUsers" xml:space="preserve">
+    <value>Top Users</value>
+  </data>
+  <data name="NoApplicationsYetSimple" xml:space="preserve">
+    <value>No applications yet</value>
+  </data>
+  <data name="ActivityOverview" xml:space="preserve">
+    <value>Activity Overview</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="ThisWeek" xml:space="preserve">
+    <value>This Week</value>
+  </data>
+  <data name="SystemOverview" xml:space="preserve">
+    <value>System Overview</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="Applications" xml:space="preserve">
+    <value>Applications</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="UsersCountSuffix" xml:space="preserve">
+    <value>users</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="ApiKeys" xml:space="preserve">
+    <value>API Keys</value>
+  </data>
+  <data name="Apps" xml:space="preserve">
+    <value>Apps</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Lock</value>
+  </data>
+  <data name="RecentApplications" xml:space="preserve">
+    <value>Recent Applications</value>
+  </data>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Application not found.</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to List</value>
+  </data>
+  <data name="PrintCv" xml:space="preserve">
+    <value>Print CV</value>
+  </data>
+  <data name="CoverLetter" xml:space="preserve">
+    <value>Cover Letter</value>
+  </data>
+  <data name="UnableToLoadCoverLetter" xml:space="preserve">
+    <value>Unable to load cover letter.</value>
+  </data>
+  <data name="UnableToLoadTailoredCv" xml:space="preserve">
+    <value>Unable to load tailored CV.</value>
+  </data>
+  <data name="CopyEmail" xml:space="preserve">
+    <value>Copy Email</value>
+  </data>
+  <data name="NoApplicationEmailSaved" xml:space="preserve">
+    <value>No application email was saved for this application.</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="Stacktrace" xml:space="preserve">
+    <value>Stack Trace</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>Ai-CV Login</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember Me</value>
+  </data>
+  <data name="OrSignInWith" xml:space="preserve">
+    <value>Or sign in with</value>
+  </data>
+  <data name="ContinueWithGoogle" xml:space="preserve">
+    <value>Continue with Google</value>
+  </data>
+  <data name="ContinueWithMicrosoft" xml:space="preserve">
+    <value>Continue with Microsoft</value>
+  </data>
+  <data name="ContinueWithGitHub" xml:space="preserve">
+    <value>Continue with GitHub</value>
+  </data>
+  <data name="DontHaveAccount" xml:space="preserve">
+    <value>Don't have an account?</value>
+  </data>
+  <data name="RegisterHere" xml:space="preserve">
+    <value>Register here</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Create Account</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="AlreadyHaveAccount" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="LoginHere" xml:space="preserve">
+    <value>Login here</value>
+  </data>
+  <data name="PasswordRequirementHelper" xml:space="preserve">
+    <value>Minimum 6 characters, at least one uppercase, lowercase, and digit</value>
+  </data>
+  <data name="HowItWorksGuide" xml:space="preserve">
+    <value>How It Works &amp; Guide</value>
+  </data>
+  <data name="Step1" xml:space="preserve">
+    <value>Step 1</value>
+  </data>
+  <data name="BuildMasterCv" xml:space="preserve">
+    <value>Build Master CV</value>
+  </data>
+  <data name="BuildMasterCvDescription" xml:space="preserve">
+    <value>Go to the Profile page and fill in your details. This is your "Source of Truth" - add everything you've ever done.</value>
+  </data>
+  <data name="Step2" xml:space="preserve">
+    <value>Step 2</value>
+  </data>
+  <data name="ConnectAiKeys" xml:space="preserve">
+    <value>Connect AI Keys</value>
+  </data>
+  <data name="ConnectAiKeysDescription" xml:space="preserve">
+    <value>Ensure your API keys (OpenAI, Gemini, etc.) are set in Settings. The app needs these to generate content.</value>
+  </data>
+  <data name="Step3" xml:space="preserve">
+    <value>Step 3</value>
+  </data>
+  <data name="GenerateApplicationDescription" xml:space="preserve">
+    <value>Go to Generate, paste a Job URL or description. The AI will read your Master CV and the Job Description to create a perfectly tailored Resume and Cover Letter.</value>
+  </data>
+  <data name="HtmlFormatting" xml:space="preserve">
+    <value>HTML Formatting</value>
+  </data>
+  <data name="HtmlFormattingDescription" xml:space="preserve">
+    <value>You can use HTML tags in Description fields (Summary, Work Experience, etc.) to format your text.</value>
+  </data>
+  <data name="CodeToWrite" xml:space="preserve">
+    <value>Code to Write</value>
+  </data>
+  <data name="ResultPreview" xml:space="preserve">
+    <value>Result Preview</value>
+  </data>
+  <data name="InstallingUpdates" xml:space="preserve">
+    <value>Installing updates...</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Update Available</value>
+  </data>
+  <data name="ServerRestartingWait" xml:space="preserve">
+    <value>The server is restarting. Please wait...</value>
+  </data>
+  <data name="ImprovingSystemWorkSavedRestart" xml:space="preserve">
+    <value>We are improving the system. Your work is saved locally. Brief restart in {0}.</value>
+  </data>
+  <data name="BoldText" xml:space="preserve">
+    <value>Bold Text</value>
+  </data>
+  <data name="ItalicText" xml:space="preserve">
+    <value>Italic Text</value>
+  </data>
+  <data name="ColoredText" xml:space="preserve">
+    <value>Colored Text</value>
+  </data>
+  <data name="BulletList" xml:space="preserve">
+    <value>Bullet List</value>
+  </data>
+  <data name="LineBreak" xml:space="preserve">
+    <value>Line Break</value>
+  </data>
+  <data name="BetaWarning" xml:space="preserve">
+    <value>Beta - Data may reset during updates</value>
+  </data>
+  <data name="UnhandledError" xml:space="preserve">
+    <value>An unhandled error has occurred.</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="AiCvApplications" xml:space="preserve">
+    <value>AI CV &amp; Applications</value>
+  </data>
+  <data name="NoProfileDataToPreview" xml:space="preserve">
+    <value>No profile data available to preview.</value>
+  </data>
+  <data name="NoProfileData" xml:space="preserve">
+    <value>No profile data available.</value>
+  </data>
+  <data name="CoreCompetencies" xml:space="preserve">
+    <value>CORE COMPETENCIES</value>
+  </data>
+  <data name="NoSkillsListed" xml:space="preserve">
+    <value>No skills listed.</value>
+  </data>
+  <data name="WorkExperienceCv" xml:space="preserve">
+    <value>WORK EXPERIENCE</value>
+  </data>
+  <data name="NoWorkExperienceListed" xml:space="preserve">
+    <value>No work experience listed.</value>
+  </data>
+  <data name="EducationCv" xml:space="preserve">
+    <value>EDUCATION</value>
+  </data>
+  <data name="NoEducationListed" xml:space="preserve">
+    <value>No education listed.</value>
+  </data>
+  <data name="PersonalProjectsCv" xml:space="preserve">
+    <value>PERSONAL PROJECTS</value>
+  </data>
+  <data name="NoPersonalProjectsListed" xml:space="preserve">
+    <value>No personal projects listed.</value>
+  </data>
+  <data name="LanguagesCv" xml:space="preserve">
+    <value>LANGUAGES</value>
+  </data>
+  <data name="NoLanguagesListed" xml:space="preserve">
+    <value>No languages listed.</value>
+  </data>
+  <data name="InterestsCv" xml:space="preserve">
+    <value>INTERESTS</value>
+  </data>
+  <data name="NoInterestsListed" xml:space="preserve">
+    <value>No interests listed.</value>
+  </data>
+  <data name="ReferencesAvailableUponRequest" xml:space="preserve">
+    <value>References available upon request</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email:</value>
+  </data>
+  <data name="PhoneLabel" xml:space="preserve">
+    <value>Phone:</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Location:</value>
+  </data>
+  <data name="LinkedInLabel" xml:space="preserve">
+    <value>LinkedIn:</value>
+  </data>
+  <data name="GitHubLabel" xml:space="preserve">
+    <value>GitHub:</value>
+  </data>
+  <data name="TechnologiesLabel" xml:space="preserve">
+    <value>Technologies:</value>
+  </data>
+  <data name="ShowInCv" xml:space="preserve">
+    <value>Show in CV</value>
+  </data>
+  <data name="WillBeAutoDetected" xml:space="preserve">
+    <value>Will be Auto-detected</value>
+  </data>
+  <data name="PreviewWillAppearHere" xml:space="preserve">
+    <value>Preview will appear here...</value>
+  </data>
+  <data name="at" xml:space="preserve">
+    <value>at</value>
+  </data>
+  <data name="DownloadPdf" xml:space="preserve">
+    <value>Download PDF</value>
+  </data>
+  <data name="NoPdfData" xml:space="preserve">
+    <value>No PDF Data</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="ResetChanges" xml:space="preserve">
+    <value>Reset Changes</value>
+  </data>
+  <data name="EditResumeJson" xml:space="preserve">
+    <value>Edit Resume JSON</value>
+  </data>
+  <data name="EditResumeJsonHelper" xml:space="preserve">
+    <value>Edit the JSON structure directly. Ensure all keys and string values are quoted.</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="SectionTitle" xml:space="preserve">
+    <value>Section Title</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Generate" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="MyApplications" xml:space="preserve">
+    <value>My Applications</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>year</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>years</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>month</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>months</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>Present</value>
+  </data>
+  <data name="JobDescriptionInstructions" xml:space="preserve">
+    <value>E.g., 'Focus on leadership skills', 'Use formal tone', 'Keep cover letter under 300 words'</value>
+  </data>
+  <data name="RawDataWarning" xml:space="preserve">
+    <value>Warning: You are editing the raw data structure. Syntax errors will prevent the CV from rendering.</value>
+  </data>
+  <data name="EditEmailHelper" xml:space="preserve">
+    <value>Edit the email if needed before copying.</value>
+  </data>
+  <data name="GitHubPortfolioUrl" xml:space="preserve">
+    <value>GitHub/Portfolio URL</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="LanguageName" xml:space="preserve">
+    <value>Language Name</value>
+  </data>
+  <data name="InterestName" xml:space="preserve">
+    <value>Interest Name</value>
+  </data>
+</root>

@@ -236,7 +236,7 @@ public partial class Profile : IDisposable
         }
     }
 
-    private static string CalculateDuration(DateTime? start, DateTime? end)
+    private string CalculateDuration(DateTime? start, DateTime? end)
     {
         if (!start.HasValue)
             return "";
@@ -250,9 +250,15 @@ public partial class Profile : IDisposable
 
         var parts = new List<string>();
         if (years > 0)
-            parts.Add($"{years} year{(years > 1 ? "s" : "")}");
+        {
+            var yearKey = years > 1 ? "Years" : "Year";
+            parts.Add($"{years} {Localizer[yearKey]}");
+        }
         if (months > 0)
-            parts.Add($"{months} month{(months > 1 ? "s" : "")}");
+        {
+            var monthKey = months > 1 ? "Months" : "Month";
+            parts.Add($"{months} {Localizer[monthKey]}");
+        }
 
         return string.Join(" ", parts);
     }

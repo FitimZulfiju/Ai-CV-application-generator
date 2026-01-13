@@ -1,84 +1,78 @@
 namespace AiCV.Infrastructure.Services
 {
-    public class AIServiceFactory(IUserSettingsService userSettingsService, IHttpClientFactory httpClientFactory) : IAIServiceFactory
+    public class AIServiceFactory(
+        IUserAIConfigurationService userAIConfigurationService,
+        IHttpClientFactory httpClientFactory
+    ) : IAIServiceFactory
     {
-        private readonly IUserSettingsService _userSettingsService = userSettingsService;
+        private readonly IUserAIConfigurationService _userAIConfigurationService =
+            userAIConfigurationService;
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-        public async Task<IAIService> GetServiceAsync(AIProvider provider, string userId, AIModel? model = null)
+        public async Task<IAIService> GetServiceAsync(
+            AIProvider provider,
+            string userId,
+            string? modelId = null
+        )
         {
-            var settings = await _userSettingsService.GetUserSettingsAsync(userId);
+            var configurations = await _userAIConfigurationService.GetConfigurationsAsync(userId);
 
-            // Use passed model if provided, otherwise fallback to settings default, then to system default
-            AIModel selectedModel = model ?? settings?.DefaultModel ?? AIModel.Gpt4o;
+            // Priority 1: User asked for specific provider -> Find config for that provider.
+            // Prefer Active config if it matches the provider, otherwise take any config for that provider.
+            var config =
+                configurations.FirstOrDefault(c => c.Provider == provider && c.IsActive)
+                ?? configurations.FirstOrDefault(c => c.Provider == provider);
+
+            if (config == null || string.IsNullOrEmpty(config.ApiKey))
+            {
+                throw new InvalidOperationException(
+                    $"{provider} is not configured. Please add a configuration in Settings."
+                );
+            }
+
+            // Use modelId if passed, otherwise fallback to config's model, otherwise default string
+            string? selectedModelId = modelId ?? config.ModelId;
 
             return provider switch
             {
-                AIProvider.OpenAI => CreateOpenAIService(settings),
-                AIProvider.GoogleGemini => CreateGoogleGeminiService(settings, _httpClientFactory),
-                AIProvider.Anthropic => CreateClaudeService(settings, _httpClientFactory),
-                AIProvider.Groq => CreateGroqService(settings, _httpClientFactory),
-                AIProvider.DeepSeek => CreateDeepSeekService(settings, _httpClientFactory),
-                _ => throw new ArgumentException("Invalid AI Provider", nameof(provider))
+                AIProvider.OpenAI => new OpenAIService(config.ApiKey, selectedModelId ?? "gpt-4o"),
+                AIProvider.GoogleGemini => new GoogleGeminiService(
+                    _httpClientFactory.CreateClient(),
+                    config.ApiKey,
+                    selectedModelId ?? "gemini-2.0-flash-exp"
+                ),
+                AIProvider.Claude => new ClaudeService(
+                    _httpClientFactory.CreateClient(),
+                    config.ApiKey,
+                    selectedModelId ?? "claude-3-5-haiku-20241022"
+                ),
+                AIProvider.Groq => new GroqService(
+                    _httpClientFactory.CreateClient(),
+                    config.ApiKey,
+                    selectedModelId ?? "llama-3.3-70b-versatile"
+                ),
+                AIProvider.DeepSeek => new DeepSeekService(
+                    _httpClientFactory.CreateClient(),
+                    config.ApiKey,
+                    selectedModelId ?? "deepseek-chat"
+                ),
+                AIProvider.OpenRouter => CreateOpenRouterService(
+                    config.ApiKey,
+                    _httpClientFactory,
+                    selectedModelId ?? "google/gemini-2.0-flash-exp:free"
+                ),
+                _ => throw new ArgumentException("Invalid AI Provider", nameof(provider)),
             };
         }
 
-        private static OpenAIService CreateOpenAIService(UserSettings? settings)
+        private static IAIService CreateOpenRouterService(
+            string apiKey,
+            IHttpClientFactory httpClientFactory,
+            string modelId
+        )
         {
-            var apiKey = settings?.OpenAIApiKey;
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new InvalidOperationException("OpenAI API Key is not configured. Please go to Settings to configure it.");
-            }
-            return new OpenAIService(apiKey);
-        }
-
-        private static GoogleGeminiService CreateGoogleGeminiService(UserSettings? settings, IHttpClientFactory httpClientFactory)
-        {
-            var apiKey = settings?.GoogleGeminiApiKey;
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new InvalidOperationException("Google Gemini API Key is not configured. Please go to Settings to configure it.");
-            }
-
             var httpClient = httpClientFactory.CreateClient();
-            return new GoogleGeminiService(httpClient, apiKey);
-        }
-
-        private static ClaudeService CreateClaudeService(UserSettings? settings, IHttpClientFactory httpClientFactory)
-        {
-            var apiKey = settings?.ClaudeApiKey;
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new InvalidOperationException("Claude API Key is not configured. Please go to Settings to configure it.");
-            }
-
-            var httpClient = httpClientFactory.CreateClient();
-            return new ClaudeService(httpClient, apiKey);
-        }
-
-        private static GroqService CreateGroqService(UserSettings? settings, IHttpClientFactory httpClientFactory)
-        {
-            var apiKey = settings?.GroqApiKey;
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new InvalidOperationException("Groq API Key is not configured. Please go to Settings to configure it.");
-            }
-
-            var httpClient = httpClientFactory.CreateClient();
-            return new GroqService(httpClient, apiKey);
-        }
-
-        private static DeepSeekService CreateDeepSeekService(UserSettings? settings, IHttpClientFactory httpClientFactory)
-        {
-            var apiKey = settings?.DeepSeekApiKey;
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new InvalidOperationException("DeepSeek API Key is not configured. Please go to Settings to configure it.");
-            }
-
-            var httpClient = httpClientFactory.CreateClient();
-            return new DeepSeekService(httpClient, apiKey);
+            return new OpenRouterService(httpClient, apiKey, modelId);
         }
     }
 }

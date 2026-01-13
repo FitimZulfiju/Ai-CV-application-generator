@@ -1,28 +1,30 @@
 @page "/login"
 @using MudBlazor
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
-<PageTitle>Login - Ai-CV</PageTitle>
+<PageTitle>@Localizer["LoginTitle"] - Ai-CV</PageTitle>
 <MudContainer MaxWidth="MaxWidth.Small" Class="py-4 d-flex flex-column align-center justify-center"
     Style="min-height: 80vh;">
     <MudPaper Class="pa-6" Elevation="3" Style="width: 100%;">
-        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Ai-CV Login</MudText>
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">@Localizer["LoginTitle"]</MudText>
 
         <form method="post" action="/perform-login">
 
             <MudTextField T="string" @bind-Value="_email"
-                UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="Email"
+                UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="@Localizer["Email"]"
                 Variant="Variant.Outlined" InputType="InputType.Email" Adornment="Adornment.Start"
                 AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
 
             <MudTextField T="string" @bind-Value="_password"
-                UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })" Label="Password"
-                Variant="Variant.Outlined" InputType="@PasswordInputType" Adornment="Adornment.End"
-                AdornmentIcon="@PasswordIcon" OnAdornmentClick="TogglePasswordVisibility"
+                UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })"
+                Label="@Localizer["Password"]" Variant="Variant.Outlined" InputType="@PasswordInputType"
+                Adornment="Adornment.End" AdornmentIcon="@PasswordIcon" OnAdornmentClick="TogglePasswordVisibility"
                 AdornmentAriaLabel="Toggle password visibility" Class="mb-3" Required="true" />
 
             <div class="d-flex align-center mb-3">
                 <input type="hidden" name="rememberMe" value="@(_rememberMe.ToString().ToLower())" />
-                <MudCheckBox T="bool" @bind-Value="_rememberMe" Label="Remember Me" Color="Color.Primary" />
+                <MudCheckBox T="bool" @bind-Value="_rememberMe" Label="@Localizer["RememberMe"]"
+                    Color="Color.Primary" />
             </div>
 
             @if (!string.IsNullOrEmpty(Error))
@@ -32,35 +34,36 @@
             }
 
             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                FullWidth="true" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
+                FullWidth="true" StartIcon="@Icons.Material.Filled.Login">@Localizer["Login"]</MudButton>
         </form>
 
         <MudDivider Class="my-4" />
 
         @if (HasAnyExternalProvider)
         {
-            <MudText Typo="Typo.body2" Align="Align.Center" Class="mb-3" Color="Color.Secondary">Or sign in with</MudText>
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mb-3" Color="Color.Secondary">@Localizer["OrSignInWith"]
+            </MudText>
 
             <MudStack Spacing="2">
                 @if (IsGoogleConfigured)
                 {
                     <MudButton Href="/external-login/Google" Variant="Variant.Outlined" FullWidth="true"
                 StartIcon="@Icons.Custom.Brands.Google" Style="border-color: #DB4437; color: #DB4437;">
-                        Continue with Google
+                        @Localizer["ContinueWithGoogle"]
                     </MudButton>
                 }
                 @if (IsMicrosoftConfigured)
                 {
                     <MudButton Href="/external-login/Microsoft" Variant="Variant.Outlined" FullWidth="true"
                 StartIcon="@Icons.Custom.Brands.Microsoft" Style="border-color: #00a4ef; color: #00a4ef;">
-                        Continue with Microsoft
+                        @Localizer["ContinueWithMicrosoft"]
                     </MudButton>
                 }
                 @if (IsGitHubConfigured)
                 {
                     <MudButton Href="/external-login/GitHub" Variant="Variant.Outlined" FullWidth="true"
                 StartIcon="@Icons.Custom.Brands.GitHub" Style="border-color: #333; color: #333;">
-                        Continue with GitHub
+                        @Localizer["ContinueWithGitHub"]
                     </MudButton>
                 }
             </MudStack>
@@ -69,7 +72,7 @@
         }
 
         <MudText Align="Align.Center">
-            Don't have an account? <MudLink Href="/register">Register here</MudLink>
+            @Localizer["DontHaveAccount"] <MudLink Href="/register">@Localizer["RegisterHere"]</MudLink>
         </MudText>
     </MudPaper>
 </MudContainer>
