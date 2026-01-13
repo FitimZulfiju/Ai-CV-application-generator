@@ -138,7 +138,7 @@ public class JobApplicationOrchestratorTests
     public async Task SaveApplicationAsync_ShouldSaveToCvService()
     {
         // Arrange
-        var userId = "user1";
+        const string testUserId = "user1";
         var job = new JobPosting
         {
             Title = "Job Title",
@@ -147,18 +147,18 @@ public class JobApplicationOrchestratorTests
             Url = "https://example.com/job",
         };
         var profile = new CandidateProfile { Id = 1 };
-        var coverLetter = "Cover Letter";
+        const string testCoverLetter = "Cover Letter";
         var tailoredResume = new CandidateProfile { FullName = "Tailored" };
-        var applicationEmail = "Dear Hiring Manager...";
+        const string testApplicationEmail = "Dear Hiring Manager...";
 
         // Act
         await _orchestrator.SaveApplicationAsync(
-            userId,
+            testUserId,
             job,
             profile,
-            coverLetter,
+            testCoverLetter,
             tailoredResume,
-            applicationEmail
+            testApplicationEmail
         );
 
         // Assert - Note: The orchestrator creates a fresh JobPosting entity to avoid EF Core tracking issues
@@ -167,7 +167,7 @@ public class JobApplicationOrchestratorTests
             s =>
                 s.SaveApplicationAsync(
                     It.Is<GeneratedApplication>(app =>
-                        app.UserId == userId
+                        app.UserId == testUserId
                         && app.JobPosting != null
                         && app.JobPosting.Title == job.Title
                         && app.JobPosting.CompanyName == job.CompanyName
@@ -175,9 +175,9 @@ public class JobApplicationOrchestratorTests
                         && app.JobPosting.Url == job.Url
                         && app.JobPosting.Id == 0 // Fresh entity should have Id = 0
                         && app.CandidateProfileId == profile.Id
-                        && app.CoverLetterContent == coverLetter
+                        && app.CoverLetterContent == testCoverLetter
                         && !string.IsNullOrEmpty(app.TailoredResumeJson)
-                        && app.ApplicationEmailContent == applicationEmail
+                        && app.ApplicationEmailContent == testApplicationEmail
                     )
                 ),
             Times.Once

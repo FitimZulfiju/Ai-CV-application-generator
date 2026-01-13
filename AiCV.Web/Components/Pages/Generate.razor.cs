@@ -371,7 +371,7 @@ public partial class Generate : IDisposable
             LoadingService.Update(100, "Complete!");
             await Task.Delay(300);
 
-            Snackbar.Add($"Application Generated!", Severity.Success);
+            Snackbar.Add("Application Generated!", Severity.Success);
             _previewCoverLetter = true; // Auto-switch to preview
 
             // Only allow saving if content is different from what was previously saved

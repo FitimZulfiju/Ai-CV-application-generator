@@ -103,23 +103,6 @@ public class DeepSeekService(HttpClient httpClient, string apiKey, string modelI
         return result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
     }
 
-    private static string BuildPrompt(CandidateProfile profile, JobPosting job)
-    {
-        return $@"
-            Candidate Profile:
-            Name: {profile.FullName}
-            Email: {profile.Email}
-            Phone: {profile.PhoneNumber}
-            Professional Summary: {profile.ProfessionalSummary}
-            Skills: {string.Join(", ", profile.Skills.Select(s => s.Name))}
-
-            Job Posting:
-            Company: {job.CompanyName}
-            Position: {job.Title}
-            Description: {job.Description}
-";
-    }
-
     private class DeepSeekResponse
     {
         public List<Choice>? Choices { get; set; }

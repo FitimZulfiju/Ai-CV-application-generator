@@ -468,12 +468,14 @@ app.MapPost(
             logger.LogWarning("Manual update schedule requested via API.");
             updateCheckService.ScheduleUpdate(180); // 3 minutes
 
-            var attempt = 0;
             // Short wait to ensure time is set if lock contention (rare)
-            while (updateCheckService.ScheduledUpdateTime == null && attempt < 5)
+            for (
+                var attempt = 0;
+                updateCheckService.ScheduledUpdateTime == null && attempt < 5;
+                attempt++
+            )
             {
                 System.Threading.Thread.Sleep(50);
-                attempt++;
             }
 
             double? seconds = null;

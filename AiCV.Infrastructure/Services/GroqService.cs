@@ -13,30 +13,26 @@ namespace AiCV.Infrastructure.Services
             string? customPrompt = null
         )
         {
-            var prompt =
-                $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
-
-            var requestPayload = new
-            {
-                model = _modelId,
-                messages = new[]
-                {
+            var content = new StringContent(
+                JsonSerializer.Serialize(
                     new
                     {
-                        role = "system",
-                        content = string.IsNullOrWhiteSpace(customPrompt)
-                            ? AISystemPrompts.CoverLetterSystemPrompt
-                            : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                    },
-                    new { role = "user", content = BuildPrompt(profile, job) },
-                },
-                temperature = 0.7,
-                max_tokens = 4096,
-            };
-
-            var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(
-                jsonPayload,
+                        model = _modelId,
+                        messages = new[]
+                        {
+                            new
+                            {
+                                role = "system",
+                                content = string.IsNullOrWhiteSpace(customPrompt)
+                                    ? AISystemPrompts.CoverLetterSystemPrompt
+                                    : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                            },
+                            new { role = "user", content = BuildPrompt(profile, job) },
+                        },
+                        temperature = 0.7,
+                        max_tokens = 4096,
+                    }
+                ),
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
@@ -64,30 +60,30 @@ namespace AiCV.Infrastructure.Services
             string? customPrompt = null
         )
         {
-            var prompt =
-                $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
-
-            var requestPayload = new
-            {
-                model = _modelId,
-                messages = new[]
-                {
+            var content = new StringContent(
+                JsonSerializer.Serialize(
                     new
                     {
-                        role = "system",
-                        content = string.IsNullOrWhiteSpace(customPrompt)
-                            ? AISystemPrompts.ResumeTailoringSystemPrompt
-                            : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                    },
-                    new { role = "user", content = BuildPrompt(profile, job, isResume: true) },
-                },
-                temperature = 0.7,
-                max_tokens = 4096,
-            };
-
-            var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(
-                jsonPayload,
+                        model = _modelId,
+                        messages = new[]
+                        {
+                            new
+                            {
+                                role = "system",
+                                content = string.IsNullOrWhiteSpace(customPrompt)
+                                    ? AISystemPrompts.ResumeTailoringSystemPrompt
+                                    : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                            },
+                            new
+                            {
+                                role = "user",
+                                content = BuildPrompt(profile, job, isResume: true),
+                            },
+                        },
+                        temperature = 0.7,
+                        max_tokens = 4096,
+                    }
+                ),
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
@@ -103,9 +99,9 @@ namespace AiCV.Infrastructure.Services
                 throw new Exception($"Groq API Error: {response.StatusCode} - {error}");
             }
 
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
-            var textResponse = groqResponse?.Choices?[0]?.Message?.Content;
+            var textResponse = JsonSerializer
+                .Deserialize<GroqResponse>(await response.Content.ReadAsStringAsync())
+                ?.Choices?[0]?.Message?.Content;
 
             if (string.IsNullOrEmpty(textResponse))
             {

@@ -42,7 +42,10 @@ public class ModelDiscoveryService(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error discovering models for {Provider}", provider);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error discovering models for {Provider}", provider);
+            }
             return new ModelDiscoveryResult
             {
                 Success = true,
@@ -60,11 +63,13 @@ public class ModelDiscoveryService(
         );
         var response = await client.GetAsync("https://api.openai.com/v1/models");
         if (!response.IsSuccessStatusCode)
+        {
             return new ModelDiscoveryResult
             {
                 Success = true,
                 Models = GetFallbackModels(AIProvider.OpenAI),
             };
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(content);
@@ -73,7 +78,7 @@ public class ModelDiscoveryService(
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
             .Where(id => id.StartsWith("gpt-") || id.StartsWith("o1") || id.StartsWith("o3"))
-            .OrderByDescending(id => id)
+            .OrderDescending()
             .ToList();
 
         return new ModelDiscoveryResult
@@ -90,11 +95,13 @@ public class ModelDiscoveryService(
             $"https://generativelanguage.googleapis.com/v1beta/models?key={apiKey}"
         );
         if (!response.IsSuccessStatusCode)
+        {
             return new ModelDiscoveryResult
             {
                 Success = true,
                 Models = GetFallbackModels(AIProvider.GoogleGemini),
             };
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(content);
@@ -103,7 +110,7 @@ public class ModelDiscoveryService(
             .EnumerateArray()
             .Select(m => m.GetProperty("name").GetString()!.Replace("models/", ""))
             .Where(id => id.StartsWith("gemini-"))
-            .OrderByDescending(id => id)
+            .OrderDescending()
             .ToList();
 
         return new ModelDiscoveryResult
@@ -122,11 +129,13 @@ public class ModelDiscoveryService(
         );
         var response = await client.GetAsync("https://api.groq.com/openai/v1/models");
         if (!response.IsSuccessStatusCode)
+        {
             return new ModelDiscoveryResult
             {
                 Success = true,
                 Models = GetFallbackModels(AIProvider.Groq),
             };
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(content);
@@ -134,7 +143,7 @@ public class ModelDiscoveryService(
             .RootElement.GetProperty("data")
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
-            .OrderByDescending(id => id)
+            .OrderDescending()
             .ToList();
 
         return new ModelDiscoveryResult
@@ -153,11 +162,13 @@ public class ModelDiscoveryService(
         );
         var response = await client.GetAsync("https://api.deepseek.com/v1/models");
         if (!response.IsSuccessStatusCode)
+        {
             return new ModelDiscoveryResult
             {
                 Success = true,
                 Models = GetFallbackModels(AIProvider.DeepSeek),
             };
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(content);
@@ -165,7 +176,7 @@ public class ModelDiscoveryService(
             .RootElement.GetProperty("data")
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
-            .OrderByDescending(id => id)
+            .OrderDescending()
             .ToList();
 
         return new ModelDiscoveryResult
@@ -187,11 +198,13 @@ public class ModelDiscoveryService(
 
         var response = await client.GetAsync("https://openrouter.ai/api/v1/models");
         if (!response.IsSuccessStatusCode)
+        {
             return new ModelDiscoveryResult
             {
                 Success = false,
                 ErrorMessage = $"API returned {response.StatusCode}",
             };
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(content);
@@ -199,7 +212,7 @@ public class ModelDiscoveryService(
             .RootElement.GetProperty("data")
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
-            .OrderBy(id => id)
+            .Order()
             .ToList();
 
         return new ModelDiscoveryResult { Success = true, Models = models };

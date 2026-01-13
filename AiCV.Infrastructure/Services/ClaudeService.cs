@@ -14,9 +14,6 @@ namespace AiCV.Infrastructure.Services
             string? customPrompt = null
         )
         {
-            string prompt =
-                $"{AISystemPrompts.CoverLetterSystemPrompt}\n\n{BuildPrompt(profile, job)}";
-
             var requestPayload = new
             {
                 model = _modelId,
@@ -54,9 +51,6 @@ namespace AiCV.Infrastructure.Services
             string? customPrompt = null
         )
         {
-            var prompt =
-                $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
-
             var requestPayload = new
             {
                 model = _modelId,

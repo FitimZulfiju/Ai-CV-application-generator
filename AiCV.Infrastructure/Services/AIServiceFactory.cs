@@ -65,7 +65,7 @@ namespace AiCV.Infrastructure.Services
             };
         }
 
-        private static IAIService CreateOpenRouterService(
+        private static OpenRouterService CreateOpenRouterService(
             string apiKey,
             IHttpClientFactory httpClientFactory,
             string modelId

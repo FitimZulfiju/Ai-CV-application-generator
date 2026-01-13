@@ -32,10 +32,9 @@ public class UserAIConfigurationService(
             c.UserId == userId && c.IsActive
         );
 
-        if (config != null)
-        {
-            config.ApiKey = Unprotect(config.ApiKey);
-        }
+        if (config is null)
+            return null;
+        config.ApiKey = Unprotect(config.ApiKey);
         return config;
     }
 
@@ -45,11 +44,9 @@ public class UserAIConfigurationService(
             c.Id == id && c.UserId == userId
         );
 
-        if (config != null)
-        {
-            config.ApiKey = Unprotect(config.ApiKey);
-        }
-
+        if (config is null)
+            return null;
+        config.ApiKey = Unprotect(config.ApiKey);
         return config;
     }
 

@@ -7,11 +7,6 @@ namespace AiCV.Infrastructure.Services
         private readonly string _apiKey = apiKey;
         private readonly string _modelId = modelId;
 
-        private static readonly JsonSerializerOptions _jsonOptions = new()
-        {
-            PropertyNameCaseInsensitive = true,
-        };
-
         public async Task<string> GenerateCoverLetterAsync(
             CandidateProfile profile,
             JobPosting job,

@@ -12,7 +12,7 @@ public partial class UserGuideDialog
 
     protected record FormattingExample(string Description, string Code, string Preview);
 
-    protected List<FormattingExample> _formattingExamples =>
+    private List<FormattingExample> FormattingExamples =>
         [
             new(Localizer["BoldText"], "<b>Leader</b>", "<b>Leader</b>"),
             new(Localizer["ItalicText"], "<i>Innovative</i>", "<i>Innovative</i>"),

@@ -4,11 +4,6 @@ namespace AiCV.Infrastructure.Services
     {
         private readonly ChatClient _chatClient = new(modelId, new ApiKeyCredential(apiKey));
 
-        private static readonly JsonSerializerOptions _jsonOptions = new()
-        {
-            PropertyNameCaseInsensitive = true,
-        };
-
         public async Task<string> GenerateCoverLetterAsync(
             CandidateProfile profile,
             JobPosting job,

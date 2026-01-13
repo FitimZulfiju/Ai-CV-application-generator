@@ -50,7 +50,7 @@ namespace AiCV.Infrastructure.Services
                 settings.OpenRouterApiKey = Decrypt(settings.OpenRouterApiKey);
             }
 
-            Console.WriteLine($"[UserSettingsService] Settings retrieved.");
+            Console.WriteLine("[UserSettingsService] Settings retrieved.");
             return settings;
         }
 

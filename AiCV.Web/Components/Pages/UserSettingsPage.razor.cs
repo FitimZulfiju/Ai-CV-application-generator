@@ -39,7 +39,7 @@ public partial class UserSettingsPage
     private bool _showCostAlert = true;
 
     // Available providers for dropdown
-    private List<AIProvider> _availableProviders = Enum.GetValues<AIProvider>().ToList();
+    private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
 
     private bool CanAddConfiguration =>
         !string.IsNullOrWhiteSpace(_newConfig.ApiKey)
@@ -157,7 +157,7 @@ public partial class UserSettingsPage
         }
     }
 
-    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken token)
+    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken _)
     {
         // If text is empty, show all models
         if (string.IsNullOrWhiteSpace(value))
