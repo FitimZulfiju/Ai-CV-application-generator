@@ -10,7 +10,19 @@ resumeButton.addEventListener("click", resume);
 
 function handleReconnectStateChanged(event) {
     if (event.detail.state === "show") {
-        reconnectModal.showModal();
+        // Delay showing the modal to avid flashing during quick reloads
+        setTimeout(() => {
+            if (reconnectModal.classList.contains("components-reconnect-hide")) {
+                return; // Abort if it was hidden in the meantime
+            }
+            // Check if we are still in "show" state? 
+            // Ideally we just show it, but CSS transition handles the fade in.
+            // However, `showModal()` forces it visible. 
+            // Let's rely on CSS opacity but we invoke showModal() immediately?
+            // No, the user said "looks like taking photo" -> white flash.
+            // We delay the actual showModal call.
+            reconnectModal.showModal();
+        }, 500);
     } else if (event.detail.state === "hide") {
         reconnectModal.close();
     } else if (event.detail.state === "failed") {
