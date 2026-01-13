@@ -144,16 +144,16 @@ public partial class UserSettingsPage
 
     private void OnModelSelected()
     {
-        // Auto-generate name if empty
+        // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
         if (
             !string.IsNullOrWhiteSpace(_newConfig.ModelId)
             && (
                 string.IsNullOrWhiteSpace(_newConfig.Name)
-                || _newConfig.Name.Contains(_newConfig.Provider.ToString())
+                || _availableModels.Contains(_newConfig.Name)
             )
         )
         {
-            _newConfig.Name = $"{_newConfig.Provider} - {_newConfig.ModelId}";
+            _newConfig.Name = _newConfig.ModelId;
         }
     }
 
@@ -226,6 +226,19 @@ public partial class UserSettingsPage
 
     private async Task EditConfiguration(UserAIConfiguration config)
     {
+        // Clone config for editing to prevent modifying the list directly before saving
+        var configToEdit = new UserAIConfiguration
+        {
+            Id = config.Id,
+            UserId = config.UserId,
+            Provider = config.Provider,
+            Name = config.Name,
+            ApiKey = config.ApiKey,
+            ModelId = config.ModelId,
+            IsActive = config.IsActive,
+            CreatedAt = config.CreatedAt,
+        };
+
         // We need to fetch models for this config to populate dropdown in dialog
         // Fallback first to avoid delay
         var models = DiscoveryService.GetFallbackModels(config.Provider);
@@ -233,8 +246,21 @@ public partial class UserSettingsPage
         // If we want real discovery on edit, we might need a "Refresh Models" button in dialog
         // or try to discover immediately if we have the key (which we do, unprotectd).
         // Let's try discovery if key is present.
-        if (!string.IsNullOrEmpty(config.ApiKey))
+        if (string.IsNullOrEmpty(config.ApiKey))
         {
+            Snackbar.Add("Warning: API Key is missing. Please enter it.", Severity.Warning);
+        }
+        else if (config.ApiKey == "DECRYPTION_FAILED")
+        {
+            Snackbar.Add(
+                "Error: API Key could not be decrypted. This usually happens after a system restart if keys weren't persisted, or if keys were rotated. Please re-enter it.",
+                Severity.Error
+            );
+            configToEdit.ApiKey = string.Empty; // Clear the token so user doesn't save it
+        }
+        else
+        {
+            // Try discovery if we have a valid-looking key
             try
             {
                 var discoveryResult = await DiscoveryService.DiscoverModelsAsync(
@@ -250,26 +276,6 @@ public partial class UserSettingsPage
             { /* ignore, stick to fallback */
             }
         }
-        else
-        {
-            Snackbar.Add(
-                "Warning: API Key is missing or could not be decrypted. Please re-enter it.",
-                Severity.Warning
-            );
-        }
-
-        // Clone config for editing to prevent modifying the list directly before saving
-        var configToEdit = new UserAIConfiguration
-        {
-            Id = config.Id,
-            UserId = config.UserId,
-            Provider = config.Provider,
-            Name = config.Name,
-            ApiKey = config.ApiKey,
-            ModelId = config.ModelId,
-            IsActive = config.IsActive,
-            CreatedAt = config.CreatedAt,
-        };
 
         var parameters = new DialogParameters<AISettingsEditDialog>
         {

@@ -1,11 +1,11 @@
-namespace AiCV.Infrastructure.Services;
-
 public class UserAIConfigurationService(
     ApplicationDbContext context,
-    IDataProtectionProvider dataProtectionProvider
+    IDataProtectionProvider dataProtectionProvider,
+    ILogger<UserAIConfigurationService> logger
 ) : IUserAIConfigurationService
 {
     private readonly ApplicationDbContext _context = context;
+    private readonly ILogger<UserAIConfigurationService> _logger = logger;
     private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(
         "AiCV.AIConfigurations"
     );
@@ -164,9 +164,10 @@ public class UserAIConfigurationService(
         {
             return _protector.Unprotect(input);
         }
-        catch
+        catch (Exception ex)
         {
-            return string.Empty; // Fail safely
+            _logger.LogError(ex, "Failed to unprotect API Key.");
+            return "DECRYPTION_FAILED"; // Use token to distinguish in UI
         }
     }
 }
