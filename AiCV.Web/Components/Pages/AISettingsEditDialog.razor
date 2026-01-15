@@ -12,7 +12,7 @@
 
             <MudAutocomplete T="string" Label="@Localizer["Model"]" @bind-Value="UserConfiguration.ModelId"
                 @bind-Value:after="OnModelSelected" Variant="Variant.Outlined" Margin="Margin.Dense"
-                SearchFunc="@SearchModels" Clearable="true" CoerceValue="true" />
+                SearchFunc="@SearchModels" Clearable="true" CoerceValue="false" />
 
             @if (!string.IsNullOrEmpty(UserConfiguration.CostType))
             {

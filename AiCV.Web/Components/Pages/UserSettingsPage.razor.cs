@@ -13,10 +13,10 @@ public partial class UserSettingsPage
 
     private List<AIModelDto> _availableModels = [];
     private AIModelDto? _selectedModelMetadata;
-    private bool _modelsLoaded = false;
-    private bool _isValidating = false;
-    private bool _isTestingConnection = false;
-    private bool _showNewApiKey = false;
+    private bool _modelsLoaded;
+    private bool _isValidating;
+    private bool _isTestingConnection;
+    private bool _showNewApiKey;
     private bool _showCostAlert = true;
 
     // Available providers for dropdown
@@ -128,21 +128,19 @@ public partial class UserSettingsPage
         if (_selectedModelMetadata != null)
         {
             _newConfig.CostType = _selectedModelMetadata.CostType;
-            _newConfig.Notes = _selectedModelMetadata.Notes.Count != 0
-                ? string.Join(", ", _selectedModelMetadata.Notes)
-                : null;
-        }
+            _newConfig.Notes =
+                _selectedModelMetadata.Notes.Count != 0
+                    ? string.Join(", ", _selectedModelMetadata.Notes)
+                    : null;
 
-        // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
-        if (
-            !string.IsNullOrWhiteSpace(_newConfig.ModelId)
-            && (
+            // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
+            if (
                 string.IsNullOrWhiteSpace(_newConfig.Name)
                 || _availableModels.Any(m => m.ModelId == _newConfig.Name)
             )
-        )
-        {
-            _newConfig.Name = _newConfig.ModelId;
+            {
+                _newConfig.Name = _newConfig.ModelId;
+            }
         }
     }
 
