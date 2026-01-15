@@ -166,7 +166,7 @@ builder
 builder.Services.AddLocalization();
 
 // Configure supported cultures for localization
-var supportedCultures = new[] { "en", "sq" };
+var supportedCultures = new[] { "en", "sq", "da" };
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     options

@@ -24,5 +24,13 @@
                 <span>Shqip</span>
             </MudStack>
         </MudMenuItem>
+        <MudMenuItem OnClick='@(() => SwitchLanguage("da"))'>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudImage
+                    Src="@($"data:image/svg+xml;base64,{Convert.ToBase64String(Encoding.UTF8.GetBytes(FlagIcons.DK))}")"
+                    Alt="Denmark" Width="24" Height="24" ObjectFit="ObjectFit.Contain" />
+                <span>Danish</span>
+            </MudStack>
+        </MudMenuItem>
     </ChildContent>
 </MudMenu>
