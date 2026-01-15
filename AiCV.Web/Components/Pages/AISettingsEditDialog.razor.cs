@@ -17,6 +17,20 @@ public partial class AISettingsEditDialog
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(UserConfiguration));
 
+    private void OnModelSelected()
+    {
+        var selectedModel = AvailableModels.FirstOrDefault(m =>
+            m.ModelId == UserConfiguration.ModelId
+        );
+        if (selectedModel != null)
+        {
+            UserConfiguration.CostType = selectedModel.CostType;
+            UserConfiguration.Notes = selectedModel.Notes.Count != 0
+                ? string.Join(", ", selectedModel.Notes)
+                : null;
+        }
+    }
+
     private Task<IEnumerable<string>> SearchModels(string value, CancellationToken _)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -25,8 +39,10 @@ public partial class AISettingsEditDialog
         }
 
         var filtered = AvailableModels
-            .Where(m => m.ModelId.Contains(value, StringComparison.OrdinalIgnoreCase)
-                     || (m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) == true))
+            .Where(m =>
+                m.ModelId.Contains(value, StringComparison.OrdinalIgnoreCase)
+                || (m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) == true)
+            )
             .Select(m => m.ModelId);
 
         return Task.FromResult(filtered);

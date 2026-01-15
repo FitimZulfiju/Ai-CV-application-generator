@@ -125,6 +125,14 @@ public partial class UserSettingsPage
             m.ModelId == _newConfig.ModelId
         );
 
+        if (_selectedModelMetadata != null)
+        {
+            _newConfig.CostType = _selectedModelMetadata.CostType;
+            _newConfig.Notes = _selectedModelMetadata.Notes.Count != 0
+                ? string.Join(", ", _selectedModelMetadata.Notes)
+                : null;
+        }
+
         // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
         if (
             !string.IsNullOrWhiteSpace(_newConfig.ModelId)
@@ -264,6 +272,8 @@ public partial class UserSettingsPage
             ApiKey = config.ApiKey,
             ModelId = config.ModelId,
             IsActive = config.IsActive,
+            CostType = config.CostType,
+            Notes = config.Notes,
             CreatedAt = config.CreatedAt,
         };
 
@@ -299,16 +309,24 @@ public partial class UserSettingsPage
                 {
                     models = discoveryResult.Models;
                 }
+                else if (!discoveryResult.Success)
+                {
+                    Snackbar.Add(
+                        $"{Localizer["DiscoveryFailed"]}: {discoveryResult.ErrorMessage}",
+                        Severity.Warning
+                    );
+                }
             }
-            catch
-            { /* ignore, stick to fallback */
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Discovery error: {ex.Message}", Severity.Warning);
             }
         }
 
         var parameters = new DialogParameters<AISettingsEditDialog>
         {
             { x => x.UserConfiguration, configToEdit },
-            { x => x.AvailableModels, models }
+            { x => x.AvailableModels, models },
         };
 
         var options = new DialogOptions

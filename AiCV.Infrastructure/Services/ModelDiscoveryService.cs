@@ -2,11 +2,13 @@ namespace AiCV.Infrastructure.Services;
 
 public class ModelDiscoveryService(
     IHttpClientFactory httpClientFactory,
-    ILogger<ModelDiscoveryService> logger
+    ILogger<ModelDiscoveryService> logger,
+    IStringLocalizer<AicvResources> localizer
 ) : IModelDiscoveryService
 {
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private readonly ILogger<ModelDiscoveryService> _logger = logger;
+    private readonly IStringLocalizer<AicvResources> _localizer = localizer;
 
     public async Task<ModelDiscoveryResult> DiscoverModelsAsync(AIProvider provider, string apiKey)
     {
@@ -15,7 +17,7 @@ public class ModelDiscoveryService(
             return new ModelDiscoveryResult
             {
                 Success = false,
-                ErrorMessage = "API key is required",
+                ErrorMessage = _localizer["ApiKeyIsRequired"],
             };
         }
 
@@ -28,15 +30,11 @@ public class ModelDiscoveryService(
                 AIProvider.Groq => await DiscoverGroqModelsAsync(apiKey),
                 AIProvider.DeepSeek => await DiscoverDeepSeekModelsAsync(apiKey),
                 AIProvider.OpenRouter => await DiscoverOpenRouterModelsAsync(apiKey),
-                AIProvider.Claude => new ModelDiscoveryResult
-                {
-                    Success = true,
-                    Models = GetFallbackModels(AIProvider.Claude),
-                },
+                AIProvider.Claude => await DiscoverClaudeModelsAsync(apiKey),
                 _ => new ModelDiscoveryResult
                 {
                     Success = false,
-                    ErrorMessage = "Provider does not support discovery",
+                    ErrorMessage = _localizer["ProviderDoesNotSupportDiscovery"],
                 },
             };
         }
@@ -46,11 +44,7 @@ public class ModelDiscoveryService(
             {
                 _logger.LogError(ex, "Error discovering models for {Provider}", provider);
             }
-            return new ModelDiscoveryResult
-            {
-                Success = true,
-                Models = GetFallbackModels(provider),
-            };
+            return new ModelDiscoveryResult { Success = false, ErrorMessage = ex.Message };
         }
     }
 
@@ -64,10 +58,16 @@ public class ModelDiscoveryService(
         var response = await client.GetAsync("https://api.openai.com/v1/models");
         if (!response.IsSuccessStatusCode)
         {
+            var error = await response.Content.ReadAsStringAsync();
             return new ModelDiscoveryResult
             {
-                Success = true,
-                Models = GetFallbackModels(AIProvider.OpenAI),
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.OpenAI,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
             };
         }
 
@@ -104,10 +104,16 @@ public class ModelDiscoveryService(
         );
         if (!response.IsSuccessStatusCode)
         {
+            var error = await response.Content.ReadAsStringAsync();
             return new ModelDiscoveryResult
             {
-                Success = true,
-                Models = GetFallbackModels(AIProvider.GoogleGemini),
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.GoogleGemini,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
             };
         }
 
@@ -145,10 +151,16 @@ public class ModelDiscoveryService(
         var response = await client.GetAsync("https://api.groq.com/openai/v1/models");
         if (!response.IsSuccessStatusCode)
         {
+            var error = await response.Content.ReadAsStringAsync();
             return new ModelDiscoveryResult
             {
-                Success = true,
-                Models = GetFallbackModels(AIProvider.Groq),
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.Groq,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
             };
         }
 
@@ -185,10 +197,16 @@ public class ModelDiscoveryService(
         var response = await client.GetAsync("https://api.deepseek.com/v1/models");
         if (!response.IsSuccessStatusCode)
         {
+            var error = await response.Content.ReadAsStringAsync();
             return new ModelDiscoveryResult
             {
-                Success = true,
-                Models = GetFallbackModels(AIProvider.DeepSeek),
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.DeepSeek,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
             };
         }
 
@@ -225,13 +243,36 @@ public class ModelDiscoveryService(
         client.DefaultRequestHeaders.Add("HTTP-Referer", "https://github.com/FitimZulfiju/AiCV");
         client.DefaultRequestHeaders.Add("X-Title", "AiCV Application Generator");
 
-        var response = await client.GetAsync("https://openrouter.ai/api/v1/models");
-        if (!response.IsSuccessStatusCode)
+        // PROBE: OpenRouter's /models is public. We MUST call /auth/key to verify the actual key.
+        var probeResponse = await client.GetAsync("https://openrouter.ai/api/v1/auth/key");
+        if (!probeResponse.IsSuccessStatusCode)
         {
+            var error = await probeResponse.Content.ReadAsStringAsync();
             return new ModelDiscoveryResult
             {
                 Success = false,
-                ErrorMessage = $"API returned {response.StatusCode}",
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.OpenRouter,
+                    error,
+                    probeResponse.StatusCode,
+                    _localizer
+                ),
+            };
+        }
+
+        var response = await client.GetAsync("https://openrouter.ai/api/v1/models");
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            return new ModelDiscoveryResult
+            {
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.OpenRouter,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
             };
         }
 
@@ -289,7 +330,42 @@ public class ModelDiscoveryService(
         return new ModelDiscoveryResult
         {
             Success = true,
-            Models = [.. models.OrderBy(m => m.Name)],
+            Models =
+                models.Count > 0
+                    ? [.. models.OrderBy(m => m.Name)]
+                    : GetFallbackModels(AIProvider.OpenRouter),
+        };
+    }
+
+    private async Task<ModelDiscoveryResult> DiscoverClaudeModelsAsync(string apiKey)
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Add("x-api-key", apiKey);
+        client.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
+
+        // Simple probe to verify the key - fetching first model metadata
+        var response = await client.GetAsync(
+            "https://api.anthropic.com/v1/models/claude-3-5-sonnet-20241022"
+        );
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            return new ModelDiscoveryResult
+            {
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.Claude,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
+            };
+        }
+
+        return new ModelDiscoveryResult
+        {
+            Success = true,
+            Models = GetFallbackModels(AIProvider.Claude),
         };
     }
 
@@ -329,12 +405,15 @@ public class ModelDiscoveryService(
             _ => (Array.Empty<string>(), "Paid", new List<string>()),
         };
 
-        return [.. ids.Select(id => new AIModelDto
+        return
+        [
+            .. ids.Select(id => new AIModelDto
             {
                 ModelId = id,
                 Name = id,
                 CostType = costType,
                 Notes = notes,
-            })];
+            }),
+        ];
     }
 }

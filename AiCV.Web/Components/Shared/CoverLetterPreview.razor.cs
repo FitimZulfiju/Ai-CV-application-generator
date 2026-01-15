@@ -20,7 +20,7 @@ public partial class CoverLetterPreview
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private string FormatLetter(string content)
+    private static string FormatLetter(string content)
     {
         if (string.IsNullOrEmpty(content))
             return string.Empty;

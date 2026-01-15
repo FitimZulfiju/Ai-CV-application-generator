@@ -11,28 +11,25 @@
                 Variant="Variant.Outlined" Margin="Margin.Dense" />
 
             <MudAutocomplete T="string" Label="@Localizer["Model"]" @bind-Value="UserConfiguration.ModelId"
-                Variant="Variant.Outlined" Margin="Margin.Dense" SearchFunc="@SearchModels"
-                Clearable="true" CoerceValue="true" />
-            
-            @{
-                var selectedModel = AvailableModels.FirstOrDefault(m => m.ModelId == UserConfiguration.ModelId);
-                if (selectedModel != null)
-                {
-                    <div class="mt-n2 px-1">
-                        <div class="d-flex align-center gap-2">
-                            <MudChip T="string" Color="@(selectedModel.CostType == "Paid" ? Color.Warning : Color.Success)" 
-                                     Size="Size.Small" Variant="Variant.Text" Class="ma-0">
-                                @(Localizer[selectedModel.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
-                            </MudChip>
-                            @if (selectedModel.Notes.Any())
-                            {
-                                <MudText Typo="Typo.caption" Color="Color.Info" Style="font-style: italic">
-                                    @string.Join(", ", selectedModel.Notes)
-                                </MudText>
-                            }
-                        </div>
+                @bind-Value:after="OnModelSelected" Variant="Variant.Outlined" Margin="Margin.Dense"
+                SearchFunc="@SearchModels" Clearable="true" CoerceValue="true" />
+
+            @if (!string.IsNullOrEmpty(UserConfiguration.CostType))
+            {
+                <div class="mt-n2 px-1">
+                    <div class="d-flex align-center gap-2">
+                        <MudChip T="string" Color="@(UserConfiguration.CostType == "Paid" ? Color.Warning : Color.Success)"
+                        Size="Size.Small" Variant="Variant.Text" Class="ma-0">
+                            @(Localizer[UserConfiguration.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
+                        </MudChip>
+                        @if (!string.IsNullOrEmpty(UserConfiguration.Notes))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Info" Style="font-style: italic">
+                                @UserConfiguration.Notes
+                            </MudText>
+                        }
                     </div>
-                }
+                </div>
             }
 
             <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="UserConfiguration.ApiKey" Variant="Variant.Outlined"

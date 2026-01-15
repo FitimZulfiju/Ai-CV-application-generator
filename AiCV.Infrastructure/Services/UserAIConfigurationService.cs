@@ -1,7 +1,9 @@
+namespace AiCV.Infrastructure.Services;
+
 public class UserAIConfigurationService(
-    ApplicationDbContext context,
-    IDataProtectionProvider dataProtectionProvider,
-    ILogger<UserAIConfigurationService> logger
+ApplicationDbContext context,
+IDataProtectionProvider dataProtectionProvider,
+ILogger<UserAIConfigurationService> logger
 ) : IUserAIConfigurationService
 {
     private readonly ApplicationDbContext _context = context;
@@ -80,6 +82,8 @@ public class UserAIConfigurationService(
             existing.Name = config.Name;
             existing.ApiKey = config.ApiKey;
             existing.ModelId = config.ModelId;
+            existing.CostType = config.CostType;
+            existing.Notes = config.Notes;
             // IsActive is handled via ActivateConfigurationAsync or if it was already active
 
             _context.Entry(existing).State = EntityState.Modified;

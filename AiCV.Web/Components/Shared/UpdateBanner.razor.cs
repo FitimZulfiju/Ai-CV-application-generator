@@ -2,9 +2,9 @@
 
 public partial class UpdateBanner
 {
-    private bool _showBanner = false;
-    private bool _isInstalling = false;
-    private int _secondsRemaining = 0;
+    private bool _showBanner;
+    private bool _isInstalling;
+    private int _secondsRemaining;
     private string? _newVersionTag;
     private string? _currentVersion;
     private System.Timers.Timer? _pollTimer;
