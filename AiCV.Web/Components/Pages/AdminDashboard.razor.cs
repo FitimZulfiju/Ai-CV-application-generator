@@ -2,21 +2,6 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class AdminDashboard
 {
-    [Inject]
-    public IAdminStatisticsService StatisticsService { get; set; } = default!;
-
-    [Inject]
-    public IUserManagementService UserManagementService { get; set; } = default!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public IJSRuntime JS { get; set; } = default!;
-
     private async Task ExportCsv()
     {
         try
@@ -25,7 +10,7 @@ public partial class AdminDashboard
             await using var stream = new MemoryStream(csvBytes);
             using var streamRef = new DotNetStreamReference(stream);
 
-            await JS.InvokeVoidAsync(
+            await JSRuntime.InvokeVoidAsync(
                 "downloadFileFromStream",
                 $"AiCV_Export_{DateTime.UtcNow:yyyyMMdd}.csv",
                 streamRef

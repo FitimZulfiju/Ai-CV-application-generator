@@ -27,3 +27,6 @@ global using AiCV.Infrastructure.Data;
 global using Microsoft.Extensions.Hosting;
 global using System.Net.Http.Json;
 global using Microsoft.AspNetCore.DataProtection;
+global using System.Net;
+global using AiCV.Infrastructure.Resources;
+global using Microsoft.Extensions.Localization;

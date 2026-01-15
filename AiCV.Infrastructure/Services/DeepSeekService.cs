@@ -1,13 +1,38 @@
 namespace AiCV.Infrastructure.Services;
 
-public class DeepSeekService(HttpClient httpClient, string apiKey, string modelId) : IAIService
+public class DeepSeekService(
+    HttpClient httpClient,
+    string apiKey,
+    string modelId,
+    IStringLocalizer<AicvResources> localizer
+) : AiServiceBase(localizer)
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly string _apiKey = apiKey;
     private readonly string ApiUrl = "https://api.deepseek.com/v1/chat/completions";
     private readonly string _modelId = modelId;
 
-    public async Task<string> GenerateCoverLetterAsync(
+    protected override AIProvider Provider => AIProvider.DeepSeek;
+
+    protected override async Task<HttpResponseMessage> SendProbeRequestAsync()
+    {
+        var requestBody = new
+        {
+            model = _modelId,
+            messages = new[] { new { role = "user", content = "Test" } },
+            max_tokens = 1,
+        };
+
+        var jsonContent = JsonSerializer.Serialize(requestBody);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        var request = new HttpRequestMessage(HttpMethod.Post, ApiUrl) { Content = content };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+
+        return await _httpClient.SendAsync(request);
+    }
+
+    public override async Task<string> GenerateCoverLetterAsync(
         CandidateProfile profile,
         JobPosting job,
         string? customPrompt = null
@@ -20,7 +45,7 @@ public class DeepSeekService(HttpClient httpClient, string apiKey, string modelI
         return await CallDeepSeekApiAsync(prompt);
     }
 
-    public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
+    public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
         CandidateProfile profile,
         JobPosting job,
         string? customPrompt = null
@@ -48,7 +73,7 @@ public class DeepSeekService(HttpClient httpClient, string apiKey, string modelI
         }
     }
 
-    public async Task<string> GenerateApplicationEmailAsync(
+    public override async Task<string> GenerateApplicationEmailAsync(
         CandidateProfile profile,
         JobPosting job,
         string coverLetter,
@@ -94,8 +119,13 @@ public class DeepSeekService(HttpClient httpClient, string apiKey, string modelI
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException(
-                $"DeepSeek API Error: {response.StatusCode} - {responseContent}"
+            throw new Exception(
+                AIErrorMapper.MapError(
+                    AIProvider.DeepSeek,
+                    responseContent,
+                    response.StatusCode,
+                    _localizer
+                )
             );
         }
 

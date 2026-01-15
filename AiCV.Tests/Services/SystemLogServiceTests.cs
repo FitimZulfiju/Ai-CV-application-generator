@@ -1,8 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using AiCV.Domain.Entities;
-using AiCV.Infrastructure.Data;
-using AiCV.Infrastructure.Services;
-
 namespace AiCV.Tests.Services;
 
 public class SystemLogServiceTests

@@ -1,8 +1,3 @@
-@using System.Globalization
-@using System.Text
-@using AiCV.Web.Components.Shared
-@inject NavigationManager Navigation
-
 <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
     <ActivatorContent>
         <MudButton Color="Color.Inherit" Variant="Variant.Text">
@@ -31,18 +26,3 @@
         </MudMenuItem>
     </ChildContent>
 </MudMenu>
-
-@code {
-    private static string CurrentLanguageCode => CultureInfo.CurrentCulture.Name switch
-    {
-        "sq" or "sq-AL" => "AL",
-        _ => "EN"
-    };
-
-    private void SwitchLanguage(string culture)
-    {
-        var uri = new Uri(Navigation.Uri);
-        var redirectUri = Uri.EscapeDataString(uri.ToString());
-        Navigation.NavigateTo($"/culture/set?culture={culture}&redirectUri={redirectUri}", forceLoad: true);
-    }
-}

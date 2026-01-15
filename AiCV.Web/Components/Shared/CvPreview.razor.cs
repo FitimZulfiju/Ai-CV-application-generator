@@ -2,13 +2,6 @@ namespace AiCV.Web.Components.Shared;
 
 public partial class CvPreview
 {
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
-    [Inject]
-    public IStringLocalizer<Infrastructure.Resources.AicvResources> Localizer { get; set; } =
-        default!;
-
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 

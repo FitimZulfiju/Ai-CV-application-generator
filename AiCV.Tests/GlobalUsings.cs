@@ -1,0 +1,11 @@
+﻿global using System.Text;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
+global using Moq;
+global using AiCV.Domain;
+global using AiCV.Infrastructure.Data;
+global using AiCV.Infrastructure.Services;
+global using AiCV.Application.DTOs;
+global using AiCV.Application.Interfaces;
+global using Microsoft.Extensions.Logging;
+global using AiCV.Domain.Entities;

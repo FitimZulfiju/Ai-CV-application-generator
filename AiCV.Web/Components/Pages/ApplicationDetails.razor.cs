@@ -2,28 +2,7 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class ApplicationDetails
 {
-    [Inject]
-    public ICVService CVService { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = default!;
-
-    [Inject]
-    public IClipboardService ClipboardService { get; set; } = default!;
-
-    private Shared.PrintPreviewModal _printPreviewModal = default!;
+    private PrintPreviewModal _printPreviewModal = default!;
 
     [Parameter]
     public int Id { get; set; }
@@ -126,9 +105,6 @@ public partial class ApplicationDetails
             _isLoading = false;
         }
     }
-
-    [Inject]
-    public IPdfService PdfService { get; set; } = default!;
 
     private async Task PrintCoverLetter()
     {

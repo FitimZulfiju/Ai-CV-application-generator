@@ -2,33 +2,6 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class Profile : IDisposable
 {
-    [Inject]
-    public ICVService CVService { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public IPdfService PdfService { get; set; } = default!;
-
-    [Inject]
-    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    public IWebHostEnvironment Environment { get; set; } = default!;
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = default!;
-
-    [Inject]
-    public ClientPersistenceService PersistenceService { get; set; } = default!;
-
     private Timer? _autoSaveTimer;
 
     private PrintPreviewModal _printPreviewModal = default!;
@@ -65,7 +38,7 @@ public partial class Profile : IDisposable
         if (_profile == null)
         {
             // User likely deleted from DB but cookie persists. Force logout.
-            NavigationManager.NavigateTo("/logout", true);
+            Navigation.NavigateTo($"/{NavUri.LogoutPage}", true);
             return;
         }
 

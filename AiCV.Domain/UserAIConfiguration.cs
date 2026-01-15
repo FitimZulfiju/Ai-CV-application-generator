@@ -8,6 +8,8 @@ public class UserAIConfiguration
     public string Name { get; set; } = string.Empty;
     public string? ApiKey { get; set; }
     public string? ModelId { get; set; }
+    public string? CostType { get; set; }
+    public string? Notes { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

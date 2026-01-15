@@ -1,6 +1,5 @@
-@page "/application/{Id:int}"
+@attribute [Microsoft.AspNetCore.Components.Route($"{NavUri.ApplicationPage}/{{Id:int}}")]
 @attribute [Authorize]
-@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 <PageTitle>@Localizer["AiCvApplications"]</PageTitle>
 
@@ -13,13 +12,13 @@
     else if (_application == null)
     {
             <MudAlert Severity="Severity.Error">@Localizer["ApplicationNotFound"]</MudAlert>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" Class="mt-4">@Localizer["BackToList"]</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Navigation.NavigateTo($"/{NavUri.MyApplicationsPage}"))" Class="mt-4">@Localizer["BackToList"]</MudButton>
     }
     else
     {
             <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
                 <div class="d-flex align-center">
-                    <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/my-applications"))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => Navigation.NavigateTo($"/{NavUri.MyApplicationsPage}"))" />
                     <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title @Localizer["at"] @_application.JobPosting?.CompanyName</MudText>
                 </div>
                 <div class="hide-on-mobile" style="flex: 1 1 auto;"></div>
@@ -122,4 +121,3 @@
 </MudContainer>
 
 <AiCV.Web.Components.Shared.PrintPreviewModal @ref="_printPreviewModal" />
-

@@ -908,4 +908,56 @@
   <data name="InterestName" xml:space="preserve">
     <value>Interest Name</value>
   </data>
+  <data name="ModelAvailabilityDisclaimer" xml:space="preserve">
+    <value>Model availability depends on your API key and account balance. Some models require a paid balance even if listed. Models marked 'No per-token cost' may still be rate-limited or temporarily unavailable.</value>
+  </data>
+  <data name="CostTypePaid" xml:space="preserve">
+    <value>Paid (Requires balance)</value>
+  </data>
+  <data name="CostTypeFree" xml:space="preserve">
+    <value>No per-token cost</value>
+  </data>
+  <data name="TestConnection" xml:space="preserve">
+    <value>Test Connection</value>
+  </data>
+  <data name="AccessCheckSuccess" xml:space="preserve">
+    <value>Access verified! Your key can use this model.</value>
+  </data>
+  <data name="AccessCheckFailed" xml:space="preserve">
+    <value>Access check failed. See notes below or check your balance.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Rate-limited</value>
+  </data>
+  <data name="AvailabilityNotGuaranteed" xml:space="preserve">
+    <value>Availability not guaranteed</value>
+  </data>
+  <data name="RequiresBalance" xml:space="preserve">
+    <value>Requires OpenRouter balance</value>
+  </data>
+  <data name="MayNotBeAccessibleFreeTier" xml:space="preserve">
+    <value>May not be accessible with free-tier keys</value>
+  </data>
+  <data name="InvalidRequest" xml:space="preserve">
+    <value>Invalid request. Please check your configuration.</value>
+  </data>
+  <data name="RemoteServerError" xml:space="preserve">
+    <value>Remote AI server error. Please try again later.</value>
+  </data>
+  <data name="InvalidApiKey" xml:space="preserve">
+    <value>Invalid API Key for {0}.</value>
+  </data>
+  <data name="InsufficientBalance" xml:space="preserve">
+    <value>Insufficient balance for {0}. This model requires a paid balance.</value>
+  </data>
+  <data name="ModelAccessRestricted" xml:space="preserve">
+    <value>Model access restricted or blocked by {0} policies.</value>
+  </data>
+  <data name="RateLimitReached" xml:space="preserve">
+    <value>{0} rate limit reached. Please wait before trying again.</value>
+  </data>
 </root>
+

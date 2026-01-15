@@ -908,4 +908,56 @@
   <data name="InterestName" xml:space="preserve">
     <value>Emri i Interesit</value>
   </data>
+  <data name="ModelAvailabilityDisclaimer" xml:space="preserve">
+    <value>Disponueshmëria e modelit varet nga çelësi juaj API dhe bilanci i llogarisë. Disa modele kërkojnë një bilanc të paguar edhe nëse renditen këtu. Modelet e shënuara 'Pa kosto për token' mund të jenë ende të kufizuara në shpejtësi ose përkohësisht të paarritshme.</value>
+  </data>
+  <data name="CostTypePaid" xml:space="preserve">
+    <value>Me pagesë (Kërkon bilanc)</value>
+  </data>
+  <data name="CostTypeFree" xml:space="preserve">
+    <value>Pa kosto për token</value>
+  </data>
+  <data name="TestConnection" xml:space="preserve">
+    <value>Testo Lidhjen</value>
+  </data>
+  <data name="AccessCheckSuccess" xml:space="preserve">
+    <value>Aksesi u konfirmua! Çelësi juaj mund ta përdorë këtë model.</value>
+  </data>
+  <data name="AccessCheckFailed" xml:space="preserve">
+    <value>Kontrolli i aksesit dështoi. Shihni shënimet më poshtë ose kontrolloni bilancin tuaj.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Shënime</value>
+  </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Kufizuar në shpejtësi (Rate-limited)</value>
+  </data>
+  <data name="AvailabilityNotGuaranteed" xml:space="preserve">
+    <value>Disponueshmëria nuk garantohet</value>
+  </data>
+  <data name="RequiresBalance" xml:space="preserve">
+    <value>Kërkon bilanc në OpenRouter</value>
+  </data>
+  <data name="MayNotBeAccessibleFreeTier" xml:space="preserve">
+    <value>Mund të mos jetë i aksesueshëm me çelësat e nivelit falas</value>
+  </data>
+  <data name="InvalidRequest" xml:space="preserve">
+    <value>Kërkesë e pavlefshme. Ju lutemi kontrolloni konfigurimin tuaj.</value>
+  </data>
+  <data name="RemoteServerError" xml:space="preserve">
+    <value>Gabim në serverin e largët AI. Ju lutemi provoni përsëri më vonë.</value>
+  </data>
+  <data name="InvalidApiKey" xml:space="preserve">
+    <value>Çelës API i pavlefshëm për {0}.</value>
+  </data>
+  <data name="InsufficientBalance" xml:space="preserve">
+    <value>Bilanc i pamjaftueshëm për {0}. Ky model kërkon një bilanc me pagesë.</value>
+  </data>
+  <data name="ModelAccessRestricted" xml:space="preserve">
+    <value>Aksesi në model është i kufizuar ose i bllokuar nga politikat e {0}.</value>
+  </data>
+  <data name="RateLimitReached" xml:space="preserve">
+    <value>Limit i shpejtësisë së {0} është arritur. Ju lutemi prisni përpara se të provoni përsëri.</value>
+  </data>
 </root>
+

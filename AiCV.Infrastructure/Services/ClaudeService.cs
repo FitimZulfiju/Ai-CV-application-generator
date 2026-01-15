@@ -1,187 +1,233 @@
-namespace AiCV.Infrastructure.Services
+namespace AiCV.Infrastructure.Services;
+
+public class ClaudeService(
+    HttpClient httpClient,
+    string apiKey,
+    string modelId,
+    IStringLocalizer<AicvResources> localizer
+) : AiServiceBase(localizer)
 {
-    public class ClaudeService(HttpClient httpClient, string apiKey, string modelId) : IAIService
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly string _apiKey = apiKey;
+    private readonly string _modelId = modelId;
+    private const string ApiUrl = "https://api.anthropic.com/v1/messages";
+    private const string ApiVersion = "2023-06-01";
+
+    protected override AIProvider Provider => AIProvider.Claude;
+
+    protected override async Task<HttpResponseMessage> SendProbeRequestAsync()
     {
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly string _apiKey = apiKey;
-        private readonly string _modelId = modelId;
-        private const string ApiUrl = "https://api.anthropic.com/v1/messages";
-        private const string ApiVersion = "2023-06-01";
-
-        public async Task<string> GenerateCoverLetterAsync(
-            CandidateProfile profile,
-            JobPosting job,
-            string? customPrompt = null
-        )
+        var requestPayload = new
         {
-            var requestPayload = new
+            model = _modelId,
+            max_tokens = 1,
+            messages = new[] { new { role = "user", content = "Test" } },
+        };
+
+        var jsonPayload = JsonSerializer.Serialize(requestPayload);
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+        _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
+
+        return await _httpClient.PostAsync(ApiUrl, content);
+    }
+
+    public override async Task<string> GenerateCoverLetterAsync(
+        CandidateProfile profile,
+        JobPosting job,
+        string? customPrompt = null
+    )
+    {
+        var requestPayload = new
+        {
+            model = _modelId,
+            max_tokens = 4096,
+            system = string.IsNullOrWhiteSpace(customPrompt)
+                ? AISystemPrompts.CoverLetterSystemPrompt
+                : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+            messages = new[]
             {
-                model = _modelId,
-                max_tokens = 4096,
-                system = string.IsNullOrWhiteSpace(customPrompt)
-                    ? AISystemPrompts.CoverLetterSystemPrompt
-                    : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                messages = new[] { new { role = "user", content = BuildPrompt(profile, job) } },
-            };
+                new { role = "user", content = AIPromptBuilder.Build(profile, job) },
+            },
+        };
 
-            var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+        var jsonPayload = JsonSerializer.Serialize(requestPayload);
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
-            _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+        _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
 
-            var response = await _httpClient.PostAsync(ApiUrl, content);
+        var response = await _httpClient.PostAsync(ApiUrl, content);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Claude API Error: {response.StatusCode} - {error}");
-            }
-
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
-
-            return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                AIErrorMapper.MapError(
+                    AIProvider.Claude,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                )
+            );
         }
 
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
-            CandidateProfile profile,
-            JobPosting job,
-            string? customPrompt = null
-        )
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
+
+        return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
+    }
+
+    public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
+        CandidateProfile profile,
+        JobPosting job,
+        string? customPrompt = null
+    )
+    {
+        var requestPayload = new
         {
-            var requestPayload = new
+            model = _modelId,
+            max_tokens = 4096,
+            system = string.IsNullOrWhiteSpace(customPrompt)
+                ? AISystemPrompts.ResumeTailoringSystemPrompt
+                : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+            messages = new[]
             {
-                model = _modelId,
-                max_tokens = 4096,
-                system = string.IsNullOrWhiteSpace(customPrompt)
-                    ? AISystemPrompts.ResumeTailoringSystemPrompt
-                    : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                messages = new[]
+                new
                 {
-                    new { role = "user", content = BuildPrompt(profile, job, isResume: true) },
+                    role = "user",
+                    content = AIPromptBuilder.Build(profile, job, isResume: true),
                 },
-            };
+            },
+        };
 
-            var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+        var jsonPayload = JsonSerializer.Serialize(requestPayload);
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
-            _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+        _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
 
-            var response = await _httpClient.PostAsync(ApiUrl, content);
+        var response = await _httpClient.PostAsync(ApiUrl, content);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Claude API Error: {response.StatusCode} - {error}");
-            }
-
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
-            var textResponse = claudeResponse?.Content?[0]?.Text;
-
-            if (string.IsNullOrEmpty(textResponse))
-            {
-                throw new Exception("No content generated by Claude.");
-            }
-
-            // Clean up JSON markdown code blocks if present
-            textResponse = textResponse.Replace("```json", "").Replace("```", "").Trim();
-
-            return AIResponseParser.ParseTailoredResume(textResponse, profile);
-        }
-
-        public async Task<string> GenerateApplicationEmailAsync(
-            CandidateProfile profile,
-            JobPosting job,
-            string coverLetter,
-            string? customPrompt = null
-        )
+        if (!response.IsSuccessStatusCode)
         {
-            var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
-            if (!string.IsNullOrWhiteSpace(customPrompt))
-                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-
-            var userPrompt = $"""
-                Candidate Name: {profile.FullName}
-                Position: {job.Title}
-                Company: {job.CompanyName}
-
-                Cover Letter Summary:
-                {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-                Write a brief professional email to accompany this application.
-                """;
-
-            var requestPayload = new
-            {
-                model = _modelId,
-                max_tokens = 1024,
-                system = systemPrompt,
-                messages = new[] { new { role = "user", content = userPrompt } },
-            };
-
-            var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
-            _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
-
-            var response = await _httpClient.PostAsync(ApiUrl, content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Claude API Error: {response.StatusCode} - {error}");
-            }
-
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
-
-            return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                AIErrorMapper.MapError(
+                    AIProvider.Claude,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                )
+            );
         }
 
-        private static string BuildPrompt(
-            CandidateProfile profile,
-            JobPosting job,
-            bool isResume = false
-        )
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
+        var textResponse = claudeResponse?.Content?[0]?.Text;
+
+        if (string.IsNullOrEmpty(textResponse))
         {
-            return AIPromptBuilder.Build(profile, job, isResume);
+            throw new Exception("No content generated by Claude.");
         }
 
-        private class ClaudeResponse
+        // Clean up JSON markdown code blocks if present
+        textResponse = textResponse.Replace("```json", "").Replace("```", "").Trim();
+
+        return AIResponseParser.ParseTailoredResume(textResponse, profile);
+    }
+
+    public override async Task<string> GenerateApplicationEmailAsync(
+        CandidateProfile profile,
+        JobPosting job,
+        string coverLetter,
+        string? customPrompt = null
+    )
+    {
+        var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt))
+            systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+
+        var userPrompt = $"""
+            Candidate Name: {profile.FullName}
+            Position: {job.Title}
+            Company: {job.CompanyName}
+
+            Cover Letter Summary:
+            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
+
+            Write a brief professional email to accompany this application.
+            """;
+
+        var requestPayload = new
         {
-            [JsonPropertyName("id")]
-            public string? Id { get; set; }
+            model = _modelId,
+            max_tokens = 1024,
+            system = systemPrompt,
+            messages = new[] { new { role = "user", content = userPrompt } },
+        };
 
-            [JsonPropertyName("type")]
-            public string? Type { get; set; }
+        var jsonPayload = JsonSerializer.Serialize(requestPayload);
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            [JsonPropertyName("role")]
-            public string? Role { get; set; }
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("x-api-key", _apiKey);
+        _httpClient.DefaultRequestHeaders.Add("anthropic-version", ApiVersion);
 
-            [JsonPropertyName("content")]
-            public ClaudeContent[]? Content { get; set; }
+        var response = await _httpClient.PostAsync(ApiUrl, content);
 
-            [JsonPropertyName("model")]
-            public string? Model { get; set; }
-
-            [JsonPropertyName("stop_reason")]
-            public string? StopReason { get; set; }
-        }
-
-        private class ClaudeContent
+        if (!response.IsSuccessStatusCode)
         {
-            [JsonPropertyName("type")]
-            public string? Type { get; set; }
-
-            [JsonPropertyName("text")]
-            public string? Text { get; set; }
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                AIErrorMapper.MapError(
+                    AIProvider.Claude,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                )
+            );
         }
+
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
+
+        return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
+    }
+
+    // DTOs follow below...
+
+    private class ClaudeResponse
+    {
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
+
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+
+        [JsonPropertyName("role")]
+        public string? Role { get; set; }
+
+        [JsonPropertyName("content")]
+        public ClaudeContent[]? Content { get; set; }
+
+        [JsonPropertyName("model")]
+        public string? Model { get; set; }
+
+        [JsonPropertyName("stop_reason")]
+        public string? StopReason { get; set; }
+    }
+
+    private class ClaudeContent
+    {
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+
+        [JsonPropertyName("text")]
+        public string? Text { get; set; }
     }
 }

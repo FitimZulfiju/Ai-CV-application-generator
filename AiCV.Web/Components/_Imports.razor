@@ -19,3 +19,31 @@
 @using System.Security.Claims
 @using Microsoft.Extensions.Localization
 @using AiCV.Infrastructure.Resources
+@using Microsoft.AspNetCore.Components
+@using AiCV.Domain.Entities
+@using AiCV.Application.Common
+@using System.Globalization
+@using System.Text
+@inject ISystemLogService LogService
+@inject IDialogService DialogService
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+@inject IUserAIConfigurationService ConfigurationService
+@inject IUserSettingsService UserSettingsService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+@inject IModelDiscoveryService DiscoveryService
+@inject NavigationManager Navigation
+@inject IHttpClientFactory HttpClientFactory
+@inject ICVService CVService
+@inject IJSRuntime JSRuntime
+@inject IClipboardService ClipboardService
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+@inject ILoadingService LoadingService
+@inject IPdfService PdfService
+@inject IWebHostEnvironment Environment
+@inject ClientPersistenceService PersistenceService
+@inject IAdminStatisticsService StatisticsService
+@inject IUserManagementService UserManagementService
+@inject IJobApplicationOrchestrator JobOrchestrator
+@inject IConfiguration Configuration

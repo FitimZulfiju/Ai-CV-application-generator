@@ -2,21 +2,6 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class MyApplications
 {
-    [Inject]
-    public ICVService CVService { get; set; } = default!;
-
-    [Inject]
-    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = default!;
-
     private List<GeneratedApplication> _applications = [];
     private bool _isLoading = true;
     private string _userId = string.Empty;
@@ -52,7 +37,7 @@ public partial class MyApplications
 
     private void ViewApplication(int id)
     {
-        NavigationManager.NavigateTo($"/application/{id}");
+        Navigation.NavigateTo($"/{NavUri.ApplicationPage}/{id}");
     }
 
     private int? _deletingId;

@@ -1,10 +1,3 @@
-using AiCV.Application.DTOs;
-using AiCV.Application.Interfaces;
-using AiCV.Domain;
-using AiCV.Infrastructure.Services;
-using Microsoft.Extensions.Logging;
-using Moq;
-
 namespace AiCV.Tests.Services;
 
 public class JobApplicationOrchestratorTests

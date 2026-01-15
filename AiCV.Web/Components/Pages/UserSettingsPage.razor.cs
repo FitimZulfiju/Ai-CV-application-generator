@@ -2,27 +2,6 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class UserSettingsPage
 {
-    [Inject]
-    public IUserAIConfigurationService ConfigurationService { get; set; } = default!;
-
-    [Inject]
-    public IUserSettingsService UserSettingsService { get; set; } = default!; // Kept if needed for other settings, but might be removed if empty
-
-    [Inject]
-    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    public IModelDiscoveryService DiscoveryService { get; set; } = default!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = default!;
-
     private string _userId = string.Empty;
     private bool _isLoading = true;
 
@@ -32,9 +11,11 @@ public partial class UserSettingsPage
     // Form model for adding NEW configuration
     private UserAIConfiguration _newConfig = new();
 
-    private List<string> _availableModels = [];
+    private List<AIModelDto> _availableModels = [];
+    private AIModelDto? _selectedModelMetadata;
     private bool _modelsLoaded = false;
     private bool _isValidating = false;
+    private bool _isTestingConnection = false;
     private bool _showNewApiKey = false;
     private bool _showCostAlert = true;
 
@@ -61,7 +42,7 @@ public partial class UserSettingsPage
         }
         else
         {
-            NavigationManager.NavigateTo("/login");
+            Navigation.NavigateTo($"/{NavUri.LoginPage}");
         }
     }
 
@@ -90,13 +71,10 @@ public partial class UserSettingsPage
         _isValidating = true;
         _modelsLoaded = false;
         _availableModels.Clear();
+        _selectedModelMetadata = null;
 
         try
         {
-            // If OpenRouter, user might have entered a modelId manually in a previous step?
-            // Actually, for OpenRouter we discover models.
-            // For others, if key is invalid, discovery fails.
-
             var result = await DiscoveryService.DiscoverModelsAsync(
                 _newConfig.Provider,
                 _newConfig.ApiKey
@@ -109,7 +87,9 @@ public partial class UserSettingsPage
 
                 if (_availableModels.Count > 0)
                 {
-                    _newConfig.ModelId = _availableModels[0];
+                    var firstModel = _availableModels[0];
+                    _newConfig.ModelId = firstModel.ModelId;
+                    _selectedModelMetadata = firstModel;
                     OnModelSelected();
                 }
 
@@ -117,19 +97,10 @@ public partial class UserSettingsPage
             }
             else
             {
-                // Fallback for providers that might not support discovery or if API is down but key is OK?
-                // Actually DiscoveryService handles fallbacks internally if discovery fails but exception treated?
-                // No, DiscoveryService returns Success=false if API error.
-                // We should show error.
                 Snackbar.Add(
                     result?.ErrorMessage ?? "Failed to validate API Key or fetch models.",
                     Severity.Error
                 );
-
-                // Optional: Allow manual entry or fallback list anyway?
-                // Let's allow fallback if discovery fails, so user isn't blocked?
-                // _availableModels = DiscoveryService.GetFallbackModels(_newConfig.Provider);
-                // _modelsLoaded = true;
             }
         }
         catch (Exception ex)
@@ -144,21 +115,22 @@ public partial class UserSettingsPage
 
     private void OnModelSelected()
     {
-        // Only update if the current ModelId is actually a valid available model
-        // (This prevents search text from overwriting the Name while typing)
-        if (
-            string.IsNullOrWhiteSpace(_newConfig.ModelId)
-            || !_availableModels.Contains(_newConfig.ModelId)
-        )
+        if (string.IsNullOrWhiteSpace(_newConfig.ModelId))
         {
+            _selectedModelMetadata = null;
             return;
         }
+
+        _selectedModelMetadata = _availableModels.FirstOrDefault(m =>
+            m.ModelId == _newConfig.ModelId
+        );
+
         // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
         if (
             !string.IsNullOrWhiteSpace(_newConfig.ModelId)
             && (
                 string.IsNullOrWhiteSpace(_newConfig.Name)
-                || _availableModels.Contains(_newConfig.Name)
+                || _availableModels.Any(m => m.ModelId == _newConfig.Name)
             )
         )
         {
@@ -166,18 +138,65 @@ public partial class UserSettingsPage
         }
     }
 
-    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken _)
+    private async Task TestConnection()
     {
-        // If text is empty, show all models
-        if (string.IsNullOrWhiteSpace(value))
+        if (
+            string.IsNullOrWhiteSpace(_newConfig.ApiKey)
+            || string.IsNullOrWhiteSpace(_newConfig.ModelId)
+        )
         {
-            return Task.FromResult(_availableModels.AsEnumerable());
+            return;
         }
 
-        // Filter models by search text (case-insensitive)
-        var filtered = _availableModels.Where(m =>
-            m.Contains(value, StringComparison.OrdinalIgnoreCase)
-        );
+        _isTestingConnection = true;
+        try
+        {
+            // We use the factory to get a temporary service instance
+            var aiService = AIServiceFactory.CreateService(
+                _newConfig.Provider,
+                _newConfig.ApiKey,
+                _newConfig.ModelId,
+                Localizer,
+                new HttpClient() // Temporary HttpClient
+            );
+
+            var result = await aiService.TestAccessAsync();
+
+            if (result.Success)
+            {
+                Snackbar.Add(Localizer["AccessCheckSuccess"], Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(
+                    $"{Localizer["AccessCheckFailed"]}: {result.Message}",
+                    Severity.Warning
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Test failed: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isTestingConnection = false;
+        }
+    }
+
+    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken _)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult(_availableModels.Select(m => m.ModelId).AsEnumerable());
+        }
+
+        var filtered = _availableModels
+            .Where(m =>
+                m.ModelId.Contains(value, StringComparison.OrdinalIgnoreCase)
+                || (m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) == true)
+            )
+            .Select(m => m.ModelId);
 
         return Task.FromResult(filtered);
     }
@@ -288,8 +307,8 @@ public partial class UserSettingsPage
 
         var parameters = new DialogParameters<AISettingsEditDialog>
         {
-            { x => x.Configuration, configToEdit },
-            { x => x.AvailableModels, models },
+            { x => x.UserConfiguration, configToEdit },
+            { x => x.AvailableModels, models }
         };
 
         var options = new DialogOptions

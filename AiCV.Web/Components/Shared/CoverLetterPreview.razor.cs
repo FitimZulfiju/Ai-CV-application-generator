@@ -2,9 +2,6 @@ namespace AiCV.Web.Components.Shared;
 
 public partial class CoverLetterPreview
 {
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 

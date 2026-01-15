@@ -2,15 +2,6 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class Login
 {
-    [Inject]
-    public NavigationManager Navigation { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public IConfiguration Configuration { get; set; } = default!;
-
     [SupplyParameterFromQuery]
     public string? Error { get; set; }
 

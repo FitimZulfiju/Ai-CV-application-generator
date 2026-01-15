@@ -2,45 +2,6 @@ namespace AiCV.Web.Components.Pages;
 
 public partial class Generate : IDisposable
 {
-    [Inject]
-    public ICVService CVService { get; set; } = default!;
-
-    [Inject]
-    public IJobApplicationOrchestrator JobOrchestrator { get; set; } = default!;
-
-    [Inject]
-    public IClipboardService ClipboardService { get; set; } = default!;
-
-    [Inject]
-    public ClientPersistenceService PersistenceService { get; set; } = default!;
-
-    [Inject]
-    public ISnackbar Snackbar { get; set; } = default!;
-
-    [Inject]
-    public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-
-    [Inject]
-    public IUserSettingsService UserSettingsService { get; set; } = default!;
-
-    [Inject]
-    public ILoadingService LoadingService { get; set; } = default!;
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
-
-    [Inject]
-    public IModelDiscoveryService DiscoveryService { get; set; } = default!;
-
-    [Inject]
-    public IDialogService DialogService { get; set; } = default!;
-
-    [Inject]
-    public IPdfService PdfService { get; set; } = default!;
-
-    [Inject]
-    public IUserAIConfigurationService ConfigurationService { get; set; } = default!;
-
     private PrintPreviewModal _printPreviewModal = default!;
     private Timer? _autoSaveTimer;
     private readonly JobPosting _job = new();

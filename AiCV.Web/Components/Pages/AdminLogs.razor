@@ -1,11 +1,5 @@
-@page "/admin/logs"
-@using AiCV.Application.Interfaces
-@using AiCV.Domain.Entities
-@using AiCV.Application.Common
+@attribute [Microsoft.AspNetCore.Components.Route(NavUri.AdminLogsPage)]
 @attribute [Authorize(Roles = Roles.Admin)]
-@inject ISystemLogService LogService
-@inject IDialogService DialogService
-@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 <PageTitle>@Localizer["SystemLogs"]</PageTitle>
 

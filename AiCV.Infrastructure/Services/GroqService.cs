@@ -1,223 +1,246 @@
-namespace AiCV.Infrastructure.Services
+namespace AiCV.Infrastructure.Services;
+
+public class GroqService(
+    HttpClient httpClient,
+    string apiKey,
+    string modelId,
+    IStringLocalizer<AicvResources> localizer
+) : AiServiceBase(localizer)
 {
-    public class GroqService(HttpClient httpClient, string apiKey, string modelId) : IAIService
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly string _apiKey = apiKey;
+    private readonly string ApiUrl = "https://api.groq.com/openai/v1/chat/completions";
+    private readonly string _modelId = modelId;
+
+    protected override AIProvider Provider => AIProvider.Groq;
+
+    protected override async Task<HttpResponseMessage> SendProbeRequestAsync()
     {
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly string _apiKey = apiKey;
-        private readonly string ApiUrl = "https://api.groq.com/openai/v1/chat/completions";
-        private readonly string _modelId = modelId;
-
-        public async Task<string> GenerateCoverLetterAsync(
-            CandidateProfile profile,
-            JobPosting job,
-            string? customPrompt = null
-        )
+        var requestPayload = new
         {
-            var content = new StringContent(
-                JsonSerializer.Serialize(
-                    new
-                    {
-                        model = _modelId,
-                        messages = new[]
-                        {
-                            new
-                            {
-                                role = "system",
-                                content = string.IsNullOrWhiteSpace(customPrompt)
-                                    ? AISystemPrompts.CoverLetterSystemPrompt
-                                    : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                            },
-                            new { role = "user", content = BuildPrompt(profile, job) },
-                        },
-                        temperature = 0.7,
-                        max_tokens = 4096,
-                    }
-                ),
-                System.Text.Encoding.UTF8,
-                "application/json"
-            );
+            model = _modelId,
+            messages = new[] { new { role = "user", content = "Test" } },
+            max_tokens = 1,
+        };
 
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+        var jsonPayload = JsonSerializer.Serialize(requestPayload);
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(ApiUrl, content);
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Groq API Error: {response.StatusCode} - {error}");
-            }
+        return await _httpClient.PostAsync(ApiUrl, content);
+    }
 
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
-
-            return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
-        }
-
-        public async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
-            CandidateProfile profile,
-            JobPosting job,
-            string? customPrompt = null
-        )
-        {
-            var content = new StringContent(
-                JsonSerializer.Serialize(
-                    new
-                    {
-                        model = _modelId,
-                        messages = new[]
-                        {
-                            new
-                            {
-                                role = "system",
-                                content = string.IsNullOrWhiteSpace(customPrompt)
-                                    ? AISystemPrompts.ResumeTailoringSystemPrompt
-                                    : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-                            },
-                            new
-                            {
-                                role = "user",
-                                content = BuildPrompt(profile, job, isResume: true),
-                            },
-                        },
-                        temperature = 0.7,
-                        max_tokens = 4096,
-                    }
-                ),
-                System.Text.Encoding.UTF8,
-                "application/json"
-            );
-
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
-
-            var response = await _httpClient.PostAsync(ApiUrl, content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Groq API Error: {response.StatusCode} - {error}");
-            }
-
-            var textResponse = JsonSerializer
-                .Deserialize<GroqResponse>(await response.Content.ReadAsStringAsync())
-                ?.Choices?[0]?.Message?.Content;
-
-            if (string.IsNullOrEmpty(textResponse))
-            {
-                throw new Exception("No content generated by Groq.");
-            }
-
-            // Clean up JSON markdown code blocks if present
-            textResponse = textResponse.Replace("```json", "").Replace("```", "").Trim();
-
-            return AIResponseParser.ParseTailoredResume(textResponse, profile);
-        }
-
-        public async Task<string> GenerateApplicationEmailAsync(
-            CandidateProfile profile,
-            JobPosting job,
-            string coverLetter,
-            string? customPrompt = null
-        )
-        {
-            var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
-            if (!string.IsNullOrWhiteSpace(customPrompt))
-                systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-
-            var userPrompt = $"""
-                Candidate Name: {profile.FullName}
-                Position: {job.Title}
-                Company: {job.CompanyName}
-
-                Cover Letter Summary:
-                {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-                Write a brief professional email to accompany this application.
-                """;
-
-            var requestPayload = new
-            {
-                model = _modelId,
-                messages = new[]
+    public override async Task<string> GenerateCoverLetterAsync(
+        CandidateProfile profile,
+        JobPosting job,
+        string? customPrompt = null
+    )
+    {
+        var content = new StringContent(
+            JsonSerializer.Serialize(
+                new
                 {
-                    new { role = "system", content = systemPrompt },
-                    new { role = "user", content = userPrompt },
-                },
-                temperature = 0.7,
-                max_tokens = 1024,
-            };
+                    model = _modelId,
+                    messages = new[]
+                    {
+                        new
+                        {
+                            role = "system",
+                            content = string.IsNullOrWhiteSpace(customPrompt)
+                                ? AISystemPrompts.CoverLetterSystemPrompt
+                                : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                        },
+                        new { role = "user", content = AIPromptBuilder.Build(profile, job) },
+                    },
+                    temperature = 0.7,
+                    max_tokens = 4096,
+                }
+            ),
+            Encoding.UTF8,
+            "application/json"
+        );
 
-            var jsonPayload = JsonSerializer.Serialize(requestPayload);
-            var content = new StringContent(
-                jsonPayload,
-                System.Text.Encoding.UTF8,
-                "application/json"
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+
+        var response = await _httpClient.PostAsync(ApiUrl, content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                AIErrorMapper.MapError(AIProvider.Groq, error, response.StatusCode, _localizer)
             );
+        }
 
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
 
-            var response = await _httpClient.PostAsync(ApiUrl, content);
+        return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
+    }
 
-            if (!response.IsSuccessStatusCode)
+    public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
+        CandidateProfile profile,
+        JobPosting job,
+        string? customPrompt = null
+    )
+    {
+        var content = new StringContent(
+            JsonSerializer.Serialize(
+                new
+                {
+                    model = _modelId,
+                    messages = new[]
+                    {
+                        new
+                        {
+                            role = "system",
+                            content = string.IsNullOrWhiteSpace(customPrompt)
+                                ? AISystemPrompts.ResumeTailoringSystemPrompt
+                                : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
+                        },
+                        new
+                        {
+                            role = "user",
+                            content = AIPromptBuilder.Build(profile, job, isResume: true),
+                        },
+                    },
+                    temperature = 0.7,
+                    max_tokens = 4096,
+                }
+            ),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+
+        var response = await _httpClient.PostAsync(ApiUrl, content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                AIErrorMapper.MapError(AIProvider.Groq, error, response.StatusCode, _localizer)
+            );
+        }
+
+        var textResponse = JsonSerializer
+            .Deserialize<GroqResponse>(await response.Content.ReadAsStringAsync())
+            ?.Choices?[0]?.Message?.Content;
+
+        if (string.IsNullOrEmpty(textResponse))
+        {
+            throw new Exception("No content generated by Groq.");
+        }
+
+        // Clean up JSON markdown code blocks if present
+        textResponse = textResponse.Replace("```json", "").Replace("```", "").Trim();
+
+        return AIResponseParser.ParseTailoredResume(textResponse, profile);
+    }
+
+    public override async Task<string> GenerateApplicationEmailAsync(
+        CandidateProfile profile,
+        JobPosting job,
+        string coverLetter,
+        string? customPrompt = null
+    )
+    {
+        var systemPrompt = AISystemPrompts.ApplicationEmailSystemPrompt;
+        if (!string.IsNullOrWhiteSpace(customPrompt))
+            systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
+
+        var userPrompt = $"""
+            Candidate Name: {profile.FullName}
+            Position: {job.Title}
+            Company: {job.CompanyName}
+
+            Cover Letter Summary:
+            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
+
+            Write a brief professional email to accompany this application.
+            """;
+
+        var requestPayload = new
+        {
+            model = _modelId,
+            messages = new[]
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Groq API Error: {response.StatusCode} - {error}");
-            }
+                new { role = "system", content = systemPrompt },
+                new { role = "user", content = userPrompt },
+            },
+            temperature = 0.7,
+            max_tokens = 1024,
+        };
 
-            var responseJson = await response.Content.ReadAsStringAsync();
-            var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
+        var jsonPayload = JsonSerializer.Serialize(requestPayload);
+        var content = new StringContent(
+            jsonPayload,
+            Encoding.UTF8,
+            "application/json"
+        );
 
-            return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
-        }
+        _httpClient.DefaultRequestHeaders.Clear();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
 
-        private static string BuildPrompt(
-            CandidateProfile profile,
-            JobPosting job,
-            bool isResume = false
-        )
+        var response = await _httpClient.PostAsync(ApiUrl, content);
+
+        if (!response.IsSuccessStatusCode)
         {
-            return AIPromptBuilder.Build(profile, job, isResume);
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                AIErrorMapper.MapError(AIProvider.Groq, error, response.StatusCode, _localizer)
+            );
         }
 
-        private class GroqResponse
-        {
-            [JsonPropertyName("id")]
-            public string? Id { get; set; }
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
 
-            [JsonPropertyName("object")]
-            public string? Object { get; set; }
+        return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
+    }
 
-            [JsonPropertyName("created")]
-            public long Created { get; set; }
+    // DTOs follow below...
 
-            [JsonPropertyName("model")]
-            public string? Model { get; set; }
+    private class GroqResponse
+    {
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
 
-            [JsonPropertyName("choices")]
-            public GroqChoice[]? Choices { get; set; }
-        }
+        [JsonPropertyName("object")]
+        public string? Object { get; set; }
 
-        private class GroqChoice
-        {
-            [JsonPropertyName("index")]
-            public int Index { get; set; }
+        [JsonPropertyName("created")]
+        public long Created { get; set; }
 
-            [JsonPropertyName("message")]
-            public GroqMessage? Message { get; set; }
+        [JsonPropertyName("model")]
+        public string? Model { get; set; }
 
-            [JsonPropertyName("finish_reason")]
-            public string? FinishReason { get; set; }
-        }
+        [JsonPropertyName("choices")]
+        public GroqChoice[]? Choices { get; set; }
+    }
 
-        private class GroqMessage
-        {
-            [JsonPropertyName("role")]
-            public string? Role { get; set; }
+    private class GroqChoice
+    {
+        [JsonPropertyName("index")]
+        public int Index { get; set; }
 
-            [JsonPropertyName("content")]
-            public string? Content { get; set; }
-        }
+        [JsonPropertyName("message")]
+        public GroqMessage? Message { get; set; }
+
+        [JsonPropertyName("finish_reason")]
+        public string? FinishReason { get; set; }
+    }
+
+    private class GroqMessage
+    {
+        [JsonPropertyName("role")]
+        public string? Role { get; set; }
+
+        [JsonPropertyName("content")]
+        public string? Content { get; set; }
     }
 }

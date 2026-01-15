@@ -1,7 +1,6 @@
-namespace AiCV.Application.Interfaces
+namespace AiCV.Application.Interfaces;
+
+public interface IClipboardService
 {
-    public interface IClipboardService
-    {
-        Task CopyToClipboardAsync(string text);
-    }
+    Task CopyToClipboardAsync(string text);
 }

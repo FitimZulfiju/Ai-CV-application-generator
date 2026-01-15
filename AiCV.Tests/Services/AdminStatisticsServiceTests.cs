@@ -1,11 +1,3 @@
-using System.Text;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using AiCV.Domain;
-using AiCV.Infrastructure.Data;
-using AiCV.Infrastructure.Services;
-
 namespace AiCV.Tests.Services;
 
 public class AdminStatisticsServiceTests

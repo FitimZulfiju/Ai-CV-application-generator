@@ -1,6 +1,4 @@
-@page "/login"
-@using MudBlazor
-@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+@attribute [Microsoft.AspNetCore.Components.Route(NavUri.LoginPage)]
 
 <PageTitle>@Localizer["LoginTitle"] - Ai-CV</PageTitle>
 <MudContainer MaxWidth="MaxWidth.Small" Class="py-4 d-flex flex-column align-center justify-center"

@@ -1,6 +1,5 @@
-@page "/my-applications"
+@attribute [Microsoft.AspNetCore.Components.Route(NavUri.MyApplicationsPage)]
 @attribute [Authorize]
-@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 <PageTitle>@Localizer["MyApplications"]</PageTitle>
 
@@ -12,18 +11,21 @@
     }
     else if (_applications == null || !_applications.Any())
     {
-        <MudAlert Severity="Severity.Info">@Localizer["NoApplicationsYet"] <MudLink Href="/generate">@Localizer["Generate"]
-            </MudLink> @Localizer["ToCreateOne"]</MudAlert>
+        <MudAlert Severity="Severity.Info">
+            @Localizer["NoApplicationsYet"] <MudLink Href="/generate">
+                @Localizer["Generate"]
+            </MudLink> @Localizer["ToCreateOne"]
+        </MudAlert>
     }
     else
     {
         <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading"
-        LoadingProgressColor="Color.Info" Filter="new Func<GeneratedApplication,bool>(FilterFunc1)" Dense="true">
+                  LoadingProgressColor="Color.Info" Filter="new Func<GeneratedApplication, bool>(FilterFunc1)" Dense="true">
             <ToolBarContent>
                 <MudText Typo="Typo.h5">📝 @Localizer["MyApplications"]</MudText>
                 <MudSpacer />
                 <MudTextField @bind-Value="searchString1" Placeholder="@Localizer["Search"]" Adornment="Adornment.Start"
-                AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Clearable="true"></MudTextField>
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Clearable="true"></MudTextField>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>#</MudTh>
@@ -39,8 +41,8 @@
                 <MudTd DataLabel="@Localizer["JobTitle"]">@context.JobPosting?.Title</MudTd>
                 <MudTd DataLabel="@Localizer["Actions"]">
                     <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
-                    OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" Disabled="@(_deletingId == context.Id)"
-                    StartIcon="@Icons.Material.Filled.Visibility">@Localizer["View"]</MudButton>
+                               OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" Disabled="@(_deletingId == context.Id)"
+                               StartIcon="@Icons.Material.Filled.Visibility">@Localizer["View"]</MudButton>
 
                     @if (_deletingId == context.Id)
                     {
@@ -49,7 +51,7 @@
                     else
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                    OnClick="@(() => DeleteApplication(context))" aria-label="delete" Disabled="@(_deletingId != null)">
+                                       OnClick="@(() => DeleteApplication(context))" aria-label="delete" Disabled="@(_deletingId != null)">
                         </MudIconButton>
                     }
                 </MudTd>

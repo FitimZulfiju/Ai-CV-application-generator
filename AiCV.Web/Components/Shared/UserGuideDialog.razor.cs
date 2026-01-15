@@ -2,9 +2,6 @@ namespace AiCV.Web.Components.Shared;
 
 public partial class UserGuideDialog
 {
-    [Inject]
-    private IStringLocalizer<AicvResources> Localizer { get; set; } = default!;
-
     [CascadingParameter]
     protected IMudDialogInstance MudDialog { get; set; } = default!;
 

@@ -1,12 +1,11 @@
-namespace AiCV.Domain
+namespace AiCV.Domain;
+
+public enum AIProvider
 {
-    public enum AIProvider
-    {
-        OpenAI,
-        GoogleGemini,
-        Claude,
-        Groq,
-        DeepSeek,
-        OpenRouter,
-    }
+    OpenAI,
+    GoogleGemini,
+    Claude,
+    Groq,
+    DeepSeek,
+    OpenRouter,
 }

@@ -1,5 +1,4 @@
 @rendermode InteractiveServer
-@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
 
 <MudNavMenu>
     @* <MudText Typo="Typo.h6" Class="px-4 py-2">AiCV</MudText> *@
@@ -9,20 +8,20 @@
 
     <AuthorizeView>
         <Authorized>
-            <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
-            <MudNavLink Href="/generate" Icon="@Icons.Material.Filled.AutoAwesome">@Localizer["Generate"]</MudNavLink>
-            <MudNavLink Href="/my-applications" Icon="@Icons.Material.Filled.List">@Localizer["MyApplications"]
+            <MudNavLink Href=@($"/{NavUri.ProfilePage}") Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]</MudNavLink>
+            <MudNavLink Href=@($"/{NavUri.GeneratePage}") Icon="@Icons.Material.Filled.AutoAwesome">@Localizer["Generate"]</MudNavLink>
+            <MudNavLink Href=@($"/{NavUri.MyApplicationsPage}") Icon="@Icons.Material.Filled.List">@Localizer["MyApplications"]
             </MudNavLink>
-            <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">@Localizer["Settings"]</MudNavLink>
+            <MudNavLink Href=@($"/{NavUri.SettingsPage}") Icon="@Icons.Material.Filled.Settings">@Localizer["Settings"]</MudNavLink>
 
             <AuthorizeView Roles="Admin">
                 <Authorized Context="adminContext">
                     <MudDivider Class="my-2" />
-                    <MudNavLink Href="/admin" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AdminPanelSettings"
+                    <MudNavLink Href=@($"/{NavUri.AdminDashboardPage}") Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AdminPanelSettings"
                         Style="color: var(--mud-palette-warning);">
                         @Localizer["AdminDashboard"]
                     </MudNavLink>
-                    <MudNavLink Href="/admin/logs" Icon="@Icons.Material.Filled.BugReport"
+                    <MudNavLink Href=@($"/{NavUri.AdminLogsPage}") Icon="@Icons.Material.Filled.BugReport"
                         Style="color: var(--mud-palette-error);">
                         @Localizer["SystemLogs"]
                     </MudNavLink>
@@ -36,13 +35,13 @@
 
             <MudNavLink OnClick="Logout" Icon="@Icons.Material.Filled.Logout">@Localizer["Logout"]</MudNavLink>
 
-            <form action="/logout" method="post" id="logout-form" style="display:none;">
+            <form action=@($"/{NavUri.LogoutPage}") method="post" id="logout-form" style="display:none;">
             </form>
         </Authorized>
         <NotAuthorized>
             <MudDivider Class="my-2" />
-            <MudNavLink Href="/login" Icon="@Icons.Material.Filled.Login">@Localizer["Login"]</MudNavLink>
-            <MudNavLink Href="/register" Icon="@Icons.Material.Filled.PersonAdd">@Localizer["Register"]</MudNavLink>
+            <MudNavLink Href=@($"/{NavUri.LoginPage}") Icon="@Icons.Material.Filled.Login">@Localizer["Login"]</MudNavLink>
+            <MudNavLink Href=@($"/{NavUri.RegisterPage}") Icon="@Icons.Material.Filled.PersonAdd">@Localizer["Register"]</MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
 </MudNavMenu>

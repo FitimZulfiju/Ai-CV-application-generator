@@ -78,7 +78,15 @@ public class ModelDiscoveryService(
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
             .Where(id => id.StartsWith("gpt-") || id.StartsWith("o1") || id.StartsWith("o3"))
-            .OrderDescending()
+            .Distinct()
+            .Select(id => new AIModelDto
+            {
+                ModelId = id,
+                Name = id,
+                CostType = "Paid",
+                Notes = ["Requires OpenAI credits/balance"],
+            })
+            .OrderByDescending(m => m.ModelId)
             .ToList();
 
         return new ModelDiscoveryResult
@@ -110,7 +118,14 @@ public class ModelDiscoveryService(
             .EnumerateArray()
             .Select(m => m.GetProperty("name").GetString()!.Replace("models/", ""))
             .Where(id => id.StartsWith("gemini-"))
-            .OrderDescending()
+            .Select(id => new AIModelDto
+            {
+                ModelId = id,
+                Name = id,
+                CostType = "Paid",
+                Notes = ["Free tier available with rate limits"],
+            })
+            .OrderByDescending(m => m.ModelId)
             .ToList();
 
         return new ModelDiscoveryResult
@@ -143,7 +158,14 @@ public class ModelDiscoveryService(
             .RootElement.GetProperty("data")
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
-            .OrderDescending()
+            .Select(id => new AIModelDto
+            {
+                ModelId = id,
+                Name = id,
+                CostType = "No per-token cost",
+                Notes = ["Aggressive rate limits based on tier"],
+            })
+            .OrderByDescending(m => m.ModelId)
             .ToList();
 
         return new ModelDiscoveryResult
@@ -176,7 +198,14 @@ public class ModelDiscoveryService(
             .RootElement.GetProperty("data")
             .EnumerateArray()
             .Select(m => m.GetProperty("id").GetString()!)
-            .OrderDescending()
+            .Select(id => new AIModelDto
+            {
+                ModelId = id,
+                Name = id,
+                CostType = "Paid",
+                Notes = ["Requires DeepSeek API balance"],
+            })
+            .OrderByDescending(m => m.ModelId)
             .ToList();
 
         return new ModelDiscoveryResult
@@ -208,39 +237,104 @@ public class ModelDiscoveryService(
 
         var content = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(content);
-        var models = json
-            .RootElement.GetProperty("data")
-            .EnumerateArray()
-            .Select(m => m.GetProperty("id").GetString()!)
-            .Order()
-            .ToList();
+        var models = new List<AIModelDto>();
 
-        return new ModelDiscoveryResult { Success = true, Models = models };
+        foreach (var m in json.RootElement.GetProperty("data").EnumerateArray())
+        {
+            var id = m.GetProperty("id").GetString()!;
+            var name = m.TryGetProperty("name", out var n) ? n.GetString() : id;
+            var pricing = m.TryGetProperty("pricing", out var p) ? p : (JsonElement?)null;
+
+            var costType = "Paid";
+            if (pricing.HasValue)
+            {
+                var prompt = pricing.Value.TryGetProperty("prompt", out var pr)
+                    ? pr.GetString()
+                    : "0";
+                var completion = pricing.Value.TryGetProperty("completion", out var cp)
+                    ? cp.GetString()
+                    : "0";
+
+                if (
+                    (prompt == "0" || prompt == "0.0") && (completion == "0" || completion == "0.0")
+                )
+                {
+                    costType = "No per-token cost";
+                }
+            }
+
+            var notes = new List<string>();
+            if (costType == "No per-token cost")
+            {
+                notes.Add("Rate-limited");
+                notes.Add("Availability not guaranteed");
+            }
+            else
+            {
+                notes.Add("Requires OpenRouter balance");
+                notes.Add("May not be accessible with free-tier keys");
+            }
+
+            models.Add(
+                new AIModelDto
+                {
+                    ModelId = id,
+                    Name = name,
+                    CostType = costType,
+                    Notes = notes,
+                }
+            );
+        }
+
+        return new ModelDiscoveryResult
+        {
+            Success = true,
+            Models = [.. models.OrderBy(m => m.Name)],
+        };
     }
 
-    public List<string> GetFallbackModels(AIProvider provider) =>
-        provider switch
+    public List<AIModelDto> GetFallbackModels(AIProvider provider)
+    {
+        var (ids, costType, notes) = provider switch
         {
-            AIProvider.OpenAI => ["gpt-4o", "gpt-4o-mini", "o1-preview", "o1-mini"],
-            AIProvider.GoogleGemini =>
-            [
-                "gemini-2.0-flash-exp",
-                "gemini-1.5-pro",
-                "gemini-1.5-flash",
-            ],
-            AIProvider.Claude =>
-            [
-                "claude-3-5-sonnet-20241022",
-                "claude-3-5-haiku-20241022",
-                "claude-3-opus-20240229",
-            ],
-            AIProvider.Groq =>
-            [
-                "llama-3.3-70b-versatile",
-                "llama-3.1-8b-instant",
-                "mixtral-8x7b-32768",
-            ],
-            AIProvider.DeepSeek => ["deepseek-chat", "deepseek-reasoner"],
-            _ => [],
+            AIProvider.OpenAI => (
+                ["gpt-4o", "gpt-4o-mini", "o1-preview", "o1-mini"],
+                "Paid",
+                ["Requires OpenAI credits/balance"]
+            ),
+            AIProvider.GoogleGemini => (
+                ["gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"],
+                "Paid",
+                ["Free tier available with rate limits"]
+            ),
+            AIProvider.Claude => (
+                [
+                    "claude-3-5-sonnet-20241022",
+                    "claude-3-5-haiku-20241022",
+                    "claude-3-opus-20240229",
+                ],
+                "Paid",
+                ["Requires Anthropic credits"]
+            ),
+            AIProvider.Groq => (
+                ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"],
+                "No per-token cost",
+                ["Aggressive rate limits based on tier"]
+            ),
+            AIProvider.DeepSeek => (
+                ["deepseek-chat", "deepseek-reasoner"],
+                "Paid",
+                ["Requires DeepSeek API balance"]
+            ),
+            _ => (Array.Empty<string>(), "Paid", new List<string>()),
         };
+
+        return [.. ids.Select(id => new AIModelDto
+            {
+                ModelId = id,
+                Name = id,
+                CostType = costType,
+                Notes = notes,
+            })];
+    }
 }

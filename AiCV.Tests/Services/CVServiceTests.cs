@@ -1,9 +1,3 @@
-using AiCV.Domain;
-using AiCV.Infrastructure.Data;
-using AiCV.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-
 namespace AiCV.Tests.Services;
 
 public class CVServiceTests
@@ -17,7 +11,7 @@ public class CVServiceTests
             .Options;
 
         // Create a mock factory that returns a new context with the in-memory options
-        var mockFactory = new Moq.Mock<IDbContextFactory<ApplicationDbContext>>();
+        var mockFactory = new Mock<IDbContextFactory<ApplicationDbContext>>();
         mockFactory.Setup(f => f.CreateDbContextAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(() => new ApplicationDbContext(options));
 
@@ -29,7 +23,7 @@ public class CVServiceTests
     {
         // Arrange
         var service = new CVService(_contextFactory);
-        var userId = "non-existent-user";
+        const string userId = "non-existent-user";
 
         // Act
         var result = await service.GetProfileAsync(userId);
@@ -42,8 +36,8 @@ public class CVServiceTests
     public async Task GetProfileAsync_ShouldCreateProfile_WhenUserExistsAndProfileMissing()
     {
         // Arrange
-        var userId = "new-user-with-no-profile";
-        using (var context = await _contextFactory.CreateDbContextAsync())
+        const string userId = "new-user-with-no-profile";
+        await using (var context = await _contextFactory.CreateDbContextAsync())
         {
             context.Users.Add(new User { Id = userId, UserName = "testuser", Email = "test@example.com" });
             await context.SaveChangesAsync();
@@ -57,10 +51,10 @@ public class CVServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(userId, result.UserId);
-        
+
         // Verify it was saved to DB
         // Verify it was saved to DB
-        using var verifyContext = await _contextFactory.CreateDbContextAsync();
+        await using var verifyContext = await _contextFactory.CreateDbContextAsync();
         var savedProfile = await verifyContext.CandidateProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         Assert.NotNull(savedProfile);
     }
@@ -69,8 +63,8 @@ public class CVServiceTests
     public async Task GetProfileAsync_ShouldReturnExistingProfile_WhenUserExists()
     {
         // Arrange
-        var userId = "existing-user";
-        using (var context = await _contextFactory.CreateDbContextAsync())
+        const string userId = "existing-user";
+        await using (var context = await _contextFactory.CreateDbContextAsync())
         {
             context.CandidateProfiles.Add(new CandidateProfile
             {
@@ -96,17 +90,17 @@ public class CVServiceTests
     public async Task SaveProfileAsync_ShouldUpdateExistingProfile()
     {
         // Arrange
-        var userId = "update-user";
+        const string userId = "update-user";
         var profile = new CandidateProfile { UserId = userId, FullName = "Original Name" };
-        
-        using (var context = await _contextFactory.CreateDbContextAsync())
+
+        await using (var context = await _contextFactory.CreateDbContextAsync())
         {
             context.CandidateProfiles.Add(profile);
             await context.SaveChangesAsync();
         }
 
         var service = new CVService(_contextFactory);
-        
+
         // Modify profile
         profile.FullName = "Updated Name";
 
@@ -114,7 +108,7 @@ public class CVServiceTests
         await service.SaveProfileAsync(profile);
 
         // Assert
-        using (var context = await _contextFactory.CreateDbContextAsync())
+        await using (var context = await _contextFactory.CreateDbContextAsync())
         {
             var updatedProfile = await context.CandidateProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
             Assert.NotNull(updatedProfile);

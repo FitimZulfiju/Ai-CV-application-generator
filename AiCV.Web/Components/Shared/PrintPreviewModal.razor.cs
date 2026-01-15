@@ -2,9 +2,6 @@ namespace AiCV.Web.Components.Shared;
 
 public partial class PrintPreviewModal
 {
-    [Inject]
-    public IJSRuntime JS { get; set; } = default!;
-
     private bool _isVisible;
     private string _iframeKey = Guid.NewGuid().ToString();
 
@@ -49,7 +46,7 @@ public partial class PrintPreviewModal
         var filename = $"{DocumentType}_{DocumentTitle?.Replace(" ", "_") ?? "DOC"}.pdf";
         var base64 = Convert.ToBase64String(PdfData);
 
-        await JS.InvokeVoidAsync(
+        await JSRuntime.InvokeVoidAsync(
             "eval",
             $@"
 (function() {{

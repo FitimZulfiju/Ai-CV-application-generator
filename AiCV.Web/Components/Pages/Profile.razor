@@ -1,7 +1,5 @@
-@page "/profile"
-@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+@attribute [Microsoft.AspNetCore.Components.Route(NavUri.ProfilePage)]
 @attribute [Authorize]
-
 
 <PageTitle>@Localizer["MasterCvProfile"]</PageTitle>
 
