@@ -30,7 +30,6 @@ public partial class AdminDashboard
     private List<ChartSeries> _dailyChartSeries = [];
     private string[] _dailyLabels = [];
     private readonly ChartOptions _chartOptions = new() { YAxisTicks = 1 };
-
     protected override async Task OnInitializedAsync()
     {
         await LoadStatistics();

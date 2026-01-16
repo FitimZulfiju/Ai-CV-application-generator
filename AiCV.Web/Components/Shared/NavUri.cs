@@ -14,5 +14,6 @@
         public const string ProfilePage = "profile";
         public const string RegisterPage = "register";
         public const string SettingsPage = "settings";
+        public const string AccessDeniedPage = "accessdenied";
     }
 }

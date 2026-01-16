@@ -100,9 +100,9 @@ if (!string.IsNullOrEmpty(githubClientId) && !string.IsNullOrEmpty(githubClientS
 // Configure cookie authentication
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/login";
-    options.LogoutPath = "/logout";
-    options.AccessDeniedPath = "/login";
+    options.LoginPath = $"/{NavUri.LoginPage}";
+    options.LogoutPath = $"/{NavUri.LogoutPage}";
+    options.AccessDeniedPath = $"/{NavUri.LoginPage}";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
@@ -187,12 +187,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler($"/{NavUri.ErrorPage}", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseStatusCodePagesWithReExecute($"/{NavUri.NotFoundPage}", createScopeForStatusCodePages: true);
+app.UseStatusCodePagesWithReExecute($"/{NavUri.NotFoundPage}", createScopeForStatusCodePages: true);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -216,7 +216,13 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<User>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        await DbInitializer.InitializeAsync(context, userManager, roleManager);
+        var modelDiscoveryService = services.GetRequiredService<IModelDiscoveryService>();
+        await DbInitializer.InitializeAsync(
+            context,
+            userManager,
+            roleManager,
+            modelDiscoveryService
+        );
     }
     catch (Exception ex)
     {
@@ -230,11 +236,11 @@ app.MapStaticAssets();
 
 // Add logout endpoint
 app.MapPost(
-    "/logout",
+    $"/{NavUri.LogoutPage}",
     async (SignInManager<User> signInManager) =>
     {
         await signInManager.SignOutAsync();
-        return Results.Redirect("/login");
+        return Results.Redirect($"/{NavUri.LoginPage}");
     }
 );
 
@@ -258,7 +264,7 @@ app.MapPost(
             {
                 return Results.Redirect("/");
             }
-            return Results.Redirect("/login?error=Invalid login attempt");
+            return Results.Redirect($"/{NavUri.LoginPage}?error=Invalid login attempt");
         }
     )
     .DisableAntiforgery(); // Disable antiforgery for simplicity in this demo, but recommended for production
@@ -276,7 +282,7 @@ app.MapPost(
         {
             if (password != confirmPassword)
             {
-                return Results.Redirect("/register?error=Passwords do not match");
+                return Results.Redirect($"/{NavUri.RegisterPage}?error=Passwords do not match");
             }
 
             var user = new User { UserName = email, Email = email };
@@ -308,7 +314,7 @@ app.MapPost(
             }
 
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return Results.Redirect($"/register?error={Uri.EscapeDataString(errors)}");
+            return Results.Redirect($"/{NavUri.RegisterPage}?error={Uri.EscapeDataString(errors)}");
         }
     )
     .DisableAntiforgery();
@@ -349,7 +355,7 @@ app.MapGet(
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
-            return Results.Redirect("/login?error=External login failed");
+            return Results.Redirect($"/{NavUri.LoginPage}?error=External login failed");
         }
 
         // Try to sign in with existing external login
@@ -369,7 +375,9 @@ app.MapGet(
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrEmpty(email))
         {
-            return Results.Redirect("/login?error=Email not provided by external provider");
+            return Results.Redirect(
+                $"/{NavUri.LoginPage}?error=Email not provided by external provider"
+            );
         }
 
         var user = await userManager.FindByEmailAsync(email);
@@ -386,7 +394,9 @@ app.MapGet(
             if (!createResult.Succeeded)
             {
                 var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                return Results.Redirect($"/login?error={Uri.EscapeDataString(errors)}");
+                return Results.Redirect(
+                    $"/{NavUri.LoginPage}?error={Uri.EscapeDataString(errors)}"
+                );
             }
 
             // Assign User role to new external registrations
@@ -475,7 +485,7 @@ app.MapPost(
                 attempt++
             )
             {
-                System.Threading.Thread.Sleep(50);
+                Thread.Sleep(50);
             }
 
             double? seconds = null;

@@ -550,8 +550,27 @@ public partial class Generate : IDisposable
                     _job.Description = draft.Job.Description;
                     _customPrompt = draft.CustomPrompt;
                     _manualEntry = draft.ManualEntry;
-                    _activeConfigId = draft.SelectedConfigId;
                     _showAdvancedEditor = draft.ShowAdvancedEditor;
+
+                    // Validate restored config ID - if it doesn't exist in current providers, ignore it
+                    if (
+                        draft.SelectedConfigId.HasValue
+                        && _configuredProviders.Any(c => c.Id == draft.SelectedConfigId.Value)
+                    )
+                    {
+                        _activeConfigId = draft.SelectedConfigId;
+                    }
+                    else
+                    {
+                        // If invalid or null, ensure we fall back to the backend default
+                        if (_hasConfiguredProvider && _activeConfigId == null)
+                        {
+                            var defaultConf =
+                                _configuredProviders.FirstOrDefault(c => c.IsActive)
+                                ?? _configuredProviders[0];
+                            _activeConfigId = defaultConf.Id;
+                        }
+                    }
 
                     if (!string.IsNullOrEmpty(_job.Description))
                     {

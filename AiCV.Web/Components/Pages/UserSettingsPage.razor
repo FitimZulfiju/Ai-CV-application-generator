@@ -82,7 +82,7 @@
                     Label="@(_availableModels.Count == 0 ? Localizer["Model"].Value : $"{Localizer["Models"]} ({_availableModels.Count})")"
                     @bind-Value="_newConfig.ModelId" @bind-Value:after="OnModelSelected" SearchFunc="@SearchModels"
                     Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="@(!_modelsLoaded)" CoerceValue="false"
-                    ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary" Dense="true" MaxItems="50"
+                    ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary" Dense="true" MaxItems="null"
                     Clearable="true" ResetValueOnEmptyText="true">
                         <ItemTemplate Context="modelId">
                             <MudText>@modelId</MudText>

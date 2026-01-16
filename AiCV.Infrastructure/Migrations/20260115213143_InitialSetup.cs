@@ -87,6 +87,27 @@ namespace AiCV.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserAIConfigurations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Provider = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModelId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CostType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAIConfigurations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -233,7 +254,9 @@ namespace AiCV.Infrastructure.Migrations
                     ClaudeApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GroqApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeepSeekApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DefaultModel = table.Column<int>(type: "int", nullable: false),
+                    OpenRouterApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DefaultProvider = table.Column<int>(type: "int", nullable: false),
+                    DefaultModelId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -309,6 +332,7 @@ namespace AiCV.Infrastructure.Migrations
                     CandidateProfileId = table.Column<int>(type: "int", nullable: false),
                     CoverLetterContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TailoredResumeJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationEmailContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -560,6 +584,9 @@ namespace AiCV.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "SystemLogs");
+
+            migrationBuilder.DropTable(
+                name: "UserAIConfigurations");
 
             migrationBuilder.DropTable(
                 name: "UserSettings");
