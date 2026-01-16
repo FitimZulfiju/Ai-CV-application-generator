@@ -61,7 +61,7 @@
 
             <!-- Usage Trends Chart (Line Chart) -->
             <MudItem xs="12" md="12">
-                <MudCard Elevation="3">
+                <MudCard Elevation="3" Class="custom-chard-card">
                     <MudCardHeader>
                         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                             <!-- Title -->
@@ -72,7 +72,7 @@
                                 </MudText>
                             </MudStack>
                             <!-- Legend -->
-                           @*  <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                            @*  <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                                 @foreach (var series in _dailyChartSeries)
                                 {
 
@@ -99,8 +99,8 @@
             </MudItem>
 
             <style>
-                .mud-chart-legend,
-                .mud-chart-legend-container {
+                .custom-chard-card .mud-chart-legend,
+                .custom-chard-card .mud-chart-legend-container {
                     display: none !important;
                     align-items: end;
                 }
@@ -182,14 +182,20 @@
 
             <!-- System Overview Donut -->
             <MudItem xs="12" md="6">
-                <MudCard Elevation="3" Class="pa-4 d-flex flex-column align-center justify-center">
+                <MudCard Elevation="3" Class="pa-4">
                     <MudText Typo="Typo.h6" Class="mb-3">@Localizer["SystemOverview"]</MudText>
-                    <MudChart ChartType="ChartType.Donut"
+                    <MudChart ChartType="ChartType.Donut" LegendPosition="Position.End"
                               InputData="@(new double[] { _statistics.TotalUsers, _statistics.TotalProfiles, _statistics.TotalApplicationsGenerated })"
-                              InputLabels="@(new string[] { Localizer["Users"], Localizer["Profiles"], Localizer["Applications"] })"
-                              Height="320px" />
-                </MudCard>
-            </MudItem>
+                              InputLabels="@(
+                              new string[]
+                              {
+                                $"{Localizer["Users"]} ({_statistics.TotalUsers})",
+                                $"{Localizer["Profiles"]} ({_statistics.TotalProfiles})",
+                                $"{Localizer["Applications"]} ({_statistics.TotalApplicationsGenerated})"
+                              })"
+                          Height="320px" />
+            </MudCard>
+        </MudItem>
 
             <!-- All Users Table with Management -->
             <MudItem xs="12">
@@ -215,7 +221,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd DataLabel="Status">
-                                @if (context.IsLockedOut)
+                            @if (context.IsLockedOut)
                                 {
                                     <MudChip T="string" Size="Size.Small" Color="Color.Error"
                                              Icon="@Icons.Material.Filled.Lock">@Localizer["Locked"]</MudChip>
