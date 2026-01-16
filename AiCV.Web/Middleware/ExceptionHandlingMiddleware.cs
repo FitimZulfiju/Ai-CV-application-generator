@@ -11,6 +11,20 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, IServiceScopeFact
         {
             await _next(context);
         }
+        catch (Microsoft.AspNetCore.Authentication.AuthenticationFailureException ex)
+        {
+            // Handle OAuth failures (like invalid_grant/expired token) gracefully
+            using var scope = _scopeFactory.CreateScope();
+            var logService = scope.ServiceProvider.GetRequiredService<ISystemLogService>();
+
+            await logService.LogWarningAsync(
+                message: $"External login failure: {ex.Message}. Path: {context.Request.Path}",
+                source: "ExceptionHandlingMiddleware"
+            );
+
+            // Redirect to login page with error
+            context.Response.Redirect($"/{NavUri.LoginPage}?error=ExternalLoginFailed");
+        }
         catch (Exception ex)
         {
             // Create a scope to resolve scoped services like ISystemLogService

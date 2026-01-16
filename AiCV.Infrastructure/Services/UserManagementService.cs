@@ -19,8 +19,17 @@ public class UserManagementService(ApplicationDbContext context, UserManager<Use
 
         if (lockout)
         {
+            // Ensure lockout is enabled for this user so the lockout end date is respected
+            if (!await _userManager.GetLockoutEnabledAsync(user))
+            {
+                await _userManager.SetLockoutEnabledAsync(user, true);
+            }
+
             // Lock out for 100 years (effectively permanent)
             await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+
+            // Update security stamp to invalidate current sessions
+            await _userManager.UpdateSecurityStampAsync(user);
         }
         else
         {

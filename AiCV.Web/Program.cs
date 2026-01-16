@@ -264,7 +264,11 @@ app.MapPost(
             {
                 return Results.Redirect("/");
             }
-            return Results.Redirect($"/{NavUri.LoginPage}?error=Invalid login attempt");
+            if (result.IsLockedOut)
+            {
+                return Results.Redirect($"/{NavUri.LoginPage}?error=AccountLocked");
+            }
+            return Results.Redirect($"/{NavUri.LoginPage}?error=InvalidLoginAttempt");
         }
     )
     .DisableAntiforgery(); // Disable antiforgery for simplicity in this demo, but recommended for production
@@ -369,6 +373,10 @@ app.MapGet(
         if (signInResult.Succeeded)
         {
             return Results.Redirect("/");
+        }
+        if (signInResult.IsLockedOut)
+        {
+            return Results.Redirect($"/{NavUri.LoginPage}?error=AccountLocked");
         }
 
         // Create new user if not exists
