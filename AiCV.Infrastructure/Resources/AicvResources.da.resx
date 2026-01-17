@@ -61,6 +61,9 @@
   <data name="Settings" xml:space="preserve">
     <value>Indstillinger</value>
   </data>
+  <data name="Tagline" xml:space="preserve">
+    <value>Tagline</value>
+  </data>
   <data name="OpenRouterApiKey" xml:space="preserve">
     <value>OpenRouter API-nøgle</value>
   </data>

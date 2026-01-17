@@ -91,34 +91,38 @@ else
                                     Label="@Localizer["ShowInCv"]" />
                             </MudStack>
                         </MudItem>
-                        <MudItem xs="12" sm="4">
+                        <MudItem xs="12" sm="2">
                             <MudTextField @bind-Value="_profile.FullName" Label="@Localizer["FullName"]" Variant="Variant.Outlined"
                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Badge" />
                         </MudItem>
-                        <MudItem xs="12" sm="4">
+                        <MudItem xs="12" sm="3">
                             <MudTextField @bind-Value="_profile.Title" Label="@Localizer["ProfessionalTitle"]" Variant="Variant.Outlined"
                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
                         </MudItem>
-                        <MudItem xs="12" sm="4">
+                        <MudItem xs="12" sm="2">
                             <MudTextField @bind-Value="_profile.Email" Label="@Localizer["Email"]" Variant="Variant.Outlined"
                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
                         </MudItem>
-                        <MudItem xs="12" sm="6" Class="pt-2">
+                        <MudItem xs="12" sm="2">
                             <MudTextField @bind-Value="_profile.PhoneNumber" Label="@Localizer["PhoneNumber"]" Variant="Variant.Outlined"
                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" />
                         </MudItem>
-                        <MudItem xs="12" sm="6" Class="pt-2">
+                        <MudItem xs="12" sm="3">
                             <MudTextField @bind-Value="_profile.Location" Label="@Localizer["Location"]" Variant="Variant.Outlined"
                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                         </MudItem>
-                        <MudItem xs="12" sm="6" Class="pt-2">
+                        <MudItem xs="12" sm="3" Class="pt-2">
                             <MudTextField @bind-Value="_profile.LinkedInUrl" Label="@Localizer["LinkedInUrl"]" Variant="Variant.Outlined"
                                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
                         </MudItem>
-                        <MudItem xs="12" sm="6" Class="pt-2">
+                        <MudItem xs="12" sm="3" Class="pt-2">
                             <MudTextField @bind-Value="_profile.PortfolioUrl" Label="@Localizer["PortfolioUrl"]"
                                 Variant="Variant.Outlined" Adornment="Adornment.Start"
                                 AdornmentIcon="@Icons.Material.Filled.Link" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6" Class="pt-2">
+                            <MudTextField @bind-Value="_profile.Tagline" Label="@Localizer["Tagline"]" Variant="Variant.Outlined"
+                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.ShortText" />
                         </MudItem>
                         <MudItem xs="12" Class="pt-2">
                             <MudTextField @bind-Value="_profile.ProfessionalSummary" Label="@Localizer["ProfessionalSummary"]"

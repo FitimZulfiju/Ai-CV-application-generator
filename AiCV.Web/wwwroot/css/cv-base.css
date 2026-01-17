@@ -56,3 +56,19 @@
 .cv-container .page:not(:last-child) {
     border-bottom: 0.062em solid var(--border-color);
 }
+
+/* Support for HR tag in content */
+.cv-container hr {
+    border: 0;
+    border-top: 0.062em solid var(--border-color);
+    margin: 0.5em 0;
+}
+
+/* HR in Header (White, Ultra Thin, Balanced) */
+.cv-container .header hr {
+    border-color: rgba(255, 255, 255, 0.4);
+    border-top-width: 0.02em;
+    /* Ultra Thin */
+    margin: 0.35em 0;
+    /* Balanced margins */
+}

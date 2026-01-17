@@ -16,6 +16,7 @@ public class CandidateProfile
     public string ProfessionalSummary { get; set; } = string.Empty;
     public string ProfilePictureUrl { get; set; } = string.Empty;
     public bool ShowProfilePicture { get; set; } = false;
+    public string Tagline { get; set; } = string.Empty;
 
     public List<Experience> WorkExperience { get; set; } = [];
     public List<Education> Educations { get; set; } = [];

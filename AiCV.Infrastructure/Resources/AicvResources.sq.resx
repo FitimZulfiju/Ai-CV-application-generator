@@ -61,6 +61,9 @@
   <data name="Settings" xml:space="preserve">
     <value>Cilësimet</value>
   </data>
+  <data name="Tagline" xml:space="preserve">
+    <value>Moto</value>
+  </data>
   <data name="OpenRouterApiKey" xml:space="preserve">
     <value>Çelësi i API për OpenRouter</value>
   </data>

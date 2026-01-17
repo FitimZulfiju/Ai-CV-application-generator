@@ -367,6 +367,23 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
                                     t.Span(string.Join(" | ", parts));
                                 });
+
+                            // Tagline
+                            if (!string.IsNullOrEmpty(profile.Tagline))
+                            {
+                                col.Item()
+                                    .PaddingTop(0.05f, Unit.Centimetre)
+                                    .PaddingBottom(0.05f, Unit.Centimetre)
+                                    .LineHorizontal(0.1f)
+                                    .LineColor("#ffffff");
+
+                                col.Item()
+                                    .AlignCenter()
+                                    .Text(profile.Tagline)
+                                    .FontSize(9)
+                                    .FontColor("#ffffff")
+                                    .Medium();
+                            }
                         });
 
                     // 2. Image Layer (Overlay - Left Aligned)
@@ -427,14 +444,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                     .Column(c =>
                     {
                         // Summary Text with HTML formatting support
-                        c.Item()
-                            .Text(t =>
-                            {
-                                t.DefaultTextStyle(s =>
-                                    s.FontColor(TextMedium).FontSize(fontSize).LineHeight(1.5f)
-                                );
-                                FormatHtmlToText(t, PreprocessHtml(profile.ProfessionalSummary));
-                            });
+                        ComposeHtmlContent(c, profile.ProfessionalSummary, fontSize, TextMedium);
                     });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
@@ -550,15 +560,15 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                     .Cell()
                                     .ColumnSpan(2)
                                     .PaddingTop(0.2f, Unit.Centimetre)
-                                    .Text(t =>
-                                    {
-                                        t.DefaultTextStyle(dt =>
-                                            dt.FontSize(fontSize - 1)
-                                                .FontColor(TextMedium)
-                                                .LineHeight(1.5f)
-                                        );
-                                        FormatHtmlToText(t, PreprocessHtml(exp.Description, "• "));
-                                    });
+                                    .Column(c =>
+                                        ComposeHtmlContent(
+                                            c,
+                                            exp.Description,
+                                            fontSize - 1,
+                                            TextMedium,
+                                            "• "
+                                        )
+                                    );
                             }
 
                             // Grey Divider Line
@@ -651,19 +661,14 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
                                                 // Handle HTML tags like <strong style=color:blue;font-weight:normal;>
                                                 c.Item()
-                                                    .PaddingTop(0.25f, Unit.Centimetre)
-                                                    .Text(t =>
-                                                    {
-                                                        t.DefaultTextStyle(s =>
-                                                            s.FontSize(fontSize - 1)
-                                                                .FontColor(TextMedium)
-                                                                .LineHeight(1.5f)
-                                                        );
-                                                        FormatHtmlToText(
-                                                            t,
-                                                            PreprocessHtml(edu.Description)
-                                                        );
-                                                    });
+                                                    .Column(col =>
+                                                        ComposeHtmlContent(
+                                                            col,
+                                                            edu.Description,
+                                                            fontSize - 1,
+                                                            TextMedium
+                                                        )
+                                                    );
                                             }
                                         });
                                 });
@@ -782,22 +787,15 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                             {
                                                 // CSS uses ✓ (U+2713) for project features
                                                 c.Item()
-                                                    .PaddingTop(0.1f, Unit.Centimetre)
-                                                    .Text(t =>
-                                                    {
-                                                        t.DefaultTextStyle(dt =>
-                                                            dt.FontSize(fontSize - 1)
-                                                                .FontColor(TextMedium)
-                                                                .LineHeight(1.5f)
-                                                        );
-                                                        FormatHtmlToText(
-                                                            t,
-                                                            PreprocessHtml(
-                                                                proj.Description,
-                                                                "\u2713 "
-                                                            )
-                                                        );
-                                                    });
+                                                    .Column(col =>
+                                                        ComposeHtmlContent(
+                                                            col,
+                                                            proj.Description,
+                                                            fontSize - 1,
+                                                            TextMedium,
+                                                            "\u2713 "
+                                                        )
+                                                    );
                                             }
 
                                             // Render SectionTitle if present (AI Analytics, etc.)
@@ -827,25 +825,15 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                 if (sectionDetails.Length > 0)
                                                 {
                                                     c.Item()
-                                                        .PaddingTop(0.1f, Unit.Centimetre)
-                                                        .Text(t =>
-                                                        {
-                                                            t.DefaultTextStyle(dt =>
-                                                                dt.FontSize(fontSize - 1)
-                                                                    .FontColor(TextMedium)
-                                                                    .LineHeight(1.5f)
-                                                            );
-                                                            FormatHtmlToText(
-                                                                t,
-                                                                PreprocessHtml(
-                                                                    string.Join(
-                                                                        "\n",
-                                                                        sectionDetails
-                                                                    ),
-                                                                    "\u2713 "
-                                                                )
-                                                            );
-                                                        });
+                                                        .Column(col =>
+                                                            ComposeHtmlContent(
+                                                                col,
+                                                                string.Join("\n", sectionDetails),
+                                                                fontSize - 1,
+                                                                TextMedium,
+                                                                "\u2713 "
+                                                            )
+                                                        );
                                                 }
                                             }
                                         });
@@ -1095,6 +1083,9 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
         string pText = input ?? "";
 
+        // Handle HR tags - Convert to unique placeholder
+        pText = HrTagRegex().Replace(pText, "[[HR]]");
+
         // Handle Lists (<ul><li>...</li></ul>)
         if (pText.Contains("<li>", StringComparison.OrdinalIgnoreCase))
         {
@@ -1249,4 +1240,53 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
     [GeneratedRegex(@"<p.*?>", RegexOptions.IgnoreCase)]
     private static partial Regex POpenTagRegex();
+
+    [GeneratedRegex(@"<hr\s*/?>", RegexOptions.IgnoreCase)]
+    private static partial Regex HrTagRegex();
+
+    /// <summary>
+    /// Renders HTML content into a ColumnDescriptor, handling text blocks and horizontal lines.
+    /// Replaces direct Text() calls to support block-level elements like HR.
+    /// </summary>
+    private static void ComposeHtmlContent(
+        ColumnDescriptor column,
+        string? input,
+        float fontSize,
+        string fontColor,
+        string bullet = ""
+    )
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return;
+
+        var preprocessed = PreprocessHtml(input, bullet);
+        var parts = preprocessed.Split(["[[HR]]"], StringSplitOptions.None);
+
+        for (int i = 0; i < parts.Length; i++)
+        {
+            var part = parts[i];
+            if (!string.IsNullOrWhiteSpace(part))
+            {
+                column
+                    .Item()
+                    .Text(t =>
+                    {
+                        t.DefaultTextStyle(s =>
+                            s.FontSize(fontSize).FontColor(fontColor).LineHeight(1.5f)
+                        );
+                        FormatHtmlToText(t, part);
+                    });
+            }
+
+            // Render HR if not the last part
+            if (i < parts.Length - 1)
+            {
+                column
+                    .Item()
+                    .PaddingVertical(0.1f, Unit.Centimetre)
+                    .LineHorizontal(1)
+                    .LineColor(BorderColor);
+            }
+        }
+    }
 }
