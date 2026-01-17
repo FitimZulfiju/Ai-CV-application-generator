@@ -40,6 +40,7 @@ public class UserDetailDto
     public string Email { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
+    public string TagLine { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public bool EmailConfirmed { get; set; }

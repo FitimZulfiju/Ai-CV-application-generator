@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AiCV.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -229,7 +229,8 @@ namespace AiCV.Infrastructure.Migrations
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfessionalSummary = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShowProfilePicture = table.Column<bool>(type: "bit", nullable: false)
+                    ShowProfilePicture = table.Column<bool>(type: "bit", nullable: false),
+                    Tagline = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
