@@ -1,3 +1,29 @@
+// Load .env file for configuration (searches current and parent directories)
+var currentDir = new DirectoryInfo(AppContext.BaseDirectory);
+while (currentDir != null)
+{
+    var envFile = Path.Combine(currentDir.FullName, ".env");
+    var deployEnvFile = Path.Combine(currentDir.FullName, "deploy", ".env");
+
+    if (File.Exists(envFile))
+    {
+        DotNetEnv.Env.Load(envFile);
+        break;
+    }
+
+    if (File.Exists(deployEnvFile))
+    {
+        DotNetEnv.Env.Load(deployEnvFile);
+        break;
+    }
+
+    currentDir = currentDir.Parent;
+}
+
+// Enable legacy timestamp behavior for PostgreSQL compatibility
+// This allows DateTime with Kind=Unspecified to work with PostgreSQL
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,16 +47,92 @@ builder
     // Add authorization
     .SetFallbackPolicy(null);
 
-// Database
+// Database Provider Selection
+// Set DB_PROVIDER environment variable to "PostgreSQL" or "SqlServer" (default)
+var dbProvider = builder.Configuration["DB_PROVIDER"] ?? "SqlServer";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-var connectionString =
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Server=localhost;Database=AiCV_db;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString)
-);
+if (string.IsNullOrEmpty(connectionString))
+{
+    if (dbProvider.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+    {
+        // Try to build PostgreSQL connection string from individual variables
+        var pgHost = builder.Configuration["PG_HOST"] ?? "localhost";
+        var pgPort = builder.Configuration["PG_PORT"] ?? "5432";
+        var pgDb = builder.Configuration["DB_NAME"] ?? "aicv_db";
+        var pgUser = builder.Configuration["DB_USER"] ?? "sa";
+        var pgPass = builder.Configuration["DB_PASSWORD"] ?? "";
+
+        // Strip single quotes if present (common in .env files)
+        if (pgPass.StartsWith("'") && pgPass.EndsWith("'"))
+            pgPass = pgPass[1..^1];
+
+        if (
+            pgHost.Equals("shared-postgres", StringComparison.OrdinalIgnoreCase)
+            || pgHost.Equals("db", StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            pgHost = "localhost";
+        }
+
+        connectionString =
+            $"Host={pgHost};Port={pgPort};Database={pgDb};Username={pgUser};Password={pgPass};";
+    }
+    else
+    {
+        // Try to build SQL Server connection string from individual variables
+        var sqlServer = builder.Configuration["DB_SERVER"] ?? "localhost";
+        var sqlDb = builder.Configuration["DB_NAME"] ?? "AiCV_db";
+        var sqlUser = builder.Configuration["DB_USER"];
+        var sqlPass = builder.Configuration["DB_PASSWORD"] ?? "";
+
+        if (sqlPass.StartsWith("'") && sqlPass.EndsWith("'"))
+            sqlPass = sqlPass[1..^1];
+
+        if (
+            sqlServer.Equals("shared-sqlserver", StringComparison.OrdinalIgnoreCase)
+            || sqlServer.Equals("db", StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            sqlServer = "localhost";
+        }
+
+        if (!string.IsNullOrEmpty(sqlUser))
+        {
+            connectionString =
+                $"Server={sqlServer};Database={sqlDb};User Id={sqlUser};Password={sqlPass};TrustServerCertificate=True;MultipleActiveResultSets=true;";
+        }
+        else
+        {
+            connectionString =
+                $"Server={sqlServer};Database={sqlDb};Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+        }
+    }
+}
+
+// Configure DbContext based on provider
+Action<DbContextOptionsBuilder> configureDbContext = dbProvider.Equals(
+    "PostgreSQL",
+    StringComparison.OrdinalIgnoreCase
+)
+    ? options =>
+        options
+            .UseNpgsql(
+                connectionString,
+                npgsql => npgsql.MigrationsAssembly("AiCV.Migrations.PostgreSQL")
+            )
+            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+    : options =>
+        options
+            .UseSqlServer(
+                connectionString,
+                sql => sql.MigrationsAssembly("AiCV.Migrations.SqlServer")
+            )
+            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+
+builder.Services.AddDbContextFactory<ApplicationDbContext>(configureDbContext);
 builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseSqlServer(connectionString),
+    configureDbContext,
     ServiceLifetime.Scoped,
     ServiceLifetime.Singleton
 );

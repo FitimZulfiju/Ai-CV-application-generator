@@ -11,7 +11,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, IServiceScopeFact
         {
             await _next(context);
         }
-        catch (Microsoft.AspNetCore.Authentication.AuthenticationFailureException ex)
+        catch (AuthenticationFailureException ex)
         {
             // Handle OAuth failures (like invalid_grant/expired token) gracefully
             using var scope = _scopeFactory.CreateScope();

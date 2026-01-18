@@ -13,7 +13,11 @@
 
 ## 🚀 Quick Start (Docker Compose)
 
-The easiest way to run AiCV is using Docker Compose. Create a `docker-compose.yml` file with the following content:
+The easiest way to run AiCV is using Docker Compose. We support both **PostgreSQL** (recommended) and **SQL Server**.
+
+### Option 1: PostgreSQL (Recommended)
+
+Create a `docker-compose.yml` file:
 
 ```yaml
 services:
@@ -25,12 +29,50 @@ services:
       - "8080:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=AiCV;User Id=sa;Password=YourSecurePassword123!;TrustServerCertificate=True;
+      - DB_PROVIDER=PostgreSQL
+      - PG_HOST=db
+      - DB_NAME=aicv_db
+      - DB_USER=sa
+      - DB_PASSWORD=YourSecurePassword123!
     depends_on:
       - db
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-      - "com.centurylinklabs.watchtower.scope=aicv-scope"
+
+  db:
+    image: postgres:16-alpine
+    container_name: aicv-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=YourSecurePassword123!
+      - POSTGRES_DB=aicv_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+### Option 2: SQL Server
+
+Create a `docker-compose.yml` file:
+
+```yaml
+services:
+  app:
+    image: timi74/aicv:latest
+    container_name: aicv-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DB_PROVIDER=SqlServer
+      - DB_SERVER=db
+      - DB_NAME=AiCV_db
+      - DB_USER=sa
+      - DB_PASSWORD=YourSecurePassword123!
+    depends_on:
+      - db
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -42,30 +84,26 @@ services:
     volumes:
       - mssql_data:/var/opt/mssql
 
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: aicv-watchtower
-    command: --http-api-update --label-enable --cleanup --scope aicv-scope --interval 300
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
 volumes:
   mssql_data:
 ```
 
 ### Environment Variables
 
-| Variable | Description |
-| --- | --- |
-| `ConnectionStrings__DefaultConnection` | SQL Server connection string |
-| `ASPNETCORE_ENVIRONMENT` | Set to `Production` |
-| `WATCHTOWER_HTTP_API_TOKEN` | (Optional) Token for manual update triggers |
+| Variable | Description | Default |
+| --- | --- | --- |
+| `DB_PROVIDER` | Database provider: `SqlServer` or `PostgreSQL` | `SqlServer` |
+| `ASPNETCORE_ENVIRONMENT` | Set to `Production` for deployment | `Production` |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Shared database settings | - |
+| `PG_HOST`, `PG_PORT` | PostgreSQL specific host and port | `localhost`, `5432` |
+| `DB_SERVER`, `DB_PORT` | SQL Server specific host and port | `localhost`, `1433` |
+| `ConnectionStrings__DefaultConnection` | (Alternative) Full connection string (overrides individual variables) | - |
 
 ---
 
 ## 🔗 Links
 
+- **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
 - **GitHub Repository**: [fitimzulfiu/AiCV](https://github.com/fitimzulfiu/Web-CV-application-generator)
 - **LinkedIn**: [Fitim Zulfiju](https://linkedin.com/in/[your-profile])
 - **Support**: <[your-email@example.com]>

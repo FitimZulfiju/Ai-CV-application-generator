@@ -51,10 +51,13 @@
   <ItemGroup>
     <ProjectReference Include="..\AiCV.Application\AiCV.Application.csproj" />
     <ProjectReference Include="..\AiCV.Infrastructure\AiCV.Infrastructure.csproj" />
+    <ProjectReference Include="..\AiCV.Migrations.SqlServer\AiCV.Migrations.SqlServer.csproj" />
+    <ProjectReference Include="..\AiCV.Migrations.PostgreSQL\AiCV.Migrations.PostgreSQL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="10.0.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Markdig" Version="0.44.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="10.0.2" />

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace AiCV.Infrastructure.Migrations
+namespace AiCV.Migrations.SqlServer.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -412,6 +412,7 @@ namespace AiCV.Infrastructure.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SectionTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SectionDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Technologies = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Link = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
