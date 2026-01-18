@@ -140,21 +140,35 @@ else
                                             <ul class="project-features">
                                     @((MarkupString)FormatDescription(proj.Description))
                                             </ul>
-                                @if (!string.IsNullOrEmpty(proj.SectionTitle))
+                                @if (!string.IsNullOrEmpty(proj.SectionTitle) || !string.IsNullOrEmpty(proj.SectionDescription))
                                 {
-                                    var sectionLines = proj.SectionTitle.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                                    var sectionHeader = sectionLines.FirstOrDefault()?.Trim();
-                                    var sectionDetails = sectionLines.Skip(1).ToArray();
-
-                                    if (!string.IsNullOrEmpty(sectionHeader))
+                                    if (!string.IsNullOrEmpty(proj.SectionDescription))
                                     {
-                                                            <h5 class="project-section-title">@sectionHeader</h5>
+                                        <!-- DEBUG: Raw Description: @proj.SectionDescription -->
+                                        if (!string.IsNullOrEmpty(proj.SectionTitle))
+                                        {
+                                            <h5 class="project-section-title">@proj.SectionTitle</h5>
+                                        }
+                                        <ul class="project-features">
+                                            @((MarkupString)FormatDescription(proj.SectionDescription))
+                                        </ul>
                                     }
-                                    if (sectionDetails.Any())
+                                    else if (!string.IsNullOrEmpty(proj.SectionTitle))
                                     {
-                                                            <ul class="project-features">
-                                            @((MarkupString)FormatDescription(string.Join("\n", sectionDetails)))
-                                                            </ul>
+                                        var sectionLines = proj.SectionTitle.Replace("\r\n", "\n").Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                                        var sectionHeader = sectionLines.FirstOrDefault()?.Trim();
+                                        var sectionDetails = sectionLines.Skip(1).ToArray();
+
+                                        if (!string.IsNullOrEmpty(sectionHeader))
+                                        {
+                                            <h5 class="project-section-title">@sectionHeader</h5>
+                                        }
+                                        if (sectionDetails.Any())
+                                        {
+                                            <ul class="project-features">
+                                                @((MarkupString)FormatDescription(string.Join("\n", sectionDetails)))
+                                            </ul>
+                                        }
                                     }
                                 }
                                         </div>

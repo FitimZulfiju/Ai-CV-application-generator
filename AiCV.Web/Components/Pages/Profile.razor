@@ -1,5 +1,6 @@
 @attribute [Microsoft.AspNetCore.Components.Route(NavUri.ProfilePage)]
 @attribute [Authorize]
+@inject IDialogService DialogService
 
 <PageTitle>@Localizer["MasterCvProfile"]</PageTitle>
 
@@ -11,15 +12,22 @@ else
 {
     <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
-            Class="pb-4 d-print-none stack-on-mobile" Style="gap: 16px;">
+                  Class="pb-4 d-print-none stack-on-mobile" Style="gap: 16px;">
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
                 <MudText Typo="Typo.h5">🧑 @Localizer["MasterCvProfile"]</MudText>
                 <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Primary" Size="Size.Small"
-                    OnClick="@(() => _showFormattingHelp = true)" title="@Localizer["FormattingHelp"]" />
+                               OnClick="@(() => _showFormattingHelp = true)" title="@Localizer["FormattingHelp"]" />
             </MudStack>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="width-100-mobile justify-center">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
+                <MudTooltip Text="@Localizer["ClearDraftHelper"]">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Size="Size.Medium" OnClick="ClearDraft"
+                               Style="white-space: nowrap;" StartIcon="@Icons.Material.Filled.DeleteSweep">
+                        @Localizer["ClearDraft"]
+                    </MudButton>
+                </MudTooltip>
                 <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
-                    Disabled="_isSaving" FullWidth="true" Style="max-width: 200px;">
+                           Disabled="_isSaving" Style="white-space: nowrap;"
+                           StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
                     @if (_isSaving)
                     {
                         <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -27,23 +35,22 @@ else
                     }
                     else
                     {
-                        <MudIcon Icon="@Icons.Material.Filled.Save" Class="mr-2" />
-                        <span>@Localizer["Save"]</span>
+                        @Localizer["Save"]
                     }
                 </MudButton>
                 @if (_activeTabIndex == 7)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
-                        Disabled="_isPrinting" FullWidth="true" Style="max-width: 200px;">
+                               Disabled="_isPrinting" Style="white-space: nowrap;"
+                               StartIcon="@(_isPrinting ? null : Icons.Material.Filled.Print)">
                         @if (_isPrinting)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                            <span>...</span>
+                            <span>@Localizer["Printing"]</span>
                         }
                         else
                         {
-                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                            <span>@Localizer["Print"]</span>
+                            @Localizer["PrintCv"]
                         }
                     </MudButton>
                 }
@@ -66,14 +73,15 @@ else
                                 }
                                 else
                                 {
-                                    <MudAvatar Size="Size.Large" Color="Color.Primary">@(_profile.FullName?.FirstOrDefault() ?? 'U')
+                                    <MudAvatar Size="Size.Large" Color="Color.Primary">
+                                        @(_profile.FullName?.FirstOrDefault() ?? 'U')
                                     </MudAvatar>
                                 }
 
                                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
                                     <ActivatorContent>
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                            StartIcon="@Icons.Material.Filled.CloudUpload">
+                                                   StartIcon="@Icons.Material.Filled.CloudUpload">
                                             @Localizer["UploadPicture"]
                                         </MudButton>
                                     </ActivatorContent>
@@ -82,51 +90,59 @@ else
                                 @if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
                                 {
                                     <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
-                                        StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfilePicture">
+                                               StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfilePicture">
                                         @Localizer["Delete"]
                                     </MudButton>
                                 }
 
                                 <MudSwitch @bind-Value="_profile.ShowProfilePicture" Color="Color.Primary"
-                                    Label="@Localizer["ShowInCv"]" />
+                                           Label="@Localizer["ShowInCv"]" />
                             </MudStack>
                         </MudItem>
                         <MudItem xs="12" sm="2" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.FullName" Label="@Localizer["FullName"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Badge" />
+                            <MudTextField @bind-Value="_profile.FullName" Label="@Localizer["FullName"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.Badge" />
                         </MudItem>
                         <MudItem xs="12" sm="3" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.Title" Label="@Localizer["ProfessionalTitle"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
+                            <MudTextField @bind-Value="_profile.Title" Label="@Localizer["ProfessionalTitle"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.Work" />
                         </MudItem>
                         <MudItem xs="12" sm="2" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.Email" Label="@Localizer["Email"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+                            <MudTextField @bind-Value="_profile.Email" Label="@Localizer["Email"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.Email" />
                         </MudItem>
                         <MudItem xs="12" sm="2" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.PhoneNumber" Label="@Localizer["PhoneNumber"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" />
+                            <MudTextField @bind-Value="_profile.PhoneNumber" Label="@Localizer["PhoneNumber"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.Phone" />
                         </MudItem>
                         <MudItem xs="12" sm="3" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.Location" Label="@Localizer["Location"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+                            <MudTextField @bind-Value="_profile.Location" Label="@Localizer["Location"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                         </MudItem>
                         <MudItem xs="12" sm="3" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.LinkedInUrl" Label="@Localizer["LinkedInUrl"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
+                            <MudTextField @bind-Value="_profile.LinkedInUrl" Label="@Localizer["LinkedInUrl"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
                         </MudItem>
                         <MudItem xs="12" sm="3" Class="pt-2">
                             <MudTextField @bind-Value="_profile.PortfolioUrl" Label="@Localizer["PortfolioUrl"]"
-                                Variant="Variant.Outlined" Adornment="Adornment.Start"
-                                AdornmentIcon="@Icons.Material.Filled.Link" />
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.Link" />
                         </MudItem>
                         <MudItem xs="12" sm="6" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.Tagline" Label="@Localizer["Tagline"]" Variant="Variant.Outlined"
-                                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.ShortText" />
+                            <MudTextField @bind-Value="_profile.Tagline" Label="@Localizer["Tagline"]"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.ShortText" />
                         </MudItem>
                         <MudItem xs="12" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.ProfessionalSummary" Label="@Localizer["ProfessionalSummary"]" 
-                                Variant="Variant.Outlined" AutoGrow="true" Clearable="true" Immediate="true" />
+                            <MudTextField @bind-Value="_profile.ProfessionalSummary"
+                                          Label="@Localizer["ProfessionalSummary"]" Variant="Variant.Outlined" AutoGrow="true"
+                                          Clearable="true" Immediate="true" />
                         </MudItem>
                     </MudGrid>
                 </MudCard>
@@ -135,44 +151,49 @@ else
             @* Tab Experience *@
             <MudTabPanel Text="@Localizer["Experience"]" Icon="@Icons.Material.Filled.WorkHistory">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddExperience" Class="mb-4"
-                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddExperience"]</MudButton>
+                           StartIcon="@Icons.Material.Filled.Add">@Localizer["AddExperience"]</MudButton>
                 <MudStack Spacing="4">
                     @foreach (var exp in _profile.WorkExperience)
                     {
                         <MudCard Class="pa-3" Elevation="2">
                             <MudGrid>
                                 <MudItem xs="12" sm="4">
-                                    <MudTextField @bind-Value="exp.CompanyName" Label="@Localizer["Company"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Business" />
+                                    <MudTextField @bind-Value="exp.CompanyName" Label="@Localizer["Company"]"
+                                                  Variant="Variant.Text" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Business" />
                                 </MudItem>
                                 <MudItem xs="12" sm="4">
-                                    <MudTextField @bind-Value="exp.JobTitle" Label="@Localizer["JobTitle"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work" />
+                                    <MudTextField @bind-Value="exp.JobTitle" Label="@Localizer["JobTitle"]"
+                                                  Variant="Variant.Text" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Work" />
                                 </MudItem>
                                 <MudItem xs="12" sm="4">
-                                    <MudTextField @bind-Value="exp.Location" Label="@Localizer["Location"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+                                    <MudTextField @bind-Value="exp.Location" Label="@Localizer["Location"]"
+                                                  Variant="Variant.Text" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                                 </MudItem>
-                                <MudItem xs="12" sm="4">
+                                <MudItem xs="12" sm="2">
                                     <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" />
                                 </MudItem>
-                                <MudItem xs="12" sm="4">
-                                    <MudDatePicker @bind-Date="exp.EndDate" Label="@Localizer["EndDate"]" Disabled="@exp.IsCurrentRole" />
+                                <MudItem xs="12" sm="2">
+                                    <MudDatePicker @bind-Date="exp.EndDate" Label="@Localizer["EndDate"]"
+                                                   Disabled="@exp.IsCurrentRole" />
                                 </MudItem>
-                                <MudItem xs="12" sm="4" Class="d-flex align-center">
+                                <MudItem xs="4" sm="2" Class="d-flex align-center">
                                     <MudText Typo="Typo.body2">@CalculateDuration(exp.StartDate, exp.EndDate)</MudText>
+                                </MudItem>
+                                <MudItem xs="4" sm="3">
+                                    <MudCheckBox @bind-Value="exp.IsCurrentRole" Label="@Localizer["CurrentRole"]" />
+                                </MudItem>
+                                <MudItem xs="4" sm="3">
+                                    <MudButton Class="ml-auto d-flex align-items-end" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Error"
+                                               OnClick="@(() => RemoveExperience(exp))" StartIcon="@Icons.Material.Filled.Delete">
+                                        @Localizer["Remove"]
+                                    </MudButton>
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
                                     <MudTextField @bind-Value="exp.Description" Label="@Localizer["Description"]" Lines="3"
-                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
-                                </MudItem>
-                                <MudItem xs="12" Class="pt-2">
-                                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                                        <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                            OnClick="@(() => RemoveExperience(exp))" StartIcon="@Icons.Material.Filled.Delete">
-                                            @Localizer["Remove"]</MudButton>
-                                        <MudCheckBox @bind-Value="exp.IsCurrentRole" Label="@Localizer["CurrentRole"]" />
-                                    </MudStack>
+                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
                                 </MudItem>
                             </MudGrid>
                         </MudCard>
@@ -183,35 +204,37 @@ else
             @* Tab Education *@
             <MudTabPanel Text="@Localizer["Education"]" Icon="@Icons.Material.Filled.School">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEducation" Class="mb-4"
-                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddEducation"]</MudButton>
+                           StartIcon="@Icons.Material.Filled.Add">@Localizer["AddEducation"]</MudButton>
                 <MudStack Spacing="4">
                     @foreach (var edu in _profile.Educations)
                     {
                         <MudCard Class="pa-3" Elevation="2">
                             <MudGrid>
                                 <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="edu.InstitutionName" Label="@Localizer["Institution"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.School" />
+                                    <MudTextField @bind-Value="edu.InstitutionName" Label="@Localizer["Institution"]"
+                                                  Variant="Variant.Text" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.School" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6">
                                     <MudTextField @bind-Value="edu.Degree" Label="@Localizer["Degree"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.WorkspacePremium" />
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.WorkspacePremium" />
                                 </MudItem>
-                                <MudItem xs="12" sm="6">
+                                <MudItem xs="12" sm="4">
                                     <MudDatePicker @bind-Date="edu.StartDate" Label="@Localizer["StartDate"]" />
                                 </MudItem>
-                                <MudItem xs="12" sm="6">
+                                <MudItem xs="12" sm="4">
                                     <MudDatePicker @bind-Date="edu.EndDate" Label="@Localizer["EndDate"]" />
+                                </MudItem>
+                                <MudItem xs="12" sm="4">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Class="ml-auto d-flex align-items-end" Size="Size.Small"
+                                               OnClick="@(() => RemoveEducation(edu))" StartIcon="@Icons.Material.Filled.Delete">
+                                        @Localizer["Remove"]
+                                    </MudButton>
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
                                     <MudTextField @bind-Value="edu.Description" Label="@Localizer["Description"]" Lines="3"
-                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true"
-                                        HelperText="@Localizer["EducationDescriptionHelper"]" />
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                        OnClick="@(() => RemoveEducation(edu))" StartIcon="@Icons.Material.Filled.Delete">@Localizer["Remove"]
-                                    </MudButton>
+                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true"
+                                                  HelperText="@Localizer["EducationDescriptionHelper"]" />
                                 </MudItem>
                             </MudGrid>
                         </MudCard>
@@ -223,7 +246,7 @@ else
             <MudTabPanel Text="@Localizer["Skills"]" Icon="@Icons.Material.Filled.Build">
                 <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-4"
-                        StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
+                               StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
                     <MudText Typo="Typo.body2" Class="mb-4">@Localizer["SkillsHelper"]</MudText>
                 </MudStack>
                 <MudGrid>
@@ -233,20 +256,21 @@ else
                             <!-- adds 4px spacing around each item -->
                             <MudCard Class="pa-3" Elevation="2">
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
-                                    <MudTextField @bind-Value="category.Name" Label="@Localizer["CategoryName"]" Variant="Variant.Text" />
+                                    <MudTextField @bind-Value="category.Name" Label="@Localizer["CategoryName"]"
+                                                  Variant="Variant.Text" />
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
-                                        OnClick="@(() => RemoveCategory(category))" />
+                                                   OnClick="@(() => RemoveCategory(category))" />
                                     <MudTextField Class="" @bind-Value="category.NewSkillInput"
-                                        Label="@($"{Localizer["AddSkill"]} {category.Name}")" Variant="Variant.Outlined"
-                                        Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add"
-                                        OnAdornmentClick="@(() => AddSkill(category))" />
+                                                  Label="@($"{Localizer["AddSkill"]} {category.Name}")" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add"
+                                                  OnAdornmentClick="@(() => AddSkill(category))" />
                                 </MudStack>
                                 <MudChipSet T="string" Class="mt-1">
                                     @foreach (var skill in category.Skills.ToList())
                                     {
                                         var s = skill;
                                         <MudChip T="string" Value="@s" Text="@s"
-                                            OnClose="@((MudChip<string> chip) => RemoveSkill(category, s))" />
+                                                 OnClose="@((MudChip<string> chip) => RemoveSkill(category, s))" />
                                     }
                                 </MudChipSet>
                             </MudCard>
@@ -258,47 +282,59 @@ else
             @* Tab Projects *@
             <MudTabPanel Text="@Localizer["Projects"]" Icon="@Icons.Material.Filled.Code">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProject" Class="mb-4"
-                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddProject"]</MudButton>
+                           StartIcon="@Icons.Material.Filled.Add">@Localizer["AddProject"]</MudButton>
                 <MudStack Spacing="4">
                     @foreach (var proj in _profile.Projects)
                     {
                         <MudCard Class="pa-3" Elevation="2">
                             <MudGrid>
                                 <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="proj.Name" Label="@Localizer["ProjectName"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Label" />
+                                    <MudTextField @bind-Value="proj.Name" Label="@Localizer["ProjectName"]"
+                                                  Variant="Variant.Text" Clearable="true" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Label" />
                                 </MudItem>
                                 <MudItem xs="12" sm="2">
                                     <MudTextField @bind-Value="proj.Role" Label="@Localizer["Role"]" Variant="Variant.Text"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+                                                  Clearable="true" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Person" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6" md="2">
-                                    <MudDatePicker @bind-Date="proj.StartDate" Label="@Localizer["StartDate"]" />
+                                    <MudDatePicker @bind-Date="proj.StartDate" Label="@Localizer["StartDate"]"
+                                                   Clearable="true" />
                                 </MudItem>
                                 <MudItem xs="12" sm="6" md="2">
-                                    <MudDatePicker @bind-Date="proj.EndDate" Label="@Localizer["EndDate"]" />
+                                    <MudDatePicker @bind-Date="proj.EndDate" Label="@Localizer["EndDate"]" Clearable="true" />
                                 </MudItem>
                                 <MudItem xs="12" sm="12" md="6" Class="pt-2">
-                                    <MudTextField @bind-Value="proj.Link" Label="@Localizer["LinkGitHubLive"]" Variant="Variant.Outlined"
-                                        Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Link" />
+                                    <MudTextField @bind-Value="proj.Link" Label="@Localizer["LinkGitHubLive"]"
+                                                  Variant="Variant.Outlined" Clearable="true" Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Link" />
                                 </MudItem>
                                 <MudItem xs="12" sm="12" md="6" Class="pt-2">
                                     <MudTextField @bind-Value="proj.Technologies" Label="@Localizer["TechnologiesUsed"]"
-                                        Variant="Variant.Outlined" />
+                                                  Clearable="true" Variant="Variant.Outlined" />
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-1">
-                                    <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]" Lines="3"
-                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                    <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]"
+                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
                                 </MudItem>
-                                <MudItem xs="12" Class="pt-2">
-                                    <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]" Lines="3"
-                                        Variant="Variant.Outlined" AutoGrow="true" Clearable="true"
-                                        HelperText="@Localizer["ProjectSectionTitleHelper"]" />
+                                <MudItem xs="12" sm="11" Class="pt-2">
+                                    <div class="pl-5">
+                                    <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]"
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Subject"
+                                                  Variant="Variant.Text" Clearable="true"></MudTextField>
+                                    @* HelperText="@Localizer["ProjectSectionTitleHelper"]" /> *@
+                                    </div>
                                 </MudItem>
-                                <MudItem xs="12" Class="pt-1">
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                        OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">@Localizer["Remove"]
+                                <MudItem xs="12" sm="1">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Class="ml-auto d-flex align-items-end" Size="Size.Small"
+                                               OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">
+                                        @Localizer["Remove"]
                                     </MudButton>
+                                </MudItem>
+                                <MudItem xs="12" Class="pt-2 ml-5">
+                                    <MudTextField @bind-Value="proj.SectionDescription" Label="@Localizer["Description"]"
+                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
                                 </MudItem>
                             </MudGrid>
                         </MudCard>
@@ -309,18 +345,20 @@ else
             @* Tab Languages *@
             <MudTabPanel Text="@Localizer["Languages"]" Icon="@Icons.Material.Filled.Language">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddLanguage" Class="mb-4"
-                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddLanguage"]</MudButton>
+                           StartIcon="@Icons.Material.Filled.Add">@Localizer["AddLanguage"]</MudButton>
                 <MudGrid>
                     @foreach (var lang in _profile.Languages)
                     {
                         <MudItem xs="12" sm="6" md="3">
                             <MudCard Class="pa-3" Elevation="2">
                                 <MudStack Spacing="2">
-                                    <MudTextField @bind-Value="lang.Name" Label="@Localizer["Language"]" Variant="Variant.Text" />
-                                    <MudTextField @bind-Value="lang.Proficiency" Label="@Localizer["Proficiency"]" Variant="Variant.Text"
-                                        HelperText="@Localizer["LanguageProficiencyHelper"]" />
+                                    <MudTextField @bind-Value="lang.Name" Label="@Localizer["Language"]"
+                                                  Variant="Variant.Text" />
+                                    <MudTextField @bind-Value="lang.Proficiency" Label="@Localizer["Proficiency"]"
+                                                  Variant="Variant.Text" HelperText="@Localizer["LanguageProficiencyHelper"]" />
                                     <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                        OnClick="@(() => RemoveLanguage(lang))" StartIcon="@Icons.Material.Filled.Delete">@Localizer["Remove"]
+                                               OnClick="@(() => RemoveLanguage(lang))" StartIcon="@Icons.Material.Filled.Delete">
+                                        @Localizer["Remove"]
                                     </MudButton>
                                 </MudStack>
                             </MudCard>
@@ -332,17 +370,19 @@ else
             @* Tab Interests *@
             <MudTabPanel Text="@Localizer["Interests"]" Icon="@Icons.Material.Filled.Interests">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddInterest" Class="mb-4"
-                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddInterest"]</MudButton>
+                           StartIcon="@Icons.Material.Filled.Add">@Localizer["AddInterest"]</MudButton>
                 <MudGrid>
                     @foreach (var interest in _profile.Interests)
                     {
                         <MudItem xs="12" sm="6" md="3">
                             <MudCard Class="pa-3" Elevation="2">
                                 <MudStack Spacing="2">
-                                    <MudTextField @bind-Value="interest.Name" Label="@Localizer["Interests"]" Variant="Variant.Text" />
+                                    <MudTextField @bind-Value="interest.Name" Label="@Localizer["Interests"]"
+                                                  Variant="Variant.Text" />
                                     <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                        OnClick="@(() => RemoveInterest(interest))" StartIcon="@Icons.Material.Filled.Delete">
-                                        @Localizer["Remove"]</MudButton>
+                                               OnClick="@(() => RemoveInterest(interest))" StartIcon="@Icons.Material.Filled.Delete">
+                                        @Localizer["Remove"]
+                                    </MudButton>
                                 </MudStack>
                             </MudCard>
                         </MudItem>
@@ -361,7 +401,7 @@ else
 <AiCV.Web.Components.Shared.PrintPreviewModal @ref="_printPreviewModal" />
 
 <MudDialog @bind-Visible="_showFormattingHelp"
-    Options="@(new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true })">
+           Options="@(new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true })">
     <TitleContent>
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
             <MudIcon Icon="@Icons.Material.Filled.FormatColorText" Color="Color.Primary" />
@@ -377,16 +417,19 @@ else
             <MudText Typo="Typo.subtitle1"><strong>@Localizer["LineBreaks"]</strong></MudText>
             <MudText Typo="Typo.body2">@Localizer["LineBreaksDescription"]</MudText>
             <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
-                <code>Line 1<br/>Line 2<br/>Line 3</code>
+                <code>Line 1<br />Line 2<br />Line 3</code>
             </MudPaper>
 
             <MudDivider />
 
-            <MudText Typo="Typo.subtitle1"><strong>@Localizer["BulletPoints"] (Experience &amp; Projects)</strong></MudText>
-            <MudText Typo="Typo.body2">@Localizer["BulletPointsDescription"]
+            <MudText Typo="Typo.subtitle1">
+                <strong>@Localizer["BulletPoints"] (Experience &amp; Projects)</strong>
+            </MudText>
+            <MudText Typo="Typo.body2">
+                @Localizer["BulletPointsDescription"]
             </MudText>
             <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
-                <code>- Built REST APIs using ASP.NET Core<br/>- Implemented CI/CD pipelines<br/>* Reduced deployment time by 40%</code>
+                <code>- Built REST APIs using ASP.NET Core<br />- Implemented CI/CD pipelines<br />* Reduced deployment time by 40%</code>
             </MudPaper>
 
             <MudDivider />
@@ -394,7 +437,7 @@ else
             <MudText Typo="Typo.subtitle1"><strong>@Localizer["HtmlTags"]</strong></MudText>
             <MudText Typo="Typo.body2">@Localizer["HtmlTagsDescription"]</MudText>
             <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
-                <code>&lt;strong&gt;Bold text&lt;/strong&gt;<br/>&lt;em&gt;Italic text&lt;/em&gt;</code>
+                <code>&lt;strong&gt;Bold text&lt;/strong&gt;<br />&lt;em&gt;Italic text&lt;/em&gt;</code>
             </MudPaper>
 
             <MudDivider />
@@ -442,5 +485,3 @@ else
         <MudButton Color="Color.Primary" OnClick="@(() => _showFormattingHelp = false)">@Localizer["GotIt"]</MudButton>
     </DialogActions>
 </MudDialog>
-
-

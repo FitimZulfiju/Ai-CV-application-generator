@@ -962,5 +962,26 @@
   <data name="RateLimitReached" xml:space="preserve">
     <value>Limit i shpejtësisë së {0} është arritur. Ju lutemi prisni përpara se të provoni përsëri.</value>
   </data>
+  <data name="ClearDraft" xml:space="preserve">
+    <value>Pastro draftin dhe rifresko</value>
+  </data>
+  <data name="ClearDraftHelper" xml:space="preserve">
+    <value>Pastron ndryshimet lokale dhe rifreskon të dhënat nga serveri</value>
+  </data>
+  <data name="DraftCleared" xml:space="preserve">
+    <value>Drafti u pastrua me sukses</value>
+  </data>
+  <data name="ClearDraftConfirmationTitle" xml:space="preserve">
+    <value>Pastroni draftin dhe rifreskoni?</value>
+  </data>
+  <data name="ClearDraftConfirmationContent" xml:space="preserve">
+    <value>A jeni i sigurt që dëshironi të pastroni ndryshimet lokale dhe të rifreskoni nga serveri? Puna e paruajtur do të humbasë.</value>
+  </data>
+  <data name="ClearDraftConfirmButton" xml:space="preserve">
+    <value>Pastro</value>
+  </data>
+  <data name="ClearDraftCancelButton" xml:space="preserve">
+    <value>Anulo</value>
+  </data>
 </root>
 

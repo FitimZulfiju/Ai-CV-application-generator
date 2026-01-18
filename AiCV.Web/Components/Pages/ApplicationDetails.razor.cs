@@ -55,7 +55,7 @@ public partial class ApplicationDetails
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var user = authState.User;
                     var userId = user.FindFirst(
-                        System.Security.Claims.ClaimTypes.NameIdentifier
+                        ClaimTypes.NameIdentifier
                     )?.Value;
 
                     if (!string.IsNullOrEmpty(userId))

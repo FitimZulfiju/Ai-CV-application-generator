@@ -974,5 +974,26 @@
   <data name="ExternalEmailNotProvided" xml:space="preserve">
     <value>Email not provided by external provider.</value>
   </data>
+  <data name="ClearDraft" xml:space="preserve">
+    <value>Clear draft and reload</value>
+  </data>
+  <data name="ClearDraftHelper" xml:space="preserve">
+    <value>Clears local changes and reloads data from the server</value>
+  </data>
+  <data name="DraftCleared" xml:space="preserve">
+    <value>Draft cleared successfully</value>
+  </data>
+  <data name="ClearDraftConfirmationTitle" xml:space="preserve">
+    <value>Clear draft and reload?</value>
+  </data>
+  <data name="ClearDraftConfirmationContent" xml:space="preserve">
+    <value>Are you sure you want to clear local changes and reload from the server? Unsaved progress will be lost.</value>
+  </data>
+  <data name="ClearDraftConfirmButton" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="ClearDraftCancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>
 

@@ -368,7 +368,9 @@
     color: var(--text-medium);
     line-height: 1.7;
     margin-bottom: 0.5em;
-    display: block;
+    margin-bottom: 0.5em;
+    display: list-item;
+    position: relative;
 }
 
 .cv-container .project-features li::before {

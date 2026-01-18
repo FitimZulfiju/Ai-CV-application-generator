@@ -955,4 +955,25 @@
   <data name="RateLimitReached" xml:space="preserve">
     <value>{0} hastighedsbegrænsning nået. Vent venligst før du prøver igen.</value>
   </data>
+  <data name="ClearDraft" xml:space="preserve">
+    <value>Ryd kladde og genindlæs</value>
+  </data>
+  <data name="ClearDraftHelper" xml:space="preserve">
+    <value>Rydder lokale ændringer og genindlæser data fra serveren</value>
+  </data>
+  <data name="DraftCleared" xml:space="preserve">
+    <value>Kladde ryddet succesfuldt</value>
+  </data>
+  <data name="ClearDraftConfirmationTitle" xml:space="preserve">
+    <value>Ryd kladde og genindlæs?</value>
+  </data>
+  <data name="ClearDraftConfirmationContent" xml:space="preserve">
+    <value>Er du sikker på, at du vil rydde lokale ændringer og genindlæse fra serveren? Ikke-gemte fremskridt vil gå tabt.</value>
+  </data>
+  <data name="ClearDraftConfirmButton" xml:space="preserve">
+    <value>Ryd</value>
+  </data>
+  <data name="ClearDraftCancelButton" xml:space="preserve">
+    <value>Annuller</value>
+  </data>
 </root>

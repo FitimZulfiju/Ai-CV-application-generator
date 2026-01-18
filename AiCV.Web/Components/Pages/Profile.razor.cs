@@ -23,6 +23,11 @@ public partial class Profile : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadProfileAsync();
+    }
+
+    private async Task LoadProfileAsync()
+    {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -57,9 +62,29 @@ public partial class Profile : IDisposable
                     }),
             ];
         }
-        // Note: Do NOT call UpdateProfileSkills() here - it would replace
-        // the loaded skills (with real IDs) with new objects (Id=0),
-        // breaking EF Core entity tracking.
+
+        // Auto-migrate SectionTitle to SectionDescription for backward compatibility
+        if (_profile.Projects != null)
+        {
+            foreach (var proj in _profile.Projects)
+            {
+                if (
+                    string.IsNullOrEmpty(proj.SectionDescription)
+                    && !string.IsNullOrEmpty(proj.SectionTitle)
+                    && proj.SectionTitle.Contains('\n')
+                )
+                {
+                    var lines = proj
+                        .SectionTitle.Replace("\r\n", "\n")
+                        .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length > 1)
+                    {
+                        proj.SectionTitle = lines[0].Trim();
+                        proj.SectionDescription = string.Join("\n", lines.Skip(1));
+                    }
+                }
+            }
+        }
     }
 
     private void AddCategory()
@@ -182,6 +207,23 @@ public partial class Profile : IDisposable
                 _isSaving = false;
                 StateHasChanged();
             }
+        }
+    }
+
+    private async Task ClearDraft()
+    {
+        var result = await DialogService.ShowMessageBox(
+            Localizer["ClearDraftConfirmationTitle"],
+            Localizer["ClearDraftConfirmationContent"],
+            yesText: Localizer["ClearDraftConfirmButton"],
+            cancelText: Localizer["ClearDraftCancelButton"]
+        );
+
+        if (result == true)
+        {
+            await PersistenceService.ClearDraftAsync("profile_draft");
+            await LoadProfileAsync();
+            Snackbar.Add(Localizer["DraftCleared"], Severity.Info);
         }
     }
 

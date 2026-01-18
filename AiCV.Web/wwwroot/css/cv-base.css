@@ -34,7 +34,7 @@
     line-height: 1.6;
     color: var(--text-dark);
     background-color: #f3f4f6;
-    padding: 1.25em;
+    /*padding: 1.25em;*/
     width: 100%;
     min-height: 100%;
 }

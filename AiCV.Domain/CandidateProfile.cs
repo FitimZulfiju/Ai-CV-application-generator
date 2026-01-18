@@ -84,6 +84,7 @@ public class Project
     public DateTime? EndDate { get; set; }
     public string Description { get; set; } = string.Empty;
     public string SectionTitle { get; set; } = string.Empty;
+    public string SectionDescription { get; set; } = string.Empty;
     public string Technologies { get; set; } = string.Empty; // Comma separated or formatted
     public string Link { get; set; } = string.Empty;
 }

@@ -799,7 +799,32 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                             }
 
                                             // Render SectionTitle if present (AI Analytics, etc.)
-                                            if (!string.IsNullOrEmpty(proj.SectionTitle))
+                                            // Render Section Description (Title + Description)
+                                            if (!string.IsNullOrEmpty(proj.SectionDescription))
+                                            {
+                                                // New logic: Title is just title, Description is content
+                                                if (!string.IsNullOrEmpty(proj.SectionTitle))
+                                                {
+                                                    c.Item()
+                                                        .PaddingTop(0.2f, Unit.Centimetre)
+                                                        .Text(StripHtml(proj.SectionTitle))
+                                                        .SemiBold()
+                                                        .FontSize(fontSize)
+                                                        .FontColor(PrimaryColor);
+                                                }
+
+                                                c.Item()
+                                                    .Column(col =>
+                                                        ComposeHtmlContent(
+                                                            col,
+                                                            proj.SectionDescription,
+                                                            fontSize - 1,
+                                                            TextMedium,
+                                                            "\u2713 "
+                                                        )
+                                                    );
+                                            }
+                                            else if (!string.IsNullOrEmpty(proj.SectionTitle))
                                             {
                                                 var sectionLines = proj.SectionTitle.Split(
                                                     '\n',
