@@ -17,16 +17,19 @@ AiCV Application Generator is a self-hosted platform designed to streamline the 
 
 - **Framework**: .NET 10 (Blazor Server)
 - **UI Library**: MudBlazor
-- **Database**: SQL Server with Entity Framework Core
+- **Database**: SQL Server or PostgreSQL with Entity Framework Core
 - **AI Integration**: Support for multiple AI Providers (OpenAI, Google Gemini, Groq, etc.)
 - **Authentication**: ASP.NET Core Identity
 
-## 🔑 Default Admin Credentials
+## �️ Database Support
 
-Use these credentials to log in and test the application:
+AiCV supports both **PostgreSQL** and **SQL Server**. You can easily switch between them by setting the `DB_PROVIDER` environment variable.
 
-- **Email:** `testuser@ai-aicv.com`
-- **Password:** `TestUser123!`
+For detailed Docker Compose setup examples for each provider, please refer to our **[Docker Hub Repository](https://hub.docker.com/r/timi74/aicv)** or the **[DOCKER_HUB.md](DOCKER_HUB.md)** file.
+
+## �🔑 Authentication
+
+To get started, simply **Register** a new account on the login page.
 
 ## 🐳 Docker Hub
 
@@ -42,6 +45,7 @@ Deploy using our provided Docker Compose stack to get a fully secured applicatio
 ### Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download) installed.
+- SQL Server or PostgreSQL database.
 
 ### Installation & Run
 
@@ -79,6 +83,13 @@ Deploy using our provided Docker Compose stack to get a fully secured applicatio
     - Click "Generate Application".
 5. **Save**: Review the generated content and click "Save Application" to store it.
 6. **My Applications**: View and manage your saved applications.
+
+## 🔗 Links
+
+- **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
+- **GitHub Repository**: [fitimzulfiu/AiCV](https://github.com/fitimzulfiu/Web-CV-application-generator)
+- **LinkedIn**: [Fitim Zulfiju](https://linkedin.com/in/[your-profile])
+- **Support**: <[your-email@example.com]>
 
 ## 📄 License
 
