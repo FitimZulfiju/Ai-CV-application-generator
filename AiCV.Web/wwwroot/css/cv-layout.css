@@ -506,7 +506,7 @@
 /* Responsive Design */
 @media (max-width: 48em) {
     .cv-container {
-        padding: 0.625em;
+        /*padding: 0.625em;*/
     }
 
     .cv-container .container {
