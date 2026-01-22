@@ -25,6 +25,7 @@ public partial class Generate : IDisposable
     private string _resumeJson = string.Empty;
     private string _originalResumeJson = string.Empty;
     private bool _manualEntry = false;
+    private bool _includeProfilePicture = false;
 
     private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
 
@@ -80,6 +81,29 @@ public partial class Generate : IDisposable
     {
         _resumeJson = _originalResumeJson;
         Snackbar.Add("Reset to original generated version.", Severity.Info);
+    }
+
+    private void OnIncludeProfilePictureToggled(bool value)
+    {
+        _includeProfilePicture = value;
+
+        // Update the generated resume immediately if it exists
+        if (_generatedResume != null && _cachedProfile != null)
+        {
+            _generatedResume.ShowProfilePicture =
+                _includeProfilePicture && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
+
+            // Also update the JSON so it stays in sync
+            _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
+        }
+
+        // Mark as unsaved since we changed something
+        _isAlreadySaved = false;
+    }
+
+    private bool HasProfilePicture()
+    {
+        return _cachedProfile != null && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
     }
 
     private void UpdatePreview(string text)
@@ -296,6 +320,16 @@ public partial class Generate : IDisposable
             _generatedCoverLetter = CoverLetter;
             _generatedResume = ResumeResult.Profile;
             _generatedEmail = ApplicationEmail;
+
+            // Copy profile picture settings from the master profile to the tailored CV
+            // Use the switch value to determine if the picture should be shown
+            if (_generatedResume != null && _cachedProfile != null)
+            {
+                _generatedResume.ProfilePictureUrl = _cachedProfile.ProfilePictureUrl;
+                _generatedResume.ShowProfilePicture =
+                    _includeProfilePicture
+                    && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
+            }
             _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             _originalResumeJson = _resumeJson;
             _detectedCompanyName = ResumeResult.DetectedCompanyName;

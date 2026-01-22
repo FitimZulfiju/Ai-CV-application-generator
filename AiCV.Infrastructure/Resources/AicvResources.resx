@@ -995,5 +995,14 @@
   <data name="ClearDraftCancelButton" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="IncludePhoto" xml:space="preserve">
+    <value>Include Photo</value>
+  </data>
+  <data name="IncludePhotoInCv" xml:space="preserve">
+    <value>Include your profile picture in the tailored CV</value>
+  </data>
+  <data name="NoProfilePictureUploadOne" xml:space="preserve">
+    <value>No profile picture uploaded. Go to Profile page to upload one.</value>
+  </data>
 </root>
 

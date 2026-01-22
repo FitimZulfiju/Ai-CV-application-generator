@@ -983,5 +983,14 @@
   <data name="ClearDraftCancelButton" xml:space="preserve">
     <value>Anulo</value>
   </data>
+  <data name="IncludePhoto" xml:space="preserve">
+    <value>Përfshi Fotografinë</value>
+  </data>
+  <data name="IncludePhotoInCv" xml:space="preserve">
+    <value>Përfshi fotografinë tuaj në CV-në e përshtatur</value>
+  </data>
+  <data name="NoProfilePictureUploadOne" xml:space="preserve">
+    <value>Nuk keni fotografi profili. Shkoni te faqja e Profilit për të ngarkuar një.</value>
+  </data>
 </root>
 

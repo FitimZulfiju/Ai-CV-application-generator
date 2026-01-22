@@ -976,4 +976,13 @@
   <data name="ClearDraftCancelButton" xml:space="preserve">
     <value>Annuller</value>
   </data>
+  <data name="IncludePhoto" xml:space="preserve">
+    <value>Inkluder foto</value>
+  </data>
+  <data name="IncludePhotoInCv" xml:space="preserve">
+    <value>Inkluder dit profilbillede i det skræddersyede CV</value>
+  </data>
+  <data name="NoProfilePictureUploadOne" xml:space="preserve">
+    <value>Intet profilbillede uploadet. Gå til profilsiden for at uploade et.</value>
+  </data>
 </root>
