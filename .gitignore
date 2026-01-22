@@ -106,3 +106,6 @@ Thumbs.db
 
 # Data Protection Keys
 AiCV.Web/DataProtectionKeys/
+
+# User Uploads (profile pictures, etc.)
+AiCV.Web/wwwroot/uploads/
