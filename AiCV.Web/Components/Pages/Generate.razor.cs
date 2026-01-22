@@ -90,15 +90,24 @@ public partial class Generate : IDisposable
         // Update the generated resume immediately if it exists
         if (_generatedResume != null && _cachedProfile != null)
         {
+            // Ensure the profile picture URL is always copied from the master profile
+            _generatedResume.ProfilePictureUrl = _cachedProfile.ProfilePictureUrl;
             _generatedResume.ShowProfilePicture =
                 _includeProfilePicture && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
 
-            // Also update the JSON so it stays in sync
+            // Serialize and deserialize to create a new object reference
+            // This forces Blazor to detect the change and re-render the CvPreview component
             _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
+            _generatedResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(
+                _resumeJson
+            );
         }
 
         // Mark as unsaved since we changed something
         _isAlreadySaved = false;
+
+        // Force UI refresh
+        StateHasChanged();
     }
 
     private bool HasProfilePicture()
