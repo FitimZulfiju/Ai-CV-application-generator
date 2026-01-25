@@ -107,16 +107,7 @@ public class OpenRouterService(
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
         }
 
-        var userPrompt = $"""
-            Candidate Name: {profile.FullName}
-            Position: {job.Title}
-            Company: {job.CompanyName}
-
-            Cover Letter Summary:
-            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-            Write a brief professional email to accompany this application.
-            """;
+        var userPrompt = BuildEmailPrompt(profile, job, coverLetter);
 
         var requestBody = new
         {

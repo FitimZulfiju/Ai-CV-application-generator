@@ -39,7 +39,7 @@ public class GoogleGeminiService(
         var systemPrompt = AISystemPrompts.CoverLetterSystemPrompt;
         if (!string.IsNullOrWhiteSpace(customPrompt))
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-        var prompt = $"{systemPrompt}\n\n{AIPromptBuilder.Build(profile, job)}";
+        var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job)}";
         var requestBody = new
         {
             contents = new[] { new { parts = new[] { new { text = prompt } } } },
@@ -82,7 +82,7 @@ public class GoogleGeminiService(
         var systemPrompt = AISystemPrompts.ResumeTailoringSystemPrompt;
         if (!string.IsNullOrWhiteSpace(customPrompt))
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
-        var prompt = $"{systemPrompt}\n\n{AIPromptBuilder.Build(profile, job, isResume: true)}";
+        var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job, isResume: true)}";
         var requestBody = new
         {
             contents = new[] { new { parts = new[] { new { text = prompt } } } },
@@ -135,16 +135,7 @@ public class GoogleGeminiService(
         if (!string.IsNullOrWhiteSpace(customPrompt))
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
 
-        var userPrompt = $"""
-            Candidate Name: {profile.FullName}
-            Position: {job.Title}
-            Company: {job.CompanyName}
-
-            Cover Letter Summary:
-            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-            Write a brief professional email to accompany this application.
-            """;
+        var userPrompt = BuildEmailPrompt(profile, job, coverLetter);
 
         var prompt = $"{systemPrompt}\n\n{userPrompt}";
 

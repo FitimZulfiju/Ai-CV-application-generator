@@ -16,24 +16,24 @@
                 <MudAvatar Size="Size.Large" Color="Color.Primary">
                     <MudIcon Icon="@Icons.Material.Filled.Person" />
                 </MudAvatar>
-                <MudText Typo="Typo.h5">@_profile.FullName</MudText>
-                <MudText Typo="Typo.subtitle1" Color="Color.Primary">@_profile.Title</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Secondary">@_profile.Location</MudText>
+                <MudText Typo="Typo.h5"><FormattedText Text="@_profile.FullName" /></MudText>
+                <MudText Typo="Typo.subtitle1" Color="Color.Primary"><FormattedText Text="@_profile.Title" /></MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary"><FormattedText Text="@_profile.Location" /></MudText>
             </MudStack>
 
             <MudDivider Class="my-3" />
 
             <!-- Contact Info -->
             <MudStack Row="true" Justify="Justify.Center" Spacing="3" Class="mb-4">
-                <MudChip T="string" Icon="@Icons.Material.Filled.Email" Size="Size.Small">@_profile.Email</MudChip>
-                <MudChip T="string" Icon="@Icons.Material.Filled.Phone" Size="Size.Small">@_profile.PhoneNumber</MudChip>
+                <MudChip T="string" Icon="@Icons.Material.Filled.Email" Size="Size.Small"><FormattedText Text="@_profile.Email" /></MudChip>
+                <MudChip T="string" Icon="@Icons.Material.Filled.Phone" Size="Size.Small"><FormattedText Text="@_profile.PhoneNumber" /></MudChip>
             </MudStack>
 
             <!-- Professional Summary -->
             <MudText Typo="Typo.h6" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1" /> Professional Summary
             </MudText>
-            <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)_profile.ProfessionalSummary)</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4"><FormattedText Text="@_profile.ProfessionalSummary" /></MudText>
 
             <MudDivider Class="my-3" />
 
@@ -44,7 +44,7 @@
             <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="1" Class="mb-4">
                 @foreach (var skill in _profile.Skills)
                 {
-                    <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">@skill.Name</MudChip>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined"><FormattedText Text="@skill.Name" /></MudChip>
                 }
             </MudStack>
 
@@ -57,12 +57,12 @@
             @foreach (var exp in _profile.WorkExperience)
             {
                 <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
-                    <MudText Typo="Typo.subtitle1"><strong>@exp.JobTitle</strong></MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Primary">@exp.CompanyName</MudText>
+                    <MudText Typo="Typo.subtitle1"><strong><FormattedText Text="@exp.JobTitle" /></strong></MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary"><FormattedText Text="@exp.CompanyName" /></MudText>
                     <MudText Typo="Typo.caption" Color="Color.Secondary">
                         @exp.StartDate?.ToString("MMM yyyy") - @(exp.IsCurrentRole ? "Present" : exp.EndDate?.ToString("MMM yyyy"))
                     </MudText>
-                    <MudText Typo="Typo.body2" Style="white-space: pre-line;">@exp.Description</MudText>
+                    <MudText Typo="Typo.body2" Style="white-space: pre-line;"><FormattedText Text="@exp.Description" IsDescription="true" /></MudText>
                 </MudCard>
             }
 
@@ -75,8 +75,8 @@
             @foreach (var edu in _profile.Educations)
             {
                 <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
-                    <MudText Typo="Typo.subtitle1"><strong>@edu.Degree</strong></MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Primary">@edu.InstitutionName</MudText>
+                    <MudText Typo="Typo.subtitle1"><strong><FormattedText Text="@edu.Degree" /></strong></MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary"><FormattedText Text="@edu.InstitutionName" /></MudText>
                     <MudText Typo="Typo.caption" Color="Color.Secondary">@edu.EndDate?.ToString("yyyy")</MudText>
                 </MudCard>
             }
@@ -90,8 +90,8 @@
             @foreach (var project in _profile.Projects)
             {
                 <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
-                    <MudText Typo="Typo.subtitle1"><strong>@project.Name</strong></MudText>
-                    <MudText Typo="Typo.body2">@project.Description</MudText>
+                    <MudText Typo="Typo.subtitle1"><strong><FormattedText Text="@project.Name" /></strong></MudText>
+                    <MudText Typo="Typo.body2"><FormattedText Text="@project.Description" IsDescription="true" /></MudText>
                     <MudChip T="string" Size="Size.Small" Color="Color.Info">@project.Technologies</MudChip>
                 </MudCard>
             }

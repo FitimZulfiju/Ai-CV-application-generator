@@ -1004,5 +1004,23 @@
   <data name="NoProfilePictureUploadOne" xml:space="preserve">
     <value>No profile picture uploaded. Go to Profile page to upload one.</value>
   </data>
+  <data name="DearHiringManager" xml:space="preserve">
+    <value>Dear Hiring Manager,</value>
+  </data>
+  <data name="Sincerely" xml:space="preserve">
+    <value>Sincerely,</value>
+  </data>
+  <data name="CandidateName" xml:space="preserve">
+    <value>Candidate Name</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="CoverLetterSummary" xml:space="preserve">
+    <value>Cover Letter Summary</value>
+  </data>
+  <data name="WriteEmailInstruction" xml:space="preserve">
+    <value>Write a brief professional email to accompany this application.</value>
+  </data>
 </root>
 

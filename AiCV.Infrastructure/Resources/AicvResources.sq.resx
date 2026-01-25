@@ -992,5 +992,23 @@
   <data name="NoProfilePictureUploadOne" xml:space="preserve">
     <value>Nuk keni fotografi profili. Shkoni te faqja e Profilit për të ngarkuar një.</value>
   </data>
+  <data name="DearHiringManager" xml:space="preserve">
+    <value>I nderuar Menaxher i Punësimit,</value>
+  </data>
+  <data name="Sincerely" xml:space="preserve">
+    <value>Me respekt,</value>
+  </data>
+  <data name="CandidateName" xml:space="preserve">
+    <value>Emri i kandidatit</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Pozicioni</value>
+  </data>
+  <data name="CoverLetterSummary" xml:space="preserve">
+    <value>Përmbledhja e letrës së motivimit</value>
+  </data>
+  <data name="WriteEmailInstruction" xml:space="preserve">
+    <value>Shkruani një email të shkurtër profesional për t'i bashkangjitur këtij aplikimi.</value>
+  </data>
 </root>
 

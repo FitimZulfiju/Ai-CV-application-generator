@@ -1,8 +1,10 @@
 ﻿namespace AiCV.Infrastructure.Services;
 
-public partial class PdfService(IWebHostEnvironment env) : IPdfService
+public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
+    : IPdfService
 {
     private readonly IWebHostEnvironment _env = env;
+    private readonly IStringLocalizer<AicvResources> _localizer = localizer;
 
     // Define colors
     // Define colors from CSS
@@ -322,17 +324,24 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                             // Name
                             col.Item()
                                 .AlignCenter()
-                                .Text(profile.FullName)
-                                .FontSize(20)
-                                .Bold()
-                                .FontColor("#ffffff");
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.FontSize(20).Bold().FontColor("#ffffff")
+                                    );
+                                    ComposeMarkdownText(t, profile.FullName);
+                                });
 
                             // Title
                             col.Item()
                                 .AlignCenter()
-                                .Text(profile.Title ?? "Candidate")
-                                .FontSize(11)
-                                .FontColor(Colors.Grey.Lighten4);
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.FontSize(11).FontColor(Colors.Grey.Lighten4)
+                                    );
+                                    FormatHtmlToText(t, PreprocessHtml(profile.Title ?? ""));
+                                });
 
                             // Contact Info
                             col.Item()
@@ -341,15 +350,23 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                                    var parts = new List<string>();
-                                    if (!string.IsNullOrEmpty(profile.Email))
-                                        parts.Add($"Email: {profile.Email}");
-                                    if (!string.IsNullOrEmpty(profile.PhoneNumber))
-                                        parts.Add($"Phone: {profile.PhoneNumber}");
-                                    if (!string.IsNullOrEmpty(profile.Location))
-                                        parts.Add($"Location: {profile.Location}");
+                                    t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
 
-                                    t.Span(string.Join(" | ", parts));
+                                    bool first = true;
+                                    void AddPart(string label, string? value)
+                                    {
+                                        if (string.IsNullOrEmpty(value))
+                                            return;
+                                        if (!first)
+                                            t.Span(" | ");
+                                        t.Span($"{_localizer[label]} ");
+                                        FormatHtmlToText(t, PreprocessHtml(value));
+                                        first = false;
+                                    }
+
+                                    AddPart("EmailLabel", profile.Email);
+                                    AddPart("PhoneLabel", profile.PhoneNumber);
+                                    AddPart("LocationLabel", profile.Location);
                                 });
 
                             // Links
@@ -359,13 +376,21 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                                    var parts = new List<string>();
-                                    if (!string.IsNullOrEmpty(profile.LinkedInUrl))
-                                        parts.Add($"LinkedIn: {profile.LinkedInUrl}");
-                                    if (!string.IsNullOrEmpty(profile.PortfolioUrl))
-                                        parts.Add($"GitHub: {profile.PortfolioUrl}");
 
-                                    t.Span(string.Join(" | ", parts));
+                                    bool first = true;
+                                    void AddLink(string label, string? value)
+                                    {
+                                        if (string.IsNullOrEmpty(value))
+                                            return;
+                                        if (!first)
+                                            t.Span(" | ");
+                                        t.Span($"{_localizer[label]} ");
+                                        FormatHtmlToText(t, PreprocessHtml(value));
+                                        first = false;
+                                    }
+
+                                    AddLink("LinkedInLabel", profile.LinkedInUrl);
+                                    AddLink("GitHubLabel", profile.PortfolioUrl);
                                 });
 
                             // Tagline
@@ -379,10 +404,13 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
                                 col.Item()
                                     .AlignCenter()
-                                    .Text(profile.Tagline)
-                                    .FontSize(9)
-                                    .FontColor("#ffffff")
-                                    .Medium();
+                                    .Text(t =>
+                                    {
+                                        t.DefaultTextStyle(x =>
+                                            x.FontSize(9).FontColor("#ffffff").Medium()
+                                        );
+                                        ComposeMarkdownText(t, profile.Tagline);
+                                    });
                             }
                         });
 
@@ -422,11 +450,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
     // --- Helper Methods for Page Sections ---
 
-    private static void ComposePageOne(
-        IContainer container,
-        CandidateProfile profile,
-        float fontSize
-    )
+    private void ComposePageOne(IContainer container, CandidateProfile profile, float fontSize)
     {
         container.Column(col =>
         {
@@ -452,7 +476,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             // Skills (Core Competencies)
             if (profile.Skills != null && profile.Skills.Count != 0)
             {
-                SectionTitle(col, "Core Competencies");
+                SectionTitle(col, _localizer["CoreCompetencies"]);
 
                 var categories = profile.Skills.GroupBy(s => s.Category ?? "Other").ToList();
                 foreach (var cat in categories)
@@ -467,16 +491,25 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                         .Column(c =>
                         {
                             c.Item()
-                                .Text(StripHtml(cat.Key))
-                                .Bold()
-                                .FontSize(fontSize)
-                                .FontColor(PrimaryDark);
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.Bold().FontSize(fontSize).FontColor(PrimaryDark)
+                                    );
+                                    ComposeMarkdownText(t, cat.Key);
+                                });
                             c.Item()
-                                .Text(
-                                    string.Join(", ", cat.Select(s => StripHtml(s.Name)).Distinct())
-                                )
-                                .FontSize(fontSize - 1)
-                                .FontColor(TextMedium);
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.FontSize(fontSize - 1).FontColor(TextMedium)
+                                    );
+                                    var skillList = string.Join(
+                                        ", ",
+                                        cat.Select(s => s.Name).Distinct()
+                                    );
+                                    ComposeMarkdownText(t, skillList);
+                                });
                         });
                 }
                 col.Item().PaddingBottom(1, Unit.Centimetre);
@@ -484,11 +517,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
         });
     }
 
-    private static void ComposePageTwo(
-        IContainer container,
-        CandidateProfile profile,
-        float fontSize
-    )
+    private void ComposePageTwo(IContainer container, CandidateProfile profile, float fontSize)
     {
         container.Column(col =>
         {
@@ -497,7 +526,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             // Experience
             if (profile.WorkExperience != null && profile.WorkExperience.Count != 0)
             {
-                SectionTitle(col, "Work Experience");
+                SectionTitle(col, _localizer["WorkExperienceCv"]);
 
                 col.Item()
                     .Table(table =>
@@ -519,10 +548,13 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                             // Row 1: Title & Date
                             table
                                 .Cell()
-                                .Text(StripHtml(exp.JobTitle ?? ""))
-                                .Bold()
-                                .FontSize(fontSize + 1)
-                                .FontColor(TextDark);
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(s =>
+                                        s.FontSize(fontSize + 1).FontColor(TextDark).Bold()
+                                    );
+                                    FormatHtmlToText(t, PreprocessHtml(exp.JobTitle));
+                                });
                             table
                                 .Cell()
                                 .AlignRight()
@@ -532,9 +564,13 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                         s.FontSize(fontSize - 2).FontColor(TextMedium)
                                     );
                                     t.Span(
-                                        $"{exp.StartDate:MM/yyyy} – {(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : "Present")}"
+                                        $"{exp.StartDate:MM/yyyy} – {(exp.IsCurrentRole ? _localizer["Present"] : (exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : _localizer["Present"]))}"
                                     );
-                                    var duration = CalculateDuration(exp.StartDate, exp.EndDate);
+                                    var duration = CalculateDuration(
+                                        exp.StartDate,
+                                        exp.EndDate,
+                                        exp.IsCurrentRole
+                                    );
                                     if (!string.IsNullOrEmpty(duration))
                                     {
                                         t.Span($" ({duration})").Italic();
@@ -542,16 +578,19 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                 });
 
                             // Row 2: Company
-                            var companyText = StripHtml(exp.CompanyName ?? "");
-                            if (!string.IsNullOrEmpty(exp.Location))
-                                companyText += $" - {StripHtml(exp.Location)}";
                             table
                                 .Cell()
                                 .ColumnSpan(2)
-                                .Text(companyText)
-                                .FontSize(fontSize)
-                                .FontColor(PrimaryColor)
-                                .SemiBold();
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.FontSize(fontSize).FontColor(PrimaryColor).SemiBold()
+                                    );
+                                    var companyText = exp.CompanyName ?? "";
+                                    if (!string.IsNullOrEmpty(exp.Location))
+                                        companyText += $" - {exp.Location}";
+                                    ComposeMarkdownText(t, companyText);
+                                });
 
                             // Row 3: Description with Bullets
                             if (!string.IsNullOrWhiteSpace(exp.Description))
@@ -589,11 +628,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
         });
     }
 
-    private static void ComposePageThree(
-        IContainer container,
-        CandidateProfile profile,
-        float fontSize
-    )
+    private void ComposePageThree(IContainer container, CandidateProfile profile, float fontSize)
     {
         container.Column(col =>
         {
@@ -602,7 +637,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             // Education
             if (profile.Educations != null && profile.Educations.Count != 0)
             {
-                SectionTitle(col, "Education");
+                SectionTitle(col, _localizer["EducationCv"]);
 
                 col.Item()
                     .Table(table =>
@@ -631,25 +666,41 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                 .Row(r =>
                                                 {
                                                     r.RelativeItem()
-                                                        .Text(StripHtml(edu.Degree ?? ""))
-                                                        .Bold()
-                                                        .FontSize(fontSize + 1)
-                                                        .FontColor(TextDark);
+                                                        .Text(t =>
+                                                        {
+                                                            t.DefaultTextStyle(x =>
+                                                                x.Bold()
+                                                                    .FontSize(fontSize + 1)
+                                                                    .FontColor(TextDark)
+                                                            );
+                                                            ComposeMarkdownText(
+                                                                t,
+                                                                edu.Degree ?? ""
+                                                            );
+                                                        });
                                                     r.ConstantItem(100)
                                                         .AlignRight()
                                                         .Text(
-                                                            $"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : "Present")}"
+                                                            $"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : _localizer["Present"])}"
                                                         )
                                                         .FontSize(fontSize - 2)
                                                         .FontColor(TextMedium);
                                                 });
 
                                             c.Item()
-                                                .Text(StripHtml(edu.InstitutionName ?? ""))
-                                                .FontSize(fontSize)
-                                                .FontColor(PrimaryColor)
-                                                .SemiBold()
-                                                .Bold();
+                                                .Text(t =>
+                                                {
+                                                    t.DefaultTextStyle(x =>
+                                                        x.FontSize(fontSize)
+                                                            .FontColor(PrimaryColor)
+                                                            .SemiBold()
+                                                            .Bold()
+                                                    );
+                                                    ComposeMarkdownText(
+                                                        t,
+                                                        edu.InstitutionName ?? ""
+                                                    );
+                                                });
 
                                             if (!string.IsNullOrEmpty(edu.Description))
                                             {
@@ -697,7 +748,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             // Projects
             if (profile.Projects != null && profile.Projects.Count != 0)
             {
-                SectionTitle(col, "Personal Projects");
+                SectionTitle(col, _localizer["PersonalProjectsCv"]);
 
                 col.Item()
                     .Table(table =>
@@ -722,16 +773,21 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                 .Row(r =>
                                                 {
                                                     r.RelativeItem()
-                                                        .Text(StripHtml(proj.Name ?? ""))
-                                                        .Bold()
-                                                        .FontSize(fontSize + 1)
-                                                        .FontColor(TextDark);
+                                                        .Text(t =>
+                                                        {
+                                                            t.DefaultTextStyle(x =>
+                                                                x.Bold()
+                                                                    .FontSize(fontSize + 1)
+                                                                    .FontColor(TextDark)
+                                                            );
+                                                            ComposeMarkdownText(t, proj.Name ?? "");
+                                                        });
 
                                                     var dateStr = "";
                                                     if (proj.StartDate.HasValue)
                                                     {
                                                         dateStr =
-                                                            $"{proj.StartDate.Value:yyyy} - {(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : "Present")}";
+                                                            $"{proj.StartDate.Value:yyyy} - {(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : _localizer["Present"])}";
                                                     }
                                                     r.ConstantItem(120)
                                                         .AlignRight()
@@ -755,7 +811,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                         );
                                                         if (!string.IsNullOrEmpty(proj.Link))
                                                         {
-                                                            t.Span("GitHub: ")
+                                                            t.Span($"{_localizer["GitHubLabel"]} ")
                                                                 .Bold()
                                                                 .FontColor(PrimaryDark);
                                                             t.Span(proj.Link)
@@ -766,10 +822,15 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                             !string.IsNullOrEmpty(proj.Technologies)
                                                         )
                                                         {
-                                                            t.Span("Technologies: ")
+                                                            t.Span(
+                                                                    $"{_localizer["TechnologiesLabel"]} "
+                                                                )
                                                                 .Bold()
                                                                 .FontColor(PrimaryDark);
-                                                            t.Span(StripHtml(proj.Technologies));
+                                                            ComposeMarkdownText(
+                                                                t,
+                                                                proj.Technologies
+                                                            );
                                                         }
                                                     });
                                             }
@@ -777,10 +838,15 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                             if (!string.IsNullOrEmpty(proj.Role))
                                             {
                                                 c.Item()
-                                                    .Text(StripHtml(proj.Role))
-                                                    .FontSize(fontSize)
-                                                    .FontColor(PrimaryColor)
-                                                    .SemiBold();
+                                                    .Text(t =>
+                                                    {
+                                                        t.DefaultTextStyle(x =>
+                                                            x.FontSize(fontSize)
+                                                                .FontColor(PrimaryColor)
+                                                                .SemiBold()
+                                                        );
+                                                        ComposeMarkdownText(t, proj.Role);
+                                                    });
                                             }
 
                                             if (!string.IsNullOrEmpty(proj.Description))
@@ -807,10 +873,18 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                 {
                                                     c.Item()
                                                         .PaddingTop(0.2f, Unit.Centimetre)
-                                                        .Text(StripHtml(proj.SectionTitle))
-                                                        .SemiBold()
-                                                        .FontSize(fontSize)
-                                                        .FontColor(PrimaryColor);
+                                                        .Text(t =>
+                                                        {
+                                                            t.DefaultTextStyle(x =>
+                                                                x.SemiBold()
+                                                                    .FontSize(fontSize)
+                                                                    .FontColor(PrimaryColor)
+                                                            );
+                                                            ComposeMarkdownText(
+                                                                t,
+                                                                proj.SectionTitle
+                                                            );
+                                                        });
                                                 }
 
                                                 c.Item()
@@ -840,10 +914,15 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                                 {
                                                     c.Item()
                                                         .PaddingTop(0.2f, Unit.Centimetre)
-                                                        .Text(StripHtml(sectionHeader))
-                                                        .SemiBold()
-                                                        .FontSize(fontSize)
-                                                        .FontColor(PrimaryColor);
+                                                        .Text(t =>
+                                                        {
+                                                            t.DefaultTextStyle(x =>
+                                                                x.SemiBold()
+                                                                    .FontSize(fontSize)
+                                                                    .FontColor(PrimaryColor)
+                                                            );
+                                                            ComposeMarkdownText(t, sectionHeader);
+                                                        });
                                                 }
 
                                                 // Render subsection details with bullets
@@ -877,7 +956,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             // Languages
             if (profile.Languages != null && profile.Languages.Count != 0)
             {
-                SectionTitle(col, "Languages");
+                SectionTitle(col, _localizer["LanguagesCv"]);
                 // Languages Layout: Stacked & Full Width (Table)
                 col.Item()
                     .Text(t =>
@@ -895,8 +974,10 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                         for (int i = 0; i < profile.Languages.Count; i++)
                         {
                             var lang = profile.Languages[i];
-                            t.Span(StripHtml(lang.Name));
-                            t.Span($" ({StripHtml(lang.Proficiency)})").FontSize(8).Italic();
+                            ComposeMarkdownText(t, lang.Name);
+                            t.Span(" (");
+                            ComposeMarkdownText(t, lang.Proficiency);
+                            t.Span(")").FontSize(8).Italic();
                             if (i < profile.Languages.Count - 1)
                             {
                                 t.Span(" | ");
@@ -913,7 +994,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
             if (profile.Interests != null && profile.Interests.Count != 0)
             {
-                SectionTitle(col, "Interests");
+                SectionTitle(col, _localizer["InterestsCv"]);
 
                 // Tags Layout: Centered, allowed to wrap (2+ rows), rounded chips, restored font size
                 col.Item()
@@ -934,9 +1015,13 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                                         .CornerRadius(4)
                                         .PaddingHorizontal(2)
                                         .PaddingVertical(2)
-                                        .Text(StripHtml(interest.Name))
-                                        .FontSize(8)
-                                        .FontColor(TextMedium);
+                                        .Text(t =>
+                                        {
+                                            t.DefaultTextStyle(x =>
+                                                x.FontSize(8).FontColor(TextMedium)
+                                            );
+                                            ComposeMarkdownText(t, interest.Name);
+                                        });
                                 });
                         }
                     });
@@ -955,7 +1040,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
                 .PaddingVertical(1)
                 .PaddingHorizontal(2)
                 .AlignCenter()
-                .Text("References available upon request")
+                .Text(_localizer["ReferencesAvailableUponRequest"])
                 .FontSize(8)
                 .FontColor(TextMedium)
                 .Italic();
@@ -981,110 +1066,81 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             });
     }
 
-    private static void FormatHtmlToText(TextDescriptor textDescriptor, string? input)
+    private static void FormatHtmlToText(
+        TextDescriptor textDescriptor,
+        string? input,
+        bool isBold = false,
+        bool isItalic = false,
+        bool isUnderline = false,
+        string? color = null
+    )
     {
         if (string.IsNullOrWhiteSpace(input))
             return;
 
-        // Use generated regex to match HTML tags with optional inline styles
         var regex = HtmlTagWithStyleRegex();
-
         int lastIndex = 0;
+
         foreach (Match match in regex.Matches(input))
         {
-            // Add text before this match (strip any remaining HTML tags)
+            // Add text before this match
             if (match.Index > lastIndex)
             {
                 var beforeText = input[lastIndex..match.Index];
                 var cleanBefore = HtmlTagRegex().Replace(beforeText, string.Empty);
                 if (!string.IsNullOrEmpty(cleanBefore))
                 {
-                    textDescriptor.Span(cleanBefore);
+                    var span = textDescriptor.Span(cleanBefore);
+                    ApplyStyle(span, isBold, isItalic, isUnderline, color);
                 }
             }
 
             var tagName = match.Groups[1].Value.ToLower();
-            // Style attr can be in group 2 (double), 3 (single), or 4 (unquoted)
             var styleAttr = match.Groups[2].Value + match.Groups[3].Value + match.Groups[4].Value;
             var content = match.Groups[5].Value;
 
-            // Strip nested HTML from content (simple handling)
-            var cleanContent = HtmlTagRegex().Replace(content, string.Empty);
-
-            // Initial state based on tag
-            bool isBold = tagName == "strong" || tagName == "b";
-            bool isItalic = tagName == "em" || tagName == "i";
-            string? color = null;
+            // Inherit parent styles or apply new ones from current tag
+            bool currentBold = isBold || tagName == "strong" || tagName == "b";
+            bool currentItalic = isItalic || tagName == "em" || tagName == "i";
+            bool currentUnderline = isUnderline || tagName == "u";
+            string? currentColor = color;
 
             if (!string.IsNullOrEmpty(styleAttr))
             {
-                // Parse color
                 var colorMatch = ColorStyleRegex().Match(styleAttr);
                 if (colorMatch.Success)
-                {
-                    var rawColor = colorMatch.Groups[1].Value.Trim();
-                    color = GetHexColor(rawColor);
-                }
+                    currentColor = GetHexColor(colorMatch.Groups[1].Value.Trim());
 
-                // Parse font-weight
                 var weightMatch = FontWeightStyleRegex().Match(styleAttr);
                 if (weightMatch.Success)
                 {
                     var weight = weightMatch.Groups[1].Value.Trim().ToLower();
-                    if (weight == "bold" || weight == "700" || weight == "800" || weight == "900")
-                        isBold = true;
-                    if (weight == "normal" || weight == "400")
-                        isBold = false;
+                    if (weight == "bold" || weight == "700" || weight == "800")
+                        currentBold = true;
+                    else if (weight == "normal" || weight == "400")
+                        currentBold = false;
                 }
 
-                // Parse font-style
                 var styleMatch = FontStyleStyleRegex().Match(styleAttr);
                 if (styleMatch.Success)
                 {
                     var style = styleMatch.Groups[1].Value.Trim().ToLower();
                     if (style == "italic")
-                        isItalic = true;
-                    if (style == "normal")
-                        isItalic = false;
+                        currentItalic = true;
+                    else if (style == "normal")
+                        currentItalic = false;
                 }
             }
 
-            // Apply styling
-            if (cleanContent == "\u25B8") // Arrow
-            {
-                textDescriptor.Element(e =>
-                    e.PaddingBottom(-1.5f)
-                        .Width(10)
-                        .Height(10)
-                        .Svg(
-                            $"<svg viewBox=\"0 0 24 24\"><path fill=\"{PrimaryColor}\" d=\"M9 12l-5 5V7z\"/></svg>"
-                        )
-                );
-            }
-            else if (cleanContent == "\u2713") // Checkmark
-            {
-                textDescriptor.Element(e =>
-                    e.PaddingBottom(-1)
-                        .Width(10)
-                        .Height(10)
-                        .Svg(
-                            $"<svg viewBox=\"0 0 24 24\"><path fill=\"{AccentColor}\" d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"
-                        )
-                );
-
-                // Add a small space after
-                textDescriptor.Span(" ");
-            }
-            else
-            {
-                var span = textDescriptor.Span(cleanContent);
-                if (isBold)
-                    span.Bold();
-                if (isItalic)
-                    span.Italic();
-                if (!string.IsNullOrEmpty(color))
-                    span.FontColor(color);
-            }
+            // RECURSIVELY handle nested tags
+            FormatHtmlToText(
+                textDescriptor,
+                content,
+                currentBold,
+                currentItalic,
+                currentUnderline,
+                currentColor
+            );
 
             lastIndex = match.Index + match.Length;
         }
@@ -1096,9 +1152,28 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
             var cleanRemaining = HtmlTagRegex().Replace(remainingText, string.Empty);
             if (!string.IsNullOrEmpty(cleanRemaining))
             {
-                textDescriptor.Span(cleanRemaining);
+                var span = textDescriptor.Span(cleanRemaining);
+                ApplyStyle(span, isBold, isItalic, isUnderline, color);
             }
         }
+    }
+
+    private static void ApplyStyle(
+        TextSpanDescriptor span,
+        bool bold,
+        bool italic,
+        bool underline,
+        string? color
+    )
+    {
+        if (bold)
+            span.Bold();
+        if (italic)
+            span.Italic();
+        if (underline)
+            span.Underline();
+        if (!string.IsNullOrEmpty(color))
+            span.FontColor(color);
     }
 
     private static string PreprocessHtml(string? input, string bullet = "")
@@ -1106,7 +1181,14 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
 
-        string pText = input ?? "";
+        string pText = WebUtility.HtmlDecode(input ?? "");
+
+        // Standardize markdown-style bolding to HTML strong tags for consistency
+        pText = MarkdownBoldRegex().Replace(pText, "<strong>$1</strong>");
+
+        // Standardize markdown-style italic to HTML em tags
+        pText = MarkdownItalicAsteriskRegex().Replace(pText, "<em>$1</em>");
+        pText = MarkdownItalicUnderscoreRegex().Replace(pText, "<em>$1</em>");
 
         // Handle HR tags - Convert to unique placeholder
         pText = HrTagRegex().Replace(pText, "[[HR]]");
@@ -1176,7 +1258,7 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
         pText = POpenTagRegex().Replace(pText, "");
 
         // Decode HTML entities
-        pText = System.Net.WebUtility.HtmlDecode(pText);
+        // Entities already decoded at top
 
         // Safety net: Identify and colorize standalone occurrences of these chars if they weren't caught above
         // This handles cases where the text itself already contains the chars (not just replacing LIs)
@@ -1186,9 +1268,9 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
         return pText.Trim();
     }
 
-    private static string CalculateDuration(DateTime? start, DateTime? end)
+    private string CalculateDuration(DateTime? start, DateTime? end, bool isCurrentRole = false)
     {
-        if (!start.HasValue)
+        if (!start.HasValue || isCurrentRole)
             return "";
 
         var endDate = end ?? DateTime.Now;
@@ -1200,9 +1282,9 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
         var parts = new List<string>();
         if (years > 0)
-            parts.Add($"{years} year{(years > 1 ? "s" : "")}");
+            parts.Add($"{years} {_localizer[years > 1 ? "Years" : "Year"]}");
         if (months > 0)
-            parts.Add($"{months} month{(months > 1 ? "s" : "")}");
+            parts.Add($"{months} {_localizer[months > 1 ? "Months" : "Month"]}");
 
         return string.Join(" ", parts);
     }
@@ -1229,11 +1311,19 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
     [GeneratedRegex(@"/Type\s*/Page\b", RegexOptions.IgnoreCase)]
     private static partial Regex PageTypeRegex();
 
-    // Backreference \1 is not supported by GeneratedRegex, use compiled Regex instead
-#pragma warning disable SYSLIB1045 // Cannot use GeneratedRegex - pattern uses backreference \1
+    [GeneratedRegex(@"\*\*(.*?)\*\*", RegexOptions.Singleline)]
+    private static partial Regex MarkdownBoldRegex();
+
+    [GeneratedRegex(@"\*(.*?)\*", RegexOptions.Singleline)]
+    private static partial Regex MarkdownItalicAsteriskRegex();
+
+    [GeneratedRegex(@"_(.*?)_", RegexOptions.Singleline)]
+    private static partial Regex MarkdownItalicUnderscoreRegex();
+
+#pragma warning disable SYSLIB1045 // Pattern with backreferences not supported by GeneratedRegex
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
         @"<(strong|b|em|i|u|span)(?:\s+style\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+)))?\s*>(.+?)</\1>",
-        RegexOptions.IgnoreCase | RegexOptions.Compiled
+        RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline
     );
 #pragma warning restore SYSLIB1045
 
@@ -1268,6 +1358,17 @@ public partial class PdfService(IWebHostEnvironment env) : IPdfService
 
     [GeneratedRegex(@"<hr\s*/?>", RegexOptions.IgnoreCase)]
     private static partial Regex HrTagRegex();
+
+    /// <summary>
+    /// Renders text with HTML and Markdown support into a TextDescriptor.
+    /// Used for single-line or inline candidate-provided fields.
+    /// </summary>
+    private static void ComposeMarkdownText(TextDescriptor t, string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            return;
+        FormatHtmlToText(t, PreprocessHtml(content));
+    }
 
     /// <summary>
     /// Renders HTML content into a ColumnDescriptor, handling text blocks and horizontal lines.

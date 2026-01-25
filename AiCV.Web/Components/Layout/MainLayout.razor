@@ -4,7 +4,7 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudScrollToTop TopOffset="400">
-    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Size="Size.Small" />
 </MudScrollToTop>
 
 <MudLayout
@@ -35,7 +35,6 @@
         Style="position: fixed; top: 64px; z-index: 2000;">
             <MudText Typo="Typo.subtitle1" Color="Color.Dark">
                 <b>
-
                     @LoadingService.Percentage
                     %
                 </b>

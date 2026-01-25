@@ -251,9 +251,9 @@ public partial class Profile : IDisposable
         }
     }
 
-    private string CalculateDuration(DateTime? start, DateTime? end)
+    private string CalculateDuration(DateTime? start, DateTime? end, bool isCurrentRole = false)
     {
-        if (!start.HasValue)
+        if (!start.HasValue || isCurrentRole)
             return "";
 
         var endDate = end ?? DateTime.Now;

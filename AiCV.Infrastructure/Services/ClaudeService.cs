@@ -47,10 +47,7 @@ public class ClaudeService(
             system = string.IsNullOrWhiteSpace(customPrompt)
                 ? AISystemPrompts.CoverLetterSystemPrompt
                 : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
-            messages = new[]
-            {
-                new { role = "user", content = AIPromptBuilder.Build(profile, job) },
-            },
+            messages = new[] { new { role = "user", content = BuildPrompt(profile, job) } },
         };
 
         var jsonPayload = JsonSerializer.Serialize(requestPayload);
@@ -66,12 +63,7 @@ public class ClaudeService(
         {
             var error = await response.Content.ReadAsStringAsync();
             throw new Exception(
-                AIErrorMapper.MapError(
-                    AIProvider.Claude,
-                    error,
-                    response.StatusCode,
-                    _localizer
-                )
+                AIErrorMapper.MapError(AIProvider.Claude, error, response.StatusCode, _localizer)
             );
         }
 
@@ -96,11 +88,7 @@ public class ClaudeService(
                 : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
             messages = new[]
             {
-                new
-                {
-                    role = "user",
-                    content = AIPromptBuilder.Build(profile, job, isResume: true),
-                },
+                new { role = "user", content = BuildPrompt(profile, job, isResume: true) },
             },
         };
 
@@ -117,12 +105,7 @@ public class ClaudeService(
         {
             var error = await response.Content.ReadAsStringAsync();
             throw new Exception(
-                AIErrorMapper.MapError(
-                    AIProvider.Claude,
-                    error,
-                    response.StatusCode,
-                    _localizer
-                )
+                AIErrorMapper.MapError(AIProvider.Claude, error, response.StatusCode, _localizer)
             );
         }
 
@@ -152,16 +135,7 @@ public class ClaudeService(
         if (!string.IsNullOrWhiteSpace(customPrompt))
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
 
-        var userPrompt = $"""
-            Candidate Name: {profile.FullName}
-            Position: {job.Title}
-            Company: {job.CompanyName}
-
-            Cover Letter Summary:
-            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-            Write a brief professional email to accompany this application.
-            """;
+        var userPrompt = BuildEmailPrompt(profile, job, coverLetter);
 
         var requestPayload = new
         {
@@ -184,12 +158,7 @@ public class ClaudeService(
         {
             var error = await response.Content.ReadAsStringAsync();
             throw new Exception(
-                AIErrorMapper.MapError(
-                    AIProvider.Claude,
-                    error,
-                    response.StatusCode,
-                    _localizer
-                )
+                AIErrorMapper.MapError(AIProvider.Claude, error, response.StatusCode, _localizer)
             );
         }
 

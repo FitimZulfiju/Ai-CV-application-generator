@@ -17,18 +17,28 @@ public partial class CvPreview
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private static string FormatSummary(string? summary)
+    public static string FormatSummary(string? summary)
     {
         if (string.IsNullOrEmpty(summary))
             return string.Empty;
-        // Simple bold formatting for Markdown-like syntax
-        return summary
-            .Replace("**", "<strong>")
-            .Replace("</strong>", "</strong>")
-            .Replace("\n", "<br>");
+
+        // Decode entities
+        var formatted = System.Net.WebUtility.HtmlDecode(summary);
+
+        // Handle bold (**text**)
+        formatted = BoldRegex().Replace(formatted, "<strong>$1</strong>");
+
+        // Handle italic (*text* or _text_)
+        formatted = ItalicAsteriskRegex().Replace(formatted, "<em>$1</em>");
+        formatted = ItalicUnderscoreRegex().Replace(formatted, "<em>$1</em>");
+
+        // Handle underline (HTML only for now, as markdown doesn't have a standard for it)
+        formatted = UnderlineRegex().Replace(formatted, "<u>$1</u>");
+
+        return formatted.Replace("\n", "<br>");
     }
 
-    private static string FormatDescription(string? description)
+    public static string FormatDescription(string? description)
     {
         if (string.IsNullOrEmpty(description))
             return string.Empty;
@@ -45,17 +55,21 @@ public partial class CvPreview
             var cleanLine = line.Trim().TrimStart('-', '*').Trim();
             if (!string.IsNullOrEmpty(cleanLine))
             {
-                // Handle bold formatting
-                cleanLine = cleanLine.Replace("**", "<strong>").Replace("</strong>", "</strong>");
+                // Decode and handle bold/italic
+                cleanLine = System.Net.WebUtility.HtmlDecode(cleanLine);
+                cleanLine = BoldRegex().Replace(cleanLine, "<strong>$1</strong>");
+                cleanLine = ItalicAsteriskRegex().Replace(cleanLine, "<em>$1</em>");
+                cleanLine = ItalicUnderscoreRegex().Replace(cleanLine, "<em>$1</em>");
+                cleanLine = UnderlineRegex().Replace(cleanLine, "<u>$1</u>");
                 sb.AppendLine($"<li>{cleanLine}</li>");
             }
         }
         return sb.ToString();
     }
 
-    private string CalculateDuration(DateTime? start, DateTime? end)
+    private string CalculateDuration(DateTime? start, DateTime? end, bool isCurrentRole = false)
     {
-        if (!start.HasValue)
+        if (!start.HasValue || isCurrentRole)
             return "";
 
         var endDate = end ?? DateTime.Now;
@@ -79,4 +93,16 @@ public partial class CvPreview
 
         return string.Join(" ", parts);
     }
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"\*\*(.*?)\*\*")]
+    private static partial System.Text.RegularExpressions.Regex BoldRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"\*(.*?)\*")]
+    private static partial System.Text.RegularExpressions.Regex ItalicAsteriskRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"_(.*?)_")]
+    private static partial System.Text.RegularExpressions.Regex ItalicUnderscoreRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"<u>(.*?)</u>")]
+    private static partial System.Text.RegularExpressions.Regex UnderlineRegex();
 }

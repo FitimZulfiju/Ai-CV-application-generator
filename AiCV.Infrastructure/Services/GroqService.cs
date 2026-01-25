@@ -52,7 +52,7 @@ public class GroqService(
                                 ? AISystemPrompts.CoverLetterSystemPrompt
                                 : $"{AISystemPrompts.CoverLetterSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
                         },
-                        new { role = "user", content = AIPromptBuilder.Build(profile, job) },
+                        new { role = "user", content = BuildPrompt(profile, job) },
                     },
                     temperature = 0.7,
                     max_tokens = 4096,
@@ -101,11 +101,7 @@ public class GroqService(
                                 ? AISystemPrompts.ResumeTailoringSystemPrompt
                                 : $"{AISystemPrompts.ResumeTailoringSystemPrompt}\n\nAdditional Instructions: {customPrompt}",
                         },
-                        new
-                        {
-                            role = "user",
-                            content = AIPromptBuilder.Build(profile, job, isResume: true),
-                        },
+                        new { role = "user", content = BuildPrompt(profile, job, isResume: true) },
                     },
                     temperature = 0.7,
                     max_tokens = 4096,
@@ -154,16 +150,7 @@ public class GroqService(
         if (!string.IsNullOrWhiteSpace(customPrompt))
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
 
-        var userPrompt = $"""
-            Candidate Name: {profile.FullName}
-            Position: {job.Title}
-            Company: {job.CompanyName}
-
-            Cover Letter Summary:
-            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-            Write a brief professional email to accompany this application.
-            """;
+        var userPrompt = BuildEmailPrompt(profile, job, coverLetter);
 
         var requestPayload = new
         {
@@ -178,11 +165,7 @@ public class GroqService(
         };
 
         var jsonPayload = JsonSerializer.Serialize(requestPayload);
-        var content = new StringContent(
-            jsonPayload,
-            Encoding.UTF8,
-            "application/json"
-        );
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         _httpClient.DefaultRequestHeaders.Clear();
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");

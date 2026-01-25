@@ -1,6 +1,5 @@
 @attribute [Microsoft.AspNetCore.Components.Route(NavUri.ProfilePage)]
 @attribute [Authorize]
-@inject IDialogService DialogService
 
 <PageTitle>@Localizer["MasterCvProfile"]</PageTitle>
 
@@ -136,7 +135,7 @@ else
                         </MudItem>
                         <MudItem xs="12" sm="6" Class="pt-2">
                             <MudTextField @bind-Value="_profile.Tagline" Label="@Localizer["Tagline"]"
-                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start" AutoGrow="true"
                                           AdornmentIcon="@Icons.Material.Filled.ShortText" />
                         </MudItem>
                         <MudItem xs="12" Class="pt-2">
@@ -176,18 +175,42 @@ else
                                     <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" />
                                 </MudItem>
                                 <MudItem xs="12" sm="2">
-                                    <MudDatePicker @bind-Date="exp.EndDate" Label="@Localizer["EndDate"]"
+                                    <MudDatePicker @bind-Date="exp.EndDate" 
+                                                   Label="@(exp.IsCurrentRole ? Localizer["Present"] : Localizer["EndDate"])"
                                                    Disabled="@exp.IsCurrentRole" />
                                 </MudItem>
-                                <MudItem xs="4" sm="2" Class="d-flex align-center">
+
+                                @*  <MudItem xs="4" sm="2" Class="d-flex align-center">
                                     <MudText Typo="Typo.body2">@CalculateDuration(exp.StartDate, exp.EndDate)</MudText>
+                                </MudItem> *@
+
+                                <MudItem xs="4" sm="2" Class="d-flex align-center">
+                                    @if (!exp.IsCurrentRole)
+                                    {
+                                        <MudChip T="string"
+                                                 Color="Color.Info"
+                                                 Variant="Variant.Outlined"
+                                                 Size="Size.Small">
+                                            @CalculateDuration(exp.StartDate, exp.EndDate, exp.IsCurrentRole)
+                                        </MudChip>
+                                    }
                                 </MudItem>
-                                <MudItem xs="4" sm="3">
+
+                                @*  <MudItem xs="4" sm="3">
                                     <MudCheckBox @bind-Value="exp.IsCurrentRole" Label="@Localizer["CurrentRole"]" />
-                                </MudItem>
+                                </MudItem> *@
+
                                 <MudItem xs="4" sm="3">
-                                    <MudButton Class="ml-auto d-flex align-items-end" Variant="Variant.Outlined" Size="Size.Small" Color="Color.Error"
-                                               OnClick="@(() => RemoveExperience(exp))" StartIcon="@Icons.Material.Filled.Delete">
+                                    <MudSwitch T="bool"
+                                               @bind-Value="exp.IsCurrentRole"
+                                               Color="Color.Primary"
+                                               Label="@Localizer["CurrentRole"]" />
+                                </MudItem>
+
+                                <MudItem xs="4" sm="3">
+                                    <MudButton Class="ml-auto d-flex align-items-end" Variant="Variant.Outlined"
+                                               Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveExperience(exp))"
+                                               StartIcon="@Icons.Material.Filled.Delete">
                                         @Localizer["Remove"]
                                     </MudButton>
                                 </MudItem>
@@ -226,7 +249,8 @@ else
                                     <MudDatePicker @bind-Date="edu.EndDate" Label="@Localizer["EndDate"]" />
                                 </MudItem>
                                 <MudItem xs="12" sm="4">
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Class="ml-auto d-flex align-items-end" Size="Size.Small"
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                               Class="ml-auto d-flex align-items-end" Size="Size.Small"
                                                OnClick="@(() => RemoveEducation(edu))" StartIcon="@Icons.Material.Filled.Delete">
                                         @Localizer["Remove"]
                                     </MudButton>
@@ -320,14 +344,15 @@ else
                                 </MudItem>
                                 <MudItem xs="12" sm="11" Class="pt-2">
                                     <div class="pl-5">
-                                    <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]"
-                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Subject"
-                                                  Variant="Variant.Text" Clearable="true"></MudTextField>
-                                    @* HelperText="@Localizer["ProjectSectionTitleHelper"]" /> *@
+                                        <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Subject"
+                                                      Variant="Variant.Text" Clearable="true"></MudTextField>
+                                        @* HelperText="@Localizer["ProjectSectionTitleHelper"]" /> *@
                                     </div>
                                 </MudItem>
                                 <MudItem xs="12" sm="1">
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Class="ml-auto d-flex align-items-end" Size="Size.Small"
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                               Class="ml-auto d-flex align-items-end" Size="Size.Small"
                                                OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">
                                         @Localizer["Remove"]
                                     </MudButton>
@@ -442,40 +467,38 @@ else
 
             <MudDivider />
 
-            <MudText Typo="Typo.subtitle1"><strong>@Localizer["WhereEachFormatWorks"]</strong></MudText>
+            <MudText Typo="Typo.subtitle1"><strong>@Localizer["SupportedFields"]</strong></MudText>
+            <MudAlert Severity="Severity.Success" Dense="true" Icon="@Icons.Material.Filled.DoneAll">
+                @Localizer["AllTextFieldsSupportFormatting"]
+            </MudAlert>
             <MudSimpleTable Dense="true" Hover="true" Bordered="true">
                 <thead>
                     <tr>
-                        <th>@Localizer["Field"]</th>
-                        <th>@Localizer["LineBreaks"]</th>
-                        <th>@Localizer["BulletPoints"] (- or *)</th>
-                        <th>@Localizer["HtmlTags"]</th>
+                        <th>@Localizer["FormattingType"]</th>
+                        <th>@Localizer["Syntax"]</th>
+                        <th>@Localizer["SupportedIn"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>@Localizer["ProfessionalSummary"]</td>
-                        <td>@Localizer["Yes"]</td>
-                        <td>@Localizer["No"]</td>
-                        <td>@Localizer["Yes"]</td>
+                        <td><strong>@Localizer["BoldMarkdown"]</strong></td>
+                        <td><code>**text**</code></td>
+                        <td>@Localizer["AllFields"]</td>
                     </tr>
                     <tr>
-                        <td>@Localizer["ExperienceDescription"]</td>
-                        <td>@Localizer["Yes"] (@Localizer["AsBullets"])</td>
-                        <td>@Localizer["Yes"]</td>
-                        <td>@Localizer["Yes"]</td>
+                        <td><strong>@Localizer["HtmlTags"]</strong></td>
+                        <td><code>&lt;strong&gt;, &lt;em&gt;, &lt;u&gt;</code></td>
+                        <td>@Localizer["AllFields"]</td>
                     </tr>
                     <tr>
-                        <td>@Localizer["ProjectDescription"]</td>
-                        <td>@Localizer["Yes"] (@Localizer["AsBullets"])</td>
-                        <td>@Localizer["Yes"]</td>
-                        <td>@Localizer["Yes"]</td>
+                        <td><strong>@Localizer["LineBreaks"]</strong></td>
+                        <td>@Localizer["EnterKey"]</td>
+                        <td>@Localizer["AllFields"]</td>
                     </tr>
                     <tr>
-                        <td>@Localizer["EducationDescription"]</td>
-                        <td>@Localizer["Yes"]</td>
-                        <td>@Localizer["No"]</td>
-                        <td>@Localizer["Yes"]</td>
+                        <td><strong>@Localizer["BulletPoints"]</strong></td>
+                        <td><code>- @Localizer["or"] *</code></td>
+                        <td>@Localizer["DescriptionsOnly"]</td>
                     </tr>
                 </tbody>
             </MudSimpleTable>

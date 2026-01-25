@@ -128,12 +128,34 @@ public abstract class AiServiceBase(IStringLocalizer<AicvResources> localizer) :
         }
     }
 
-    protected static string BuildPrompt(
-        CandidateProfile profile,
-        JobPosting job,
-        bool isResume = false
-    )
+    protected string BuildPrompt(CandidateProfile profile, JobPosting job, bool isResume = false)
     {
-        return AIPromptBuilder.Build(profile, job, isResume);
+        var language = System.Globalization.CultureInfo.CurrentCulture.EnglishName;
+        var dearHiringManager = _localizer["DearHiringManager"];
+        var sincerely = _localizer["Sincerely"];
+        return AIPromptBuilder.Build(
+            profile,
+            job,
+            language,
+            dearHiringManager,
+            sincerely,
+            isResume
+        );
+    }
+
+    protected string BuildEmailPrompt(CandidateProfile profile, JobPosting job, string coverLetter)
+    {
+        var language = System.Globalization.CultureInfo.CurrentCulture.EnglishName;
+        return AIPromptBuilder.BuildEmailPrompt(
+            profile,
+            job,
+            language,
+            coverLetter,
+            _localizer["CandidateName"],
+            _localizer["Position"],
+            _localizer["Company"],
+            _localizer["CoverLetterSummary"],
+            _localizer["WriteEmailInstruction"]
+        );
     }
 }

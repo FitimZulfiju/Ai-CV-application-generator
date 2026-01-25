@@ -2,22 +2,31 @@ namespace AiCV.Infrastructure.Services;
 
 public static class AIResponseParser
 {
-    private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
 
-    public static TailoredResumeResult ParseTailoredResume(string jsonResponse, CandidateProfile originalProfile)
+    public static TailoredResumeResult ParseTailoredResume(
+        string jsonResponse,
+        CandidateProfile originalProfile
+    )
     {
         try
         {
             // Clean up JSON markdown code blocks if present (common in AI responses)
             var cleanJson = jsonResponse.Replace("```json", "").Replace("```", "").Trim();
 
-            var resultDto = JsonSerializer.Deserialize<TailoredResumeResponseDto>(cleanJson, _jsonOptions);
+            var resultDto = JsonSerializer.Deserialize<TailoredResumeResponseDto>(
+                cleanJson,
+                _jsonOptions
+            );
             var tailoredProfileDto = resultDto?.TailoredProfile;
 
             var result = new TailoredResumeResult
             {
                 DetectedCompanyName = resultDto?.DetectedJobDetails?.CompanyName,
-                DetectedJobTitle = resultDto?.DetectedJobDetails?.JobTitle
+                DetectedJobTitle = resultDto?.DetectedJobDetails?.JobTitle,
             };
 
             if (tailoredProfileDto != null)
@@ -34,10 +43,15 @@ public static class AIResponseParser
                     Location = originalProfile.Location,
 
                     // Use AI generated content if available, otherwise fallback
-                    Title = !string.IsNullOrEmpty(tailoredProfileDto.Title) ? tailoredProfileDto.Title : originalProfile.Title,
+                    Title = !string.IsNullOrEmpty(tailoredProfileDto.Title)
+                        ? tailoredProfileDto.Title
+                        : originalProfile.Title,
+                    Tagline = !string.IsNullOrEmpty(tailoredProfileDto.Tagline)
+                        ? tailoredProfileDto.Tagline
+                        : originalProfile.Tagline,
 
                     // Copy original Professional Summary (AI no longer rewrites this)
-                    ProfessionalSummary = originalProfile.ProfessionalSummary
+                    ProfessionalSummary = originalProfile.ProfessionalSummary,
                 };
 
                 // Copy original Work Experience (AI no longer rewrites this)
@@ -54,40 +68,25 @@ public static class AIResponseParser
                     {
                         if (skillGroup.Names != null)
                         {
-                            skillList.AddRange(skillGroup.Names.Select(name => new Skill 
-                            {
-                                Name = name,
-                                Category = !string.IsNullOrWhiteSpace(skillGroup.Category) ? skillGroup.Category : "General"
-                            }));
+                            skillList.AddRange(
+                                skillGroup.Names.Select(name => new Skill
+                                {
+                                    Name = name,
+                                    Category = !string.IsNullOrWhiteSpace(skillGroup.Category)
+                                        ? skillGroup.Category
+                                        : "General",
+                                })
+                            );
                         }
                     }
                     tailoredProfile.Skills = skillList;
                 }
 
-                // Copy static sections from original profile (Education, Projects, Languages, Interests)
-                // These are rarely tailored by AI, so we preserve the original data to avoid data loss
                 if (originalProfile.Educations != null)
                 {
                     tailoredProfile.Educations = [.. originalProfile.Educations];
                 }
 
-                if (originalProfile.Projects != null)
-                {
-                    tailoredProfile.Projects = [.. originalProfile.Projects];
-                }
-
-                if (originalProfile.Languages != null)
-                {
-                    tailoredProfile.Languages = [.. originalProfile.Languages];
-                }
-
-                if (originalProfile.Interests != null)
-                {
-                    tailoredProfile.Interests = [.. originalProfile.Interests];
-                }
-
-                // Copy static sections from original profile (Projects, Languages, Interests)
-                // These are rarely tailored by AI, so we preserve the original data
                 if (originalProfile.Projects != null)
                 {
                     tailoredProfile.Projects = [.. originalProfile.Projects];
@@ -114,7 +113,9 @@ public static class AIResponseParser
         }
         catch (JsonException ex)
         {
-            throw new Exception($"Failed to parse AI JSON response: {ex.Message}. Response was: {jsonResponse}");
+            throw new Exception(
+                $"Failed to parse AI JSON response: {ex.Message}. Response was: {jsonResponse}"
+            );
         }
     }
 
@@ -140,6 +141,7 @@ public static class AIResponseParser
         public string PortfolioUrl { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public string ProfessionalSummary { get; set; } = string.Empty;
+        public string Tagline { get; set; } = string.Empty;
         public List<SkillGroupDto>? Skills { get; set; }
         public List<ExperienceDto>? WorkExperience { get; set; }
         // Education is now copied from original, so we don't need it in DTO anymore

@@ -1,10 +1,7 @@
 namespace AiCV.Infrastructure.Services;
 
-public class OpenAIService(
-    string apiKey,
-    string modelId,
-    IStringLocalizer<AicvResources> localizer
-) : AiServiceBase(localizer)
+public class OpenAIService(string apiKey, string modelId, IStringLocalizer<AicvResources> localizer)
+    : AiServiceBase(localizer)
 {
     private readonly ChatClient _chatClient = new(modelId, new ApiKeyCredential(apiKey));
 
@@ -87,16 +84,7 @@ public class OpenAIService(
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
         }
 
-        var userPrompt = $"""
-            Candidate Name: {profile.FullName}
-            Position: {job.Title}
-            Company: {job.CompanyName}
-
-            Cover Letter Summary:
-            {coverLetter[..Math.Min(500, coverLetter.Length)]}...
-
-            Write a brief professional email to accompany this application.
-            """;
+        var userPrompt = BuildEmailPrompt(profile, job, coverLetter);
 
         ChatCompletion completion = await _chatClient.CompleteChatAsync(
             new SystemChatMessage(systemPrompt),

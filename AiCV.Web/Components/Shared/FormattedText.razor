@@ -1,0 +1,9 @@
+@((MarkupString)(IsDescription ? CvPreview.FormatDescription(Text) : CvPreview.FormatSummary(Text)))
+
+@code {
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public bool IsDescription { get; set; }
+}

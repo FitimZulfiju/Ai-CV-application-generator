@@ -985,4 +985,22 @@
   <data name="NoProfilePictureUploadOne" xml:space="preserve">
     <value>Intet profilbillede uploadet. Gå til profilsiden for at uploade et.</value>
   </data>
+  <data name="DearHiringManager" xml:space="preserve">
+    <value>Kære Ansættelsesansvarlig,</value>
+  </data>
+  <data name="Sincerely" xml:space="preserve">
+    <value>Med venlig hilsen,</value>
+  </data>
+  <data name="CandidateName" xml:space="preserve">
+    <value>Kandidatnavn</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Stilling</value>
+  </data>
+  <data name="CoverLetterSummary" xml:space="preserve">
+    <value>Resumé af følgebrev</value>
+  </data>
+  <data name="WriteEmailInstruction" xml:space="preserve">
+    <value>Skriv en kort professionel e-mail til at ledsage denne ansøgning.</value>
+  </data>
 </root>
