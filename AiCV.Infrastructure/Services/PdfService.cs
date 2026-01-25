@@ -1176,6 +1176,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             span.FontColor(color);
     }
 
+    // SVG Path for Checkmark (Material Design)
+    private const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+
     private static string PreprocessHtml(string? input, string bullet = "")
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -1193,24 +1196,31 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         // Handle HR tags - Convert to unique placeholder
         pText = HrTagRegex().Replace(pText, "[[HR]]");
 
+        // Use a placeholder for the checkmark so we can render it as SVG later
+        // We'll replace the unicode char or the request for a checkmark bullet with this placeholder
+        // Note: We use a space after the placeholder to ensure separation from text
+        const string checkmarkPlaceholder = "[[CHECKMARK]]";
+
         // Handle Lists (<ul><li>...</li></ul>)
         if (pText.Contains("<li>", StringComparison.OrdinalIgnoreCase))
         {
             // Replace <li> with bullet
             if (!string.IsNullOrEmpty(bullet))
             {
-                // Wrap bullet in color span if it's the right arrow or checkmark
-                string coloredBullet = bullet;
-                if (bullet.Contains('\u25B8')) // ▸ Right Arrow
+                string bulletReplacement = bullet;
+
+                if (bullet.Contains('\u25B8'))
                 {
-                    coloredBullet = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
+                    // Keep using span for text-based bullets (Right Arrow)
+                    bulletReplacement = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
                 }
                 else if (bullet.Contains('\u2713')) // ✓ Checkmark
                 {
-                    coloredBullet = $"<span style='color:{AccentColor}'>\u2713</span> ";
+                    // Use special placeholder for Checkmark to render as SVG
+                    bulletReplacement = checkmarkPlaceholder;
                 }
 
-                pText = LiOpenTagRegex().Replace(pText, coloredBullet);
+                pText = LiOpenTagRegex().Replace(pText, bulletReplacement);
             }
             else
             {
@@ -1232,22 +1242,21 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             var lines = pText.Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries);
             var sb = new StringBuilder();
 
-            // Wrap bullet in color span
-            string coloredBullet = bullet;
+            string bulletReplacement = bullet;
             if (bullet.Contains('\u25B8')) // ▸ Right Arrow
             {
-                coloredBullet = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
+                bulletReplacement = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
             }
             else if (bullet.Contains('\u2713')) // ✓ Checkmark
             {
-                coloredBullet = $"<span style='color:{AccentColor}'>\u2713</span> ";
+                bulletReplacement = checkmarkPlaceholder;
             }
 
             foreach (var line in lines)
             {
                 var cleanLine = line.Trim().TrimStart('-', '*').Trim();
                 if (!string.IsNullOrEmpty(cleanLine))
-                    sb.AppendLine($"{coloredBullet}{cleanLine}");
+                    sb.AppendLine($"{bulletReplacement}{cleanLine}");
             }
             return sb.ToString().Trim();
         }
@@ -1260,10 +1269,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         // Decode HTML entities
         // Entities already decoded at top
 
-        // Safety net: Identify and colorize standalone occurrences of these chars if they weren't caught above
-        // This handles cases where the text itself already contains the chars (not just replacing LIs)
+        // Safety net: Identify standalone occurrences of checkmark chars
+        // Replace existing unicode checkmarks in the text with the placeholder
+        pText = pText.Replace("\u2713", checkmarkPlaceholder);
+
+        // Handle standalone right arrows (keep as text span)
         pText = pText.Replace("\u25B8", $"<span style='color:{PrimaryColor}'>\u25B8</span>");
-        pText = pText.Replace("\u2713", $"<span style='color:{AccentColor}'>\u2713</span>");
 
         return pText.Trim();
     }
@@ -1371,8 +1382,8 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     }
 
     /// <summary>
-    /// Renders HTML content into a ColumnDescriptor, handling text blocks and horizontal lines.
-    /// Replaces direct Text() calls to support block-level elements like HR.
+    /// Renders HTML content into a ColumnDescriptor, handling text blocks, horizontal lines, and SVG checkmarks.
+    /// Replaces direct Text() calls to support block-level elements like HR and complex Layouts for Checkmarks.
     /// </summary>
     private static void ComposeHtmlContent(
         ColumnDescriptor column,
@@ -1385,23 +1396,73 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         if (string.IsNullOrWhiteSpace(input))
             return;
 
+        // Preprocess will convert bullets/checkmarks to placeholders if needed
         var preprocessed = PreprocessHtml(input, bullet);
         var parts = preprocessed.Split(["[[HR]]"], StringSplitOptions.None);
 
         for (int i = 0; i < parts.Length; i++)
         {
             var part = parts[i];
+
             if (!string.IsNullOrWhiteSpace(part))
             {
-                column
-                    .Item()
-                    .Text(t =>
+                // Split by Checkmark Placeholder
+                var checkmarkParts = part.Split(["[[CHECKMARK]]"], StringSplitOptions.None);
+
+                for (int j = 0; j < checkmarkParts.Length; j++)
+                {
+                    var segment = checkmarkParts[j];
+
+                    // j=0: Text before the first checkmark (if any)
+                    // j>0: Text following a checkmark (so render checkmark + text)
+
+                    if (j == 0)
                     {
-                        t.DefaultTextStyle(s =>
-                            s.FontSize(fontSize).FontColor(fontColor).LineHeight(1.5f)
-                        );
-                        FormatHtmlToText(t, part);
-                    });
+                        if (!string.IsNullOrWhiteSpace(segment))
+                        {
+                            column
+                                .Item()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(s =>
+                                        s.FontSize(fontSize).FontColor(fontColor).LineHeight(1.5f)
+                                    );
+                                    FormatHtmlToText(t, segment);
+                                });
+                        }
+                    }
+                    else
+                    {
+                        // Render Checkmark + Text segment
+                        column
+                            .Item()
+                            .Row(row =>
+                            {
+                                // Fixed width for the checkmark icon
+                                // Scaling icon slightly down to match text baseline better
+                                var svgXml =
+                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{AccentColor}\"/></svg>";
+                                row.ConstantItem(fontSize + 5)
+                                    .PaddingRight(5)
+                                    .PaddingTop(2)
+                                    .Height(fontSize)
+                                    .Svg(svgXml);
+
+                                // Remaining width for the text
+                                row.RelativeItem()
+                                    .Text(t =>
+                                    {
+                                        t.DefaultTextStyle(s =>
+                                            s.FontSize(fontSize)
+                                                .FontColor(fontColor)
+                                                .LineHeight(1.5f)
+                                        );
+                                        // Even if segment is empty (e.g. checkmark only), FormatHtmlToText is safe
+                                        FormatHtmlToText(t, segment.Trim());
+                                    });
+                            });
+                    }
+                }
             }
 
             // Render HR if not the last part
