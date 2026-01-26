@@ -1,0 +1,147 @@
+@attribute [Microsoft.AspNetCore.Components.Route(NavUri.NotesPage)]
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+<style>
+    .notes-drop-zone {
+        column-gap: 16px;
+        width: 100% !important;
+        min-height: 100px;
+        display: block !important;
+        column-count: 1;
+    }
+
+    @@media(min-width: 600px) {
+        .notes-drop-zone {
+            column-count: 2;
+        }
+    }
+
+    @@media(min-width: 960px) {
+        .notes-drop-zone {
+            column-count: 3;
+        }
+    }
+
+    @@media(min-width: 1280px) {
+        .notes-drop-zone {
+            column-count: 4;
+        }
+    }
+
+    @@media(min-width: 1920px) {
+        .notes-drop-zone {
+            column-count: 5;
+        }
+    }
+
+    .mud-drop-item {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Target the wrapper we added in the markup for 100% reliable spacing */
+    .masonry-item-wrapper {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 16px !important;
+        /* Forces the vertical gap to match the horizontal column-gap */
+        break-inside: avoid-column !important;
+        /* Prevents splitting across columns */
+        padding: 0 !important;
+    }
+
+    .note-item-wrapper {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    @@media(max-width: 640px) {
+        .notes-header-stack {
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+
+        .notes-search-stack {
+            width: 100% !important;
+            margin-top: 8px;
+        }
+    }
+</style>
+
+<PageTitle>@Localizer["Notes"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
+        Class="mb-6 notes-header-stack gap-4">
+        <MudText Typo="Typo.h5" Class="d-flex align-center">📝 @Localizer["Notes"]</MudText>
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="flex-grow-1 notes-search-stack">
+            <MudTextField Value="_searchText" Placeholder="@Localizer["Search"]" Adornment="Adornment.Start"
+                AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined" Margin="Margin.Dense"
+                Immediate="true" DebounceInterval="300" FullWidth="true" Clearable="true"
+                ValueChanged="@(new EventCallback<string>(this, OnSearchChanged))" />
+            <MudToggleIconButton Toggled="_showArchived"
+                ToggledChanged="@(new EventCallback<bool>(this, (bool b) => OnShowArchivedChanged(b)))"
+                Icon="@Icons.Material.Outlined.Archive" ToggledIcon="@Icons.Material.Filled.Archive"
+                title="@Localizer["ShowArchived"]" toggled-title="@Localizer["ShowArchived"]" Color="Color.Default"
+                ToggledColor="Color.Primary" />
+        </MudStack>
+    </MudStack>
+
+    @if (_isLoading)
+    {
+            <AiCV.Web.Components.Shared.LoadingIndicator />
+    }
+    else
+    {
+        var filteredNotes = GetFilteredNotes();
+        var pinnedNotes = filteredNotes.Where(n => n.IsPinned).ToList();
+        var otherNotes = filteredNotes.Where(n => !n.IsPinned).ToList();
+
+        @if (!filteredNotes.Any())
+        {
+                    <MudPaper Class="pa-8 d-flex flex-column align-center justify-center" Elevation="0" Style="min-height: 300px;">
+                        <MudIcon Icon="@Icons.Material.Outlined.StickyNote2" Size="Size.Large" Color="Color.Secondary" Class="mb-4"
+            Style="font-size: 64px;" />
+                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center">
+                    @(_showArchived ? Localizer["NoArchivedNotes"] : Localizer["NoNotesYet"])
+                        </MudText>
+                    </MudPaper>
+        }
+        else
+        {
+                    <MudDropContainer @ref="_dropContainer" T="Note" Items="_displayNotes"
+        ItemsSelector="@((Note item, string zone) => GetNoteZone(item) == zone)" ItemDropped="OnItemDropped"
+        Class="notes-container">
+                        <ChildContent>
+                    @if (pinnedNotes.Any() && !_showArchived)
+                    {
+                                    <MudText Typo="Typo.overline" Color="Color.Secondary" Class="mb-4">@Localizer["PinnedNotes"]</MudText>
+                                    <MudDropZone T="Note" Identifier="pinned" AllowReorder="true" Class="notes-drop-zone" />
+                    }
+
+                    @if (otherNotes.Any() || pinnedNotes.Any())
+                    {
+                        @if (pinnedNotes.Any() && !_showArchived)
+                        {
+                                            <MudText Typo="Typo.overline" Color="Color.Secondary" Class="mb-4 mt-6">@Localizer["OtherNotes"]</MudText>
+                        }
+                                    <MudDropZone T="Note" Identifier="@(_showArchived ? "archived" : "other")" AllowReorder="true"
+                Class="notes-drop-zone" />
+                    }
+                        </ChildContent>
+                        <ItemRenderer>
+                            <div class="masonry-item-wrapper">
+                                <NoteCard NoteItem="context" OnEdit="EditNote" OnPin="TogglePin" OnArchive="ToggleArchive"
+                    OnDelete="DeleteNote" />
+                            </div>
+                        </ItemRenderer>
+                    </MudDropContainer>
+        }
+    }
+</MudContainer>
+
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed; bottom: 24px; right: 24px;"
+    OnClick="AddNote" />

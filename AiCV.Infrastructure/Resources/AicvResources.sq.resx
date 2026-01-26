@@ -1010,5 +1010,78 @@
   <data name="WriteEmailInstruction" xml:space="preserve">
     <value>Shkruani një email të shkurtër profesional për t'i bashkangjitur këtij aplikimi.</value>
   </data>
+  <!-- Notes Feature -->
+  <data name="AddNote" xml:space="preserve">
+    <value>Shto Shënim</value>
+  </data>
+  <data name="EditNote" xml:space="preserve">
+    <value>Ndrysho Shënimin</value>
+  </data>
+  <data name="NoteTitle" xml:space="preserve">
+    <value>Titulli</value>
+  </data>
+  <data name="NoteContent" xml:space="preserve">
+    <value>Përmbajtja</value>
+  </data>
+  <data name="PinnedNotes" xml:space="preserve">
+    <value>Të ngjitura</value>
+  </data>
+  <data name="OtherNotes" xml:space="preserve">
+    <value>Të tjerat</value>
+  </data>
+  <data name="NoNotesYet" xml:space="preserve">
+    <value>Nuk ka shënime ende. Klikoni butonin + për të krijuar shënimin e parë!</value>
+  </data>
+  <data name="PinNote" xml:space="preserve">
+    <value>Ngjit</value>
+  </data>
+  <data name="UnpinNote" xml:space="preserve">
+    <value>Hiq ngjitur</value>
+  </data>
+  <data name="ArchiveNote" xml:space="preserve">
+    <value>Arkivo</value>
+  </data>
+  <data name="UnarchiveNote" xml:space="preserve">
+    <value>Kthe nga arkivi</value>
+  </data>
+  <data name="DeleteNote" xml:space="preserve">
+    <value>Fshi Shënimin</value>
+  </data>
+  <data name="DeleteNoteConfirmation" xml:space="preserve">
+    <value>A jeni i sigurt që dëshironi të fshini këtë shënim?</value>
+  </data>
+  <data name="NoteCreated" xml:space="preserve">
+    <value>Shënimi u krijua me sukses</value>
+  </data>
+  <data name="NoteUpdated" xml:space="preserve">
+    <value>Shënimi u përditësua me sukses</value>
+  </data>
+  <data name="NoteDeleted" xml:space="preserve">
+    <value>Shënimi u fshi me sukses</value>
+  </data>
+  <data name="NotePinned" xml:space="preserve">
+    <value>Shënimi u ngjit</value>
+  </data>
+  <data name="NoteUnpinned" xml:space="preserve">
+    <value>Shënimi u hoq nga ngjitur</value>
+  </data>
+  <data name="NoteArchived" xml:space="preserve">
+    <value>Shënimi u arkivua</value>
+  </data>
+  <data name="NoteUnarchived" xml:space="preserve">
+    <value>Shënimi u kthye nga arkivi</value>
+  </data>
+  <data name="ArchivedNotes" xml:space="preserve">
+    <value>Shënimet e arkivuara</value>
+  </data>
+  <data name="ShowArchived" xml:space="preserve">
+    <value>Shfaq të arkivuarat</value>
+  </data>
+  <data name="NoArchivedNotes" xml:space="preserve">
+    <value>Nuk ka shënime të arkivuara</value>
+  </data>
+  <data name="NoteColor" xml:space="preserve">
+    <value>Ngjyra</value>
+  </data>
 </root>
 

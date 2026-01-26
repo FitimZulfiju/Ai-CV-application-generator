@@ -1,0 +1,40 @@
+@rendermode InteractiveServer
+
+<MudDialog>
+    <TitleContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Filled.NoteAlt" Color="Color.Primary" />
+            <MudText Typo="Typo.h5">@Localizer[NoteModel.Id == 0 ? "AddNote" : "EditNote"]</MudText>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="NoteModel.Title" Label="@Localizer["NoteTitle"]" Variant="Variant.Outlined"
+                MaxLength="200" Immediate="true" Adornment="Adornment.Start" Clearable="true"
+                AdornmentIcon="@Icons.Material.Outlined.Label" />
+
+            <MudTextField @bind-Value="NoteModel.Content" Label="@Localizer["NoteContent"]" Variant="Variant.Outlined"
+                Lines="8" Immediate="true" Adornment="Adornment.Start" Clearable="true" AutoGrow="true"
+                AdornmentIcon="@Icons.Material.Outlined.Description" />
+
+            <MudText Typo="Typo.body2">@Localizer["NoteColor"]</MudText>
+            <MudChipSet T="string" @bind-SelectedValue="NoteModel.Color" SelectionMode="SelectionMode.SingleSelection">
+                @foreach (var color in NoteColors)
+                {
+                    <MudChip T="string" Value="@color.Key" Style="@GetColorStyle(color.Key)" Size="Size.Medium"
+                    Variant="@(NoteModel.Color == color.Key ? Variant.Filled : Variant.Outlined)">
+                        @if (NoteModel.Color == color.Key)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+                        }
+                    </MudChip>
+                }
+            </MudChipSet>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton StartIcon="@Icons.Material.Filled.Cancel" OnClick="Cancel">@Localizer["Cancel"]</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" Variant="Variant.Filled"
+            OnClick="Submit">@Localizer["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>

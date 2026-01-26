@@ -1,0 +1,50 @@
+@rendermode InteractiveServer
+
+<MudCard Class="note-card relative" Elevation="2" Style="@GetCardStyle()">
+    @if (NoteItem.IsPinned)
+    {
+        <MudIcon Icon="@Icons.Material.Filled.PushPin" Size="Size.Small" Color="Color.Default"
+        Style="position: absolute; top: 12px; right: 12px; opacity: 0.6; transform: rotate(45deg);" />
+    }
+    <MudCardContent Class="pa-3" @onclick="OnCardClick" Style="cursor: pointer;">
+        @if (!string.IsNullOrWhiteSpace(NoteItem.Title))
+        {
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                <MudIcon Icon="@Icons.Material.Outlined.Label" Size="Size.Small" Color="Color.Default"
+                Style="opacity: 0.7;" />
+                <MudText Typo="Typo.subtitle1" Style="font-weight: 600;">
+                    @NoteItem.Title
+                </MudText>
+            </MudStack>
+        }
+        @if (string.IsNullOrWhiteSpace(NoteItem.Title) && !string.IsNullOrWhiteSpace(NoteItem.Content))
+        {
+            <MudIcon Icon="@Icons.Material.Outlined.Description" Size="Size.Small" Color="Color.Default"
+            Style="opacity: 0.5;" Class="mb-2" />
+        }
+        @if (!string.IsNullOrWhiteSpace(NoteItem.Content))
+        {
+            <MudText Typo="Typo.body2" Style="white-space: pre-wrap; word-break: break-word;" Class="note-content">
+                @GetTruncatedContent()
+            </MudText>
+        }
+        @if (string.IsNullOrWhiteSpace(NoteItem.Title) && string.IsNullOrWhiteSpace(NoteItem.Content))
+        {
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Style="font-style: italic;">
+                @Localizer["NoNotesYet"]
+            </MudText>
+        }
+    </MudCardContent>
+    <MudCardActions Class="pa-2 pt-0">
+        <MudIconButton Icon="@(NoteItem.IsPinned ? Icons.Material.Filled.PushPin : Icons.Material.Outlined.PushPin)"
+            Size="Size.Small" title="@(NoteItem.IsPinned ? Localizer["UnpinNote"].Value : Localizer["PinNote"].Value)"
+            OnClick="OnPinClick" />
+        <MudIconButton Icon="@(NoteItem.IsArchived ? Icons.Material.Filled.Unarchive : Icons.Material.Outlined.Archive)"
+            Size="Size.Small"
+            title="@(NoteItem.IsArchived ? Localizer["UnarchiveNote"].Value : Localizer["ArchiveNote"].Value)"
+            OnClick="OnArchiveClick" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" Color="Color.Error"
+            title="@Localizer["DeleteNote"]" OnClick="OnDeleteClick" />
+    </MudCardActions>
+</MudCard>

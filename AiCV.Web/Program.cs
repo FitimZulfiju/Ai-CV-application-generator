@@ -64,7 +64,7 @@ if (string.IsNullOrEmpty(connectionString))
         var pgPass = builder.Configuration["DB_PASSWORD"] ?? "";
 
         // Strip single quotes if present (common in .env files)
-        if (pgPass.StartsWith("'") && pgPass.EndsWith("'"))
+        if (pgPass.StartsWith('\'') && pgPass.EndsWith('\''))
             pgPass = pgPass[1..^1];
 
         if (
@@ -86,7 +86,7 @@ if (string.IsNullOrEmpty(connectionString))
         var sqlUser = builder.Configuration["DB_USER"];
         var sqlPass = builder.Configuration["DB_PASSWORD"] ?? "";
 
-        if (sqlPass.StartsWith("'") && sqlPass.EndsWith("'"))
+        if (sqlPass.StartsWith('\'') && sqlPass.EndsWith('\''))
             sqlPass = sqlPass[1..^1];
 
         if (
@@ -251,6 +251,7 @@ builder.Services.AddScoped<ILoadingService, LoadingService>();
 builder.Services.AddScoped<IAdminStatisticsService, AdminStatisticsService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<ISystemLogService, SystemLogService>();
+builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<IModelDiscoveryService, ModelDiscoveryService>();
 builder.Services.AddScoped<ClientPersistenceService>();
 

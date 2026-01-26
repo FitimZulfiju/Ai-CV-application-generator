@@ -15,6 +15,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<UserSettings> UserSettings { get; set; } = default!;
     public DbSet<UserAIConfiguration> UserAIConfigurations { get; set; } = default!;
     public DbSet<SystemLog> SystemLogs { get; set; } = default!;
+    public DbSet<Note> Notes { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(a => a.User)
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        // User -> Notes (One-to-Many)
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.Notes)
+            .WithOne(n => n.User)
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder
             .Entity<CandidateProfile>()

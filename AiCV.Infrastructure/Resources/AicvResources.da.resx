@@ -1003,4 +1003,77 @@
   <data name="WriteEmailInstruction" xml:space="preserve">
     <value>Skriv en kort professionel e-mail til at ledsage denne ansøgning.</value>
   </data>
+  <!-- Notes Feature -->
+  <data name="AddNote" xml:space="preserve">
+    <value>Tilfoej note</value>
+  </data>
+  <data name="EditNote" xml:space="preserve">
+    <value>Rediger note</value>
+  </data>
+  <data name="NoteTitle" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="NoteContent" xml:space="preserve">
+    <value>Indhold</value>
+  </data>
+  <data name="PinnedNotes" xml:space="preserve">
+    <value>Fastgjorte</value>
+  </data>
+  <data name="OtherNotes" xml:space="preserve">
+    <value>Andre</value>
+  </data>
+  <data name="NoNotesYet" xml:space="preserve">
+    <value>Ingen noter endnu. Klik paa + knappen for at oprette din foerste note!</value>
+  </data>
+  <data name="PinNote" xml:space="preserve">
+    <value>Fastgoer</value>
+  </data>
+  <data name="UnpinNote" xml:space="preserve">
+    <value>Fjern fastgoering</value>
+  </data>
+  <data name="ArchiveNote" xml:space="preserve">
+    <value>Arkiver</value>
+  </data>
+  <data name="UnarchiveNote" xml:space="preserve">
+    <value>Fjern fra arkiv</value>
+  </data>
+  <data name="DeleteNote" xml:space="preserve">
+    <value>Slet note</value>
+  </data>
+  <data name="DeleteNoteConfirmation" xml:space="preserve">
+    <value>Er du sikker paa, at du vil slette denne note?</value>
+  </data>
+  <data name="NoteCreated" xml:space="preserve">
+    <value>Note oprettet med succes</value>
+  </data>
+  <data name="NoteUpdated" xml:space="preserve">
+    <value>Note opdateret med succes</value>
+  </data>
+  <data name="NoteDeleted" xml:space="preserve">
+    <value>Note slettet med succes</value>
+  </data>
+  <data name="NotePinned" xml:space="preserve">
+    <value>Note fastgjort</value>
+  </data>
+  <data name="NoteUnpinned" xml:space="preserve">
+    <value>Note frigjort</value>
+  </data>
+  <data name="NoteArchived" xml:space="preserve">
+    <value>Note arkiveret</value>
+  </data>
+  <data name="NoteUnarchived" xml:space="preserve">
+    <value>Note fjernet fra arkiv</value>
+  </data>
+  <data name="ArchivedNotes" xml:space="preserve">
+    <value>Arkiverede noter</value>
+  </data>
+  <data name="ShowArchived" xml:space="preserve">
+    <value>Vis arkiverede</value>
+  </data>
+  <data name="NoArchivedNotes" xml:space="preserve">
+    <value>Ingen arkiverede noter</value>
+  </data>
+  <data name="NoteColor" xml:space="preserve">
+    <value>Farve</value>
+  </data>
 </root>

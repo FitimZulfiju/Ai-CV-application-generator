@@ -1,0 +1,19 @@
+.note-card {
+    transition: box-shadow 0.2s ease-in-out, transform 0.1s ease-in-out;
+    height: 100%;
+}
+
+.note-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-4px);
+}
+
+.note-content {
+    max-height: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 12;
+    line-clamp: 12;
+    -webkit-box-orient: vertical;
+}

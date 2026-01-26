@@ -1022,5 +1022,78 @@
   <data name="WriteEmailInstruction" xml:space="preserve">
     <value>Write a brief professional email to accompany this application.</value>
   </data>
+  <!-- Notes Feature -->
+  <data name="AddNote" xml:space="preserve">
+    <value>Add Note</value>
+  </data>
+  <data name="EditNote" xml:space="preserve">
+    <value>Edit Note</value>
+  </data>
+  <data name="NoteTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="NoteContent" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="PinnedNotes" xml:space="preserve">
+    <value>Pinned</value>
+  </data>
+  <data name="OtherNotes" xml:space="preserve">
+    <value>Others</value>
+  </data>
+  <data name="NoNotesYet" xml:space="preserve">
+    <value>No notes yet. Click the + button to create your first note!</value>
+  </data>
+  <data name="PinNote" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="UnpinNote" xml:space="preserve">
+    <value>Unpin</value>
+  </data>
+  <data name="ArchiveNote" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="UnarchiveNote" xml:space="preserve">
+    <value>Unarchive</value>
+  </data>
+  <data name="DeleteNote" xml:space="preserve">
+    <value>Delete Note</value>
+  </data>
+  <data name="DeleteNoteConfirmation" xml:space="preserve">
+    <value>Are you sure you want to delete this note?</value>
+  </data>
+  <data name="NoteCreated" xml:space="preserve">
+    <value>Note created successfully</value>
+  </data>
+  <data name="NoteUpdated" xml:space="preserve">
+    <value>Note updated successfully</value>
+  </data>
+  <data name="NoteDeleted" xml:space="preserve">
+    <value>Note deleted successfully</value>
+  </data>
+  <data name="NotePinned" xml:space="preserve">
+    <value>Note pinned</value>
+  </data>
+  <data name="NoteUnpinned" xml:space="preserve">
+    <value>Note unpinned</value>
+  </data>
+  <data name="NoteArchived" xml:space="preserve">
+    <value>Note archived</value>
+  </data>
+  <data name="NoteUnarchived" xml:space="preserve">
+    <value>Note unarchived</value>
+  </data>
+  <data name="ArchivedNotes" xml:space="preserve">
+    <value>Archived Notes</value>
+  </data>
+  <data name="ShowArchived" xml:space="preserve">
+    <value>Show archived</value>
+  </data>
+  <data name="NoArchivedNotes" xml:space="preserve">
+    <value>No archived notes</value>
+  </data>
+  <data name="NoteColor" xml:space="preserve">
+    <value>Color</value>
+  </data>
 </root>
 
