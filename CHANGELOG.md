@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Watchtower auto-update support
 
 ---
+## [0.17.0] - 2026-01-27
+
+### Added
+- feat: prepare for open source release v1.0.0
+
+
 
 <!-- 
 This changelog is automatically updated by GitHub Actions on each release.
