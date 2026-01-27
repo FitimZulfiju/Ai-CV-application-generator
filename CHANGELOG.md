@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Watchtower auto-update support
 
 ---
+## [0.17.1] - 2026-01-27
+
+### Changed
+- docs: remove screenshot placeholder from README
+- docs: update changelog for v0.17.0
+
 ## [0.17.0] - 2026-01-27
 
 ### Added
