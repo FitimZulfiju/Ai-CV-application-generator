@@ -63,8 +63,8 @@
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/fitimzulfiu/Web-CV-application-generator.git
-    cd Web-CV-application-generator
+    git clone https://github.com/FitimZulfiju/Ai-CV-application-generator.git
+    cd Ai-CV-application-generator
     ```
 
 2. **Configure Environment**:

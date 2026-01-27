@@ -20,7 +20,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x # Adjust if using a different version
+          dotnet-version: 10.0.x
 
       - name: Restore dependencies
         run: dotnet restore AiCV.sln
@@ -168,12 +168,12 @@ jobs:
             ### 📖 Documentation
 
             - [Full README](https://github.com/FitimZulfiju/Ai-CV-application-generator#readme)
-            - [Deployment Guide](https://github.com/FitimZulfiju/Ai-CV-application-generator/blob/main/docs/deployment.md)
+            - [Deployment Guide](https://github.com/FitimZulfiju/Ai-CV-application-generator/blob/master/docs/deployment.md)
             - [Docker Hub](https://hub.docker.com/r/timi74/aicv)
 
             ---
 
-            **Full Changelog**: https://github.com/FitimZulfiju/Ai-CV-application-generator/blob/main/CHANGELOG.md
+            **Full Changelog**: https://github.com/FitimZulfiju/Ai-CV-application-generator/blob/master/CHANGELOG.md
           draft: false
           prerelease: false
         env:

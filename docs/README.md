@@ -34,7 +34,11 @@ This system is self-hosted and **user-controlled**, enabling multiple users or o
 - User profile includes:
   - Personal details
   - Work experience
-  - Skills  
+  - Education
+  - Skills
+  - Projects
+  - Languages
+  - Interests
 - AI configuration per user:
   - Add multiple providers and models
   - API keys stored encrypted

@@ -149,6 +149,6 @@ services:
 ## 🔗 Links
 
 - **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
-- **GitHub Repository**: [fitimzulfiju/AiCV](https://github.com/FitimZulfiju/Ai-CV-application-generator)
+- **GitHub Repository**: [FitimZulfiju/Ai-CV-application-generator](https://github.com/FitimZulfiju/Ai-CV-application-generator)
 - **LinkedIn**: [Fitim Zulfiju](https://linkedin.com/in/[your-profile])
 - **Support**: <[your-email@example.com]>
