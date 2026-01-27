@@ -1,96 +1,118 @@
 # AiCV Application Generator
 
-🚀 **AiCV** is a powerful AI career assistant built with Blazor Server & .NET 10. Automatically generate tailored CVs and Cover Letters optimized for specific job postings using various Large Language Models (LLMs).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512bd4)](https://dotnet.microsoft.com/)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-blue)](https://hub.docker.com/r/timi74/aicv)
 
-AiCV Application Generator is a self-hosted platform designed to streamline the job application process. It uses Large Language Models to analyze job descriptions (scraped directly from URLs) and re-align your professional profile to meet specific role requirements.
+**AiCV** is a powerful, self-hosted AI career assistant built with **.NET 10** and **Blazor Server**. It helps you automatically generate tailored CVs and cover letters optimized for specific job postings using your preferred LLM provider.
+
+![Dashboard Preview](docs/images/dashboard-preview.png)
+*(Note: Add a screenshot of your dashboard here)*
 
 ## 🚀 Features
 
-- **AI-Powered Generation**: Automatically generates professional cover letters and tailored resumes based on your profile and a specific job posting.
-- **Job Post Scraping**: Simply paste a job URL (LinkedIn, Indeed, etc.) to automatically extract job details.
-- **Multi-User Support**: Secure user accounts with ASP.NET Core Identity.
-- **Secure API Key Management**: Users can securely store their own OpenAI and Google Gemini API keys (encrypted in the database).
-- **Application Management**: Save, view, and manage your generated applications in a dedicated dashboard.
-- **Modern UI**: Built with MudBlazor for a responsive and professional user experience.
+- **Multi-Provider AI Support**: Bring your own API keys for **OpenAI**, **Google Gemini**, **Claude (Anthropic)**, **Groq**, **DeepSeek**, or **OpenRouter**.
+- **Smart Job Scraping**: Paste a job URL (LinkedIn, Indeed, etc.) or manually enter details. The system uses smart extraction to parse requirements.
+- **Privacy-First**: Your data and API keys are stored locally in your database. Keys are encrypted at rest.
+- **Multi-User & Secure**: Supports user registration, login, and OAuth (Google, Microsoft, GitHub).
+- **Multi-Language**: UI available in **English**, **Albanian (Shqip)**, and **Danish (Dansk)**.
+- **Professional Exports**: Generate and download PDFs, or export to Markdown/JSON.
+- **Modern UI**: Built with MudBlazor for a responsive experience.
 
 ## 🛠️ Tech Stack
 
 - **Framework**: .NET 10 (Blazor Server)
-- **UI Library**: MudBlazor
-- **Database**: SQL Server or PostgreSQL with Entity Framework Core
-- **AI Integration**: Support for multiple AI Providers (OpenAI, Google Gemini, Groq, etc.)
-- **Authentication**: ASP.NET Core Identity
-
-## �️ Database Support
-
-AiCV supports both **PostgreSQL** and **SQL Server**. You can easily switch between them by setting the `DB_PROVIDER` environment variable.
-
-For detailed Docker Compose setup examples for each provider, please refer to our **[Docker Hub Repository](https://hub.docker.com/r/timi74/aicv)** or the **[DOCKER_HUB.md](DOCKER_HUB.md)** file.
-
-## �🔑 Authentication
-
-To get started, simply **Register** a new account on the login page.
-
-## 🐳 Docker Hub
-
-The official image is available on Docker Hub: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
-
-This image provides a pre-configured Blazor Server environment for the AiCV platform. It is designed for privacy-conscious users who want a self-hosted, professional tool for career management.
-
-**Quick Start:**
-Deploy using our provided Docker Compose stack to get a fully secured application generator with automated updates and certificate management.
+- **Database**: SQL Server or PostgreSQL (switchable via config)
+- **ORM**: Entity Framework Core
+- **UI**: MudBlazor
+- **PDF Generation**: QuestPDF
 
 ## 🏁 Getting Started
 
 ### Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download) installed.
-- SQL Server or PostgreSQL database.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) (Recommended for easiest setup)
+- **OR** [.NET 10 SDK](https://dotnet.microsoft.com/download) + SQL Server/PostgreSQL instance.
 
-### Installation & Run
+### 🐳 Quick Start with Docker
+
+1. Create a `docker-compose.yml` (or use the one in `docs/`):
+
+    ```yaml
+    services:
+      app:
+        image: timi74/aicv:latest
+        ports:
+          - "8080:80"
+        environment:
+          - DB_PROVIDER=PostgreSQL
+          - PG_HOST=db
+          - DB_PASSWORD=YourSecurePassword123!
+        depends_on:
+          - db
+      db:
+        image: postgres:16-alpine
+        environment:
+          - POSTGRES_PASSWORD=YourSecurePassword123!
+    ```
+
+2. Run `docker-compose up -d`.
+3. Open `http://localhost:8080`.
+
+### 🔧 Local Development Setup
 
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/yourusername/AiCV.git
-    cd AiCV
+    git clone https://github.com/fitimzulfiu/Web-CV-application-generator.git
+    cd Web-CV-application-generator
     ```
 
-2. **Build the solution**:
+2. **Configure Environment**:
+    Copy `.env.example` to `.env` and update your database credentials and optional OAuth keys.
 
     ```bash
-    dotnet build AiCV.sln
+    cp .env.example .env
     ```
 
-3. **Run the application**:
+3. **Run the Application**:
 
     ```bash
-    cd AiCV.Web
-    dotnet run
+    dotnet run --project AiCV.Web
     ```
 
-4. **Open in Browser**:
-    Navigate to `https://localhost:7153` (or the URL shown in the console).
+4. **Visit**: `https://localhost:7153`
 
-### Usage Guide
+## 📘 Usage
 
-1. **Register/Login**: Create an account or use the default admin credentials.
-2. **Profile**: Fill in your candidate profile (Experience, Education, Skills).
-3. **Settings**: Go to the Settings page and enter your OpenAI or Google Gemini API Key.
+1. **Register/Login**: Create an account.
+2. **Profile**: Go to **Profile** and fill in your details (Experience, Skills, Education).
+3. **Settings**: Enter your API Key for your preferred provider (e.g., OpenAI, Gemini, Groq).
 4. **Generate**:
-    - Paste a Job URL and click "Fetch".
-    - Select your AI Provider.
-    - Click "Generate Application".
-5. **Save**: Review the generated content and click "Save Application" to store it.
-6. **My Applications**: View and manage your saved applications.
+    - Go to **Job Applications**.
+    - Paste a Job URL and click **Fetch** (or enter details manually).
+    - Select your AI Model.
+    - Click **Generate**.
+5. **Export**: Review your tailored CV/Cover Letter and download as PDF.
+
+## 🌍 Supported AI Providers
+
+- **OpenAI** (GPT-4o, GPT-4-turbo, etc.)
+- **Google Gemini** (Gemini 2.0 Flash, Pro, etc.)
+- **Claude** (Anthropic)
+- **Groq** (Llama 3, Mixtral - High Speed)
+- **DeepSeek** (DeepSeek Chat/Coder)
+- **OpenRouter** (Access to any other model)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🔗 Links
 
 - **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
-- **GitHub Repository**: [fitimzulfiu/AiCV](https://github.com/fitimzulfiu/Web-CV-application-generator)
-- **LinkedIn**: [Fitim Zulfiju](https://linkedin.com/in/[your-profile])
-- **Support**: <[your-email@example.com]>
-
-## 📄 License
-
-This project is licensed under the MIT License.
+- **GitHub**: [fitimzulfiu/Web-CV-application-generator](https://github.com/fitimzulfiu/Web-CV-application-generator)

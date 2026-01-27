@@ -99,6 +99,19 @@ appsettings.Development.json
 **/*api-key*.txt
 **/.env
 **/.env.*
+# Deploy folder (Allow scripts, ignore secrets/data)
+**/deploy/.env
+**/deploy/.env.*
+!**/deploy/.env.example
+**/deploy/docker-compose.yml
+**/deploy/data/
+**/deploy/logs/
+**/deploy/backups/
+**/deploy/cloudflared/
+**/deploy/shared-sql/
+**/deploy/portainer/
+**/deploy/shared-sql/
+**/deploy/reset-database.sh
 
 # OS Generated
 .DS_Store

@@ -16,17 +16,17 @@
             @onclick="NavigateToHome" />
         <MudText Typo="Typo.h6" Class="responsive-app-title">@Localizer["AiCvApplications"]</MudText>
         <MudSpacer />
-        @if (_showBetaWarning)
+       @*  @if (_showBetaWarning)
         {
             <MudChip T="string" Color="Color.Warning" Size="Size.Small" OnClose="@(() => _showBetaWarning = false)"
             Class="hide-on-mobile" Icon="@Icons.Material.Filled.Warning">
                 @Localizer["BetaWarning"]
             </MudChip>
-        }
+        } *@
         <MudSpacer />
         <LanguageSwitcher />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"
-            Href="https://github.com/fitimzulfiju/Web-CV-application-generator" Target="_blank" />
+            Href="https://github.com/fitimzulfiju/Ai-CV-application-generator" Target="_blank" />
     </MudAppBar>
     @if (LoadingService.IsVisible)
     {

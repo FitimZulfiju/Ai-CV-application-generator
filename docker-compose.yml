@@ -1,0 +1,40 @@
+# Quick-start docker-compose for local development
+# For production deployment, see deploy/docker-compose.postgres.yml or docker-compose.sqlserver.yml
+
+services:
+  app:
+    image: timi74/aicv:latest
+    container_name: aicv-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DB_PROVIDER=PostgreSQL
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=aicv_db;Username=postgres;Password=YourSecurePassword123!;
+    volumes:
+      - ./uploads:/app/wwwroot/uploads
+      - ./images:/app/wwwroot/images
+      - ./keys:/app/DataProtectionKeys
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: aicv-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=YourSecurePassword123!
+      - POSTGRES_DB=aicv_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aicv_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

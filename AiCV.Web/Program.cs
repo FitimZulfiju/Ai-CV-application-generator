@@ -42,10 +42,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddMudServices();
 
 // Add authorization
-builder
-    .Services.AddAuthorizationBuilder()
-    // Add authorization
-    .SetFallbackPolicy(null);
+builder.Services.AddAuthorizationBuilder().SetFallbackPolicy(null);
 
 // Database Provider Selection
 // Set DB_PROVIDER environment variable to "PostgreSQL" or "SqlServer" (default)
@@ -261,6 +258,20 @@ if (!Directory.Exists(keysPath))
 {
     Directory.CreateDirectory(keysPath);
 }
+
+// Ensure Uploads and Images directories exist for user data persistence
+var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+var imagesPath = Path.Combine(builder.Environment.WebRootPath, "images");
+if (!Directory.Exists(imagesPath))
+{
+    Directory.CreateDirectory(imagesPath);
+}
+
 builder
     .Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
