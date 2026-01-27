@@ -963,21 +963,14 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     {
                         t.DefaultTextStyle(x => x.FontSize(9).FontColor(TextMedium));
                         t.AlignCenter();
-                        var langTexts = new List<string>();
-                        foreach (var lang in profile.Languages)
-                        {
-                            langTexts.Add(
-                                $"{StripHtml(lang.Name)} ({StripHtml(lang.Proficiency)})"
-                            );
-                        }
+
                         // Bold language names: render each separately
                         for (int i = 0; i < profile.Languages.Count; i++)
                         {
                             var lang = profile.Languages[i];
                             ComposeMarkdownText(t, lang.Name);
-                            t.Span(" (");
+                            t.Span(" ");
                             ComposeMarkdownText(t, lang.Proficiency);
-                            t.Span(")").FontSize(8).Italic();
                             if (i < profile.Languages.Count - 1)
                             {
                                 t.Span(" | ");
@@ -1234,7 +1227,6 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         }
         else if (
             !string.IsNullOrEmpty(bullet)
-            && pText.Contains('\n')
             && !pText.Contains("<p>", StringComparison.OrdinalIgnoreCase)
         )
         {
@@ -1255,6 +1247,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             foreach (var line in lines)
             {
                 var cleanLine = line.Trim().TrimStart('-', '*').Trim();
+
+                // Explicitly handle <br> tags here because we return early from this block
+                // transforming them into newlines *within* the same bullet point
+                cleanLine = BrTagRegex().Replace(cleanLine, "\n");
+
                 if (!string.IsNullOrEmpty(cleanLine))
                     sb.AppendLine($"{bulletReplacement}{cleanLine}");
             }
@@ -1298,14 +1295,6 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             parts.Add($"{months} {_localizer[months > 1 ? "Months" : "Month"]}");
 
         return string.Join(" ", parts);
-    }
-
-    // Keep strict StripHtml for titles/names where we want clean text only
-    private static string StripHtml(string? input)
-    {
-        if (string.IsNullOrWhiteSpace(input))
-            return string.Empty;
-        return HtmlTagRegex().Replace(input, string.Empty).Trim();
     }
 
     private static int GetPageCount(byte[] pdfBytes)
@@ -1358,7 +1347,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     [GeneratedRegex(@"<ul>|</ul>|<ol>|</ol>", RegexOptions.IgnoreCase)]
     private static partial Regex ListTagRegex();
 
-    [GeneratedRegex(@"<br\s*/?>", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"<br.*?>", RegexOptions.IgnoreCase)]
     private static partial Regex BrTagRegex();
 
     [GeneratedRegex(@"</p>", RegexOptions.IgnoreCase)]
