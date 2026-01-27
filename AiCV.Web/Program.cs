@@ -321,22 +321,35 @@ app.UseAntiforgery();
 
 app.UseRequestLocalization();
 
-// Seed Database
-using (var scope = app.Services.CreateScope())
+// Seed Database (Development only, safe for open source)
+if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        var userManager = services.GetRequiredService<UserManager<User>>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var modelDiscoveryService = services.GetRequiredService<IModelDiscoveryService>();
-        await DbInitializer.InitializeAsync(
-            context,
-            userManager,
-            roleManager,
-            modelDiscoveryService
+        // Use reflection to find and call DbInitializer to avoid build errors if the file is missing/ignored
+        var initializerType = Type.GetType(
+            "AiCV.Infrastructure.Data.DbInitializer, AiCV.Infrastructure"
         );
+        if (initializerType != null)
+        {
+            var initializeMethod = initializerType.GetMethod("InitializeAsync");
+            if (initializeMethod != null)
+            {
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var modelDiscoveryService = services.GetRequiredService<IModelDiscoveryService>();
+
+                var task = (Task)
+                    initializeMethod.Invoke(
+                        null,
+                        new object[] { context, userManager, roleManager, modelDiscoveryService }
+                    )!;
+                await task;
+            }
+        }
     }
     catch (Exception ex)
     {
