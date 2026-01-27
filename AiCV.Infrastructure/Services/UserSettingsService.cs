@@ -1,9 +1,16 @@
 namespace AiCV.Infrastructure.Services;
 
-public class UserSettingsService(IDbContextFactory<ApplicationDbContext> contextFactory)
-    : IUserSettingsService
+using Microsoft.AspNetCore.DataProtection;
+
+public class UserSettingsService(
+    IDbContextFactory<ApplicationDbContext> contextFactory,
+    IDataProtectionProvider dataProtectionProvider
+) : IUserSettingsService
 {
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
+    private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(
+        "AiCV.Infrastructure.Services.UserSettingsService"
+    );
 
     public async Task<UserSettings?> GetUserSettingsAsync(string userId)
     {
@@ -86,15 +93,11 @@ public class UserSettingsService(IDbContextFactory<ApplicationDbContext> context
             context.UserSettings.Add(settings);
         }
 
-        settings.OpenAIApiKey = !string.IsNullOrEmpty(openAiApiKey)
-            ? Encrypt(openAiApiKey)
-            : null;
+        settings.OpenAIApiKey = !string.IsNullOrEmpty(openAiApiKey) ? Encrypt(openAiApiKey) : null;
         settings.GoogleGeminiApiKey = !string.IsNullOrEmpty(googleGeminiApiKey)
             ? Encrypt(googleGeminiApiKey)
             : null;
-        settings.ClaudeApiKey = !string.IsNullOrEmpty(claudeApiKey)
-            ? Encrypt(claudeApiKey)
-            : null;
+        settings.ClaudeApiKey = !string.IsNullOrEmpty(claudeApiKey) ? Encrypt(claudeApiKey) : null;
         settings.GroqApiKey = !string.IsNullOrEmpty(groqApiKey) ? Encrypt(groqApiKey) : null;
         settings.DeepSeekApiKey = !string.IsNullOrEmpty(deepSeekApiKey)
             ? Encrypt(deepSeekApiKey)
@@ -111,40 +114,28 @@ public class UserSettingsService(IDbContextFactory<ApplicationDbContext> context
         Console.WriteLine("[UserSettingsService] Settings saved to database.");
     }
 
-    private static string Encrypt(string clearText)
+    private string Encrypt(string clearText)
     {
-        // Simple Base64 encoding for storing API keys (for demo purposes only)
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(clearText);
-            var result = Convert.ToBase64String(bytes);
-            Console.WriteLine(
-                $"[UserSettingsService] Encrypting '{clearText[..Math.Min(3, clearText.Length)]}...' -> '{result[..Math.Min(3, result.Length)]}...'"
-            );
-            return result;
+            return _protector.Protect(clearText);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Encryption failed: {ex}");
+            Console.WriteLine($"Encryption failed: {ex.Message}");
             return string.Empty;
         }
     }
 
-    private static string Decrypt(string cipherText)
+    private string Decrypt(string cipherText)
     {
-        // Simple Base64 decoding for stored API keys
         try
         {
-            var bytes = Convert.FromBase64String(cipherText);
-            var result = Encoding.UTF8.GetString(bytes);
-            Console.WriteLine(
-                $"[UserSettingsService] Decrypting '{cipherText[..Math.Min(3, cipherText.Length)]}...' -> '{result[..Math.Min(3, result.Length)]}...'"
-            );
-            return result;
+            return _protector.Unprotect(cipherText);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Decryption failed: {ex}");
+            Console.WriteLine($"Decryption failed: {ex.Message}");
             return string.Empty;
         }
     }

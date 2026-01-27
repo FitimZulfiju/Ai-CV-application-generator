@@ -122,3 +122,6 @@ AiCV.Web/DataProtectionKeys/
 
 # User Uploads (profile pictures, etc.)
 AiCV.Web/wwwroot/uploads/
+
+# Database Initializers (Sensitive)
+**/DbInitializer.cs

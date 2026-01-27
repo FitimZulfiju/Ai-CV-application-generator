@@ -15,7 +15,7 @@ public static class DemoProfileData
             PhoneNumber = "+12 34 56 78 90",
             LinkedInUrl = "https://linkedin.com/in/testuser",
             PortfolioUrl = "https://github.com/testuser",
-            Location = "Copenhagen Area, Denmark",
+            Location = "City, Country",
             ProfessionalSummary =
                 "Full-Stack .NET Developer with <strong style=\"color:blue;font-weight:normal;\">7+ years</strong> building enterprise web applications and microservices. Specialized in <strong style=\"color:blue;font-weight:normal;\">.NET Core, Blazor, ASP.NET Core,</strong> and cloud-native architectures. Proven track record delivering scalable solutions for transportation, document processing, and ERP systems across consulting and product companies. Strong expertise in API design, system integration, and Agile development.",
             Skills =
@@ -72,7 +72,7 @@ public static class DemoProfileData
                     StartDate = new DateTime(2025, 3, 1),
                     EndDate = new DateTime(2025, 8, 1),
                     IsCurrentRole = false,
-                    Location = "Taastrup, Denmark",
+                    Location = "City, State",
                     Description =
                         "Developed and maintained <strong style=\"color:blue;font-weight:normal;\">25+ Blazor components</strong> for enterprise transportation system supporting Nordic logistics operations.\n"
                         + "Integrated with <strong style=\"color:blue;font-weight:normal;\">1500+ REST APIs endpoints,</strong> implementing 12 new features during 6-month tenure.\n"
@@ -87,7 +87,7 @@ public static class DemoProfileData
                     StartDate = new DateTime(2023, 7, 1),
                     EndDate = new DateTime(2024, 7, 1),
                     IsCurrentRole = false,
-                    Location = "København, Denmark",
+                    Location = "City, State",
                     Description =
                         "Architected microservices-based Intelligent Document Processing system, processing <strong style=\"color:blue;font-weight:normal;\">10,000+ documents monthly</strong> with 95% accuracy.\n"
                         + "Built full-stack web application using Blazor and GraphQL, reducing API response time by <strong style=\"color:blue;font-weight:normal;\">60%</strong> compared to traditional REST.\n"
@@ -103,7 +103,7 @@ public static class DemoProfileData
                     StartDate = new DateTime(2022, 6, 1),
                     EndDate = new DateTime(2023, 6, 1),
                     IsCurrentRole = false,
-                    Location = "Herlev, Denmark",
+                    Location = "City, State",
                     Description =
                         "Engineered Visma Business Solutions integrations for <strong style=\"color:blue;\">8 clients,</strong> automating invoicing and inventory management, saving <strong style=\"color:blue;font-weight:normal;\">100+ hours/month</strong> per client.\n"
                         + "Developed Magento-Visma e-commerce connector synchronizing <strong style=\"color:blue;font-weight:normal;\">5,000 products</strong> in real time with bi-directional data flow.\n"
@@ -112,46 +112,18 @@ public static class DemoProfileData
                         + "Independently managed 4-6 concurrent client projects, delivering solutions on time with minimal supervision.\n"
                         + "Gained deep expertise in REST design, third-party integrations, and SQL Server optimization (stored procedures, triggers).",
                 },
-                new Experience
-                {
-                    CompanyName = "Company 4",
-                    JobTitle = "Software Developer",
-                    StartDate = new DateTime(2021, 12, 1),
-                    EndDate = new DateTime(2022, 5, 1),
-                    IsCurrentRole = false,
-                    Location = "Skanderborg, Denmark",
-                    Description =
-                        "Developed AI-powered recruitment matching system analyzing <strong style=\"color:blue\">10,000+ CVs</strong> using C# and .NET Core.\n"
-                        + "Built search algorithms with predefined parameters (skills, experience, location) matching candidates to <strong style=\"color:blue\">500+ job postings.</strong>\n"
-                        + "Designed and implemented solution using Azure SQL Database and Azure Virtual Machine infrastructure.\n"
-                        + "Worked independently as sole developer, meeting daily with company owner for requirments and demos.",
-                },
-                new Experience
-                {
-                    CompanyName = "Company 5",
-                    JobTitle = ".NET Programmer & .NET Framework",
-                    StartDate = new DateTime(2016, 9, 1),
-                    EndDate = new DateTime(2020, 12, 1),
-                    IsCurrentRole = false,
-                    Location = "Brütten, Switzerland",
-                    Description =
-                        "Worked as external .NET developer on various client projects for Swiss software services company.\n"
-                        + "Developed ASP.NET MVC web applications and DNN CMS solutions.\n"
-                        + "Maintained and enhanced existing .NET Framework applications for multiple clients.\n"
-                        + "Collaborated remotely across Switzerland and home town offices.",
-                },
             ],
             Educations =
             [
                 new Education
                 {
-                    InstitutionName = "University Name, City, State",
-                    Degree = "Bachelor of Computer Science",
+                    InstitutionName = "[University Name], City, State",
+                    Degree = "Master of Science in [Field]",
                     StartDate = new DateTime(2007, 1, 1),
                     EndDate = new DateTime(2010, 1, 1),
                     Description =
                         "<strong>State Ministry Recognition:</strong> "
-                        + "Equivalent to State Bachelor's degree in Computer Science\n(Reference: 17/050244Q, State Ministry of Higher Education and Research)",
+                        + "Equivalent to State Bachelor's degree in Computer Science, State Ministry of Higher Education and Research)",
                 },
             ],
             Projects =
@@ -166,7 +138,7 @@ public static class DemoProfileData
                         "Full-stack ERP solution for retail/inventory management with <strong style=\"color:blue;font-weight:normal;\">sales, purchases, invoice generation, email campaigns, automated backups,</strong> customers, suppliers, and comprehensive reporting.\n"
                         + "Modular architecture with 5 projects (API, Server, Client, Components, Shared) following Clean Architecture principles.\n"
                         + "<strong style=\"color:blue;\">65+ secured REST APIs endpoints</strong> with role-based access control (Admin/Manager/User Roles).\n"
-                        + "Multi-language support (English/Albanian/Macedonian) with resource localization and real-time SignalR notifications.\n"
+                        + "Multi-language support with resource localization and real-time SignalR notifications.\n"
                         + "Automated Google Drive backup integration with OAuth 2.0 authentication, scheduling, and Docker containerization.",
                     Technologies =
                         ".NET 9, Blazor Server, MudBlazor, Entity Framework Core, SQL Server, Docker, SignalR.",

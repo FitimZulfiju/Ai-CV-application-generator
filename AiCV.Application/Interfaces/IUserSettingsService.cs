@@ -1,18 +1,17 @@
-namespace AiCV.Application.Interfaces
+namespace AiCV.Application.Interfaces;
+
+public interface IUserSettingsService
 {
-    public interface IUserSettingsService
-    {
-        Task<UserSettings?> GetUserSettingsAsync(string userId);
-        Task SaveUserSettingsAsync(
-            string userId,
-            string? openAiApiKey,
-            string? googleGeminiApiKey,
-            string? claudeApiKey,
-            string? groqApiKey,
-            string? deepSeekApiKey,
-            string? openRouterApiKey,
-            AIProvider defaultProvider,
-            string? defaultModelId
-        );
-    }
+    Task<UserSettings?> GetUserSettingsAsync(string userId);
+    Task SaveUserSettingsAsync(
+        string userId,
+        string? openAiApiKey,
+        string? googleGeminiApiKey,
+        string? claudeApiKey,
+        string? groqApiKey,
+        string? deepSeekApiKey,
+        string? openRouterApiKey,
+        AIProvider defaultProvider,
+        string? defaultModelId
+    );
 }
