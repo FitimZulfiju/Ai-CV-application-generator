@@ -7,7 +7,6 @@
 **AiCV** is a powerful, self-hosted AI career assistant built with **.NET 10** and **Blazor Server**. It helps you automatically generate tailored CVs and cover letters optimized for specific job postings using your preferred LLM provider.
 
 ![Dashboard Preview](docs/images/dashboard-preview.png)
-*(Note: Add a screenshot of your dashboard here)*
 
 ## 🚀 Features
 
