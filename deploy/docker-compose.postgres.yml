@@ -1,0 +1,96 @@
+networks:
+  aicvapp_default:
+    name: ${COMPOSE_NETWORK:-deploy_aicvapp_default}
+    external: false
+  shared_postgres_network:
+    name: shared_postgres_network
+    driver: bridge
+
+volumes:
+  shared_postgres_data:
+
+services:
+  shared-postgres:
+    image: postgres:16-alpine
+    container_name: shared-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-aicv_db}
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    volumes:
+      - shared_postgres_data:/var/lib/postgresql/data
+    networks:
+      - shared_postgres_network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-aicv_db}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    image: ${DOCKER_REPOSITORY}:${IMAGE_TAG:-latest}
+    container_name: ${APP_CONTAINER_NAME:-aicv-app}
+    restart: unless-stopped
+    depends_on:
+      shared-postgres:
+        condition: service_healthy
+    ports:
+      - ${APP_PORT:-8080}:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DB_PROVIDER=PostgreSQL
+      - ConnectionStrings__DefaultConnection=Host=shared-postgres;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}
+      - DOCKER_REPOSITORY=${DOCKER_REPOSITORY}
+      - Authentication__Google__ClientId=${Authentication__Google__ClientId:-}
+      - Authentication__Google__ClientSecret=${Authentication__Google__ClientSecret:-}
+      - Authentication__Microsoft__ClientId=${Authentication__Microsoft__ClientId:-}
+      - Authentication__Microsoft__ClientSecret=${Authentication__Microsoft__ClientSecret:-}
+      - Authentication__GitHub__ClientId=${Authentication__GitHub__ClientId:-}
+      - Authentication__GitHub__ClientSecret=${Authentication__GitHub__ClientSecret:-}
+    networks:
+      - aicvapp_default
+      - shared_postgres_network
+    volumes:
+      - ./logs:/app/logs
+      - ./wwwroot/images:/app/wwwroot/images
+      - ./wwwroot/uploads:/app/wwwroot/uploads
+      - ./dataprotection-keys:/app/DataProtectionKeys
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=aicv-scope"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: aicv-watchtower
+    command: --http-api-update --label-enable --cleanup --scope aicv-scope --interval 300
+    restart: unless-stopped
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_SCOPE=aicv-scope
+      - WATCHTOWER_POLL_INTERVAL=3600
+      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}
+      - DOCKER_API_VERSION=1.44
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - aicvapp_default
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: aicv-cloudflared
+    restart: unless-stopped
+    command: tunnel --config /home/nonroot/.cloudflared/config.yml run
+    volumes:
+      - ${CLOUDFLARED_MOUNT_DIR}:/home/nonroot/.cloudflared:ro
+    networks:
+      - aicvapp_default
