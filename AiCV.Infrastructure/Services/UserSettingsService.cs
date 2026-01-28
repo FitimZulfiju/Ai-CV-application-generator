@@ -2,15 +2,21 @@ namespace AiCV.Infrastructure.Services;
 
 using Microsoft.AspNetCore.DataProtection;
 
-public class UserSettingsService(
-    IDbContextFactory<ApplicationDbContext> contextFactory,
-    IDataProtectionProvider dataProtectionProvider
-) : IUserSettingsService
+public class UserSettingsService : IUserSettingsService
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
-    private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(
-        "AiCV.Infrastructure.Services.UserSettingsService"
-    );
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly IDataProtector _protector;
+
+    public UserSettingsService(
+        IDbContextFactory<ApplicationDbContext> contextFactory,
+        IDataProtectionProvider dataProtectionProvider
+    )
+    {
+        _contextFactory = contextFactory;
+        _protector = dataProtectionProvider.CreateProtector(
+            "AiCV.Infrastructure.Services.UserSettingsService"
+        );
+    }
 
     public async Task<UserSettings?> GetUserSettingsAsync(string userId)
     {

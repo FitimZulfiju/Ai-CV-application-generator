@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2026-01-28
 
 ### Added
 
@@ -21,9 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Watchtower auto-update support
 
 ---
-## [0.1.0] - 2026-01-28
 
-### Added
+### Recent Changes
+
 - feat: make database initialization safe for open source using reflection
 - feat: prepare for open source release v1.0.0
 - feat: implement Google Keep-style Notes feature with Masonry layout and full CRUD
@@ -103,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add initial App.razor for base Blazor application layout and styling
 
 ### Fixed
+
 - fix(Generate): Fix profile picture toggle not updating CV preview
 - fix: some css fix
 - fix: some css fix
@@ -160,19 +161,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: the local models avaliability info message.
 - fix: correct semantic versioning patterns to use proper regex format with forward slashes
 
-
 ## [0.17.1] - 2026-01-27
 
 ### Changed
+
 - docs: remove screenshot placeholder from README
 - docs: update changelog for v0.17.0
 
 ## [0.17.0] - 2026-01-27
 
 ### Added
+
 - feat: prepare for open source release v1.0.0
-
-
 
 <!-- 
 This changelog is automatically updated by GitHub Actions on each release.
