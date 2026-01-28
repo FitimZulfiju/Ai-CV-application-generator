@@ -32,7 +32,7 @@ This Code of Conduct applies both within project spaces and in public spaces whe
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project team at <[your-email@example.com]>. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening a [GitHub Issue](https://github.com/FitimZulfiju/Web-CV-application-generator/issues) with the "conduct" label, or by contacting the project maintainers directly via GitHub.
 
 ## Attribution
 

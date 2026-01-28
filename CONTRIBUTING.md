@@ -38,4 +38,4 @@ The following is a set of guidelines for contributing to **AiCV**. These are mos
 
 ## Community
 
-Join our discussions if available or reach out via email for specific architectural questions.
+Join our [GitHub Discussions](https://github.com/FitimZulfiju/Web-CV-application-generator/discussions) if available or open a [GitHub Issue](https://github.com/FitimZulfiju/Web-CV-application-generator/issues) for specific architectural questions.

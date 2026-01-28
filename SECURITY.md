@@ -11,9 +11,9 @@ Currently, only the latest version of **AiCV** is supported with security update
 
 ## Reporting a Vulnerability
 
-If you discover a potential security vulnerability in this project, please report it privately. **Do not create a public GitHub issue.**
+If you discover a potential security vulnerability in this project, please report it privately using **GitHub's Private Vulnerability Reporting** feature.
 
-Please send security-related reports to: **<[your-email@example.com]>**
+Please go to the [Security Tab](https://github.com/FitimZulfiju/Web-CV-application-generator/security/advisories/new) of the repository to submit a report. **Do not create a public GitHub issue.**
 
 We will acknowledge your report within 48 hours and provide a timeline for a fix if applicable.
 

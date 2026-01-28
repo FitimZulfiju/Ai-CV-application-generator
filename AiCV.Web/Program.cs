@@ -663,7 +663,14 @@ app.MapGet(
         {
             httpContext.Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture))
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddYears(1),
+                    Secure = true,
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Lax,
+                }
             );
         }
 

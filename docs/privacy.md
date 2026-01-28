@@ -42,3 +42,7 @@
 - Use trusted AI providers
 - Understand provider policies if using models that may train on input
 - Optional Cloudflare Tunnel for remote access or configure your own networking
+
+## 8. Contact
+
+For any privacy or data-handling inquiries, please open a [GitHub Issue](https://github.com/FitimZulfiju/Web-CV-application-generator/issues).
