@@ -1,8 +1,15 @@
 # AiCV Application Generator
 
+[![Release](https://img.shields.io/github/v/release/FitimZulfiju/Web-CV-application-generator?include_prereleases&style=flat-square&color=blue)](https://github.com/FitimZulfiju/Web-CV-application-generator/releases)
+[![CI/CD](https://github.com/FitimZulfiju/Web-CV-application-generator/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/FitimZulfiju/Web-CV-application-generator/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512bd4)](https://dotnet.microsoft.com/)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-blue)](https://hub.docker.com/r/timi74/aicv)
+[![GitHub Stars](https://img.shields.io/github/stars/FitimZulfiju/Web-CV-application-generator?style=social)](https://github.com/FitimZulfiju/Web-CV-application-generator/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/FitimZulfiju/Web-CV-application-generator?style=social)](https://github.com/FitimZulfiju/Web-CV-application-generator/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/FitimZulfiju/Web-CV-application-generator)](https://github.com/FitimZulfiju/Web-CV-application-generator/issues)
+[![GitHub repo size](https://img.shields.io/github/repo-size/FitimZulfiju/Web-CV-application-generator)](https://github.com/FitimZulfiju/Web-CV-application-generator)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/FitimZulfiju/Web-CV-application-generator/pulls)
 
 **AiCV** is a powerful, self-hosted AI career assistant built with **.NET 10** and **Blazor Server**. It helps you automatically generate tailored CVs and cover letters optimized for specific job postings using your preferred LLM provider.
 
@@ -68,8 +75,8 @@
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/FitimZulfiju/Ai-CV-application-generator.git
-    cd Ai-CV-application-generator
+    git clone https://github.com/FitimZulfiju/Web-CV-application-generator.git
+    cd Web-CV-application-generator
     ```
 
 2. **Configure Environment**:
@@ -90,7 +97,7 @@
 ## 📘 Usage
 
 1. **Register/Login**: Create an account.
-2. **Profile**: Go to **Profile** and fill in your details (Experience, Skills, Education).
+2. **Profile**: Go to **Profile** and fill in your details (Personal Details, Experience, Education, Skills, Projects, Languages, Interests).
 3. **Settings**: Enter your API Key for your preferred provider (e.g., OpenAI, Gemini, Groq).
 4. **Generate**:
     - Go to **Job Applications**.
@@ -120,4 +127,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [**Live Demo**](https://aicv.fitim.it.com)
 - [**Docker Hub**](https://hub.docker.com/r/timi74/aicv)
-- [**GitHub**](https://github.com/FitimZulfiju/Ai-CV-application-generator)
+- [**GitHub**](https://github.com/FitimZulfiju/Web-CV-application-generator)
