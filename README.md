@@ -6,6 +6,11 @@
 
 **AiCV** is a powerful, self-hosted AI career assistant built with **.NET 10** and **Blazor Server**. It helps you automatically generate tailored CVs and cover letters optimized for specific job postings using your preferred LLM provider.
 
+## 🌐 [Live Demo](https://aicv.fitim.it.com)
+>
+> [!IMPORTANT]
+> To use the generation features in the live demo, you will need to provide your own LLM API key (OpenAI, Gemini, etc.) in the **Settings** page. **Your keys are stored encrypted at rest in the database** and can be deleted by you at any time.
+
 ![Dashboard Preview](docs/images/dashboard-preview.png)
 
 ## 🚀 Features
@@ -113,5 +118,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
-- **GitHub**: [fitimzulfiu/Web-CV-application-generator](https://github.com/fitimzulfiu/Web-CV-application-generator)
+- [**Live Demo**](https://aicv.fitim.it.com)
+- [**Docker Hub**](https://hub.docker.com/r/timi74/aicv)
+- [**GitHub**](https://github.com/FitimZulfiju/Ai-CV-application-generator)
