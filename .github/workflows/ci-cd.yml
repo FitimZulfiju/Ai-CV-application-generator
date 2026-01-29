@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   build-and-test:
+    name: build-and-test
     runs-on: ubuntu-latest
 
     steps:
@@ -33,6 +34,7 @@ jobs:
         run: dotnet test AiCV.sln --no-build --verbosity normal
 
   docker-push:
+    name: docker-push
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
@@ -142,7 +144,7 @@ jobs:
         run: |
           echo "Checking for changes in CHANGELOG.md..."
           if git diff --exit-code CHANGELOG.md > /dev/null; then
-            echo "::warning title=No Changes::No changes detected in CHANGELOG.md! This explains why the PR step might fail or be skipped."
+            echo "::warning title=No Changes::No changes detected in CHANGELOG.md!"
           else
             echo "Changes detected in CHANGELOG.md."
             git diff CHANGELOG.md
@@ -162,7 +164,6 @@ jobs:
 
             This PR was created automatically by the CI/CD pipeline.
           branch: automated-changelog-update
-          base: master
           delete-branch: true
           add-paths: CHANGELOG.md
           labels: documentation, automated
