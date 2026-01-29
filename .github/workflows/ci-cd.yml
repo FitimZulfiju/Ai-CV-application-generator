@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build-and-test:
@@ -136,6 +137,18 @@ jobs:
           # Insert after "## [Unreleased]" section
           sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
           }' CHANGELOG.md
+
+      - name: Debug Changelog Modification
+        run: |
+          echo "Checking for changes in CHANGELOG.md..."
+          if git diff --exit-code CHANGELOG.md > /dev/null; then
+            echo "::warning title=No Changes::No changes detected in CHANGELOG.md! This explains why the PR step might fail or be skipped."
+          else
+            echo "Changes detected in CHANGELOG.md."
+            git diff CHANGELOG.md
+          fi
+          echo "Current git status:"
+          git status
 
       - name: Create Changelog PR
         if: steps.version.outputs.version != ''
