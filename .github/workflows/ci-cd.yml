@@ -137,10 +137,21 @@ jobs:
           sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
           }' CHANGELOG.md
 
-          # Commit changelog
-          git add CHANGELOG.md
-          git commit -m "docs: update changelog for v${{ steps.version.outputs.version }}" || true
-          git push origin HEAD:${{ github.ref_name }} || true
+      - name: Create Changelog PR
+        if: steps.version.outputs.version != ''
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: update changelog for v${{ steps.version.outputs.version }}"
+          title: "docs: update changelog for v${{ steps.version.outputs.version }}"
+          body: |
+            Auto-generated changelog update for version ${{ steps.version.outputs.version }}.
+
+            This PR was created automatically by the CI/CD pipeline.
+          branch: changelog/v${{ steps.version.outputs.version }}
+          base: ${{ github.ref_name }}
+          delete-branch: true
+          labels: documentation, automated
 
       - name: Create GitHub Release
         if: steps.version.outputs.version != ''
