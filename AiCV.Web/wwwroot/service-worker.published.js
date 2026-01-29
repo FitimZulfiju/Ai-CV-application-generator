@@ -1,10 +1,15 @@
 // Production service worker with asset caching
-const cacheName = 'aicv-cache-v2'; // Incremented version to bust old cache
+const cacheName = 'aicv-cache-v5'; // Incremented version to bust old cache
 const assetsToCache = [
     '/',
     '/app.css',
-    '/logo.png',
+    '/logoSvg.svg',
     '/favicon.png',
+    '/icon-48.png',
+    '/icon-96.png',
+    '/icon-144.png',
+    '/icon-192.png',
+    '/icon-512.png',
     '/_framework/blazor.web.js'
 ];
 

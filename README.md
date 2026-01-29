@@ -115,6 +115,14 @@
 - **DeepSeek** (DeepSeek Chat/Coder)
 - **OpenRouter** (Access to any other model)
 
+## 📚 Documentation
+
+- [Project Overview](docs/overview.md)
+- [Architecture Overview](docs/architecture.md)
+- [Deployment Guide](docs/deployment.md)
+- [Docker Hub](docs/docker_hub.md)
+- [Privacy Policy](docs/privacy.md)
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
