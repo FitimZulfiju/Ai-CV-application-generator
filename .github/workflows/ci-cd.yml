@@ -9,9 +9,11 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build-and-test:
+    name: build-and-test
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +34,7 @@ jobs:
         run: dotnet test AiCV.sln --no-build --verbosity normal
 
   docker-push:
+    name: docker-push
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
@@ -137,6 +140,18 @@ jobs:
           sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
           }' CHANGELOG.md
 
+      - name: Debug Changelog Modification
+        run: |
+          echo "Checking for changes in CHANGELOG.md..."
+          if git diff --exit-code CHANGELOG.md > /dev/null; then
+            echo "::warning title=No Changes::No changes detected in CHANGELOG.md!"
+          else
+            echo "Changes detected in CHANGELOG.md."
+            git diff CHANGELOG.md
+          fi
+          echo "Current git status:"
+          git status
+
       - name: Create Changelog PR
         if: steps.version.outputs.version != ''
         uses: peter-evans/create-pull-request@v6
@@ -148,9 +163,9 @@ jobs:
             Auto-generated changelog update for version ${{ steps.version.outputs.version }}.
 
             This PR was created automatically by the CI/CD pipeline.
-          branch: changelog/v${{ steps.version.outputs.version }}
-          base: ${{ github.ref_name }}
+          branch: automated-changelog-update
           delete-branch: true
+          add-paths: CHANGELOG.md
           labels: documentation, automated
 
       - name: Create GitHub Release
