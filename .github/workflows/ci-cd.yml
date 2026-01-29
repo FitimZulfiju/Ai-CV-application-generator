@@ -146,7 +146,7 @@ jobs:
           title: "docs: update changelog for v${{ steps.version.outputs.version }}"
           body: |
             Auto-generated changelog update for version ${{ steps.version.outputs.version }}.
-            
+
             This PR was created automatically by the CI/CD pipeline.
           branch: changelog/v${{ steps.version.outputs.version }}
           base: ${{ github.ref_name }}
