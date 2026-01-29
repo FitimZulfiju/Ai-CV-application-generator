@@ -161,9 +161,10 @@ jobs:
             Auto-generated changelog update for version ${{ steps.version.outputs.version }}.
 
             This PR was created automatically by the CI/CD pipeline.
-          branch: changelog/v${{ steps.version.outputs.version }}
-          base: ${{ github.ref_name }}
+          branch: automated-changelog-update
+          base: master
           delete-branch: true
+          add-paths: CHANGELOG.md
           labels: documentation, automated
 
       - name: Create GitHub Release
