@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.1.6] - 2026-01-30
+
+### Changed
+- test: verify docker build runs
+- Merge pull request #18 from FitimZulfiju/automated-changelog-update
+- docs: update changelog for v1.1.5
+
 ## [1.1.5] - 2026-01-30
 
 ### Fixed
