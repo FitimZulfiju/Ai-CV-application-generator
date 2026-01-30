@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.0.11] - 2026-01-30
+
+### Fixed
+- Merge pull request #8 from FitimZulfiju/fix/workflow-validation-v2
+- fix: explicit job names and remove base from pr creation
+
+
 ## [1.0.5] - 2026-01-28
 
 ### Changed
