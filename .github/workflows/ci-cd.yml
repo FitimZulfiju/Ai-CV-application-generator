@@ -49,7 +49,13 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --format='%s')
           echo "Commit message: $COMMIT_MSG"
-          if [[ "$COMMIT_MSG" == docs:\ update\ changelog* ]] || [[ "$COMMIT_MSG" == *"[skip changelog]"* ]]; then
+          # Check for:
+          # 1. Direct changelog commit: "docs: update changelog for vX.X.X"
+          # 2. Merge commit from changelog branch: "Merge pull request #X from .../automated-changelog-update"
+          # 3. Manual skip: "[skip changelog]" in message
+          if [[ "$COMMIT_MSG" == docs:\ update\ changelog* ]] || \
+             [[ "$COMMIT_MSG" == *"automated-changelog-update"* ]] || \
+             [[ "$COMMIT_MSG" == *"[skip changelog]"* ]]; then
             echo "This is a changelog update commit. Skipping version bump."
             echo "is_changelog=true" >> $GITHUB_OUTPUT
           else
