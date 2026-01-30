@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.1.5] - 2026-01-30
+
+### Fixed
+- fix: skip Docker build for changelog commits [skip changelog]
+- fix: detect changelog merge commits by branch name [skip changelog]
+
+
 ## [1.1.4] - 2026-01-30
 
 ### Changed
