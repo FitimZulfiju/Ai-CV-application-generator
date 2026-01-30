@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.0.12] - 2026-01-30
+
+### Changed
+- Merge pull request #11 from FitimZulfiju/trigger/changelog-test
+- docs: trigger workflow test for changelog automation
+
 
 ## [1.0.5] - 2026-01-28
 
