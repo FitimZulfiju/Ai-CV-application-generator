@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.1.7] - 2026-02-10
+
+### Changed
+- Revise README for AiCV project branding and details
+- Merge pull request #19 from FitimZulfiju/automated-changelog-update
+- docs: update changelog for v1.1.6
+
 ## [1.1.6] - 2026-01-30
 
 ### Changed
