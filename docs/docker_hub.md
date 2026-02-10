@@ -1,23 +1,21 @@
 # AiCV Application Generator - Docker Hub Description
 
-🚀 **AiCV** is a powerful AI career assistant built with Blazor Server & .NET 10. Automatically generate tailored CVs and Cover Letters optimized for specific job postings using various Large Language Models (LLMs).
+🚀 **AiCV** is a self-hosted AI career assistant built with **Blazor Server** & **.NET 10**. Automatically generate tailored CVs and cover letters optimized for specific job postings using multiple Large Language Models (LLMs).
 
 ## 🌟 Key Features
 
-- **AI-Powered Generation**: Tailored resumes and cover letters using various LLMs.
-- **Job URL Scraping**: Integration with popular job boards to extract requirements automatically.
-- **Self-Hosted & Private**: Your data stays in your control.
-- **Automated Updates**: Built-in support for Watchtower for zero-touch maintenance.
+* **AI-Powered Generation**: Tailored resumes and cover letters using various LLMs.
+* **Job URL Scraping**: Integration with popular job boards to extract job requirements automatically.
+* **Self-Hosted & Private**: Your data stays under your control.
+* **Automated Updates**: Supports Watchtower for zero-touch maintenance.
 
 ---
 
 ## 🚀 Quick Start (Docker Compose)
 
-The easiest way to run AiCV is using Docker Compose. We support both **PostgreSQL** (recommended) and **SQL Server**.
+AiCV supports both **PostgreSQL** (recommended) and **SQL Server**.
 
 ### Option 1: PostgreSQL (Recommended)
-
-Create a `docker-compose.yml` file:
 
 ```yaml
 services:
@@ -57,8 +55,6 @@ volumes:
 
 ### Option 2: SQL Server
 
-Create a `docker-compose.yml` file:
-
 ```yaml
 services:
   app:
@@ -94,27 +90,18 @@ volumes:
   mssql_data:
 ```
 
-### Using Environment Variables (Two Approaches)
+### Using Environment Variables (Recommended for Production)
 
-You can configure AiCV in two ways:
-
-#### Option A: Inline (as shown above)
-
-Hardcode values directly in your `docker-compose.yml` - simple for quick testing.
-
-#### Option B: Using a `.env` file (Recommended for Production)
-
-Create a `.env` file in the same directory as your `docker-compose.yml`:
+Create a `.env` file in the same directory as `docker-compose.yml`:
 
 ```ini
-# .env file
 DB_PROVIDER=PostgreSQL
 DB_NAME=aicv_db
 DB_USER=postgres
 DB_PASSWORD=YourSecurePassword123!
 ```
 
-Then reference variables in your `docker-compose.yml`:
+Reference variables in your compose file:
 
 ```yaml
 services:
@@ -124,7 +111,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - DB_PROVIDER=${DB_PROVIDER}
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
-    # ...
 
   db:
     image: postgres:16-alpine
@@ -132,21 +118,20 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-    # ...
 ```
 
 ### Environment Variables Reference
 
-| Variable | Description | Default |
-| --- | --- | --- |
-| `DB_PROVIDER` | Database provider: `SqlServer` or `PostgreSQL` | `SqlServer` |
-| `ASPNETCORE_ENVIRONMENT` | Set to `Production` for deployment | `Production` |
-| `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Shared database settings | - |
-| `ConnectionStrings__DefaultConnection` | Full connection string (recommended) | - |
+| Variable                               | Description                                    | Default      |
+| -------------------------------------- | ---------------------------------------------- | ------------ |
+| `DB_PROVIDER`                          | Database provider: `SqlServer` or `PostgreSQL` | `SqlServer`  |
+| `ASPNETCORE_ENVIRONMENT`               | Set to `Production`                            | `Production` |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD`    | Database connection info                       | -            |
+| `ConnectionStrings__DefaultConnection` | Full connection string (recommended)           | -            |
 
 ---
 
 ## 🔗 Links
 
-- **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
-- **GitHub Repository**: [FitimZulfiju/Ai-CV-application-generator](https://github.com/FitimZulfiju/Ai-CV-application-generator)
+* **Docker Hub**: [timi74/aicv](https://hub.docker.com/r/timi74/aicv)
+* **GitHub Repository**: [FitimZulfiju/Ai-CV-application-generator](https://github.com/FitimZulfiju/Ai-CV-application-generator)
