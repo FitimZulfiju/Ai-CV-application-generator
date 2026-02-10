@@ -1,138 +1,162 @@
-# AiCV Application Generator
+# AiCV – AI‑Assisted CV Application Generator
 
-[![Release](https://img.shields.io/github/v/release/FitimZulfiju/Web-CV-application-generator?include_prereleases&style=flat-square&color=blue)](https://github.com/FitimZulfiju/Web-CV-application-generator/releases)
-[![CI/CD](https://github.com/FitimZulfiju/Web-CV-application-generator/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/FitimZulfiju/Web-CV-application-generator/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![.NET](https://img.shields.io/badge/.NET-10.0-512bd4)](https://dotnet.microsoft.com/)
-[![Docker](https://img.shields.io/badge/Docker-Enabled-blue)](https://hub.docker.com/r/timi74/aicv)
-[![GitHub Stars](https://img.shields.io/github/stars/FitimZulfiju/Web-CV-application-generator?style=social)](https://github.com/FitimZulfiju/Web-CV-application-generator/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/FitimZulfiju/Web-CV-application-generator?style=social)](https://github.com/FitimZulfiju/Web-CV-application-generator/network/members)
-[![GitHub Issues](https://img.shields.io/github/issues/FitimZulfiju/Web-CV-application-generator)](https://github.com/FitimZulfiju/Web-CV-application-generator/issues)
-[![GitHub repo size](https://img.shields.io/github/repo-size/FitimZulfiju/Web-CV-application-generator)](https://github.com/FitimZulfiju/Web-CV-application-generator)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/FitimZulfiju/Web-CV-application-generator/pulls)
+**AiCV** is an open‑source, self‑hosted **experimental .NET application** that explores AI‑assisted workflows for generating CVs and cover letters based on job postings.
 
-**AiCV** is a powerful, self-hosted AI career assistant built with **.NET 10** and **Blazor Server**. It helps you automatically generate tailored CVs and cover letters optimized for specific job postings using your preferred LLM provider.
+The project focuses on:
 
-## 🌐 [Live Demo](https://aicv.fitim.it.com)
->
-> [!IMPORTANT]
-> To use the generation features in the live demo, you will need to provide your own LLM API key (OpenAI, Gemini, etc.) in the **Settings** page. **Your keys are stored encrypted at rest in the database** and can be deleted by you at any time.
+* LLM provider abstraction in a real‑world .NET application
+* Privacy‑first, self‑hosted architecture
+* Exploring trade‑offs in UX, data modeling, and AI‑assisted content generation
 
-![Dashboard Preview](docs/images/dashboard-preview.png)
+It is **not a finished product** and **not intended to replace human‑written CVs or cover letters**. Generated content should be treated as a **starting point**, not a final submission.
 
-## 🚀 Features
+---
 
-- **Multi-Provider AI Support**: Bring your own API keys for **OpenAI**, **Google Gemini**, **Claude (Anthropic)**, **Groq**, **DeepSeek**, or **OpenRouter**.
-- **Smart Job Scraping**: Paste a job URL (LinkedIn, Indeed, etc.) or manually enter details. The system uses smart extraction to parse requirements.
-- **Privacy-First**: Your data and API keys are stored locally in your database. Keys are encrypted at rest.
-- **Multi-User & Secure**: Supports user registration, login, and OAuth (Google, Microsoft, GitHub).
-- **Multi-Language**: UI available in **English**, **Albanian (Shqip)**, and **Danish (Dansk)**.
-- **Professional Exports**: Generate and download PDFs, or export to Markdown/JSON.
-- **Modern UI**: Built with MudBlazor for a responsive experience.
+## ⚠️ Project Status & Intent
+
+**Status:** Active, early‑stage, evolving
+
+This repository is intentionally public to:
+
+* Track architectural decisions and refactors openly
+* Collect early feedback on structure, boundaries, and maintainability
+* Experiment with AI integration patterns beyond trivial demos
+
+Parts of the codebase were built rapidly with **heavy AI assistance during early exploration**. Some areas are intentionally left unrefined while architecture and scope are validated.
+
+**Feedback is especially welcome on:**
+
+* Project structure and boundaries
+* Database and provider abstraction
+* Maintainability and readability
+
+---
+
+## 🌐 Live Demo
+
+[https://aicv.fitim.it.com](https://aicv.fitim.it.com)
+
+> **Important**
+> To use generation features, you must provide your own LLM API key (OpenAI, Gemini, etc.).
+> Keys are stored encrypted at rest in the database and can be deleted at any time.
+
+---
+
+## 🚀 Current Capabilities
+
+* **Multi‑Provider AI Support**
+  Bring your own API keys for OpenAI, Google Gemini, Claude (Anthropic), Groq, DeepSeek, or OpenRouter.
+
+* **Job Description Ingestion**
+  Paste a job URL (LinkedIn, Indeed, etc.) or manually enter details. Basic extraction is used to derive requirements.
+
+* **Privacy‑First by Design**
+  All data is stored in your own database. No external tracking or third‑party storage.
+
+* **Authentication & Multi‑User Support**
+  Local accounts plus OAuth (Google, Microsoft, GitHub).
+
+* **Multi‑Language UI**
+  English, Albanian (Shqip), Danish (Dansk).
+
+* **Export Options**
+  PDF generation and Markdown/JSON exports.
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: .NET 10 (Blazor Server)
-- **Database**: SQL Server or PostgreSQL (switchable via config)
-- **ORM**: Entity Framework Core
-- **UI**: MudBlazor
-- **PDF Generation**: QuestPDF
+* **Framework:** .NET 10 (Blazor Server)
+* **UI:** MudBlazor
+* **ORM:** Entity Framework Core
+* **PDF Generation:** QuestPDF
+* **Database:** SQL Server or PostgreSQL
+
+> **Database note:**
+> Both SQL Server and PostgreSQL are currently supported to explore different local and containerized deployment scenarios.
+> Migrations are provider‑specific. Consolidation and simplification are tracked in GitHub issues.
+
+---
 
 ## 🏁 Getting Started
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (Recommended for easiest setup)
-- **OR** [.NET 10 SDK](https://dotnet.microsoft.com/download) + SQL Server/PostgreSQL instance.
+* Docker Desktop (recommended)
+* OR .NET 10 SDK + SQL Server/PostgreSQL
 
-### 🐳 Quick Start with Docker
+### 🐳 Docker (Quick Start)
 
-1. Create a `docker-compose.yml` (or use the one in `docs/`):
+```yaml
+services:
+  app:
+    image: timi74/aicv:latest
+    ports:
+      - "8080:80"
+    environment:
+      - DB_PROVIDER=PostgreSQL
+      - PG_HOST=db
+      - DB_PASSWORD=YourSecurePassword123!
+    depends_on:
+      - db
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_PASSWORD=YourSecurePassword123!
+```
 
-    ```yaml
-    services:
-      app:
-        image: timi74/aicv:latest
-        ports:
-          - "8080:80"
-        environment:
-          - DB_PROVIDER=PostgreSQL
-          - PG_HOST=db
-          - DB_PASSWORD=YourSecurePassword123!
-        depends_on:
-          - db
-      db:
-        image: postgres:16-alpine
-        environment:
-          - POSTGRES_PASSWORD=YourSecurePassword123!
-    ```
+```bash
+docker-compose up -d
+```
 
-2. Run `docker-compose up -d`.
-3. Open `http://localhost:8080`.
+Open: [http://localhost:8080](http://localhost:8080)
 
-### 🔧 Local Development Setup
+---
 
-1. **Clone the repository**:
+## 🔧 Local Development
 
-    ```bash
-    git clone https://github.com/FitimZulfiju/Web-CV-application-generator.git
-    cd Web-CV-application-generator
-    ```
+```bash
+git clone https://github.com/FitimZulfiju/Web-CV-application-generator.git
+cd Web-CV-application-generator
+cp .env.example .env
+dotnet run --project AiCV.Web
+```
 
-2. **Configure Environment**:
-    Copy `.env.example` to `.env` and update your database credentials and optional OAuth keys.
+Visit: [https://localhost:7153](https://localhost:7153)
 
-    ```bash
-    cp .env.example .env
-    ```
-
-3. **Run the Application**:
-
-    ```bash
-    dotnet run --project AiCV.Web
-    ```
-
-4. **Visit**: `https://localhost:7153`
-
-## 📘 Usage
-
-1. **Register/Login**: Create an account.
-2. **Profile**: Go to **Profile** and fill in your details (Personal Details, Experience, Education, Skills, Projects, Languages, Interests).
-3. **Settings**: Enter your API Key for your preferred provider (e.g., OpenAI, Gemini, Groq).
-4. **Generate**:
-    - Go to **Job Applications**.
-    - Paste a Job URL and click **Fetch** (or enter details manually).
-    - Select your AI Model.
-    - Click **Generate**.
-5. **Export**: Review your tailored CV/Cover Letter and download as PDF.
-
-## 🌍 Supported AI Providers
-
-- **OpenAI** (GPT-4o, GPT-4-turbo, etc.)
-- **Google Gemini** (Gemini 2.0 Flash, Pro, etc.)
-- **Claude** (Anthropic)
-- **Groq** (Llama 3, Mixtral - High Speed)
-- **DeepSeek** (DeepSeek Chat/Coder)
-- **OpenRouter** (Access to any other model)
+---
 
 ## 📚 Documentation
 
-- [Project Overview](docs/overview.md)
-- [Architecture Overview](docs/architecture.md)
-- [Deployment Guide](docs/deployment.md)
-- [Docker Hub](docs/docker_hub.md)
-- [Privacy Policy](docs/privacy.md)
+* Project Overview: `docs/overview.md`
+* Architecture: `docs/architecture.md`
+* Deployment: `docs/deployment.md`
+* Privacy: `docs/privacy.md`
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+This project welcomes constructive feedback and incremental improvements.
+
+If you’re interested in:
+
+* Refactoring structure
+* Improving boundaries
+* Clarifying architecture
+
+Please check existing issues or open a new one with concrete suggestions.
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License
+
+---
 
 ## 🔗 Links
 
-- [**Live Demo**](https://aicv.fitim.it.com)
-- [**Docker Hub**](https://hub.docker.com/r/timi74/aicv)
-- [**GitHub**](https://github.com/FitimZulfiju/Web-CV-application-generator)
+* Live Demo: [https://aicv.fitim.it.com](https://aicv.fitim.it.com)
+* Docker Hub: [https://hub.docker.com/r/timi74/aicv](https://hub.docker.com/r/timi74/aicv)
+* GitHub: [https://github.com/FitimZulfiju/Web-CV-application-generator](https://github.com/FitimZulfiju/Web-CV-application-generator)
