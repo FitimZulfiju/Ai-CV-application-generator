@@ -1,48 +1,49 @@
-# Privacy & Data Handling
+# Privacy & Data Handling — AiCV
 
 ## 1. User Data
 
-- Stored locally in SQL database
-- Includes profiles: personal details, experience, skills
-- Editable and deletable at any time
+* Stored locally in SQL database
+* Includes profiles: personal details, experience, skills
+* Editable and deletable at any time by the user
 
 ## 2. AI API Keys
 
-- Provided by users
-- Encrypted at rest
-- Not exposed in logs, UI, or network
+* Provided by users
+* Encrypted at rest
+* Never exposed in logs, UI, or network traffic
 
 ## 3. AI Requests & Data Minimization
 
-- Only structured profile info sent to AI
-- No raw CVs or documents sent
-- Users choose provider/model; some may use data for training
-- AI responses stored only if user saves output
+* Only structured profile data is sent to AI for generation
+* Raw CVs or documents are never transmitted
+* Users select provider/model; some models may use data for training
+* AI responses are stored only if user saves the output
 
 ## 4. Job Data
 
-- Scraped from URLs or manually input
-- Used solely for generation
-- Not sent to external services besides AI provider
+* Scraped from URLs or manually input by user
+* Used exclusively for generation
+* Not transmitted to external services except the selected AI provider
 
 ## 5. Telemetry & External Services
 
-- No usage telemetry
-- Optional Cloudflare Tunnel only provides secure remote access
+* No automatic usage telemetry collected
+* Optional Cloudflare Tunnel provides secure remote access only
 
 ## 6. User Control
 
-- Full control over:
-  - AI providers/models used
-  - Generated CV/cover letter storage
-  - Hosting environment
+* Users retain full control over:
+
+  * AI providers and models used
+  * Storage of generated CVs and cover letters
+  * Hosting environment and deployment
 
 ## 7. Recommendations
 
-- Use trusted AI providers
-- Understand provider policies if using models that may train on input
-- Optional Cloudflare Tunnel for remote access or configure your own networking
+* Use only trusted AI providers
+* Review provider policies if using models that may retain or train on input data
+* Cloudflare Tunnel is optional for remote access; custom networking is fully supported
 
 ## 8. Contact
 
-For any privacy or data-handling inquiries, please open a [GitHub Issue](https://github.com/FitimZulfiju/Web-CV-application-generator/issues).
+For questions regarding privacy or data handling, please open a [GitHub Issue](https://github.com/FitimZulfiju/Web-CV-application-generator/issues).
