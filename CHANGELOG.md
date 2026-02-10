@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.1.13] - 2026-02-10
+
+### Changed
+- Revise overview for AiCV documentation
+
 ## [1.1.6] - 2026-01-30
 
 ### Changed
