@@ -1,65 +1,60 @@
-# Deployment Guide
+# Deployment Guide — AiCV
 
 This guide covers how to deploy **AiCV** in a production-like environment using the included scripts and Docker Compose.
 
-> **Note**: The scripts in the `deploy/` directory are optimized for an Ubuntu/Debian server environment.
+> ⚠️ **Note:** This project is experimental. The scripts in the `deploy/` directory are optimized for Ubuntu/Debian servers.
 
 ## Quick Start (Production)
 
 We provide a helper script [`deploy/deploy.sh`](../deploy/deploy.sh) that automates:
 
-- Installing Docker & Docker Compose
-- Setting up user permissions
-- Creating directory structures
-- Configuring DNS with Cloudflare Tunnels (optional)
-- Starting the application
+* Installing Docker & Docker Compose
+* Setting up user permissions
+* Creating directory structures
+* Configuring DNS with Cloudflare Tunnels (optional)
+* Starting the application
 
 ### Prerequisites
 
-- A Linux server (Ubuntu 22.04+ recommended)
-- A domain name (if using Cloudflare Tunnels)
-- Cloudflare account & API Token (if using Cloudflare Tunnels)
+* A Linux server (Ubuntu 22.04+ recommended)
+* A domain name (if using Cloudflare Tunnels)
+* Cloudflare account & API Token (if using Cloudflare Tunnels)
 
 ### 1. Prepare Environment
 
-Create a `.env` file in the `deploy/` directory (you can copy `.env.example` from the root):
+Create a `.env` file in the `deploy/` directory (copy `.env.example` from the root):
 
 ```bash
 cp .env.example deploy/.env
 nano deploy/.env
 ```
 
-### 2. Prepare Scripts (Important)
+### 2. Prepare Scripts
 
-If you uploaded scripts from Windows, you must convert them to Unix format and make them executable:
+If scripts were uploaded from Windows, convert to Unix format and make executable:
 
 ```bash
 cd deploy
-# Make dos2unix script executable
 chmod +x dos2unix.sh
-# Run it to fix all other scripts
 ./dos2unix.sh
 ```
 
-### 3. Cloudflare Tunnel Setup (Recommended for Public Access)
+### 3. Cloudflare Tunnel Setup (Optional)
 
-If you want to expose the app securely using Cloudflare Tunnels:
+1. Install `cloudflared` and log in (`cloudflared tunnel login`).
+2. Run the setup script **before** deployment:
 
-1. Make sure `cloudflared` is installed and you are logged in (`cloudflared tunnel login`).
-2. Run the setup script **BEFORE** the main deployment:
+```bash
+./TunnelSetup.sh
+```
 
-    ```bash
-    ./TunnelSetup.sh
-    ```
+This will:
 
-3. This script will:
-    - Create a new tunnel (if needed).
-    - Update your `.env` file automatically with the new `TUNNEL_ID`.
-    - Configure the DNS CNAME records for your domain.
+* Create a new tunnel if needed
+* Update `.env` with `TUNNEL_ID`
+* Configure DNS CNAME records
 
 ### 4. Run Deployment Script
-
-Once the environment and tunnel are ready, run the main deployment script:
 
 ```bash
 ./deploy.sh
@@ -67,57 +62,46 @@ Once the environment and tunnel are ready, run the main deployment script:
 
 The script will:
 
-1. Install Docker & Docker Compose if missing.
-2. Create necessary folders (`logs/`, `data/`, `backups/`, `wwwroot/uploads`, `wwwroot/images`, `dataprotection-keys`) at `APP_BASE_DIR`.
-3. Set correct permissions.
-4. Start the application with persistent volumes.
+1. Install Docker & Docker Compose if missing
+2. Create folders (`logs/`, `data/`, `backups/`, `wwwroot/uploads`, `wwwroot/images`, `dataprotection-keys`) at `APP_BASE_DIR`
+3. Set correct permissions
+4. Start the application with persistent volumes
 
----
+## Persistent Storage
 
-## 💾 Persistent Storage
+Directories mapped to host:
 
-AiCV is configured to persist all user data outside of the Docker container. The following directories are mapped to your host machine:
+* `./logs`: Application and update logs
+* `./dataprotection-keys`: Encryption keys (DO NOT DELETE)
+* `./wwwroot/images`: System-level images
+* `./wwwroot/uploads`: User-uploaded files
 
-- `./logs`: Application and update logs.
-- `./dataprotection-keys`: Encryption keys for sensitive data (API keys, etc.).
-- `./wwwroot/images`: System-level images.
-- `./wwwroot/uploads`: User-uploaded files (like profile pictures).
+**Important:** `dataprotection-keys` contains keys to decrypt AI API keys.
 
-**Important**: Never delete the `dataprotection-keys` folder, as it contains the keys needed to decrypt your saved AI provider API keys.
+## Local Deployment (Windows / Docker Desktop)
 
----
+1. Install Docker Desktop
+2. Configure `.env` in project root:
 
-## 💻 Local Deployment (Windows / Docker Desktop)
+   * `DB_PROVIDER` = `PostgreSQL` (recommended) or `SqlServer`
+3. Run:
 
-You can easily run AiCV locally on Windows using Docker Desktop.
+```powershell
+docker-compose up -d
+```
 
-1. **Install Docker Desktop**: Ensure it is running.
-2. **Configure Environment**:
-    - Copy `.env.example` to the root directory as `.env`.
-    - Set `DB_PROVIDER` to `PostgreSQL` (easiest) or `SqlServer`.
-3. **Run with Docker Compose**:
-    Open PowerShell in the project root and run:
-
-    ```powershell
-    docker-compose up -d
-    ```
-
-4. **Access App**: Open browser at `http://localhost:8080`.
-
----
+4. Access: `http://localhost:8080`
 
 ## Manual Deployment
 
-If you prefer not to use the automated script, follow these steps:
-
 ### 1. Identify Environment
 
-Decide whether to use **PostgreSQL** or **SQL Server**.
+* PostgreSQL or SQL Server
 
 ### 2. Choose Compose File
 
-- For PostgreSQL: `deploy/docker-compose.postgres.yml`
-- For SQL Server: `deploy/docker-compose.sqlserver.yml`
+* PostgreSQL: `deploy/docker-compose.postgres.yml`
+* SQL Server: `deploy/docker-compose.sqlserver.yml`
 
 ### 3. Start Application
 
