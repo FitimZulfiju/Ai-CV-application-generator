@@ -303,7 +303,7 @@ builder.Services.AddSingleton<IBackupService, BackupService>();
 builder.Services.AddHostedService<BackupBackgroundService>();
 
 // Database Initialization
-builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IDbInitializer, AiCV.Infrastructure.Data.DbInitializer>();
 
 var app = builder.Build();
 
