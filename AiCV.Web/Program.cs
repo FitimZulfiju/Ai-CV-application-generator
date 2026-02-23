@@ -297,6 +297,14 @@ builder.Services.AddSingleton<IUpdateCheckService>(sp =>
 );
 builder.Services.AddHostedService(sp => sp.GetRequiredService<UpdateCheckService>());
 
+// Backup Services
+builder.Services.AddScoped<IDbBackupRestoreService, DbBackupRestoreService>();
+builder.Services.AddSingleton<IBackupService, BackupService>();
+builder.Services.AddHostedService<BackupBackgroundService>();
+
+// Database Initialization
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -677,5 +685,20 @@ app.MapGet(
         return Results.Redirect(redirectUri);
     }
 );
+
+// Initialize database and apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        await dbInitializer.InitializeAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred during database initialization.");
+    }
+}
 
 app.Run();
