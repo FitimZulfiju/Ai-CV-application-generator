@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.2.0] - 2026-02-23
+
+### Added
+- feat: Implement automated database backup service and database initialization on startup
+
+### Fixed
+- fix: Un-ignore and add DbInitializer.cs so CI pipeline can compile it
+- fix: Fully qualify DbInitializer in Program.cs to fix CI/CD build error
+
+
 ## [1.1.6] - 2026-01-30
 
 ### Changed
