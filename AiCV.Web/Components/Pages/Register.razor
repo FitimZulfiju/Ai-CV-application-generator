@@ -9,22 +9,18 @@
             <MudImage Src="/logoSvg.svg" Alt="AiCV Logo" Width="100" />
         </div>
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">@Localizer["CreateAccount"]</MudText>
-
-        <form method="post" action="/perform-register">
-
-            <MudTextField T="string" @bind-Value="_email"
-                UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="@Localizer["Email"]"
+        
+        <EditForm Model="this" OnValidSubmit="HandleRegister">
+            <MudTextField @bind-Value="_email" Label="@Localizer["Email"]"
                 Variant="Variant.Outlined" InputType="MudBlazor.InputType.Email" Adornment="Adornment.Start"
                 AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
 
-            <MudTextField T="string" @bind-Value="_password"
-                UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })"
+            <MudTextField @bind-Value="_password"
                 Label="@Localizer["Password"]" Variant="Variant.Outlined" InputType="MudBlazor.InputType.Password"
                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="mb-3" Required="true"
                 HelperText="@Localizer["PasswordRequirementHelper"]" />
 
-            <MudTextField T="string" @bind-Value="_confirmPassword"
-                UserAttributes="@(new Dictionary<string, object> { { "name", "confirmPassword" } })"
+            <MudTextField @bind-Value="_confirmPassword"
                 Label="@Localizer["ConfirmPassword"]" Variant="Variant.Outlined"
                 InputType="MudBlazor.InputType.Password" Adornment="Adornment.Start"
                 AdornmentIcon="@Icons.Material.Filled.Lock" Class="mb-3" Required="true" />
@@ -35,8 +31,18 @@
             }
 
             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                FullWidth="true" StartIcon="@Icons.Material.Filled.PersonAdd">@Localizer["Register"]</MudButton>
-        </form>
+                FullWidth="true" StartIcon="@Icons.Material.Filled.PersonAdd" Disabled="_isProcessing">
+                @if (_isProcessing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">@Localizer["Processing"]</MudText>
+                }
+                else
+                {
+                    @Localizer["Register"]
+                }
+            </MudButton>
+        </EditForm>
 
         <MudDivider Class="my-4" />
 

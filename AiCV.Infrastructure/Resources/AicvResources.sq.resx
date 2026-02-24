@@ -1083,5 +1083,59 @@
   <data name="NoteColor" xml:space="preserve">
     <value>Ngjyra</value>
   </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Fshij llogarinë</value>
+  </data>
+  <data name="DeleteAccountWarning" xml:space="preserve">
+    <value>A jeni plotësisht i sigurt që dëshironi të fshini llogarinë tuaj? Ky veprim është i përhershëm dhe do të fshijë të gjitha të dhënat tuaja duke përfshirë profilin, biografitë, aplikimet, shënimet dhe çelësat API. Kjo nuk mund të zhbëhet.</value>
+  </data>
+  <data name="DeleteMyAccountPermanently" xml:space="preserve">
+    <value>Po, fshij llogarinë timë përgjithmonë</value>
+  </data>
+  <data name="AccountDeletedSuccess" xml:space="preserve">
+    <value>Llogaria juaj është fshirë me sukses.</value>
+  </data>
+  <data name="AccountDeleteFailed" xml:space="preserve">
+    <value>Dështoi fshirja e llogarisë. Ju lutem kontaktoni mbështetjen.</value>
+  </data>
+  <data name="DangerZone" xml:space="preserve">
+    <value>Zona e Rrezikut</value>
+  </data>
+  <data name="DeleteAccountExplainer" xml:space="preserve">
+    <value>Pasi të fshini llogarinë tuaj, nuk ka kthim mbrapa. Ju lutem jini të sigurt.</value>
+  </data>
+  <data name="DeleteMyAccount" xml:space="preserve">
+    <value>Fshij llogarinë time</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Llogaria u fshi me sukses</value>
+  </data>
+  <data name="AccountDeletedExplainer" xml:space="preserve">
+    <value>Llogaria juaj dhe të gjitha të dhënat e lidhura janë hequr përgjithmonë nga sistemi ynë.</value>
+  </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>Llogaria është bllokuar. Ju lutem provoni përsëri më vonë.</value>
+  </data>
+  <data name="DeletionWipeConfirm" xml:space="preserve">
+    <value>Konfirmim: Profili juaj, aplikimet e gjeneruara dhe konfigurimet e AI (përfshirë çelësat API) janë fshirë. Asnjë regjistrim i llogarisë suaj nuk mbetet në bazat tona kryesore të të dhënave.</value>
+  </data>
+  <data name="ExternalEmailNotProvided" xml:space="preserve">
+    <value>Ofruesi i jashtëm nuk dha një adresë email.</value>
+  </data>
+  <data name="ExternalLoginFailed" xml:space="preserve">
+    <value>Hyrja e jashtme dështoi.</value>
+  </data>
+  <data name="FinalizeLogout" xml:space="preserve">
+    <value>Përfundo &amp; Dil</value>
+  </data>
+  <data name="InvalidLoginAttempt" xml:space="preserve">
+    <value>Përpjekje e pavlefshme për hyrje.</value>
+  </data>
+  <data name="DemoAccountProtected" xml:space="preserve">
+    <value>Kjo është një llogari demo e parazgjedhur dhe nuk mund të fshihet. Ajo shërben si një shembull për të gjithë përdoruesit.</value>
+  </data>
+  <data name="ProtectedAccount" xml:space="preserve">
+    <value>Llogari e mbrojtur</value>
+  </data>
 </root>
 

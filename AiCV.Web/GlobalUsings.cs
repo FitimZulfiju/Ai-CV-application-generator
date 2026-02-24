@@ -27,6 +27,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Diagnostics;
 global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Localization;
 global using Microsoft.JSInterop;
 global using MudBlazor;
 global using MudBlazor.Services;

@@ -43,7 +43,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasMany(u => u.GeneratedApplications)
             .WithOne(a => a.User)
             .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // User -> UserAIConfigurations (One-to-Many)
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.UserAIConfigurations)
+            .WithOne()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // User -> Notes (One-to-Many)
         modelBuilder

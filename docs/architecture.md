@@ -18,11 +18,13 @@
 * Settings for API keys and model selection
 * Job ingestion and generation interface
 * Output preview and export (HTML, PDF, Markdown, JSON)
+* Account self-service (permanent deletion and OAuth account merging)
 * Session management and notifications
 
 ### SQL Database
 
 * Stores users, encrypted API keys, profiles, generated documents
+* Implements **Cascading Deletes** for automatic cleanup of all user-associated data (profiles, applications, configurations)
 * Persists active sessions
 * Multi-provider support (PostgreSQL/SQL Server)
 

@@ -53,7 +53,7 @@ public class DbBackupRestoreService(
 
             // Create zip file containing the .bak file and assets
             await using (var zipStream = new FileStream(backupFilePath, FileMode.Create))
-            using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create))
+            await using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create))
             {
                 // Add the database backup file
                 string entryName = $"database_backup_{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.bak";
@@ -77,7 +77,6 @@ public class DbBackupRestoreService(
                 File.Delete(tempBakFile);
             }
 
-            _logger.LogInformation("Backup created successfully: {Path}", backupFilePath);
             return true;
         }
         catch (Exception ex)
@@ -89,13 +88,15 @@ public class DbBackupRestoreService(
 
     private async Task AddDirectoryToArchiveAsync(ZipArchive archive, string subDir)
     {
-        string dirPath = Path.Combine(_environment.WebRootPath, subDir);
+        var webRootPath =
+            _environment.WebRootPath ?? Path.Combine(_environment.ContentRootPath, "wwwroot");
+        string dirPath = Path.Combine(webRootPath, subDir);
         if (!Directory.Exists(dirPath))
             return;
 
         foreach (var file in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
         {
-            string relativePath = Path.GetRelativePath(_environment.WebRootPath, file);
+            string relativePath = Path.GetRelativePath(webRootPath, file);
             var entry = archive.CreateEntry(relativePath.Replace("\\", "/"));
             await using var entryStream = entry.Open();
             await using var fileStream = new FileStream(

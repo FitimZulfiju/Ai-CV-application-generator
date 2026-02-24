@@ -1095,5 +1095,47 @@
   <data name="NoteColor" xml:space="preserve">
     <value>Color</value>
   </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Delete Account</value>
+  </data>
+  <data name="DeleteAccountWarning" xml:space="preserve">
+    <value>Are you absolutely sure you want to delete your account? This action is permanent and will wipe all your data including profile, resumes, applications, notes, and API keys. This cannot be undone.</value>
+  </data>
+  <data name="DeleteMyAccountPermanently" xml:space="preserve">
+    <value>Yes, Delete My Account</value>
+  </data>
+  <data name="AccountDeletedSuccess" xml:space="preserve">
+    <value>Your account has been successfully deleted.</value>
+  </data>
+  <data name="AccountDeleteFailed" xml:space="preserve">
+    <value>Failed to delete account. Please contact support.</value>
+  </data>
+  <data name="DangerZone" xml:space="preserve">
+    <value>Danger Zone</value>
+  </data>
+  <data name="DeleteAccountExplainer" xml:space="preserve">
+    <value>Once you delete your account, there is no going back. Please be certain.</value>
+  </data>
+  <data name="DeleteMyAccount" xml:space="preserve">
+    <value>Delete My Account</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Account Deleted Successfully</value>
+  </data>
+  <data name="AccountDeletedExplainer" xml:space="preserve">
+    <value>Your account and all associated data have been permanently removed from our system.</value>
+  </data>
+  <data name="DeletionWipeConfirm" xml:space="preserve">
+    <value>Confirmation: Your profile, generated applications, and AI configurations (including API keys) have been wiped. No record of your account remains in our primary databases.</value>
+  </data>
+  <data name="FinalizeLogout" xml:space="preserve">
+    <value>Finalize &amp; Sign Out</value>
+  </data>
+  <data name="DemoAccountProtected" xml:space="preserve">
+    <value>This is a default demo account and cannot be deleted. It serves as an example for all users.</value>
+  </data>
+  <data name="ProtectedAccount" xml:space="preserve">
+    <value>Protected Account</value>
+  </data>
 </root>
 

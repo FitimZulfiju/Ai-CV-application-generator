@@ -289,7 +289,9 @@ public partial class Profile : IDisposable
             var resizedFile = await file.RequestImageFileAsync(file.ContentType, 400, 400);
 
             // Ensure uploads directory exists for the specific user
-            var uploadPath = Path.Combine(Environment.WebRootPath, "uploads", _profile.UserId);
+            var webRootPath =
+                Environment.WebRootPath ?? Path.Combine(Environment.ContentRootPath, "wwwroot");
+            var uploadPath = Path.Combine(webRootPath, "uploads", _profile.UserId);
             if (!Directory.Exists(uploadPath))
             {
                 Directory.CreateDirectory(uploadPath);
@@ -330,8 +332,10 @@ public partial class Profile : IDisposable
         {
             if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
             {
+                var webRootPath =
+                    Environment.WebRootPath ?? Path.Combine(Environment.ContentRootPath, "wwwroot");
                 var filePath = Path.Combine(
-                    Environment.WebRootPath,
+                    webRootPath,
                     _profile
                         .ProfilePictureUrl.TrimStart('/')
                         .Replace('/', Path.DirectorySeparatorChar)

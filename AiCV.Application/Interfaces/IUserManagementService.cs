@@ -14,4 +14,9 @@ public interface IUserManagementService
     /// Get user details by ID
     /// </summary>
     Task<UserDetailDto?> GetUserDetailsAsync(string userId);
+
+    /// <summary>
+    /// Permanently delete user account and all associated data
+    /// </summary>
+    Task<bool> DeleteUserAccountAsync(string userId);
 }

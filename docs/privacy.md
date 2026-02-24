@@ -4,7 +4,7 @@
 
 * Stored locally in SQL database
 * Includes profiles: personal details, experience, skills
-* Editable and deletable at any time by the user
+* Account and data can be deleted at any time; deletion performs a complete wipe of the user profile, generated applications, and AI configurations (cascading delete).
 
 ## 2. AI API Keys
 

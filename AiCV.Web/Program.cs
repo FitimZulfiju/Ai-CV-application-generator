@@ -165,6 +165,8 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
     {
         options.ClientId = googleClientId;
         options.ClientSecret = googleClientSecret;
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
     });
 }
 
@@ -181,6 +183,8 @@ if (!string.IsNullOrEmpty(microsoftClientId) && !string.IsNullOrEmpty(microsoftC
         options.AuthorizationEndpoint =
             "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize";
         options.TokenEndpoint = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
     });
 }
 
@@ -194,6 +198,8 @@ if (!string.IsNullOrEmpty(githubClientId) && !string.IsNullOrEmpty(githubClientS
         options.ClientId = githubClientId;
         options.ClientSecret = githubClientSecret;
         options.Scope.Add("user:email");
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
     });
 }
 
@@ -206,7 +212,19 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    // Use SameAsRequest to allow flexibility for proxies and local testing.
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.Name = ".AiCV.Application";
+});
+
+// Explicitly configure external cookie to prevent "Session Expired" errors
+builder.Services.ConfigureExternalCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.Name = ".AiCV.External";
 });
 
 // Register Application Services
@@ -261,13 +279,19 @@ if (!Directory.Exists(keysPath))
 }
 
 // Ensure Uploads and Images directories exist for user data persistence
-var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads");
+var webRootPath = builder.Environment.WebRootPath;
+if (string.IsNullOrEmpty(webRootPath))
+{
+    webRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+}
+
+var uploadsPath = Path.Combine(webRootPath, "uploads");
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);
 }
 
-var imagesPath = Path.Combine(builder.Environment.WebRootPath, "images");
+var imagesPath = Path.Combine(webRootPath, "images");
 if (!Directory.Exists(imagesPath))
 {
     Directory.CreateDirectory(imagesPath);
@@ -330,42 +354,8 @@ app.UseAntiforgery();
 
 app.UseRequestLocalization();
 
-// Seed Database (Development only, safe for open source)
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    try
-    {
-        // Use reflection to find and call DbInitializer to avoid build errors if the file is missing/ignored
-        var initializerType = Type.GetType(
-            "AiCV.Infrastructure.Data.DbInitializer, AiCV.Infrastructure"
-        );
-        if (initializerType != null)
-        {
-            var initializeMethod = initializerType.GetMethod("InitializeAsync");
-            if (initializeMethod != null)
-            {
-                var context = services.GetRequiredService<ApplicationDbContext>();
-                var userManager = services.GetRequiredService<UserManager<User>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                var modelDiscoveryService = services.GetRequiredService<IModelDiscoveryService>();
-
-                var task = (Task)
-                    initializeMethod.Invoke(
-                        null,
-                        new object[] { context, userManager, roleManager, modelDiscoveryService }
-                    )!;
-                await task;
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
-}
+// Note: Database initialization and seeding is now handled consistently at the end of the file
+// using the DI-registered IDbInitializer service.
 
 app.UseStaticFiles();
 app.MapStaticAssets();
@@ -377,6 +367,17 @@ app.MapPost(
     {
         await signInManager.SignOutAsync();
         return Results.Redirect($"/{NavUri.LoginPage}");
+    }
+);
+
+// Direct GET logout endpoint for Blazor components (avoids "Headers are read-only" error)
+app.MapGet(
+    "/logout-direct",
+    async (SignInManager<User> signInManager, ILogger<Program> logger) =>
+    {
+        logger.LogInformation("Direct logout requested.");
+        await signInManager.SignOutAsync();
+        return Results.Redirect("/");
     }
 );
 
@@ -409,55 +410,28 @@ app.MapPost(
     )
     .DisableAntiforgery(); // Disable antiforgery for simplicity in this demo, but recommended for production
 
-// Add register endpoint
-app.MapPost(
-        "/perform-register",
-        async (
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            [FromForm] string email,
-            [FromForm] string password,
-            [FromForm] string confirmPassword
-        ) =>
+// Support GET login for auto-login after registration
+app.MapGet(
+    "/perform-login",
+    async (
+        SignInManager<User> signInManager,
+        [FromQuery] string email,
+        [FromQuery] string password
+    ) =>
+    {
+        var result = await signInManager.PasswordSignInAsync(
+            email,
+            password,
+            isPersistent: false,
+            lockoutOnFailure: false
+        );
+        if (result.Succeeded)
         {
-            if (password != confirmPassword)
-            {
-                return Results.Redirect($"/{NavUri.RegisterPage}?error=Passwords do not match");
-            }
-
-            var user = new User { UserName = email, Email = email };
-            var result = await userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                // Assign User role to new registrations
-                await userManager.AddToRoleAsync(user, Roles.User);
-
-                // Create empty profile for new user
-                var profile = new CandidateProfile
-                {
-                    UserId = user.Id,
-                    FullName = email.Split('@')[0], // Default name from email
-                    Email = email,
-                    Skills = [],
-                    WorkExperience = [],
-                    Educations = [],
-                };
-
-                using var scope = app.Services.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.CandidateProfiles.Add(profile);
-                await dbContext.SaveChangesAsync();
-
-                await signInManager.SignInAsync(user, isPersistent: false);
-                return Results.Redirect("/");
-            }
-
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return Results.Redirect($"/{NavUri.RegisterPage}?error={Uri.EscapeDataString(errors)}");
+            return Results.Redirect("/");
         }
-    )
-    .DisableAntiforgery();
+        return Results.Redirect($"/{NavUri.LoginPage}?error=InvalidLoginAttempt");
+    }
+);
 
 // External login challenge endpoint
 app.MapGet(
@@ -489,13 +463,22 @@ app.MapGet(
     async (
         SignInManager<User> signInManager,
         UserManager<User> userManager,
+        ILogger<Program> logger,
+        HttpContext httpContext,
         IServiceProvider serviceProvider
     ) =>
     {
+        // Debug logging to find out why info is null
+        var cookies = httpContext.Request.Headers.Cookie.ToString();
+        logger.LogWarning("External Login Callback. Cookies: {Cookies}", cookies);
+
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
-            return Results.Redirect($"/{NavUri.LoginPage}?error=External login failed");
+            logger.LogWarning(
+                "External login info is null. This usually means the correlation cookie was lost or expired."
+            );
+            return Results.Redirect($"/{NavUri.LoginPage}?error=ExternalLoginFailed");
         }
 
         // Try to sign in with existing external login
@@ -510,18 +493,12 @@ app.MapGet(
         {
             return Results.Redirect("/");
         }
-        if (signInResult.IsLockedOut)
-        {
-            return Results.Redirect($"/{NavUri.LoginPage}?error=AccountLocked");
-        }
 
-        // Create new user if not exists
+        // Create new user or merge with existing one by email
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrEmpty(email))
         {
-            return Results.Redirect(
-                $"/{NavUri.LoginPage}?error=Email not provided by external provider"
-            );
+            return Results.Redirect($"/{NavUri.LoginPage}?error=ExternalEmailNotProvided");
         }
 
         var user = await userManager.FindByEmailAsync(email);
@@ -562,8 +539,20 @@ app.MapGet(
             await dbContext.SaveChangesAsync();
         }
 
-        // Add external login to user
-        await userManager.AddLoginAsync(user, info);
+        // Merge account: Add the external login if it doesn't exist
+        var logins = await userManager.GetLoginsAsync(user);
+        if (
+            !logins.Any(l =>
+                l.LoginProvider == info.LoginProvider && l.ProviderKey == info.ProviderKey
+            )
+        )
+        {
+            var addLoginResult = await userManager.AddLoginAsync(user, info);
+            if (!addLoginResult.Succeeded)
+            {
+                logger.LogError("Failed to add external login for user {Email}", email);
+            }
+        }
 
         // Sign in the user
         await signInManager.SignInAsync(user, isPersistent: false);

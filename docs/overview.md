@@ -6,16 +6,19 @@ Generate tailored CVs and cover letters using a **self-hosted, privacy-first AI 
 
 ## Table of Contents
 
-1. [Purpose](#purpose)
-2. [Features](#features)
-3. [Supported AI Providers](#supported-ai-providers)
-4. [Inputs](#inputs)
-5. [Outputs](#outputs)
-6. [Execution Model](#execution-model)
-7. [Limitations](#limitations)
-8. [Deployment](#deployment)
-9. [Privacy & Data Handling](#privacy--data-handling)
-10. [Roadmap](#roadmap)
+- [AiCV — Self-Hosted AI Job Application Generator](#aicv--self-hosted-ai-job-application-generator)
+  - [Table of Contents](#table-of-contents)
+  - [Purpose](#purpose)
+  - [Features](#features)
+  - [Supported AI Providers](#supported-ai-providers)
+  - [Inputs](#inputs)
+  - [Outputs](#outputs)
+  - [Execution Model](#execution-model)
+  - [Limitations](#limitations)
+  - [Deployment](#deployment)
+  - [Privacy \& Data Handling](#privacy--data-handling)
+  - [Roadmap](#roadmap)
+  - [License](#license)
 
 ---
 
@@ -59,6 +62,10 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
 
   * Prevents data loss during updates
   * Update warning banner (3 minutes)
+* Account self-service:
+
+  * Permanent account deletion with complete data wiping
+  * Automatic OAuth account merging for Google, Microsoft, and GitHub
 
 ---
 

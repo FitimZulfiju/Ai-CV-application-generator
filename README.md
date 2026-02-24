@@ -34,7 +34,7 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
 
 ## 🌐 Live Demo
 
-[https://aicv.fitim.it.com](https://aicv.fitim.it.com)
+[Live Demo](https://aicv.fitim.it.com)
 
 > **Important**
 > To use generation features, you must provide your own LLM API key (OpenAI, Gemini, etc.).
@@ -53,10 +53,16 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
 * **Privacy‑First by Design**
   All data is stored in your own database. No external tracking or third‑party storage.
 
-* **Authentication & Multi‑User Support**
-  Local accounts plus OAuth (Google, Microsoft, GitHub).
+* **Authentication & Account Merging**
+  Local accounts plus OAuth (Google, Microsoft, GitHub). Automatically merges accounts with matching email addresses.
 
-* **Multi‑Language UI**
+* **User Account Self-Service**
+  Full control over your data. Delete your entire account and all associated AI configurations directly from settings.
+
+* **System Protection**
+  Built-in safeguards for default demo accounts and critical system configurations to prevent accidental deletion.
+
+* **Multi-Language UI**
   English, Albanian (Shqip), Danish (Dansk).
 
 * **Export Options**
@@ -139,7 +145,7 @@ Visit: [https://localhost:7153](https://localhost:7153)
 
 This project welcomes constructive feedback and incremental improvements.
 
-If you’re interested in:
+If you're interested in:
 
 * Refactoring structure
 * Improving boundaries
@@ -157,6 +163,6 @@ MIT License
 
 ## 🔗 Links
 
-* Live Demo: [https://aicv.fitim.it.com](https://aicv.fitim.it.com)
-* Docker Hub: [https://hub.docker.com/r/timi74/aicv](https://hub.docker.com/r/timi74/aicv)
-* GitHub: [https://github.com/FitimZulfiju/Web-CV-application-generator](https://github.com/FitimZulfiju/Web-CV-application-generator)
+* [Live Demo](https://aicv.fitim.it.com)
+* [Docker Hub](https://hub.docker.com/r/timi74/aicv)
+* [GitHub](https://github.com/FitimZulfiju/Web-CV-application-generator)

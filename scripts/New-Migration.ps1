@@ -10,3 +10,7 @@ $MigrationName = "Initial"  # <-- CHANGE THIS NAME
 # ============================================
 Set-Location $PSScriptRoot
 .\Add-Migration.ps1 -Name $MigrationName -Provider Both
+
+# Full path to the migration file ============
+& "c:\Ai-CV-application-generator\scripts\Add-Migration.ps1" -Name "InitialCreate" -Provider Both
+# ============================================

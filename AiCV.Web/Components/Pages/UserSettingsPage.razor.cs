@@ -3,7 +3,9 @@ namespace AiCV.Web.Components.Pages;
 public partial class UserSettingsPage
 {
     private string _userId = string.Empty;
+    private string _userEmail = string.Empty;
     private bool _isLoading = true;
+    private bool _isProtected = false;
 
     // List of saved configurations
     private List<UserAIConfiguration> _configurations = [];
@@ -18,6 +20,7 @@ public partial class UserSettingsPage
     private bool _isTestingConnection;
     private bool _showNewApiKey;
     private bool _showCostAlert = true;
+    private bool _isDeleted = false;
 
     // Available providers for dropdown
     private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
@@ -35,6 +38,18 @@ public partial class UserSettingsPage
         if (user.Identity?.IsAuthenticated == true)
         {
             _userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            // Try to get email from claims first, then fallback to Identity.Name
+            _userEmail =
+                user.FindFirst(ClaimTypes.Email)?.Value ?? user.Identity?.Name ?? string.Empty;
+
+            // Mark as protected if it's the default demo account
+            _isProtected = string.Equals(
+                _userEmail,
+                "demouser@aicv.com",
+                StringComparison.OrdinalIgnoreCase
+            );
+
             if (!string.IsNullOrEmpty(_userId))
             {
                 await LoadConfigurations();
@@ -410,6 +425,54 @@ public partial class UserSettingsPage
             AIProvider.DeepSeek => Color.Secondary,
             _ => Color.Default,
         };
+
+    private async Task HandleDeleteAccount()
+    {
+        if (_isProtected)
+            return;
+
+        var confirmed = await DialogService.ShowMessageBox(
+            Localizer["DeleteAccount"],
+            Localizer["DeleteAccountWarning"],
+            yesText: Localizer["DeleteMyAccountPermanently"],
+            cancelText: Localizer["Cancel"]
+        );
+
+        if (confirmed == true)
+        {
+            _isLoading = true;
+            StateHasChanged();
+
+            try
+            {
+                var success = await UserManagementService.DeleteUserAccountAsync(_userId);
+                if (success)
+                {
+                    _isDeleted = true;
+                    Snackbar.Add(Localizer["AccountDeletedSuccess"], Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add(Localizer["AccountDeleteFailed"], Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"{Localizer["Error"]}: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                _isLoading = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void HandleFinalLogout()
+    {
+        // Use the direct GET logout endpoint to avoid "Headers are read-only" error in Blazor Server
+        Navigation.NavigateTo("/logout-direct", forceLoad: true);
+    }
 
     private static string GetProviderIcon(AIProvider provider) =>
         provider switch

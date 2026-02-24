@@ -80,4 +80,24 @@ public class UserManagementService(ApplicationDbContext context, UserManager<Use
             LockoutEnd = user.LockoutEnd,
         };
     }
+
+    public async Task<bool> DeleteUserAccountAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+
+        // Protect the default demo account from deletion
+        if (string.Equals(user.Email, "demouser@aicv.com", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        // Deleting the user will trigger cascade deletes for all related data
+        // (CandidateProfile, UserSettings, GeneratedApplications, Notes, UserAIConfigurations)
+        var result = await _userManager.DeleteAsync(user);
+        return result.Succeeded;
+    }
 }

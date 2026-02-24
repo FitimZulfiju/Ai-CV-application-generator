@@ -417,8 +417,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     // 2. Image Layer (Overlay - Left Aligned)
                     if (showPhoto)
                     {
+                        var webRootPath =
+                            _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
                         var path = Path.Combine(
-                            _env.WebRootPath,
+                            webRootPath,
                             profile.ProfilePictureUrl!.TrimStart('/', '\\')
                         );
                         if (File.Exists(path))

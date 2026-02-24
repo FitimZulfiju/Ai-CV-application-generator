@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AiCV.Migrations.SqlServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260118045116_Initial")]
-    partial class Initial
+    [Migration("20260224140830_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,6 +122,52 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.HasIndex("CandidateProfileId");
 
                     b.ToTable("Educations");
+                });
+
+            modelBuilder.Entity("AiCV.Domain.Entities.Note", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("AiCV.Domain.Entities.SystemLog", b =>
@@ -717,6 +763,17 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.Navigation("CandidateProfile");
                 });
 
+            modelBuilder.Entity("AiCV.Domain.Entities.Note", b =>
+                {
+                    b.HasOne("AiCV.Domain.User", "User")
+                        .WithMany("Notes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("AiCV.Domain.Experience", b =>
                 {
                     b.HasOne("AiCV.Domain.CandidateProfile", "CandidateProfile")
@@ -881,6 +938,8 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.Navigation("CandidateProfile");
 
                     b.Navigation("GeneratedApplications");
+
+                    b.Navigation("Notes");
 
                     b.Navigation("UserSettings");
                 });

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.6] - 2026-01-30
 
 ### Changed
+
 - test: verify docker build runs
 - Merge pull request #18 from FitimZulfiju/automated-changelog-update
 - docs: update changelog for v1.1.5
@@ -19,31 +20,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.5] - 2026-01-30
 
 ### Fixed
+
 - fix: skip Docker build for changelog commits [skip changelog]
 - fix: detect changelog merge commits by branch name [skip changelog]
-
 
 ## [1.1.4] - 2026-01-30
 
 ### Changed
+
 - Merge pull request #16 from FitimZulfiju/automated-changelog-update
 - docs: update changelog for v1.1.3
 
 ## [1.1.3] - 2026-01-30
 
 ### Fixed
-- fix: prevent infinite loop when changelog PRs are merged
 
+- fix: prevent infinite loop when changelog PRs are merged
 
 ## [1.1.1] - 2026-01-30
 
 ### Changed
+
 - Merge pull request #14 from FitimZulfiju/automated-changelog-update
 - docs: update changelog for v1.1.0
 
 ## [1.1.0] - 2026-01-30
 
 ### Added
+
 - Merge pull request #13 from FitimZulfiju/trigger/test-v3
 - feat: test workflow trigger v3
 

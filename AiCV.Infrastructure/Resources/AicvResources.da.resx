@@ -1076,4 +1076,58 @@
   <data name="NoteColor" xml:space="preserve">
     <value>Farve</value>
   </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Slet konto</value>
+  </data>
+  <data name="DeleteAccountWarning" xml:space="preserve">
+    <value>Er du helt sikker på, at du vil slette din konto? Denne handling er permanent og vil slette alle dine data, herunder profil, biografier, ansøgninger, noter og API-nøgler. Dette kan ikke fortrydes.</value>
+  </data>
+  <data name="DeleteMyAccountPermanently" xml:space="preserve">
+    <value>Ja, slet min konto permanent</value>
+  </data>
+  <data name="AccountDeletedSuccess" xml:space="preserve">
+    <value>Din konto er blevet slettet med succes.</value>
+  </data>
+  <data name="AccountDeleteFailed" xml:space="preserve">
+    <value>Kunne ikke slette kontoen. Kontakt venligst support.</value>
+  </data>
+  <data name="DangerZone" xml:space="preserve">
+    <value>Farezone</value>
+  </data>
+  <data name="DeleteAccountExplainer" xml:space="preserve">
+    <value>Når du sletter din konto, er der ingen vej tilbage. Vær venligst sikker.</value>
+  </data>
+  <data name="DeleteMyAccount" xml:space="preserve">
+    <value>Slet min konto</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Konto slettet med succes</value>
+  </data>
+  <data name="AccountDeletedExplainer" xml:space="preserve">
+    <value>Din konto og alle tilknyttede data er blevet fjernet permanent fra vores system.</value>
+  </data>
+  <data name="DeletionWipeConfirm" xml:space="preserve">
+    <value>Bekræftelse: Din profil, genererede ansøgninger og AI-konfigurationer (inklusive API-nøgler) er blevet slettet. Der findes ingen registrering af din konto i vores primære databaser.</value>
+  </data>
+  <data name="FinalizeLogout" xml:space="preserve">
+    <value>Afslut og log ud</value>
+  </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>Kontoen er låst. Prøv venligst igen senere.</value>
+  </data>
+  <data name="ExternalEmailNotProvided" xml:space="preserve">
+    <value>Ekstern udbyder leverede ikke en e-mailadresse.</value>
+  </data>
+  <data name="ExternalLoginFailed" xml:space="preserve">
+    <value>Ekstern login mislykkedes.</value>
+  </data>
+  <data name="InvalidLoginAttempt" xml:space="preserve">
+    <value>Ugyldigt loginforsøg.</value>
+  </data>
+  <data name="DemoAccountProtected" xml:space="preserve">
+    <value>Dette er en standard demokonto og kan ikke slettes. Den fungerer som et eksempel for alle brugere.</value>
+  </data>
+  <data name="ProtectedAccount" xml:space="preserve">
+    <value>Beskyttet konto</value>
+  </data>
 </root>
