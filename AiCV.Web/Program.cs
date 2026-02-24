@@ -539,6 +539,34 @@ app.MapGet(
             await dbContext.SaveChangesAsync();
         }
 
+        // Helper to avoid logging full email addresses (PII) to external logs
+        static string? RedactEmail(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return email;
+            }
+
+            var atIndex = email.IndexOf('@');
+            if (atIndex <= 0)
+            {
+                // Not a standard email format; return a partially masked version
+                return email.Length <= 2
+                    ? new string('*', email.Length)
+                    : email[0] + new string('*', email.Length - 1);
+            }
+
+            var local = email.Substring(0, atIndex);
+            var domain = email.Substring(atIndex);
+
+            if (local.Length <= 1)
+            {
+                return "*" + domain;
+            }
+
+            return local[0] + new string('*', local.Length - 1) + domain;
+        }
+
         // Merge account: Add the external login if it doesn't exist
         var logins = await userManager.GetLoginsAsync(user);
         if (
@@ -550,7 +578,10 @@ app.MapGet(
             var addLoginResult = await userManager.AddLoginAsync(user, info);
             if (!addLoginResult.Succeeded)
             {
-                logger.LogError("Failed to add external login for user {Email}", email);
+                logger.LogError(
+                    "Failed to add external login for user {Email}",
+                    RedactEmail(email)
+                );
             }
         }
 
