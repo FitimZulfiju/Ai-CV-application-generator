@@ -2,6 +2,7 @@
 global using System.Diagnostics;
 global using System.Globalization;
 global using System.Security.Claims;
+global using System.Security.Cryptography;
 global using System.Threading.Tasks;
 global using AiCV.Application.Common;
 global using AiCV.Application.DTOs;

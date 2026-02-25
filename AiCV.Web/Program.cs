@@ -464,14 +464,11 @@ app.MapGet(
         SignInManager<User> signInManager,
         UserManager<User> userManager,
         ILogger<Program> logger,
-        HttpContext httpContext,
+        HttpContext _,
         IServiceProvider serviceProvider
     ) =>
     {
-        // Debug logging to find out why info is null
-        var cookies = httpContext.Request.Headers.Cookie.ToString();
-        logger.LogWarning("External Login Callback. Cookies: {Cookies}", cookies);
-
+        // Check for external login info
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
@@ -514,10 +511,26 @@ app.MapGet(
             var createResult = await userManager.CreateAsync(user);
             if (!createResult.Succeeded)
             {
-                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                return Results.Redirect(
-                    $"/{NavUri.LoginPage}?error={Uri.EscapeDataString(errors)}"
-                );
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError(
+                        "Failed to create user during external login for email hash {EmailHash}. Errors: {Errors}",
+                        HashEmailForLogging(email),
+                        string.Join(", ", createResult.Errors.Select(e => e.Description))
+                    );
+                }
+
+                // Check for specific error like DuplicateEmail to give a better message without exposing the email
+                if (
+                    createResult.Errors.Any(e =>
+                        e.Code == "DuplicateEmail" || e.Code == "DuplicateUserName"
+                    )
+                )
+                {
+                    return Results.Redirect($"/{NavUri.LoginPage}?error=AccountAlreadyExists");
+                }
+
+                return Results.Redirect($"/{NavUri.LoginPage}?error=RegistrationFailed");
             }
 
             // Assign User role to new external registrations
@@ -539,34 +552,6 @@ app.MapGet(
             await dbContext.SaveChangesAsync();
         }
 
-        // Helper to avoid logging full email addresses (PII) to external logs
-        static string? RedactEmail(string? email)
-        {
-            if (string.IsNullOrEmpty(email))
-            {
-                return email;
-            }
-
-            var atIndex = email.IndexOf('@');
-            if (atIndex <= 0)
-            {
-                // Not a standard email format; return a partially masked version
-                return email.Length <= 2
-                    ? new string('*', email.Length)
-                    : email[0] + new string('*', email.Length - 1);
-            }
-
-            var local = email.Substring(0, atIndex);
-            var domain = email.Substring(atIndex);
-
-            if (local.Length <= 1)
-            {
-                return "*" + domain;
-            }
-
-            return local[0] + new string('*', local.Length - 1) + domain;
-        }
-
         // Helper to log a non-reversible representation of the email (no raw PII in logs)
         static string? HashEmailForLogging(string? email)
         {
@@ -574,11 +559,9 @@ app.MapGet(
             {
                 return email;
             }
-
-            using var sha256 = SHA256.Create();
             var bytes = System.Text.Encoding.UTF8.GetBytes(email);
-            var hashBytes = sha256.ComputeHash(bytes);
-            var hashString = BitConverter.ToString(hashBytes).Replace("-", "", StringComparison.Ordinal);
+            var hashBytes = SHA256.HashData(bytes);
+            var hashString = Convert.ToHexString(hashBytes);
 
             return $"sha256:{hashString}";
         }
@@ -594,10 +577,13 @@ app.MapGet(
             var addLoginResult = await userManager.AddLoginAsync(user, info);
             if (!addLoginResult.Succeeded)
             {
-                logger.LogError(
-                    "Failed to add external login for user with email hash {EmailHash}",
-                    HashEmailForLogging(email)
-                );
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError(
+                        "Failed to add external login for user with email hash {EmailHash}",
+                        HashEmailForLogging(email)
+                    );
+                }
             }
         }
 
