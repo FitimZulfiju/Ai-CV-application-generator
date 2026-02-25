@@ -567,6 +567,22 @@ app.MapGet(
             return local[0] + new string('*', local.Length - 1) + domain;
         }
 
+        // Helper to log a non-reversible representation of the email (no raw PII in logs)
+        static string? HashEmailForLogging(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return email;
+            }
+
+            using var sha256 = SHA256.Create();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(email);
+            var hashBytes = sha256.ComputeHash(bytes);
+            var hashString = BitConverter.ToString(hashBytes).Replace("-", "", StringComparison.Ordinal);
+
+            return $"sha256:{hashString}";
+        }
+
         // Merge account: Add the external login if it doesn't exist
         var logins = await userManager.GetLoginsAsync(user);
         if (
@@ -579,8 +595,8 @@ app.MapGet(
             if (!addLoginResult.Succeeded)
             {
                 logger.LogError(
-                    "Failed to add external login for user {Email}",
-                    RedactEmail(email)
+                    "Failed to add external login for user with email hash {EmailHash}",
+                    HashEmailForLogging(email)
                 );
             }
         }
