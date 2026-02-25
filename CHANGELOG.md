@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.3.2] - 2026-02-25
+
+### Fixed
+- fix: resolve build errors and remediate PII exposure in Program.cs
+
+
 ## [1.2.0] - 2026-02-23
 
 ### Added
