@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.3.1] - 2026-02-25
+
+### Changed
+- Merge pull request #31 from FitimZulfiju/alert-autofix-2
+- Potential fix for code scanning alert no. 2: Exposure of private information
+- Merge pull request #30 from FitimZulfiju/automated-changelog-update
+- Merge branch 'master' into automated-changelog-update
+- docs: update changelog for v1.3.0
+
 ## [1.2.0] - 2026-02-23
 
 ### Added
