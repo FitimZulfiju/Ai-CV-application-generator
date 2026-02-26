@@ -134,10 +134,10 @@ Visit: [https://localhost:7153](https://localhost:7153)
 
 ## 📚 Documentation
 
-* Project Overview: `docs/overview.md`
-* Architecture: `docs/architecture.md`
-* Deployment: `docs/deployment.md`
-* Privacy: `docs/privacy.md`
+* [Project Overview](docs/overview.md)
+* [Architecture](docs/architecture.md)
+* [Deployment](docs/deployment.md)
+* [Privacy](docs/privacy.md)
 
 ---
 
