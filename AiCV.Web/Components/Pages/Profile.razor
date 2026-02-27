@@ -169,7 +169,7 @@ else
                                     <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" />
                                 </MudItem>
                                 <MudItem xs="12" sm="2">
-                                    <MudDatePicker @bind-Date="exp.EndDate" 
+                                    <MudDatePicker @bind-Date="exp.EndDate"
                                                    Label="@(exp.IsCurrentRole ? Localizer["Present"] : Localizer["EndDate"])"
                                                    Disabled="@exp.IsCurrentRole" />
                                 </MudItem>
@@ -410,7 +410,7 @@ else
             </MudTabPanel>
 
             @* Tab CV Preview *@
-            <MudTabPanel Text="@Localizer["CvPreview"]" Icon="@Icons.Material.Filled.Preview">
+            <MudTabPanel Text="@Localizer["CvPreview"]" Icon="@Icons.Material.Filled.Preview" Style="background-color:cornflowerblue;color:whitesmoke; border-radius:0.5rem;">
                 <AiCV.Web.Components.Shared.CvPreview Profile="@_profile" />
             </MudTabPanel>
         </MudTabs>
