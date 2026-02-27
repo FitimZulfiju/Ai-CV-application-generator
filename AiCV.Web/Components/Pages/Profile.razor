@@ -18,12 +18,6 @@ else
                                OnClick="@(() => _showFormattingHelp = true)" title="@Localizer["FormattingHelp"]" />
             </MudStack>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
-                <MudTooltip Text="@Localizer["ClearDraftHelper"]">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Size="Size.Medium" OnClick="ClearDraft"
-                               Style="white-space: nowrap;" StartIcon="@Icons.Material.Filled.DeleteSweep">
-                        @Localizer["ClearDraft"]
-                    </MudButton>
-                </MudTooltip>
                 <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
                            Disabled="_isSaving" Style="white-space: nowrap;"
                            StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">

@@ -1,9 +1,8 @@
 namespace AiCV.Web.Components.Pages;
 
-public partial class Generate : IDisposable
+public partial class Generate
 {
     private PrintPreviewModal _printPreviewModal = default!;
-    private Timer? _autoSaveTimer;
     private readonly JobPosting _job = new();
     private string _generatedCoverLetter = string.Empty;
     private CandidateProfile? _generatedResume;
@@ -249,9 +248,6 @@ public partial class Generate : IDisposable
         _savedCoverLetter = string.Empty;
         _savedResumeJson = string.Empty;
 
-        // Clear persistence
-        _ = PersistenceService.ClearDraftAsync("generate_draft");
-
         StateHasChanged();
     }
 
@@ -474,7 +470,7 @@ public partial class Generate : IDisposable
             _savedCoverLetter = _generatedCoverLetter;
             _savedResumeJson = _resumeJson;
             _savedEmail = _generatedEmail;
-            await PersistenceService.ClearDraftAsync("generate_draft");
+            await Task.Yield();
             Snackbar.Add("Application saved successfully!", Severity.Success);
         }
         catch (Exception ex)
@@ -575,86 +571,7 @@ public partial class Generate : IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            // Restore draft
-            var draft = await PersistenceService.GetDraftAsync<GenerateDraft>("generate_draft");
-            if (draft != null)
-            {
-                if (
-                    string.IsNullOrWhiteSpace(_job.Url)
-                    && string.IsNullOrWhiteSpace(_job.Description)
-                )
-                {
-                    // Only restore if the current form is empty (fresh load)
-                    _job.Url = draft.Job.Url;
-                    _job.CompanyName = draft.Job.CompanyName;
-                    _job.Title = draft.Job.Title;
-                    _job.Description = draft.Job.Description;
-                    _customPrompt = draft.CustomPrompt;
-                    _manualEntry = draft.ManualEntry;
-                    _showAdvancedEditor = draft.ShowAdvancedEditor;
-
-                    // Validate restored config ID - if it doesn't exist in current providers, ignore it
-                    if (
-                        draft.SelectedConfigId.HasValue
-                        && _configuredProviders.Any(c => c.Id == draft.SelectedConfigId.Value)
-                    )
-                    {
-                        _activeConfigId = draft.SelectedConfigId;
-                    }
-                    else
-                    {
-                        // If invalid or null, ensure we fall back to the backend default
-                        if (_hasConfiguredProvider && _activeConfigId == null)
-                        {
-                            var defaultConf =
-                                _configuredProviders.FirstOrDefault(c => c.IsActive)
-                                ?? _configuredProviders[0];
-                            _activeConfigId = defaultConf.Id;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(_job.Description))
-                    {
-                        UpdatePreview(_job.Description);
-                    }
-
-                    StateHasChanged();
-                    Snackbar.Add("Job details restored from browser storage.", Severity.Info);
-                }
-            }
-
-            // Start Timer
-            _autoSaveTimer = new Timer(
-                async _ =>
-                {
-                    // Check if data exists worth saving (url or description)
-                    if (
-                        !string.IsNullOrWhiteSpace(_job.Url)
-                        || !string.IsNullOrWhiteSpace(_job.Description)
-                        || !string.IsNullOrWhiteSpace(_job.CompanyName)
-                    )
-                    {
-                        await InvokeAsync(async () =>
-                        {
-                            var currentDraft = new GenerateDraft
-                            {
-                                Job = _job,
-                                CustomPrompt = _customPrompt,
-                                ManualEntry = _manualEntry,
-                                SelectedConfigId = _activeConfigId,
-                                ShowAdvancedEditor = _showAdvancedEditor,
-                            };
-                            await PersistenceService.SaveDraftAsync("generate_draft", currentDraft);
-                        });
-                    }
-                },
-                null,
-                5000,
-                5000
-            );
-        }
+        if (firstRender) { }
     }
 
     private static Color GetProviderColor(AIProvider provider) =>
@@ -678,10 +595,4 @@ public partial class Generate : IDisposable
             AIProvider.DeepSeek => Icons.Material.Filled.Explore,
             _ => Icons.Material.Filled.Memory,
         };
-
-    public void Dispose()
-    {
-        _autoSaveTimer?.Dispose();
-        GC.SuppressFinalize(this);
-    }
 }

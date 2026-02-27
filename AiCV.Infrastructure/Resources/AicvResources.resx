@@ -723,7 +723,7 @@
     <value>The server is restarting. Please wait...</value>
   </data>
   <data name="ImprovingSystemWorkSavedRestart" xml:space="preserve">
-    <value>We are improving the system. Your work is saved locally. Brief restart in {0}.</value>
+    <value>We are improving the system. Please save your changes manually! Brief restart in {0}.</value>
   </data>
   <data name="BoldText" xml:space="preserve">
     <value>Bold Text</value>

@@ -44,15 +44,29 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     {
         if (string.IsNullOrWhiteSpace(colorName))
             return null;
-        colorName = colorName.Trim();
-        if (!colorName.StartsWith('#'))
+
+        // Strip trailing semicolon and trim whitespace
+        colorName = colorName.Trim().TrimEnd(';');
+
+        // Check named colors first
+        if (NamedColors.TryGetValue(colorName, out var hexName))
+            return hexName;
+
+        // If it starts with #, validate and return
+        if (colorName.StartsWith('#'))
         {
-            if (NamedColors.TryGetValue(colorName, out var hex))
-                return hex;
+            var rawHex = colorName[1..];
+            if (HexColorRegex().IsMatch(rawHex))
+                return colorName;
+
             return null;
         }
 
-        return colorName;
+        // Fallback: If it's a valid hex without #, add #
+        if (HexColorRegex().IsMatch(colorName))
+            return "#" + colorName;
+
+        return null;
     }
 
     public Task<byte[]> GenerateCvAsync(CandidateProfile profile)
@@ -1091,8 +1105,8 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             }
 
             var tagName = match.Groups[1].Value.ToLower();
-            var styleAttr = match.Groups[2].Value + match.Groups[3].Value + match.Groups[4].Value;
-            var content = match.Groups[5].Value;
+            var attributes = match.Groups[2].Value;
+            var content = match.Groups[3].Value;
 
             // Inherit parent styles or apply new ones from current tag
             bool currentBold = isBold || tagName == "strong" || tagName == "b";
@@ -1100,30 +1114,39 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             bool currentUnderline = isUnderline || tagName == "u";
             string? currentColor = color;
 
-            if (!string.IsNullOrEmpty(styleAttr))
+            if (!string.IsNullOrEmpty(attributes))
             {
-                var colorMatch = ColorStyleRegex().Match(styleAttr);
-                if (colorMatch.Success)
-                    currentColor = GetHexColor(colorMatch.Groups[1].Value.Trim());
-
-                var weightMatch = FontWeightStyleRegex().Match(styleAttr);
-                if (weightMatch.Success)
-                {
-                    var weight = weightMatch.Groups[1].Value.Trim().ToLower();
-                    if (weight == "bold" || weight == "700" || weight == "800")
-                        currentBold = true;
-                    else if (weight == "normal" || weight == "400")
-                        currentBold = false;
-                }
-
-                var styleMatch = FontStyleStyleRegex().Match(styleAttr);
+                var styleMatch = StyleAttributeRegex().Match(attributes);
                 if (styleMatch.Success)
                 {
-                    var style = styleMatch.Groups[1].Value.Trim().ToLower();
-                    if (style == "italic")
-                        currentItalic = true;
-                    else if (style == "normal")
-                        currentItalic = false;
+                    var styleAttr =
+                        styleMatch.Groups[1].Value
+                        + styleMatch.Groups[2].Value
+                        + styleMatch.Groups[3].Value;
+
+                    var colorMatch = ColorStyleRegex().Match(styleAttr);
+                    if (colorMatch.Success)
+                        currentColor = GetHexColor(colorMatch.Groups[1].Value.Trim());
+
+                    var weightMatch = FontWeightStyleRegex().Match(styleAttr);
+                    if (weightMatch.Success)
+                    {
+                        var weight = weightMatch.Groups[1].Value.Trim().ToLower();
+                        if (weight == "bold" || weight == "700" || weight == "800")
+                            currentBold = true;
+                        else if (weight == "normal" || weight == "400")
+                            currentBold = false;
+                    }
+
+                    var fontStyleMatch = FontStyleStyleRegex().Match(styleAttr);
+                    if (fontStyleMatch.Success)
+                    {
+                        var style = fontStyleMatch.Groups[1].Value.Trim().ToLower();
+                        if (style == "italic")
+                            currentItalic = true;
+                        else if (style == "normal")
+                            currentItalic = false;
+                    }
                 }
             }
 
@@ -1307,8 +1330,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     }
 
     // GeneratedRegex patterns
-    [GeneratedRegex(@"<.*?>")]
+    [GeneratedRegex("<.*?>")]
     private static partial Regex HtmlTagRegex();
+
+    [GeneratedRegex("^[0-9a-fA-F]{3,8}$")]
+    private static partial Regex HexColorRegex();
 
     [GeneratedRegex(@"/Type\s*/Page\b", RegexOptions.IgnoreCase)]
     private static partial Regex PageTypeRegex();
@@ -1324,14 +1350,20 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
 #pragma warning disable SYSLIB1045 // Pattern with backreferences not supported by GeneratedRegex
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
-        @"<(strong|b|em|i|u|span)(?:\s+style\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+)))?\s*>(.+?)</\1>",
+        @"<(strong|b|em|i|u|span)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline
     );
 #pragma warning restore SYSLIB1045
 
     private static Regex HtmlTagWithStyleRegex() => HtmlTagWithStyleRegexInstance;
 
-    [GeneratedRegex(@"color\s*:\s*([^;]+)", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        @"style\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+))",
+        RegexOptions.IgnoreCase
+    )]
+    private static partial Regex StyleAttributeRegex();
+
+    [GeneratedRegex(@"color\s*:\s*([^;""'\s]+)", RegexOptions.IgnoreCase)]
     private static partial Regex ColorStyleRegex();
 
     [GeneratedRegex(@"font-weight\s*:\s*([^;]+)", RegexOptions.IgnoreCase)]

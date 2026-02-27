@@ -22,17 +22,19 @@ public partial class CvPreview
         if (string.IsNullOrEmpty(summary))
             return string.Empty;
 
-        // Decode entities
-        var formatted = System.Net.WebUtility.HtmlDecode(summary);
+        // Decode entities (robustly handle multiple levels of encoding if present)
+        var formatted = System.Net.WebUtility.HtmlDecode(summary ?? "");
+        if (formatted.Contains("&lt;") || formatted.Contains("&amp;"))
+            formatted = System.Net.WebUtility.HtmlDecode(formatted);
 
-        // Handle bold (**text**)
+        // Standardize markdown-style bolding to HTML strong tags for consistency with PDF rendering
         formatted = BoldRegex().Replace(formatted, "<strong>$1</strong>");
 
-        // Handle italic (*text* or _text_)
+        // Standardize markdown-style italic to HTML em tags
         formatted = ItalicAsteriskRegex().Replace(formatted, "<em>$1</em>");
         formatted = ItalicUnderscoreRegex().Replace(formatted, "<em>$1</em>");
 
-        // Handle underline (HTML only for now, as markdown doesn't have a standard for it)
+        // Handle underline
         formatted = UnderlineRegex().Replace(formatted, "<u>$1</u>");
 
         return formatted.Replace("\n", "<br>");
@@ -52,11 +54,15 @@ public partial class CvPreview
         var sb = new System.Text.StringBuilder();
         foreach (var line in lines)
         {
-            var cleanLine = line.Trim().TrimStart('-', '*').Trim();
+            // Decode and handle bold/italic/underline/colors
+            var cleanLine = System.Net.WebUtility.HtmlDecode(
+                line.Trim().TrimStart('-', '*').Trim() ?? ""
+            );
+            if (cleanLine.Contains("&lt;") || cleanLine.Contains("&amp;"))
+                cleanLine = System.Net.WebUtility.HtmlDecode(cleanLine);
+
             if (!string.IsNullOrEmpty(cleanLine))
             {
-                // Decode and handle bold/italic
-                cleanLine = System.Net.WebUtility.HtmlDecode(cleanLine);
                 cleanLine = BoldRegex().Replace(cleanLine, "<strong>$1</strong>");
                 cleanLine = ItalicAsteriskRegex().Replace(cleanLine, "<em>$1</em>");
                 cleanLine = ItalicUnderscoreRegex().Replace(cleanLine, "<em>$1</em>");

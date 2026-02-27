@@ -716,7 +716,7 @@
     <value>Serveren genstarter. Vent venligst...</value>
   </data>
   <data name="ImprovingSystemWorkSavedRestart" xml:space="preserve">
-    <value>Vi forbedrer systemet. Dit arbejde er gemt lokalt. Kortvarig genstart om {0}.</value>
+    <value>Vi forbedrer systemet. Venligst gem dine ændringer manuelt! Kortvarig genstart om {0}.</value>
   </data>
   <data name="BoldText" xml:space="preserve">
     <value>Fed tekst</value>

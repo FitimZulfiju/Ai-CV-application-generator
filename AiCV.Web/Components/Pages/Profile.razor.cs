@@ -1,9 +1,7 @@
 namespace AiCV.Web.Components.Pages;
 
-public partial class Profile : IDisposable
+public partial class Profile
 {
-    private Timer? _autoSaveTimer;
-
     private PrintPreviewModal _printPreviewModal = default!;
 
     private int _activeTabIndex;
@@ -195,7 +193,6 @@ public partial class Profile : IDisposable
             {
                 UpdateProfileSkills(); // Ensure it's up to date before saving
                 await CVService.SaveProfileAsync(_profile);
-                await PersistenceService.ClearDraftAsync("profile_draft");
                 Snackbar.Add("Profile saved successfully!", Severity.Success);
             }
             catch (Exception ex)
@@ -207,23 +204,6 @@ public partial class Profile : IDisposable
                 _isSaving = false;
                 StateHasChanged();
             }
-        }
-    }
-
-    private async Task ClearDraft()
-    {
-        var result = await DialogService.ShowMessageBox(
-            Localizer["ClearDraftConfirmationTitle"],
-            Localizer["ClearDraftConfirmationContent"],
-            yesText: Localizer["ClearDraftConfirmButton"],
-            cancelText: Localizer["ClearDraftCancelButton"]
-        );
-
-        if (result == true)
-        {
-            await PersistenceService.ClearDraftAsync("profile_draft");
-            await LoadProfileAsync();
-            Snackbar.Add(Localizer["DraftCleared"], Severity.Info);
         }
     }
 
@@ -361,64 +341,6 @@ public partial class Profile : IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            // Try to restore draft
-            var draft = await PersistenceService.GetDraftAsync<CandidateProfile>("profile_draft");
-            if (draft != null && _profile != null)
-            {
-                // Simple Restoration Strategy:
-                // If the server profile is "empty" (new) OR we want to prioritize draft.
-                // Given the requirement is "don't lose work on crash", we assume the draft is more recent/valuable
-                // if it exists.
-
-                // We map draft to _profile
-                _profile = draft;
-
-                // Re-initialize view models
-                if (_profile.Skills != null)
-                {
-                    _skillCategories =
-                    [
-                        .. _profile
-                            .Skills.GroupBy(s => s.Category ?? "Uncategorized")
-                            .Select(g => new SkillCategoryViewModel
-                            {
-                                Name = g.Key,
-                                // Use Distinct to prevent any duplicates from draft
-                                Skills = [.. g.Select(s => s.Name).Distinct()],
-                            }),
-                    ];
-                }
-
-                StateHasChanged();
-                Snackbar.Add("Draft restored from browser storage.", Severity.Info);
-            }
-
-            // Start Auto-Save Timer (every 5 seconds)
-            _autoSaveTimer = new Timer(
-                async _ =>
-                {
-                    if (_profile != null)
-                    {
-                        await InvokeAsync(async () =>
-                        {
-                            // Sync ViewModels to Profile before saving
-                            UpdateProfileSkills();
-                            await PersistenceService.SaveDraftAsync("profile_draft", _profile);
-                        });
-                    }
-                },
-                null,
-                5000,
-                5000
-            );
-        }
-    }
-
-    public void Dispose()
-    {
-        _autoSaveTimer?.Dispose();
-        GC.SuppressFinalize(this);
+        if (firstRender) { }
     }
 }

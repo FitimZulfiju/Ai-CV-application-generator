@@ -108,8 +108,7 @@
 }
 
 .cv-container .summary strong {
-    color: var(--primary-color);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Section Styling */
@@ -259,8 +258,7 @@
 }
 
 .cv-container .achievements li strong {
-    color: var(--primary-dark);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Education */
@@ -388,8 +386,7 @@
 }
 
 .cv-container .project-features li strong {
-    color: var(--primary-dark);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Additional Info Grid */
