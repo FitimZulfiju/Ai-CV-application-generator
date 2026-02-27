@@ -112,6 +112,7 @@ appsettings.Development.json
 **/deploy/portainer/
 **/deploy/shared-sql/
 **/deploy/reset-database.sh
+**/private/
 
 # OS Generated
 .DS_Store
