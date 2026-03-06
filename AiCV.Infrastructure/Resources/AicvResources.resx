@@ -115,6 +115,21 @@
   <data name="JobTitle" xml:space="preserve">
     <value>Job Title</value>
   </data>
+  <data name="Template" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="PreviewTemplate" xml:space="preserve">
+    <value>Preview Template</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>Professional</value>
+  </data>
+  <data name="Modern" xml:space="preserve">
+    <value>Modern</value>
+  </data>
+  <data name="Minimalist" xml:space="preserve">
+    <value>Minimalist</value>
+  </data>
   <data name="ManualEntryMode" xml:space="preserve">
     <value>Manual Entry Mode</value>
   </data>
@@ -318,6 +333,9 @@
   </data>
   <data name="ConfigurationUpdated" xml:space="preserve">
     <value>Configuration updated successfully</value>
+  </data>
+  <data name="TemplateUpdated" xml:space="preserve">
+    <value>Template updated successfully</value>
   </data>
   <data name="ConfigurationDeleted" xml:space="preserve">
     <value>Configuration deleted successfully</value>

@@ -115,6 +115,21 @@
   <data name="JobTitle" xml:space="preserve">
     <value>Jobtitel</value>
   </data>
+  <data name="Template" xml:space="preserve">
+    <value>Skabelon</value>
+  </data>
+  <data name="PreviewTemplate" xml:space="preserve">
+    <value>Eksempel skabelon</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>Professionel</value>
+  </data>
+  <data name="Modern" xml:space="preserve">
+    <value>Moderne</value>
+  </data>
+  <data name="Minimalist" xml:space="preserve">
+    <value>Minimalistisk</value>
+  </data>
   <data name="ManualEntryMode" xml:space="preserve">
     <value>Manuel indtastningstilstand</value>
   </data>
@@ -318,6 +333,9 @@
   </data>
   <data name="ConfigurationUpdated" xml:space="preserve">
     <value>Konfiguration opdateret med succes</value>
+  </data>
+  <data name="TemplateUpdated" xml:space="preserve">
+    <value>Skabelon opdateret med succes</value>
   </data>
   <data name="ConfigurationDeleted" xml:space="preserve">
     <value>Konfiguration slettet med succes</value>

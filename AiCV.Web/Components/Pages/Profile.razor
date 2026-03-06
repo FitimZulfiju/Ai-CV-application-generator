@@ -18,21 +18,31 @@ else
                                OnClick="@(() => _showFormattingHelp = true)" title="@Localizer["FormattingHelp"]" />
             </MudStack>
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
-                           Disabled="_isSaving" Style="white-space: nowrap;"
-                           StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
-                    @if (_isSaving)
-                    {
-                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                        <span>@Localizer["Saving"]</span>
-                    }
-                    else
-                    {
-                        @Localizer["Save"]
-                    }
-                </MudButton>
+                @if (_activeTabIndex != 7)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
+                               Disabled="_isSaving" Style="white-space: nowrap;"
+                               StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
+                        @if (_isSaving)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>@Localizer["Saving"]</span>
+                        }
+                        else
+                        {
+                            @Localizer["Save"]
+                        }
+                    </MudButton>
+                }
                 @if (_activeTabIndex == 7)
                 {
+                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:150px;"
+                               Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
+                        <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
+                        <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
+                        <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                    </MudSelect>
+
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
                                Disabled="_isPrinting" Style="white-space: nowrap;"
                                StartIcon="@(_isPrinting ? null : Icons.Material.Filled.Print)">
@@ -173,11 +183,6 @@ else
                                                    Label="@(exp.IsCurrentRole ? Localizer["Present"] : Localizer["EndDate"])"
                                                    Disabled="@exp.IsCurrentRole" />
                                 </MudItem>
-
-                                @*  <MudItem xs="4" sm="2" Class="d-flex align-center">
-                                    <MudText Typo="Typo.body2">@CalculateDuration(exp.StartDate, exp.EndDate)</MudText>
-                                </MudItem> *@
-
                                 <MudItem xs="4" sm="2" Class="d-flex align-center">
                                     @if (!exp.IsCurrentRole)
                                     {
@@ -189,10 +194,6 @@ else
                                         </MudChip>
                                     }
                                 </MudItem>
-
-                                @*  <MudItem xs="4" sm="3">
-                                    <MudCheckBox @bind-Value="exp.IsCurrentRole" Label="@Localizer["CurrentRole"]" />
-                                </MudItem> *@
 
                                 <MudItem xs="4" sm="3">
                                     <MudSwitch T="bool"
@@ -411,7 +412,7 @@ else
 
             @* Tab CV Preview *@
             <MudTabPanel Text="@Localizer["CvPreview"]" Icon="@Icons.Material.Filled.Preview" Style="background-color:cornflowerblue;color:whitesmoke; border-radius:0.5rem;">
-                <AiCV.Web.Components.Shared.CvPreview Profile="@_profile" />
+                <AiCV.Web.Components.Shared.CvPreview Profile="@_profile" Template="@_selectedTemplate" />
             </MudTabPanel>
         </MudTabs>
     </MudContainer>
@@ -465,37 +466,39 @@ else
             <MudAlert Severity="Severity.Success" Dense="true" Icon="@Icons.Material.Filled.DoneAll">
                 @Localizer["AllTextFieldsSupportFormatting"]
             </MudAlert>
+
             <MudSimpleTable Dense="true" Hover="true" Bordered="true">
                 <thead>
-                    <tr>
-                        <th>@Localizer["FormattingType"]</th>
-                        <th>@Localizer["Syntax"]</th>
-                        <th>@Localizer["SupportedIn"]</th>
-                    </tr>
+                    <MudTr>
+                        <MudTh>@Localizer["FormattingType"]</MudTh>
+                        <MudTh>@Localizer["Syntax"]</MudTh>
+                        <MudTh>@Localizer["SupportedIn"]</MudTh>
+                    </MudTr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>@Localizer["BoldMarkdown"]</strong></td>
-                        <td><code>**text**</code></td>
-                        <td>@Localizer["AllFields"]</td>
-                    </tr>
-                    <tr>
-                        <td><strong>@Localizer["HtmlTags"]</strong></td>
-                        <td><code>&lt;strong&gt;, &lt;em&gt;, &lt;u&gt;</code></td>
-                        <td>@Localizer["AllFields"]</td>
-                    </tr>
-                    <tr>
-                        <td><strong>@Localizer["LineBreaks"]</strong></td>
-                        <td>@Localizer["EnterKey"]</td>
-                        <td>@Localizer["AllFields"]</td>
-                    </tr>
-                    <tr>
-                        <td><strong>@Localizer["BulletPoints"]</strong></td>
-                        <td><code>- @Localizer["or"] *</code></td>
-                        <td>@Localizer["DescriptionsOnly"]</td>
-                    </tr>
+                    <MudTr>
+                        <MudTd><strong>@Localizer["BoldMarkdown"]</strong></MudTd>
+                        <MudTd><code>**text**</code></MudTd>
+                        <MudTd>@Localizer["AllFields"]</MudTd>
+                    </MudTr>
+                    <MudTr>
+                        <MudTd><strong>@Localizer["HtmlTags"]</strong></MudTd>
+                        <MudTd><code>&lt;strong&gt;, &lt;em&gt;, &lt;u&gt;</code></MudTd>
+                        <MudTd>@Localizer["AllFields"]</MudTd>
+                    </MudTr>
+                    <MudTr>
+                        <MudTd><strong>@Localizer["LineBreaks"]</strong></MudTd>
+                        <MudTd>@Localizer["EnterKey"]</MudTd>
+                        <MudTd>@Localizer["AllFields"]</MudTd>
+                    </MudTr>
+                    <MudTr>
+                        <MudTd><strong>@Localizer["BulletPoints"]</strong></MudTd>
+                        <MudTd><code>- @Localizer["or"] *</code></MudTd>
+                        <MudTd>@Localizer["DescriptionsOnly"]</MudTd>
+                    </MudTr>
                 </tbody>
             </MudSimpleTable>
+
         </MudStack>
     </DialogContent>
     <DialogActions>

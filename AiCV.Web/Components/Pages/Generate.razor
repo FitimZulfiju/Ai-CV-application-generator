@@ -189,12 +189,19 @@
                                Color="Color.Primary" Label="@Localizer["VisualPreview"]"
                                Style="@GetDisplayStyle(_activeTabIndex == 1)" />
                     <MudTooltip Text="@(HasProfilePicture() ? Localizer["IncludePhotoInCv"] : Localizer["NoProfilePictureUploadOne"])"
-                                Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
+                                 Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
                         <MudSwitch T="bool" Value="_includeProfilePicture" ValueChanged="OnIncludeProfilePictureToggled"
                                    Color="Color.Secondary" Label="@Localizer["IncludePhoto"]"
                                    Disabled="@(!HasProfilePicture())"
                                    Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)" />
                     </MudTooltip>
+                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplateInPreview" Label="@Localizer["Template"]"
+                               Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true"
+                               Style="@($"{GetDisplayStyle(_generatedResume != null && (_activeTabIndex == 0 || _activeTabIndex == 1))}; width: 180px;")">
+                        <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
+                        <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
+                        <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                    </MudSelect>
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
                                StartIcon="@Icons.Material.Filled.ContentCopy"
                                OnClick="@(() => CopyToClipboard(_generatedCoverLetter))"
@@ -275,7 +282,8 @@
                                         <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
                                           Style="overflow-y: auto; max-height: calc(100vh - 250px);">
                                             <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile"
-                                                                                   LetterContent="@_generatedCoverLetter" />
+                                                                                   LetterContent="@_generatedCoverLetter"
+                                                                                   Template="_selectedTemplateInPreview" />
                                         </MudPaper>
                             }
                             else
@@ -296,7 +304,7 @@
                             {
                                         <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
                                           Style="overflow-y: auto; max-height: calc(100vh - 250px);">
-                                            <AiCV.Web.Components.Shared.CvPreview Profile="_generatedResume" />
+                                            <AiCV.Web.Components.Shared.CvPreview Profile="_generatedResume" Template="_selectedTemplateInPreview" />
                                         </MudPaper>
                             }
                             else

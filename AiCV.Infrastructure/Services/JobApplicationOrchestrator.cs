@@ -3,14 +3,12 @@ namespace AiCV.Infrastructure.Services;
 public class JobApplicationOrchestrator(
     IJobPostScraper jobScraper,
     IAIServiceFactory aiServiceFactory,
-    ICVService cvService,
-    ILogger<JobApplicationOrchestrator> logger
+    ICVService cvService
 ) : IJobApplicationOrchestrator
 {
     private readonly IJobPostScraper _jobScraper = jobScraper;
     private readonly IAIServiceFactory _aiServiceFactory = aiServiceFactory;
     private readonly ICVService _cvService = cvService;
-    private readonly ILogger<JobApplicationOrchestrator> _logger = logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -38,12 +36,6 @@ public class JobApplicationOrchestrator(
     {
         // Get the AI service for the selected model
         var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, modelId);
-        _logger.LogInformation(
-            "Starting application generation for Job {JobTitle} using {ModelId} from provider {Provider}",
-            job.Title,
-            modelId ?? "default",
-            provider
-        );
 
         // Run cover letter and resume in parallel
         var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job, customPrompt);
@@ -71,7 +63,8 @@ public class JobApplicationOrchestrator(
         CandidateProfile profile,
         string coverLetter,
         CandidateProfile tailoredResume,
-        string applicationEmail
+        string applicationEmail,
+        CvTemplate template
     )
     {
         // Create a fresh JobPosting entity to avoid EF Core tracking issues
@@ -94,6 +87,7 @@ public class JobApplicationOrchestrator(
             CoverLetterContent = coverLetter,
             TailoredResumeJson = JsonSerializer.Serialize(tailoredResume, JsonOptions),
             ApplicationEmailContent = applicationEmail,
+            Template = template,
             CreatedDate = DateTime.UtcNow,
         };
 

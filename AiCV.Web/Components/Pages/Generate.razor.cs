@@ -35,6 +35,7 @@ public partial class Generate
     private bool _showAdvancedEditor = false;
     private int _splitterSize = 30;
     private int _activeTabIndex = 0;
+    private CvTemplate _selectedTemplateInPreview = CvTemplate.Professional;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
     private string _userId = string.Empty;
@@ -463,7 +464,8 @@ public partial class Generate
                 _cachedProfile,
                 _generatedCoverLetter,
                 _generatedResume!,
-                _generatedEmail
+                _generatedEmail,
+                _selectedTemplateInPreview
             );
             _isAlreadySaved = true;
             // Store what was saved to compare with future generations
@@ -510,7 +512,10 @@ public partial class Generate
         LoadingService.Show("Generating PDF...", 0);
         try
         {
-            var pdfBytes = await PdfService.GenerateCvAsync(_generatedResume);
+            var pdfBytes = await PdfService.GenerateCvAsync(
+                _generatedResume,
+                _selectedTemplateInPreview
+            );
             await _printPreviewModal.ShowAsync(pdfBytes, "Resume", _job.Title);
         }
         catch (Exception ex)
@@ -540,7 +545,8 @@ public partial class Generate
                 _generatedCoverLetter,
                 _generatedResume,
                 _job.Title,
-                _job.CompanyName
+                _job.CompanyName,
+                _selectedTemplateInPreview
             );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,

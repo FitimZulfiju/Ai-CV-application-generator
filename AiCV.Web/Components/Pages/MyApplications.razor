@@ -32,6 +32,7 @@
                 <MudTh>@Localizer["Date"]</MudTh>
                 <MudTh>@Localizer["Company"]</MudTh>
                 <MudTh>@Localizer["JobTitle"]</MudTh>
+                <MudTh>@Localizer["Template"]</MudTh>
                 <MudTh>@Localizer["Actions"]</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -39,6 +40,11 @@
                 <MudTd DataLabel="@Localizer["Date"]">@context.CreatedDate.ToLocalTime().ToString("g")</MudTd>
                 <MudTd DataLabel="@Localizer["Company"]">@context.JobPosting?.CompanyName</MudTd>
                 <MudTd DataLabel="@Localizer["JobTitle"]">@context.JobPosting?.Title</MudTd>
+                <MudTd DataLabel="@Localizer["Template"]">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Info">
+                        @Localizer[context.Template.ToString()]
+                    </MudChip>
+                </MudTd>
                 <MudTd DataLabel="@Localizer["Actions"]">
                     <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
                                OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" Disabled="@(_deletingId == context.Id)"

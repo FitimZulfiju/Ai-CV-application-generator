@@ -275,6 +275,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Template")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -551,6 +554,8 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("UserAIConfigurations");
                 });
 
@@ -797,7 +802,7 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.HasOne("AiCV.Domain.User", "User")
                         .WithMany("GeneratedApplications")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CandidateProfile");
@@ -849,6 +854,15 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         .IsRequired();
 
                     b.Navigation("CandidateProfile");
+                });
+
+            modelBuilder.Entity("AiCV.Domain.UserAIConfiguration", b =>
+                {
+                    b.HasOne("AiCV.Domain.User", null)
+                        .WithMany("UserAIConfigurations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AiCV.Domain.UserSettings", b =>
@@ -935,6 +949,8 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.Navigation("GeneratedApplications");
 
                     b.Navigation("Notes");
+
+                    b.Navigation("UserAIConfigurations");
 
                     b.Navigation("UserSettings");
                 });

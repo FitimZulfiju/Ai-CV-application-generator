@@ -8,13 +8,48 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
     // Define colors
     // Define colors from CSS
-    private const string PrimaryColor = "#2c7be5"; // var(--primary-color)
-    private const string PrimaryDark = "#1e5fae"; // var(--primary-dark)
-    private const string AccentColor = "#10b981"; // var(--accent-color)
-    private const string TextDark = "#1f2937"; // var(--text-dark)
-    private const string TextMedium = "#4b5563"; // var(--text-medium)
-    private const string BackgroundLight = "#f9fafb"; // var(--bg-light)
-    private const string BorderColor = "#e5e7eb"; // var(--border-color)
+    // Base colors (fallback to Professional)
+    private string _primaryColor = "#2c7be5";
+    private string _primaryDark = "#1e5fae";
+    private string _accentColor = "#10b981";
+    private string _textDark = "#1f2937";
+    private string _textMedium = "#4b5563";
+    private string _backgroundLight = "#f9fafb";
+    private string _borderColor = "#e5e7eb";
+
+    private void SetTemplateColors(CvTemplate template)
+    {
+        switch (template)
+        {
+            case CvTemplate.Modern:
+                _primaryColor = "#2c3e50";
+                _primaryDark = "#1a252f";
+                _accentColor = "#e67e22";
+                _textDark = "#2c3e50";
+                _textMedium = "#4b5563";
+                _backgroundLight = "#f8f9fa";
+                _borderColor = "#dee2e6";
+                break;
+            case CvTemplate.Minimalist:
+                _primaryColor = "#333333";
+                _primaryDark = "#111111";
+                _accentColor = "#777777";
+                _textDark = "#111111";
+                _textMedium = "#444444";
+                _backgroundLight = "#ffffff";
+                _borderColor = "#eeeeee";
+                break;
+            default:
+                _primaryColor = "#2c7be5";
+                _primaryDark = "#1e5fae";
+                _accentColor = "#10b981";
+                _textDark = "#1f2937";
+                _textMedium = "#4b5563";
+                _backgroundLight = "#f9fafb";
+                _borderColor = "#e5e7eb";
+                break;
+        }
+    }
 
     private static readonly Dictionary<string, string> NamedColors = new(
         StringComparer.OrdinalIgnoreCase
@@ -69,8 +104,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         return null;
     }
 
-    public Task<byte[]> GenerateCvAsync(CandidateProfile profile)
+    public Task<byte[]> GenerateCvAsync(CandidateProfile profile, CvTemplate template)
     {
+        SetTemplateColors(template);
+
         // Smart Sizing: Find optimal font size for each page INDEPENDENTLY
         float[] fontSizes =
         [
@@ -108,10 +145,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     page.Size(PageSizes.A4);
                     page.Margin(1.25f, Unit.Centimetre);
                     page.DefaultTextStyle(x =>
-                        x.FontSize(size).FontFamily("Lato").FontColor(TextDark)
+                        x.FontSize(size).FontFamily("Lato").FontColor(_textDark)
                     );
-                    page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
-                    page.Content().Element(c => ComposePageOne(c, profile, size));
+                    page.Header().ShowOnce().Element(c => ComposeHeader(c, profile, template));
+                    page.Content().Element(c => ComposePageOne(c, profile, size, template));
                 });
             });
             if (GetPageCount(p1Doc.GeneratePdf()) <= 1)
@@ -164,9 +201,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     page.Size(PageSizes.A4);
                     page.Margin(1.25f, Unit.Centimetre);
                     page.DefaultTextStyle(x =>
-                        x.FontSize(size).FontFamily("Lato").FontColor(TextDark)
+                        x.FontSize(size).FontFamily("Lato").FontColor(_textDark)
                     );
-                    page.Content().Element(c => ComposePageTwo(c, profile, size));
+                    page.Content().Element(c => ComposePageTwo(c, profile, size, template));
                 });
             });
             if (GetPageCount(p2Doc.GeneratePdf()) <= 1)
@@ -188,10 +225,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 page.Size(PageSizes.A4);
                 page.Margin(1.25f, Unit.Centimetre);
                 page.DefaultTextStyle(x =>
-                    x.FontSize(page1Size).FontFamily("Lato").FontColor(TextDark)
+                    x.FontSize(page1Size).FontFamily("Lato").FontColor(_textDark)
                 );
-                page.Header().Element(c => ComposeHeader(c, profile));
-                page.Content().Element(c => ComposePageOne(c, profile, page1Size));
+                page.Header().Element(c => ComposeHeader(c, profile, template));
+                page.Content().Element(c => ComposePageOne(c, profile, page1Size, template));
             });
 
             // Page 2
@@ -200,9 +237,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 page.Size(PageSizes.A4);
                 page.Margin(1.25f, Unit.Centimetre);
                 page.DefaultTextStyle(x =>
-                    x.FontSize(page2Size).FontFamily("Lato").FontColor(TextDark)
+                    x.FontSize(page2Size).FontFamily("Lato").FontColor(_textDark)
                 );
-                page.Content().Element(c => ComposePageTwo(c, profile, page2Size));
+                page.Content().Element(c => ComposePageTwo(c, profile, page2Size, template));
             });
 
             // Page 3+
@@ -211,9 +248,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 page.Size(PageSizes.A4);
                 page.Margin(1.25f, Unit.Centimetre);
                 page.DefaultTextStyle(x =>
-                    x.FontSize(page3Size).FontFamily("Lato").FontColor(TextDark)
+                    x.FontSize(page3Size).FontFamily("Lato").FontColor(_textDark)
                 );
-                page.Content().Element(c => ComposePageThree(c, profile, page3Size));
+                page.Content().Element(c => ComposePageThree(c, profile, page3Size, template));
             });
         });
 
@@ -225,9 +262,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         string letterContent,
         CandidateProfile profile,
         string jobTitle,
-        string companyName
+        string companyName,
+        CvTemplate template
     )
     {
+        SetTemplateColors(template);
+
         // Smart Sizing Loop: Try fonts from 12 down to 8 to fit in 1 page
         float[] fontSizes = [12f, 11.5f, 11f, 10.5f, 10f, 9.5f, 9f, 8.5f, 8f];
         byte[] pdfBytes = [];
@@ -241,10 +281,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     page.Size(PageSizes.A4);
                     page.Margin(1.25f, Unit.Centimetre);
                     page.DefaultTextStyle(x =>
-                        x.FontSize(size).FontFamily("Lato").FontColor(TextDark)
+                        x.FontSize(size).FontFamily("Lato").FontColor(_textDark)
                     );
 
-                    page.Header().ShowOnce().Element(c => ComposeHeader(c, profile));
+                    page.Header().ShowOnce().Element(c => ComposeHeader(c, profile, template));
 
                     page.Content()
                         .Column(col =>
@@ -254,21 +294,15 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
                             // Wrap the entire letter content in a styled container (thinner: 1.5pt)
                             col.Item()
-                                .Background(BackgroundLight)
+                                .Background(_backgroundLight)
                                 .BorderLeft(1.5f)
-                                .BorderColor(PrimaryColor)
+                                .BorderColor(
+                                    template == CvTemplate.Minimalist ? _borderColor : _primaryColor
+                                )
                                 .CornerRadius(5)
                                 .Padding(10)
                                 .Column(letterCol =>
                                 {
-                                    // // Date
-                                    // letterCol
-                                    //     .Item()
-                                    //     .Text(DateTime.Now.ToString("MMMM dd, yyyy"))
-                                    //     .FontSize(size);
-                                    // letterCol.Item().PaddingBottom(0.8f, Unit.Centimetre);
-
-                                    // Subject removed (included in generated content)
 
                                     // Main content
                                     if (!string.IsNullOrWhiteSpace(letterContent))
@@ -292,12 +326,8 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     {
                                         letterCol.Item().Text("No content provided.").Italic();
                                     }
-
-                                    // Sign-off removed (included in generated content)
                                 });
                         });
-
-                    // No footer for cover letter
                 });
             });
 
@@ -312,59 +342,69 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         return Task.FromResult(pdfBytes!);
     }
 
-    private void ComposeHeader(IContainer container, CandidateProfile profile)
+    private void ComposeHeader(IContainer container, CandidateProfile profile, CvTemplate template)
     {
         // Header from CSS: Background Gradient (Simulated with Primary), Color White, Left Aligned with Image
         // Determine if photo will be shown to calculate padding
         bool showPhoto =
             profile.ShowProfilePicture && !string.IsNullOrEmpty(profile.ProfilePictureUrl);
-        float textPaddingLeft = showPhoto ? 4f : 1f; // 4cm when photo, 1cm otherwise (matches cv-print.css)
+
+        // Professional template has centered text and color background
+        // Modern has left aligned text and color background
+        // Minimalist has white background and centered text
+
+        var headerBg = template == CvTemplate.Minimalist ? "#ffffff" : _primaryColor;
+        var headerTextCol = template == CvTemplate.Minimalist ? _textDark : "#ffffff";
+        var accentCol = template == CvTemplate.Minimalist ? _borderColor : _accentColor;
+        var titleTextCol = template == CvTemplate.Minimalist ? _textMedium : "#F5F5F5";
+
+        if (template == CvTemplate.Modern)
+            titleTextCol = _accentColor;
+
+        float textPaddingLeft = showPhoto ? 4f : 1f;
 
         container.Column(c =>
         {
             c.Item()
-                .Background(PrimaryColor)
+                .Background(headerBg)
                 .Layers(layers =>
                 {
-                    // 1. Text Layer (Primary - Centered in remaining space)
+                    // 1. Text Layer
                     layers
                         .PrimaryLayer()
                         .PaddingVertical(1, Unit.Centimetre)
                         .PaddingLeft(textPaddingLeft, Unit.Centimetre)
                         .PaddingRight(1, Unit.Centimetre)
-                        .MinHeight(3f, Unit.Centimetre) // Ensure height for image
+                        .MinHeight(3f, Unit.Centimetre)
                         .Column(col =>
                         {
                             // Name
                             col.Item()
-                                .AlignCenter()
+                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.FontSize(20).Bold().FontColor("#ffffff")
+                                        x.FontSize(20).Bold().FontColor(headerTextCol)
                                     );
                                     ComposeMarkdownText(t, profile.FullName);
                                 });
 
                             // Title
                             col.Item()
-                                .AlignCenter()
+                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(11).FontColor(Colors.Grey.Lighten4)
-                                    );
+                                    t.DefaultTextStyle(x => x.FontSize(11).FontColor(titleTextCol));
                                     FormatHtmlToText(t, PreprocessHtml(profile.Title ?? ""));
                                 });
 
                             // Contact Info
                             col.Item()
                                 .PaddingTop(0.2f, Unit.Centimetre)
-                                .AlignCenter()
+                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
-                                    t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
+                                    t.DefaultTextStyle(x => x.FontColor(headerTextCol).FontSize(9));
 
                                     bool first = true;
                                     void AddPart(string label, string? value)
@@ -386,10 +426,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                             // Links
                             col.Item()
                                 .PaddingTop(0.1f, Unit.Centimetre)
-                                .AlignCenter()
+                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(x => x.FontColor("#ffffff").FontSize(9));
+                                    t.DefaultTextStyle(x => x.FontColor(headerTextCol).FontSize(9));
 
                                     bool first = true;
                                     void AddLink(string label, string? value)
@@ -414,21 +454,23 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     .PaddingTop(0.05f, Unit.Centimetre)
                                     .PaddingBottom(0.05f, Unit.Centimetre)
                                     .LineHorizontal(0.1f)
-                                    .LineColor("#ffffff");
+                                    .LineColor(headerTextCol);
 
                                 col.Item()
-                                    .AlignCenter()
+                                    .Element(e =>
+                                        template != CvTemplate.Modern ? e.AlignCenter() : e
+                                    )
                                     .Text(t =>
                                     {
                                         t.DefaultTextStyle(x =>
-                                            x.FontSize(9).FontColor("#ffffff").Medium()
+                                            x.FontSize(9).FontColor(headerTextCol).Medium()
                                         );
                                         ComposeMarkdownText(t, profile.Tagline);
                                     });
                             }
                         });
 
-                    // 2. Image Layer (Overlay - Left Aligned)
+                    // 2. Image Layer
                     if (showPhoto)
                     {
                         var webRootPath =
@@ -443,12 +485,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Layer()
                                 .AlignMiddle()
                                 .AlignLeft()
-                                .PaddingLeft(1, Unit.Centimetre) // ~2cm left margin
-                                .Width(2.5f, Unit.Centimetre) // 6.25em ~ 2.5cm (print size)
+                                .PaddingLeft(1, Unit.Centimetre)
+                                .Width(2.5f, Unit.Centimetre)
                                 .Height(2.5f, Unit.Centimetre)
                                 .Element(e =>
                                 {
-                                    e.Background("#ffffff") // Fill gaps with white
+                                    e.Background("#ffffff")
                                         .CornerRadius(1.25f, Unit.Centimetre)
                                         .Border(2)
                                         .BorderColor("#ffffff")
@@ -459,14 +501,19 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     }
                 });
 
-            // Bottom Accent Line - Full Width (thinner: 0.04cm)
-            c.Item().Height(0.04f, Unit.Centimetre).Background(AccentColor);
+            // Accent Line
+            c.Item().Height(0.04f, Unit.Centimetre).Background(accentCol);
         });
     }
 
     // --- Helper Methods for Page Sections ---
 
-    private void ComposePageOne(IContainer container, CandidateProfile profile, float fontSize)
+    private void ComposePageOne(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize,
+        CvTemplate template
+    )
     {
         container.Column(col =>
         {
@@ -476,15 +523,15 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             if (!string.IsNullOrWhiteSpace(profile.ProfessionalSummary))
             {
                 col.Item()
-                    .Background(BackgroundLight)
+                    .Background(_backgroundLight)
                     .BorderLeft(1.5f)
-                    .BorderColor(PrimaryColor)
+                    .BorderColor(_primaryColor)
                     .CornerRadius(5)
                     .Padding(10)
                     .Column(c =>
                     {
                         // Summary Text with HTML formatting support
-                        ComposeHtmlContent(c, profile.ProfessionalSummary, fontSize, TextMedium);
+                        ComposeHtmlContent(c, profile.ProfessionalSummary, fontSize, _textMedium);
                     });
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
@@ -492,16 +539,16 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             // Skills (Core Competencies)
             if (profile.Skills != null && profile.Skills.Count != 0)
             {
-                SectionTitle(col, _localizer["CoreCompetencies"]);
+                SectionTitle(col, _localizer["CoreCompetencies"], template);
 
                 var categories = profile.Skills.GroupBy(s => s.Category ?? "Other").ToList();
                 foreach (var cat in categories)
                 {
                     col.Item()
                         .PaddingBottom(0.3f, Unit.Centimetre)
-                        .Background(BackgroundLight)
+                        .Background(_backgroundLight)
                         .BorderLeft(1.5f)
-                        .BorderColor(PrimaryColor)
+                        .BorderColor(template == CvTemplate.Modern ? _accentColor : _primaryColor)
                         .CornerRadius(5)
                         .Padding(10)
                         .Column(c =>
@@ -510,7 +557,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.Bold().FontSize(fontSize).FontColor(PrimaryDark)
+                                        x.Bold().FontSize(fontSize).FontColor(_primaryDark)
                                     );
                                     ComposeMarkdownText(t, cat.Key);
                                 });
@@ -518,7 +565,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.FontSize(fontSize - 1).FontColor(TextMedium)
+                                        x.FontSize(fontSize - 1).FontColor(_textMedium)
                                     );
                                     var skillList = string.Join(
                                         ", ",
@@ -533,7 +580,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         });
     }
 
-    private void ComposePageTwo(IContainer container, CandidateProfile profile, float fontSize)
+    private void ComposePageTwo(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize,
+        CvTemplate template
+    )
     {
         container.Column(col =>
         {
@@ -542,7 +594,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             // Experience
             if (profile.WorkExperience != null && profile.WorkExperience.Count != 0)
             {
-                SectionTitle(col, _localizer["WorkExperienceCv"]);
+                SectionTitle(col, _localizer["WorkExperienceCv"], template);
 
                 col.Item()
                     .Table(table =>
@@ -567,7 +619,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(s =>
-                                        s.FontSize(fontSize + 1).FontColor(TextDark).Bold()
+                                        s.FontSize(fontSize + 1).FontColor(_textDark).Bold()
                                     );
                                     FormatHtmlToText(t, PreprocessHtml(exp.JobTitle));
                                 });
@@ -577,7 +629,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(s =>
-                                        s.FontSize(fontSize - 2).FontColor(TextMedium)
+                                        s.FontSize(fontSize - 2).FontColor(_textMedium)
                                     );
                                     t.Span(
                                         $"{exp.StartDate:MM/yyyy} – {(exp.IsCurrentRole ? _localizer["Present"] : (exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : _localizer["Present"]))}"
@@ -600,7 +652,13 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.FontSize(fontSize).FontColor(PrimaryColor).SemiBold()
+                                        x.FontSize(fontSize)
+                                            .FontColor(
+                                                template == CvTemplate.Modern
+                                                    ? _accentColor
+                                                    : _primaryColor
+                                            )
+                                            .SemiBold()
                                     );
                                     var companyText = exp.CompanyName ?? "";
                                     if (!string.IsNullOrEmpty(exp.Location))
@@ -620,7 +678,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                             c,
                                             exp.Description,
                                             fontSize - 1,
-                                            TextMedium,
+                                            _textMedium,
                                             "• "
                                         )
                                     );
@@ -635,7 +693,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     .PaddingTop(0.4f, Unit.Centimetre)
                                     .PaddingBottom(0.4f, Unit.Centimetre)
                                     .LineHorizontal(1)
-                                    .LineColor(BorderColor);
+                                    .LineColor(_borderColor);
                             }
                         }
                     });
@@ -644,7 +702,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         });
     }
 
-    private void ComposePageThree(IContainer container, CandidateProfile profile, float fontSize)
+    private void ComposePageThree(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize,
+        CvTemplate template
+    )
     {
         container.Column(col =>
         {
@@ -653,7 +716,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             // Education
             if (profile.Educations != null && profile.Educations.Count != 0)
             {
-                SectionTitle(col, _localizer["EducationCv"]);
+                SectionTitle(col, _localizer["EducationCv"], template);
 
                 col.Item()
                     .Table(table =>
@@ -671,9 +734,13 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Cell()
                                 .Element(cell =>
                                 {
-                                    cell.Background(BackgroundLight)
+                                    cell.Background(_backgroundLight)
                                         .BorderLeft(1.5f)
-                                        .BorderColor(AccentColor)
+                                        .BorderColor(
+                                            template == CvTemplate.Modern
+                                                ? _accentColor
+                                                : _accentColor
+                                        ) // Modern uses accent for borders
                                         .CornerRadius(5)
                                         .Padding(10)
                                         .Column(c =>
@@ -687,7 +754,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             t.DefaultTextStyle(x =>
                                                                 x.Bold()
                                                                     .FontSize(fontSize + 1)
-                                                                    .FontColor(TextDark)
+                                                                    .FontColor(_textDark)
                                                             );
                                                             ComposeMarkdownText(
                                                                 t,
@@ -700,7 +767,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             $"{edu.StartDate:yyyy} - {(edu.EndDate.HasValue ? edu.EndDate.Value.ToString("yyyy") : _localizer["Present"])}"
                                                         )
                                                         .FontSize(fontSize - 2)
-                                                        .FontColor(TextMedium);
+                                                        .FontColor(_textMedium);
                                                 });
 
                                             c.Item()
@@ -708,7 +775,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 {
                                                     t.DefaultTextStyle(x =>
                                                         x.FontSize(fontSize)
-                                                            .FontColor(PrimaryColor)
+                                                            .FontColor(_primaryColor)
                                                             .SemiBold()
                                                             .Bold()
                                                     );
@@ -724,7 +791,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 c.Item()
                                                     .PaddingTop(0.25f, Unit.Centimetre)
                                                     .LineHorizontal(1)
-                                                    .LineColor(BorderColor);
+                                                    .LineColor(_borderColor);
 
                                                 // Handle HTML tags like <strong style=color:blue;font-weight:normal;>
                                                 c.Item()
@@ -733,7 +800,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             col,
                                                             edu.Description,
                                                             fontSize - 1,
-                                                            TextMedium
+                                                            _textMedium
                                                         )
                                                     );
                                             }
@@ -743,11 +810,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                             // Divider between Education Items (if not last)
                             if (i < count - 1)
                             {
-                                table
-                                    .Cell()
-                                    .ColumnSpan(1)
-                                    .LineHorizontal(1)
-                                    .LineColor(Colors.Grey.Lighten2);
+                                table.Cell().ColumnSpan(1).LineHorizontal(1).LineColor("#E0E0E0");
                             }
                         }
                     });
@@ -759,12 +822,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 .PaddingTop(0.4f, Unit.Centimetre)
                 .PaddingBottom(0.4f, Unit.Centimetre)
                 .LineHorizontal(1)
-                .LineColor(BorderColor);
+                .LineColor(_borderColor);
 
             // Projects
             if (profile.Projects != null && profile.Projects.Count != 0)
             {
-                SectionTitle(col, _localizer["PersonalProjectsCv"]);
+                SectionTitle(col, _localizer["PersonalProjectsCv"], template);
 
                 col.Item()
                     .Table(table =>
@@ -778,9 +841,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .PaddingBottom(0.5f, Unit.Centimetre)
                                 .Element(cell =>
                                 {
-                                    cell.Background(BackgroundLight)
+                                    cell.Background(_backgroundLight)
                                         .BorderLeft(1.5f)
-                                        .BorderColor(PrimaryColor)
+                                        .BorderColor(_primaryColor)
                                         .CornerRadius(5)
                                         .Padding(10)
                                         .Column(c =>
@@ -794,7 +857,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             t.DefaultTextStyle(x =>
                                                                 x.Bold()
                                                                     .FontSize(fontSize + 1)
-                                                                    .FontColor(TextDark)
+                                                                    .FontColor(_textDark)
                                                             );
                                                             ComposeMarkdownText(t, proj.Name ?? "");
                                                         });
@@ -809,7 +872,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                         .AlignRight()
                                                         .Text(dateStr)
                                                         .FontSize(fontSize - 2)
-                                                        .FontColor(TextMedium);
+                                                        .FontColor(_textMedium);
                                                 });
 
                                             if (
@@ -823,15 +886,15 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                     {
                                                         t.DefaultTextStyle(x =>
                                                             x.FontSize(fontSize - 1)
-                                                                .FontColor(TextMedium)
+                                                                .FontColor(_textMedium)
                                                         );
                                                         if (!string.IsNullOrEmpty(proj.Link))
                                                         {
                                                             t.Span($"{_localizer["GitHubLabel"]} ")
                                                                 .Bold()
-                                                                .FontColor(PrimaryDark);
+                                                                .FontColor(_primaryDark);
                                                             t.Span(proj.Link)
-                                                                .FontColor(PrimaryColor);
+                                                                .FontColor(_primaryColor);
                                                             t.Span(" | ");
                                                         }
                                                         if (
@@ -842,7 +905,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                                     $"{_localizer["TechnologiesLabel"]} "
                                                                 )
                                                                 .Bold()
-                                                                .FontColor(PrimaryDark);
+                                                                .FontColor(_primaryDark);
                                                             ComposeMarkdownText(
                                                                 t,
                                                                 proj.Technologies
@@ -858,7 +921,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                     {
                                                         t.DefaultTextStyle(x =>
                                                             x.FontSize(fontSize)
-                                                                .FontColor(PrimaryColor)
+                                                                .FontColor(_primaryColor)
                                                                 .SemiBold()
                                                         );
                                                         ComposeMarkdownText(t, proj.Role);
@@ -874,7 +937,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             col,
                                                             proj.Description,
                                                             fontSize - 1,
-                                                            TextMedium,
+                                                            _textMedium,
                                                             "\u2713 "
                                                         )
                                                     );
@@ -894,7 +957,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             t.DefaultTextStyle(x =>
                                                                 x.SemiBold()
                                                                     .FontSize(fontSize)
-                                                                    .FontColor(PrimaryColor)
+                                                                    .FontColor(_primaryColor)
                                                             );
                                                             ComposeMarkdownText(
                                                                 t,
@@ -909,7 +972,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             col,
                                                             proj.SectionDescription,
                                                             fontSize - 1,
-                                                            TextMedium,
+                                                            _textMedium,
                                                             "\u2713 "
                                                         )
                                                     );
@@ -935,7 +998,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             t.DefaultTextStyle(x =>
                                                                 x.SemiBold()
                                                                     .FontSize(fontSize)
-                                                                    .FontColor(PrimaryColor)
+                                                                    .FontColor(_primaryColor)
                                                             );
                                                             ComposeMarkdownText(t, sectionHeader);
                                                         });
@@ -950,7 +1013,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                                 col,
                                                                 string.Join("\n", sectionDetails),
                                                                 fontSize - 1,
-                                                                TextMedium,
+                                                                _textMedium,
                                                                 "\u2713 "
                                                             )
                                                         );
@@ -966,18 +1029,18 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     .PaddingTop(0.2f, Unit.Centimetre)
                     .PaddingBottom(0.3f, Unit.Centimetre)
                     .LineHorizontal(1)
-                    .LineColor(BorderColor);
+                    .LineColor(_borderColor);
             }
 
             // Languages
             if (profile.Languages != null && profile.Languages.Count != 0)
             {
-                SectionTitle(col, _localizer["LanguagesCv"]);
+                SectionTitle(col, _localizer["LanguagesCv"], template);
                 // Languages Layout: Stacked & Full Width (Table)
                 col.Item()
                     .Text(t =>
                     {
-                        t.DefaultTextStyle(x => x.FontSize(9).FontColor(TextMedium));
+                        t.DefaultTextStyle(x => x.FontSize(9).FontColor(_textMedium));
                         t.AlignCenter();
 
                         // Bold language names: render each separately
@@ -998,12 +1061,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     .PaddingTop(0.4f, Unit.Centimetre)
                     .PaddingBottom(0.4f, Unit.Centimetre)
                     .LineHorizontal(1)
-                    .LineColor(BorderColor);
+                    .LineColor(_borderColor);
             }
 
             if (profile.Interests != null && profile.Interests.Count != 0)
             {
-                SectionTitle(col, _localizer["InterestsCv"]);
+                SectionTitle(col, _localizer["InterestsCv"], template);
 
                 // Tags Layout: Centered, allowed to wrap (2+ rows), rounded chips, restored font size
                 col.Item()
@@ -1019,15 +1082,15 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Element(chip =>
                                 {
                                     chip.Border(0.5f)
-                                        .BorderColor(BorderColor)
-                                        .Background(BackgroundLight)
+                                        .BorderColor(_borderColor)
+                                        .Background(_backgroundLight)
                                         .CornerRadius(4)
                                         .PaddingHorizontal(2)
                                         .PaddingVertical(2)
                                         .Text(t =>
                                         {
                                             t.DefaultTextStyle(x =>
-                                                x.FontSize(8).FontColor(TextMedium)
+                                                x.FontSize(8).FontColor(_textMedium)
                                             );
                                             ComposeMarkdownText(t, interest.Name);
                                         });
@@ -1040,37 +1103,44 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     .PaddingTop(0.4f, Unit.Centimetre)
                     .PaddingBottom(0, Unit.Centimetre)
                     .LineHorizontal(1)
-                    .LineColor(BorderColor);
+                    .LineColor(_borderColor);
             }
 
             // Footer Reference (Background, no gap)
             col.Item()
-                .Background(BackgroundLight)
+                .Background(_backgroundLight)
                 .PaddingVertical(1)
                 .PaddingHorizontal(2)
                 .AlignCenter()
                 .Text(_localizer["ReferencesAvailableUponRequest"])
                 .FontSize(8)
-                .FontColor(TextMedium)
+                .FontColor(_textMedium)
                 .Italic();
         });
     }
 
-    private static void SectionTitle(ColumnDescriptor column, string title)
+    private void SectionTitle(ColumnDescriptor column, string title, CvTemplate template)
     {
         column
             .Item()
             .PaddingBottom(0.3f, Unit.Centimetre)
             .Row(row =>
             {
-                // CSS: display: inline-block; border-bottom: ... (Matches content width)
                 row.AutoItem()
-                    .BorderBottom(1.5f)
-                    .BorderColor(PrimaryColor)
+                    .Element(e =>
+                    {
+                        if (template == CvTemplate.Professional)
+                            return e.BorderBottom(1.5f).BorderColor(_primaryColor);
+                        if (template == CvTemplate.Modern)
+                            return e.BorderBottom(2f).BorderColor(_accentColor);
+                        if (template == CvTemplate.Minimalist)
+                            return e.PaddingBottom(2);
+                        return e;
+                    })
                     .Text(title.ToUpper())
                     .FontSize(12)
                     .Bold()
-                    .FontColor(PrimaryDark)
+                    .FontColor(template == CvTemplate.Modern ? _primaryColor : _primaryDark)
                     .LetterSpacing(0.06f);
             });
     }
@@ -1197,7 +1267,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     // SVG Path for Checkmark (Material Design)
     private const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
-    private static string PreprocessHtml(string? input, string bullet = "")
+    private string PreprocessHtml(string? input, string bullet = "")
     {
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
@@ -1230,7 +1300,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 if (bullet.Contains('\u25B8'))
                 {
                     // Keep using span for text-based bullets (Right Arrow)
-                    bulletReplacement = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
+                    bulletReplacement = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
                 }
                 else if (bullet.Contains('\u2713')) // ✓ Checkmark
                 {
@@ -1262,7 +1332,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             string bulletReplacement = bullet;
             if (bullet.Contains('\u25B8')) // ▸ Right Arrow
             {
-                bulletReplacement = $"<span style='color:{PrimaryColor}'>\u25B8</span> ";
+                bulletReplacement = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
             }
             else if (bullet.Contains('\u2713')) // ✓ Checkmark
             {
@@ -1296,7 +1366,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         pText = pText.Replace("\u2713", checkmarkPlaceholder);
 
         // Handle standalone right arrows (keep as text span)
-        pText = pText.Replace("\u25B8", $"<span style='color:{PrimaryColor}'>\u25B8</span>");
+        pText = pText.Replace("\u25B8", $"<span style='color:{_primaryColor}'>\u25B8</span>");
 
         return pText.Trim();
     }
@@ -1397,7 +1467,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     /// Renders text with HTML and Markdown support into a TextDescriptor.
     /// Used for single-line or inline candidate-provided fields.
     /// </summary>
-    private static void ComposeMarkdownText(TextDescriptor t, string? content)
+    private void ComposeMarkdownText(TextDescriptor t, string? content)
     {
         if (string.IsNullOrWhiteSpace(content))
             return;
@@ -1408,7 +1478,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     /// Renders HTML content into a ColumnDescriptor, handling text blocks, horizontal lines, and SVG checkmarks.
     /// Replaces direct Text() calls to support block-level elements like HR and complex Layouts for Checkmarks.
     /// </summary>
-    private static void ComposeHtmlContent(
+    private void ComposeHtmlContent(
         ColumnDescriptor column,
         string? input,
         float fontSize,
@@ -1464,7 +1534,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 // Fixed width for the checkmark icon
                                 // Scaling icon slightly down to match text baseline better
                                 var svgXml =
-                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{AccentColor}\"/></svg>";
+                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{_accentColor}\"/></svg>";
                                 row.ConstantItem(fontSize + 5)
                                     .PaddingRight(5)
                                     .PaddingTop(2)
@@ -1495,7 +1565,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     .Item()
                     .PaddingVertical(0.1f, Unit.Centimetre)
                     .LineHorizontal(1)
-                    .LineColor(BorderColor);
+                    .LineColor(_borderColor);
             }
         }
     }

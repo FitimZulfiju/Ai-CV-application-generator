@@ -115,6 +115,21 @@
   <data name="JobTitle" xml:space="preserve">
     <value>Titulli i Punës</value>
   </data>
+  <data name="Template" xml:space="preserve">
+    <value>Shabloni</value>
+  </data>
+  <data name="PreviewTemplate" xml:space="preserve">
+    <value>Shablloni i Parapamjes</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>Profesional</value>
+  </data>
+  <data name="Modern" xml:space="preserve">
+    <value>Modern</value>
+  </data>
+  <data name="Minimalist" xml:space="preserve">
+    <value>Minimalist</value>
+  </data>
   <data name="ManualEntryMode" xml:space="preserve">
     <value>Mënyra e Futjes Manuale</value>
   </data>
@@ -318,6 +333,9 @@
   </data>
   <data name="ConfigurationUpdated" xml:space="preserve">
     <value>Konfigurimi u përditësua me sukses</value>
+  </data>
+  <data name="TemplateUpdated" xml:space="preserve">
+    <value>Shablloni u përditësua me sukses</value>
   </data>
   <data name="ConfigurationDeleted" xml:space="preserve">
     <value>Konfigurimi u fshi me sukses</value>

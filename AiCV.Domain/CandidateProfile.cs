@@ -1,11 +1,17 @@
 namespace AiCV.Domain;
 
+public enum CvTemplate
+{
+    Professional = 0,
+    Modern = 1,
+    Minimalist = 2,
+}
+
 public class CandidateProfile
 {
     public int Id { get; set; }
     public string UserId { get; set; } = string.Empty;
     public User? User { get; set; }
-
     public string FullName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
@@ -17,7 +23,6 @@ public class CandidateProfile
     public string ProfilePictureUrl { get; set; } = string.Empty;
     public bool ShowProfilePicture { get; set; } = false;
     public string Tagline { get; set; } = string.Empty;
-
     public List<Experience> WorkExperience { get; set; } = [];
     public List<Education> Educations { get; set; } = [];
     public List<Skill> Skills { get; set; } = [];
@@ -30,10 +35,8 @@ public class Skill
 {
     public int Id { get; set; }
     public int CandidateProfileId { get; set; }
-
     [System.Text.Json.Serialization.JsonIgnore]
     public CandidateProfile? CandidateProfile { get; set; }
-
     public string Name { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
 }
@@ -42,10 +45,8 @@ public class Experience
 {
     public int Id { get; set; }
     public int CandidateProfileId { get; set; }
-
     [System.Text.Json.Serialization.JsonIgnore]
     public CandidateProfile? CandidateProfile { get; set; }
-
     public string CompanyName { get; set; } = string.Empty;
     public string JobTitle { get; set; } = string.Empty;
     public DateTime? StartDate { get; set; }
@@ -59,10 +60,8 @@ public class Education
 {
     public int Id { get; set; }
     public int CandidateProfileId { get; set; }
-
     [System.Text.Json.Serialization.JsonIgnore]
     public CandidateProfile? CandidateProfile { get; set; }
-
     public string InstitutionName { get; set; } = string.Empty;
     public string Degree { get; set; } = string.Empty;
     public DateTime? StartDate { get; set; }
@@ -74,10 +73,8 @@ public class Project
 {
     public int Id { get; set; }
     public int CandidateProfileId { get; set; }
-
     [System.Text.Json.Serialization.JsonIgnore]
     public CandidateProfile? CandidateProfile { get; set; }
-
     public string Name { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty; // e.g. "Full-Stack Developer"
     public DateTime? StartDate { get; set; }
@@ -93,10 +90,8 @@ public class Language
 {
     public int Id { get; set; }
     public int CandidateProfileId { get; set; }
-
     [System.Text.Json.Serialization.JsonIgnore]
     public CandidateProfile? CandidateProfile { get; set; }
-
     public string Name { get; set; } = string.Empty;
     public string Proficiency { get; set; } = string.Empty; // e.g. "Native", "Fluent"
 }
@@ -105,9 +100,7 @@ public class Interest
 {
     public int Id { get; set; }
     public int CandidateProfileId { get; set; }
-
     [System.Text.Json.Serialization.JsonIgnore]
     public CandidateProfile? CandidateProfile { get; set; }
-
     public string Name { get; set; } = string.Empty;
 }

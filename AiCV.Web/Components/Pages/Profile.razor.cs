@@ -8,6 +8,7 @@ public partial class Profile
     private bool _showFormattingHelp;
     private bool _isSaving;
     private bool _isPrinting;
+    private CvTemplate _selectedTemplate = CvTemplate.Professional;
     private CandidateProfile? _profile;
 
     public class SkillCategoryViewModel
@@ -217,7 +218,7 @@ public partial class Profile
         await Task.Yield();
         try
         {
-            var pdfBytes = await PdfService.GenerateCvAsync(_profile);
+            var pdfBytes = await PdfService.GenerateCvAsync(_profile, _selectedTemplate);
             await _printPreviewModal.ShowAsync(pdfBytes, "CV", _profile.FullName);
         }
         catch (Exception ex)

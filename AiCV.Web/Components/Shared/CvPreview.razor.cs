@@ -5,6 +5,17 @@ public partial class CvPreview
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 
+    [Parameter]
+    public CvTemplate Template { get; set; } = CvTemplate.Professional;
+
+    private string GetTemplateClass() =>
+        Template switch
+        {
+            CvTemplate.Modern => "cv-modern",
+            CvTemplate.Minimalist => "cv-minimalist",
+            _ => "cv-professional",
+        };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Only scale content on first render to avoid infinite render loop

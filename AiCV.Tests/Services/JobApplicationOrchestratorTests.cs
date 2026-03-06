@@ -6,7 +6,6 @@ public class JobApplicationOrchestratorTests
     private readonly Mock<IAIServiceFactory> _mockAiFactory;
     private readonly Mock<ICVService> _mockCvService;
     private readonly Mock<IAIService> _mockAiService;
-    private readonly Mock<ILogger<JobApplicationOrchestrator>> _mockLogger;
     private readonly JobApplicationOrchestrator _orchestrator;
 
     public JobApplicationOrchestratorTests()
@@ -15,13 +14,11 @@ public class JobApplicationOrchestratorTests
         _mockAiFactory = new Mock<IAIServiceFactory>();
         _mockCvService = new Mock<ICVService>();
         _mockAiService = new Mock<IAIService>();
-        _mockLogger = new Mock<ILogger<JobApplicationOrchestrator>>();
 
         _orchestrator = new JobApplicationOrchestrator(
             _mockScraper.Object,
             _mockAiFactory.Object,
-            _mockCvService.Object,
-            _mockLogger.Object
+            _mockCvService.Object
         );
     }
 
@@ -151,7 +148,8 @@ public class JobApplicationOrchestratorTests
             profile,
             testCoverLetter,
             tailoredResume,
-            testApplicationEmail
+            testApplicationEmail,
+            CvTemplate.Modern
         );
 
         // Assert - Note: The orchestrator creates a fresh JobPosting entity to avoid EF Core tracking issues
@@ -171,6 +169,7 @@ public class JobApplicationOrchestratorTests
                         && app.CoverLetterContent == testCoverLetter
                         && !string.IsNullOrEmpty(app.TailoredResumeJson)
                         && app.ApplicationEmailContent == testApplicationEmail
+                        && app.Template == CvTemplate.Modern
                     )
                 ),
             Times.Once

@@ -54,9 +54,7 @@ public partial class ApplicationDetails
                     // Get current authenticated user's ID
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var user = authState.User;
-                    var userId = user.FindFirst(
-                        ClaimTypes.NameIdentifier
-                    )?.Value;
+                    var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                     if (!string.IsNullOrEmpty(userId))
                     {
@@ -124,7 +122,8 @@ public partial class ApplicationDetails
                 _application.CoverLetterContent,
                 profile,
                 _application.JobPosting?.Title ?? "Job",
-                _application.JobPosting?.CompanyName ?? "Company"
+                _application.JobPosting?.CompanyName ?? "Company",
+                _application.Template
             );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,
@@ -153,7 +152,10 @@ public partial class ApplicationDetails
         await Task.Yield();
         try
         {
-            var pdfBytes = await PdfService.GenerateCvAsync(_tailoredResume);
+            var pdfBytes = await PdfService.GenerateCvAsync(
+                _tailoredResume,
+                _application?.Template ?? CvTemplate.Professional
+            );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,
                 "Resume",
@@ -175,5 +177,23 @@ public partial class ApplicationDetails
     {
         await ClipboardService.CopyToClipboardAsync(text);
         Snackbar.Add("Copied to clipboard!", Severity.Success);
+    }
+
+    private async Task OnTemplateChanged(CvTemplate newTemplate)
+    {
+        if (_application == null)
+            return;
+
+        _application.Template = newTemplate;
+        try
+        {
+            await CVService.SaveApplicationAsync(_application);
+            Snackbar.Add(Localizer["TemplateUpdated"], Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error saving template: {ex.Message}", Severity.Error);
+        }
     }
 }

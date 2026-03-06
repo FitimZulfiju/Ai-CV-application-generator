@@ -8,6 +8,17 @@ public partial class CoverLetterPreview
     [Parameter]
     public string LetterContent { get; set; } = string.Empty;
 
+    [Parameter]
+    public CvTemplate Template { get; set; } = CvTemplate.Professional;
+
+    private string GetTemplateClass() =>
+        Template switch
+        {
+            CvTemplate.Modern => "cv-modern",
+            CvTemplate.Minimalist => "cv-minimalist",
+            _ => "cv-professional",
+        };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Only scale content on first render to avoid infinite render loop
@@ -18,13 +29,5 @@ public partial class CoverLetterPreview
             await JSRuntime.InvokeVoidAsync("cvScaler.fitContentToPages");
         }
         await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private static string FormatLetter(string content)
-    {
-        if (string.IsNullOrEmpty(content))
-            return string.Empty;
-        // Basic formatting if needed, but pre-wrap handles most
-        return content;
     }
 }
