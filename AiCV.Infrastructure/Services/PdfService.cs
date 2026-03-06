@@ -303,7 +303,6 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Padding(10)
                                 .Column(letterCol =>
                                 {
-
                                     // Main content
                                     if (!string.IsNullOrWhiteSpace(letterContent))
                                     {
@@ -344,24 +343,16 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
     private void ComposeHeader(IContainer container, CandidateProfile profile, CvTemplate template)
     {
-        // Header from CSS: Background Gradient (Simulated with Primary), Color White, Left Aligned with Image
-        // Determine if photo will be shown to calculate padding
         bool showPhoto =
             profile.ShowProfilePicture && !string.IsNullOrEmpty(profile.ProfilePictureUrl);
-
-        // Professional template has centered text and color background
-        // Modern has left aligned text and color background
-        // Minimalist has white background and centered text
 
         var headerBg = template == CvTemplate.Minimalist ? "#ffffff" : _primaryColor;
         var headerTextCol = template == CvTemplate.Minimalist ? _textDark : "#ffffff";
         var accentCol = template == CvTemplate.Minimalist ? _borderColor : _accentColor;
-        var titleTextCol = template == CvTemplate.Minimalist ? _textMedium : "#F5F5F5";
-
-        if (template == CvTemplate.Modern)
-            titleTextCol = _accentColor;
-
-        float textPaddingLeft = showPhoto ? 4f : 1f;
+        var titleTextCol =
+            template == CvTemplate.Minimalist
+                ? _textMedium
+                : (template == CvTemplate.Modern ? _accentColor : "#F5F5F5");
 
         container.Column(c =>
         {
@@ -369,42 +360,147 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 .Background(headerBg)
                 .Layers(layers =>
                 {
-                    // 1. Text Layer
+                    // 1. Image Layer (Modern layout: side by side with text)
+                    if (showPhoto && template == CvTemplate.Modern)
+                    {
+                        var webRootPath =
+                            _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                        var path = Path.Combine(
+                            webRootPath,
+                            profile.ProfilePictureUrl!.TrimStart('/', '\\')
+                        );
+
+                        if (File.Exists(path))
+                        {
+                            layers
+                                .Layer()
+                                .AlignMiddle()
+                                .AlignLeft()
+                                .PaddingLeft(1, Unit.Centimetre)
+                                .Width(3, Unit.Centimetre)
+                                .Height(3, Unit.Centimetre)
+                                .Element(e =>
+                                {
+                                    e.Background("#ffffff")
+                                        .CornerRadius(1.5f, Unit.Centimetre)
+                                        .Border(2)
+                                        .BorderColor("#ffffff")
+                                        .Image(path)
+                                        .FitArea();
+                                });
+                        }
+                    }
+
+                    // 2. Text Layer
                     layers
                         .PrimaryLayer()
                         .PaddingVertical(1, Unit.Centimetre)
-                        .PaddingLeft(textPaddingLeft, Unit.Centimetre)
-                        .PaddingRight(1, Unit.Centimetre)
+                        .PaddingHorizontal(1, Unit.Centimetre)
                         .MinHeight(3f, Unit.Centimetre)
                         .Column(col =>
                         {
+                            // Shift text if photo is shown in Modern
+                            if (showPhoto && template == CvTemplate.Modern)
+                                col.Item().PaddingLeft(3.5f, Unit.Centimetre);
+
+                            // Centered image for Minimalist
+                            if (showPhoto && template == CvTemplate.Minimalist)
+                            {
+                                var webRootPath =
+                                    _env.WebRootPath
+                                    ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                                var path = Path.Combine(
+                                    webRootPath,
+                                    profile.ProfilePictureUrl!.TrimStart('/', '\\')
+                                );
+                                if (File.Exists(path))
+                                {
+                                    col.Item()
+                                        .AlignCenter()
+                                        .PaddingBottom(0.5f, Unit.Centimetre)
+                                        .Width(3, Unit.Centimetre)
+                                        .Height(3, Unit.Centimetre)
+                                        .Element(e =>
+                                        {
+                                            e.Background("#ffffff")
+                                                .CornerRadius(1.5f, Unit.Centimetre)
+                                                .Border(2)
+                                                .BorderColor("#eeeeee")
+                                                .Image(path)
+                                                .FitArea();
+                                        });
+                                }
+                            }
+
+                            // Professional center image handled by layers separately? No, let's simplify for all.
+                            if (showPhoto && template == CvTemplate.Professional)
+                            {
+                                // Professional photo positioning (Absolute-ish left)
+                                // Keep original layer logic for Professional below
+                            }
+
                             // Name
                             col.Item()
-                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
+                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
                                 .Text(t =>
                                 {
+                                    var name = profile.FullName ?? "";
+                                    if (template == CvTemplate.Minimalist)
+                                        name = name.ToUpper();
+
                                     t.DefaultTextStyle(x =>
-                                        x.FontSize(20).Bold().FontColor(headerTextCol)
+                                        x.FontSize(
+                                                template == CvTemplate.Minimalist
+                                                    ? 28
+                                                    : (template == CvTemplate.Modern ? 32 : 26)
+                                            )
+                                            .Bold()
+                                            .FontColor(headerTextCol)
+                                            .LetterSpacing(
+                                                template == CvTemplate.Minimalist ? 0.2f : -0.02f
+                                            )
                                     );
-                                    ComposeMarkdownText(t, profile.FullName);
+                                    t.Span(name);
                                 });
 
                             // Title
                             col.Item()
-                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
+                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
+                                .PaddingTop(0.1f, Unit.Centimetre)
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(x => x.FontSize(11).FontColor(titleTextCol));
-                                    FormatHtmlToText(t, PreprocessHtml(profile.Title ?? ""));
+                                    var title = profile.Title ?? "";
+                                    if (
+                                        template == CvTemplate.Minimalist
+                                        || template == CvTemplate.Modern
+                                    )
+                                    {
+                                        title = title.ToUpper();
+                                    }
+
+                                    t.DefaultTextStyle(x =>
+                                    {
+                                        var s = x.FontSize(12)
+                                            .FontColor(titleTextCol)
+                                            .LetterSpacing(0.05f);
+                                        return template == CvTemplate.Modern ? s.Bold() : s;
+                                    });
+                                    t.Span(title);
                                 });
 
-                            // Contact Info
+                            // Contact info layout
                             col.Item()
-                                .PaddingTop(0.2f, Unit.Centimetre)
-                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
+                                .PaddingTop(0.3f, Unit.Centimetre)
+                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(x => x.FontColor(headerTextCol).FontSize(9));
+                                    t.DefaultTextStyle(x =>
+                                        x.FontColor(headerTextCol)
+                                            .FontSize(9)
+                                            .LetterSpacing(
+                                                template == CvTemplate.Minimalist ? 0.05f : 0
+                                            )
+                                    );
 
                                     bool first = true;
                                     void AddPart(string label, string? value)
@@ -413,8 +509,13 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                             return;
                                         if (!first)
                                             t.Span(" | ");
-                                        t.Span($"{_localizer[label]} ");
-                                        FormatHtmlToText(t, PreprocessHtml(value));
+
+                                        var labelText = _localizer[label].Value;
+                                        if (template == CvTemplate.Minimalist)
+                                            labelText = labelText.ToUpper();
+
+                                        t.Span($"{labelText} ");
+                                        t.Span(value);
                                         first = false;
                                     }
 
@@ -423,13 +524,18 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     AddPart("LocationLabel", profile.Location);
                                 });
 
-                            // Links
+                            // Second row contact
                             col.Item()
-                                .PaddingTop(0.1f, Unit.Centimetre)
-                                .Element(e => template != CvTemplate.Modern ? e.AlignCenter() : e)
+                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
                                 .Text(t =>
                                 {
-                                    t.DefaultTextStyle(x => x.FontColor(headerTextCol).FontSize(9));
+                                    t.DefaultTextStyle(x =>
+                                        x.FontColor(headerTextCol)
+                                            .FontSize(9)
+                                            .LetterSpacing(
+                                                template == CvTemplate.Minimalist ? 0.05f : 0
+                                            )
+                                    );
 
                                     bool first = true;
                                     void AddLink(string label, string? value)
@@ -438,40 +544,23 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                             return;
                                         if (!first)
                                             t.Span(" | ");
-                                        t.Span($"{_localizer[label]} ");
-                                        FormatHtmlToText(t, PreprocessHtml(value));
+
+                                        var labelText = _localizer[label].Value;
+                                        if (template == CvTemplate.Minimalist)
+                                            labelText = labelText.ToUpper();
+
+                                        t.Span($"{labelText} ");
+                                        t.Span(value);
                                         first = false;
                                     }
 
                                     AddLink("LinkedInLabel", profile.LinkedInUrl);
                                     AddLink("GitHubLabel", profile.PortfolioUrl);
                                 });
-
-                            // Tagline
-                            if (!string.IsNullOrEmpty(profile.Tagline))
-                            {
-                                col.Item()
-                                    .PaddingTop(0.05f, Unit.Centimetre)
-                                    .PaddingBottom(0.05f, Unit.Centimetre)
-                                    .LineHorizontal(0.1f)
-                                    .LineColor(headerTextCol);
-
-                                col.Item()
-                                    .Element(e =>
-                                        template != CvTemplate.Modern ? e.AlignCenter() : e
-                                    )
-                                    .Text(t =>
-                                    {
-                                        t.DefaultTextStyle(x =>
-                                            x.FontSize(9).FontColor(headerTextCol).Medium()
-                                        );
-                                        ComposeMarkdownText(t, profile.Tagline);
-                                    });
-                            }
                         });
 
-                    // 2. Image Layer
-                    if (showPhoto)
+                    // 3. Independent Image Layer for Professional (Original logic)
+                    if (showPhoto && template == CvTemplate.Professional)
                     {
                         var webRootPath =
                             _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
@@ -1124,6 +1213,18 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         column
             .Item()
             .PaddingBottom(0.3f, Unit.Centimetre)
+            .PaddingTop(0.3f, Unit.Centimetre)
+            .Element(e =>
+            {
+                if (template == CvTemplate.Modern)
+                {
+                    return e.PaddingBottom(0.1f, Unit.Centimetre)
+                        .BorderLeft(4f)
+                        .BorderColor(_accentColor)
+                        .PaddingLeft(10);
+                }
+                return e;
+            })
             .Row(row =>
             {
                 row.AutoItem()
@@ -1131,17 +1232,21 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     {
                         if (template == CvTemplate.Professional)
                             return e.BorderBottom(1.5f).BorderColor(_primaryColor);
-                        if (template == CvTemplate.Modern)
-                            return e.BorderBottom(2f).BorderColor(_accentColor);
                         if (template == CvTemplate.Minimalist)
-                            return e.PaddingBottom(2);
+                        {
+                            return e.Width(17, Unit.Centimetre)
+                                .BorderBottom(1.5f)
+                                .BorderColor(_primaryDark)
+                                .PaddingBottom(2);
+                        }
+
                         return e;
                     })
                     .Text(title.ToUpper())
-                    .FontSize(12)
+                    .FontSize(template == CvTemplate.Minimalist ? 11 : 12)
                     .Bold()
                     .FontColor(template == CvTemplate.Modern ? _primaryColor : _primaryDark)
-                    .LetterSpacing(0.06f);
+                    .LetterSpacing(template == CvTemplate.Minimalist ? 0.15f : 0.06f);
             });
     }
 
