@@ -22,14 +22,35 @@
     --shadow-sm: 0 0.062em 0.125em 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 0.25em 0.375em -0.062em rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 0.625em 0.938em -0.188em rgba(0, 0, 0, 0.1);
+
+    /* Typography Tokens - FORCED CONSISTENCY (Matched to PDF Proportions) */
+    --font-size-name: 2.25rem;
+    /* ~24pt-28pt in PDF */
+    --font-size-title: 1rem;
+    /* ~11pt in PDF */
+    --font-size-section-title: 1.15rem;
+    /* ~12pt in PDF */
+    --font-size-item-title: 1.05rem;
+    /* ~11pt in PDF */
+    --font-size-body: 0.95rem;
+    /* ~10pt in PDF */
+    --font-size-meta: 0.85rem;
+    /* ~9pt in PDF */
+    --font-size-tagline: 0.9rem;
+
+    --cv-padding-x: 3.5rem;
+    --cv-padding-y: 2.5rem;
+    --cv-item-spacing: 1.25rem;
+    --cv-item-title-margin-bottom: 0.2rem;
 }
 
 .cv-container {
-    font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    /* Anchor for REM values */
     line-height: 1.6;
     color: var(--text-dark);
     background-color: #f3f4f6;
-    /*padding: 1.25em;*/
     width: 100%;
     min-height: 100%;
 }
