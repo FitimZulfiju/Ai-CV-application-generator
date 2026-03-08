@@ -356,243 +356,311 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
         container.Column(c =>
         {
-            c.Item()
-                .Background(headerBg)
-                .Layers(layers =>
-                {
-                    // 1. Image Layer (Modern layout: side by side with text)
-                    if (showPhoto && template == CvTemplate.Modern)
+            if (template == CvTemplate.Minimalist)
+            {
+                c.Item()
+                    .BorderBottom(0.08f, Unit.Centimetre)
+                    .BorderColor(accentCol)
+                    .Background(headerBg)
+                    .PaddingVertical(0.75f, Unit.Centimetre)
+                    .PaddingHorizontal(0.75f, Unit.Centimetre)
+                    .Column(col =>
                     {
-                        var webRootPath =
-                            _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                        var path = Path.Combine(
-                            webRootPath,
-                            profile.ProfilePictureUrl!.TrimStart('/', '\\')
-                        );
-
-                        if (File.Exists(path))
+                        if (showPhoto)
                         {
-                            layers
-                                .Layer()
-                                .AlignMiddle()
-                                .AlignLeft()
-                                .PaddingLeft(1, Unit.Centimetre)
-                                .Width(3, Unit.Centimetre)
-                                .Height(3, Unit.Centimetre)
-                                .Element(e =>
+                            var webRootPath =
+                                _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                            var path = Path.Combine(
+                                webRootPath,
+                                profile.ProfilePictureUrl!.TrimStart('/', '\\')
+                            );
+                            if (File.Exists(path))
+                            {
+                                col.Item()
+                                    .AlignCenter()
+                                    .PaddingBottom(0.5f, Unit.Centimetre)
+                                    .Width(3, Unit.Centimetre)
+                                    .Height(3, Unit.Centimetre)
+                                    .Element(e =>
+                                    {
+                                        e.Background("#ffffff")
+                                            .CornerRadius(1.5f, Unit.Centimetre)
+                                            .Border(2)
+                                            .BorderColor("#eeeeee")
+                                            .Image(path)
+                                            .FitArea();
+                                    });
+                            }
+                        }
+
+                        // Text block for Minimalist (Centered)
+                        col.Item()
+                            .AlignCenter()
+                            .Text(t =>
+                            {
+                                t.AlignCenter();
+                                t.DefaultTextStyle(x =>
+                                    x.FontSize(28)
+                                        .Bold()
+                                        .FontColor(headerTextCol)
+                                        .LetterSpacing(0.2f)
+                                );
+                                t.Span((profile.FullName ?? "").ToUpper());
+                            });
+
+                        col.Item()
+                            .PaddingTop(0.1f, Unit.Centimetre)
+                            .AlignCenter()
+                            .Text(t =>
+                            {
+                                t.AlignCenter();
+                                t.DefaultTextStyle(x =>
+                                    x.FontSize(10.5f).FontColor(titleTextCol).LetterSpacing(0.02f)
+                                );
+                                t.Span((profile.Title ?? "").ToUpper());
+                            });
+
+                        col.Item()
+                            .PaddingTop(0.3f, Unit.Centimetre)
+                            .AlignCenter()
+                            .Text(t =>
+                            {
+                                t.AlignCenter();
+                                t.DefaultTextStyle(x =>
+                                    x.FontColor(headerTextCol).FontSize(9).LetterSpacing(0.05f)
+                                );
+                                ComposeContactRow(t, profile, true);
+                            });
+
+                        col.Item()
+                            .AlignCenter()
+                            .Text(t =>
+                            {
+                                t.AlignCenter();
+                                t.DefaultTextStyle(x =>
+                                    x.FontColor(headerTextCol).FontSize(9).LetterSpacing(0.05f)
+                                );
+                                ComposeLinkRow(t, profile, true);
+                            });
+
+                        if (!string.IsNullOrWhiteSpace(profile.Tagline))
+                        {
+                            col.Item()
+                                .PaddingTop(0.2f, Unit.Centimetre)
+                                .PaddingBottom(0.2f, Unit.Centimetre)
+                                .LineHorizontal(0.5f)
+                                .LineColor(titleTextCol);
+                            col.Item()
+                                .AlignCenter()
+                                .Text(t =>
                                 {
-                                    e.Background("#ffffff")
-                                        .CornerRadius(1.5f, Unit.Centimetre)
-                                        .Border(2)
-                                        .BorderColor("#ffffff")
-                                        .Image(path)
-                                        .FitArea();
+                                    t.AlignCenter();
+                                    t.DefaultTextStyle(x =>
+                                        x.FontColor(headerTextCol).FontSize(9.5f).Italic()
+                                    );
+                                    t.Span(profile.Tagline);
                                 });
                         }
-                    }
+                    });
+            }
+            else // Modern or Professional
+            {
+                c.Item()
+                    .CornerRadius(8)
+                    .BorderBottom(0.08f, Unit.Centimetre)
+                    .BorderColor(accentCol)
+                    .Background(headerBg)
+                    .PaddingVertical(0.75f, Unit.Centimetre)
+                    .PaddingHorizontal(0.75f, Unit.Centimetre)
+                    .Row(row =>
+                    {
+                        float photoSize = (template == CvTemplate.Modern) ? 2.2f : 2.5f;
+                        float sideWidth = photoSize + 0.5f;
 
-                    // 2. Text Layer
-                    layers
-                        .PrimaryLayer()
-                        .PaddingVertical(0.75f, Unit.Centimetre)
-                        .PaddingHorizontal(0.75f, Unit.Centimetre)
-                        .MinHeight(3f, Unit.Centimetre)
-                        .Column(col =>
+                        if (showPhoto)
                         {
-                            // Shift text if photo is shown in Modern
-                            if (showPhoto && template == CvTemplate.Modern)
-                                col.Item().PaddingLeft(3.5f, Unit.Centimetre);
+                            // Left Column (Photo)
+                            row.ConstantItem(sideWidth, Unit.Centimetre)
+                                .Element(e =>
+                                {
+                                    var webRootPath =
+                                        _env.WebRootPath
+                                        ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                                    var path = Path.Combine(
+                                        webRootPath,
+                                        profile.ProfilePictureUrl!.TrimStart('/', '\\')
+                                    );
+                                    if (File.Exists(path))
+                                    {
+                                        e.AlignMiddle()
+                                            .AlignLeft()
+                                            .Width(photoSize, Unit.Centimetre)
+                                            .Height(photoSize, Unit.Centimetre)
+                                            .Element(inner =>
+                                            {
+                                                inner
+                                                    .Background("#ffffff")
+                                                    .CornerRadius(photoSize / 2, Unit.Centimetre)
+                                                    .Border(2)
+                                                    .BorderColor("#ffffff")
+                                                    .Image(path)
+                                                    .FitArea();
+                                            });
+                                    }
+                                });
+                        }
 
-                            // Centered image for Minimalist
-                            if (showPhoto && template == CvTemplate.Minimalist)
+                        // Center Column (Text Content - Truly page-centered)
+                        row.RelativeItem()
+                            .AlignCenter()
+                            .Column(col =>
                             {
-                                var webRootPath =
-                                    _env.WebRootPath
-                                    ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                                var path = Path.Combine(
-                                    webRootPath,
-                                    profile.ProfilePictureUrl!.TrimStart('/', '\\')
-                                );
-                                if (File.Exists(path))
+                                // Name
+                                col.Item()
+                                    .AlignCenter()
+                                    .Text(t =>
+                                    {
+                                        t.AlignCenter();
+                                        t.DefaultTextStyle(x =>
+                                            x.FontSize(
+                                                    template == CvTemplate.Modern
+                                                        ? (showPhoto ? 28 : 32)
+                                                        : (showPhoto ? 24 : 26)
+                                                )
+                                                .Bold()
+                                                .FontColor(headerTextCol)
+                                                .LetterSpacing(-0.02f)
+                                        );
+                                        t.Span(profile.FullName ?? "");
+                                    });
+
+                                // Title
+                                col.Item()
+                                    .PaddingTop(0.1f, Unit.Centimetre)
+                                    .AlignCenter()
+                                    .Text(t =>
+                                    {
+                                        t.AlignCenter();
+                                        var title = profile.Title ?? "";
+                                        if (template == CvTemplate.Modern)
+                                            title = title.ToUpper();
+
+                                        t.DefaultTextStyle(x =>
+                                        {
+                                            float titleFontSize =
+                                                template == CvTemplate.Modern
+                                                    ? (showPhoto ? 8.5f : 9.5f)
+                                                    : (showPhoto ? 10f : 11f);
+
+                                            var s = x.FontSize(titleFontSize)
+                                                .FontColor(titleTextCol)
+                                                .LetterSpacing(0.02f);
+                                            return template == CvTemplate.Modern ? s.Bold() : s;
+                                        });
+                                        t.Span(title);
+                                    });
+
+                                // Contact
+                                col.Item()
+                                    .PaddingTop(0.3f, Unit.Centimetre)
+                                    .AlignCenter()
+                                    .Text(t =>
+                                    {
+                                        t.AlignCenter();
+                                        t.DefaultTextStyle(x =>
+                                            x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
+                                        );
+                                        ComposeContactRow(t, profile, false);
+                                    });
+
+                                col.Item()
+                                    .AlignCenter()
+                                    .Text(t =>
+                                    {
+                                        t.AlignCenter();
+                                        t.DefaultTextStyle(x =>
+                                            x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
+                                        );
+                                        ComposeLinkRow(t, profile, false);
+                                    });
+
+                                if (!string.IsNullOrWhiteSpace(profile.Tagline))
                                 {
                                     col.Item()
+                                        .PaddingTop(0.2f, Unit.Centimetre)
+                                        .PaddingBottom(0.2f, Unit.Centimetre)
+                                        .LineHorizontal(0.5f)
+                                        .LineColor(titleTextCol);
+                                    col.Item()
                                         .AlignCenter()
-                                        .PaddingBottom(0.5f, Unit.Centimetre)
-                                        .Width(3, Unit.Centimetre)
-                                        .Height(3, Unit.Centimetre)
-                                        .Element(e =>
+                                        .Text(t =>
                                         {
-                                            e.Background("#ffffff")
-                                                .CornerRadius(1.5f, Unit.Centimetre)
-                                                .Border(2)
-                                                .BorderColor("#eeeeee")
-                                                .Image(path)
-                                                .FitArea();
+                                            t.AlignCenter();
+                                            t.DefaultTextStyle(x =>
+                                                x.FontColor(headerTextCol)
+                                                    .FontSize(showPhoto ? 8.5f : 9.5f)
+                                                    .Italic()
+                                            );
+                                            t.Span(profile.Tagline);
                                         });
                                 }
-                            }
+                            });
 
-                            // Professional center image handled by layers separately? No, let's simplify for all.
-                            if (showPhoto && template == CvTemplate.Professional)
-                            {
-                                // Professional photo positioning (Absolute-ish left)
-                                // Keep original layer logic for Professional below
-                            }
-
-                            // Name
-                            col.Item()
-                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
-                                .Text(t =>
-                                {
-                                    var name = profile.FullName ?? "";
-                                    if (template == CvTemplate.Minimalist)
-                                        name = name.ToUpper();
-
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(
-                                                template == CvTemplate.Minimalist
-                                                    ? 28
-                                                    : (template == CvTemplate.Modern ? 32 : 26)
-                                            )
-                                            .Bold()
-                                            .FontColor(headerTextCol)
-                                            .LetterSpacing(
-                                                template == CvTemplate.Minimalist ? 0.2f : -0.02f
-                                            )
-                                    );
-                                    t.Span(name);
-                                });
-
-                            // Title
-                            col.Item()
-                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
-                                .PaddingTop(0.1f, Unit.Centimetre)
-                                .Text(t =>
-                                {
-                                    var title = profile.Title ?? "";
-                                    if (
-                                        template == CvTemplate.Minimalist
-                                        || template == CvTemplate.Modern
-                                    )
-                                    {
-                                        title = title.ToUpper();
-                                    }
-
-                                    t.DefaultTextStyle(x =>
-                                    {
-                                        var s = x.FontSize(12)
-                                            .FontColor(titleTextCol)
-                                            .LetterSpacing(0.05f);
-                                        return template == CvTemplate.Modern ? s.Bold() : s;
-                                    });
-                                    t.Span(title);
-                                });
-
-                            // Contact info layout
-                            col.Item()
-                                .PaddingTop(0.3f, Unit.Centimetre)
-                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
-                                .Text(t =>
-                                {
-                                    t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol)
-                                            .FontSize(9)
-                                            .LetterSpacing(
-                                                template == CvTemplate.Minimalist ? 0.05f : 0
-                                            )
-                                    );
-
-                                    bool first = true;
-                                    void AddPart(string label, string? value)
-                                    {
-                                        if (string.IsNullOrEmpty(value))
-                                            return;
-                                        if (!first)
-                                            t.Span(" | ");
-
-                                        var labelText = _localizer[label].Value;
-                                        if (template == CvTemplate.Minimalist)
-                                            labelText = labelText.ToUpper();
-
-                                        t.Span($"{labelText} ");
-                                        t.Span(value);
-                                        first = false;
-                                    }
-
-                                    AddPart("EmailLabel", profile.Email);
-                                    AddPart("PhoneLabel", profile.PhoneNumber);
-                                    AddPart("LocationLabel", profile.Location);
-                                });
-
-                            // Second row contact
-                            col.Item()
-                                .Element(e => (template == CvTemplate.Modern) ? e : e.AlignCenter())
-                                .Text(t =>
-                                {
-                                    t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol)
-                                            .FontSize(9)
-                                            .LetterSpacing(
-                                                template == CvTemplate.Minimalist ? 0.05f : 0
-                                            )
-                                    );
-
-                                    bool first = true;
-                                    void AddLink(string label, string? value)
-                                    {
-                                        if (string.IsNullOrEmpty(value))
-                                            return;
-                                        if (!first)
-                                            t.Span(" | ");
-
-                                        var labelText = _localizer[label].Value;
-                                        if (template == CvTemplate.Minimalist)
-                                            labelText = labelText.ToUpper();
-
-                                        t.Span($"{labelText} ");
-                                        t.Span(value);
-                                        first = false;
-                                    }
-
-                                    AddLink("LinkedInLabel", profile.LinkedInUrl);
-                                    AddLink("GitHubLabel", profile.PortfolioUrl);
-                                });
-                        });
-
-                    // 3. Independent Image Layer for Professional (Original logic)
-                    if (showPhoto && template == CvTemplate.Professional)
-                    {
-                        var webRootPath =
-                            _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                        var path = Path.Combine(
-                            webRootPath,
-                            profile.ProfilePictureUrl!.TrimStart('/', '\\')
-                        );
-                        if (File.Exists(path))
+                        if (showPhoto)
                         {
-                            layers
-                                .Layer()
-                                .AlignMiddle()
-                                .AlignLeft()
-                                .PaddingLeft(1, Unit.Centimetre)
-                                .Width(2.5f, Unit.Centimetre)
-                                .Height(2.5f, Unit.Centimetre)
-                                .Element(e =>
-                                {
-                                    e.Background("#ffffff")
-                                        .CornerRadius(1.25f, Unit.Centimetre)
-                                        .Border(2)
-                                        .BorderColor("#ffffff")
-                                        .Image(path)
-                                        .FitArea();
-                                });
+                            // Right Column (Spacer to balance the photo on the left)
+                            row.ConstantItem(sideWidth, Unit.Centimetre).Element(_ => { });
                         }
-                    }
-                });
-
-            // Accent Line
-            c.Item().Height(0.04f, Unit.Centimetre).Background(accentCol);
+                    });
+            }
         });
+    }
+
+    private void ComposeContactRow(TextDescriptor t, CandidateProfile profile, bool isUpper)
+    {
+        bool first = true;
+        void AddPart(string label, string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+            if (!first)
+                t.Span(" | ");
+
+            var labelText = _localizer[label].Value;
+            if (isUpper)
+                labelText = labelText.ToUpper();
+
+            t.Span($"{labelText} ");
+            t.Span(value);
+            first = false;
+        }
+
+        AddPart("EmailLabel", profile.Email);
+        AddPart("PhoneLabel", profile.PhoneNumber);
+        AddPart("LocationLabel", profile.Location);
+    }
+
+    private void ComposeLinkRow(TextDescriptor t, CandidateProfile profile, bool isUpper)
+    {
+        bool first = true;
+        void AddLink(string label, string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+            if (!first)
+                t.Span(" | ");
+
+            var labelText = _localizer[label].Value;
+            if (isUpper)
+                labelText = labelText.ToUpper();
+
+            t.Span($"{labelText} ");
+            t.Span(value);
+            first = false;
+        }
+
+        AddLink("LinkedInLabel", profile.LinkedInUrl);
+        AddLink("GitHubLabel", profile.PortfolioUrl);
     }
 
     // --- Helper Methods for Page Sections ---
@@ -1212,6 +1280,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     {
         column
             .Item()
+            .Element(e =>
+                (template == CvTemplate.Professional || template == CvTemplate.Modern)
+                    ? e.AlignLeft()
+                    : e
+            )
             .PaddingBottom(0.3f, Unit.Centimetre)
             .PaddingTop(0.3f, Unit.Centimetre)
             .Element(e =>

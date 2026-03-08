@@ -1,7 +1,3 @@
-/* 
-   Modern Professional CV Styles - Layout & Components
-*/
-
 /* --- PROFESSIONAL TEMPLATE (Default) --- */
 
 /* Header Section */
@@ -11,16 +7,8 @@
     padding: 2.5em 3.125em 1.875em;
     text-align: center;
     position: relative;
-}
-
-.cv-container.cv-professional .header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 0.25em;
-    background: var(--accent-color);
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--accent-color);
 }
 
 .cv-container.cv-professional .name {
@@ -361,11 +349,11 @@
     align-items: center;
     gap: 2.5em;
     text-align: left;
-    border-bottom: 0.3125em solid var(--modern-accent);
     position: relative;
     overflow: hidden;
     min-height: 10em;
-    /* Ensure enough height even without photo */
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--modern-accent);
 }
 
 .cv-container.cv-modern .header::before {
@@ -405,7 +393,6 @@
     font-size: 0.875em;
     color: rgba(255, 255, 255, 0.8);
     display: block;
-    /* Removed flex to keep labels and links together */
     margin-top: 1em;
     line-height: 1.6;
 }
@@ -445,7 +432,6 @@
     box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
     padding: 2em;
     margin: 0;
-    /* Managed by section padding */
     font-size: 1em;
     line-height: 1.8;
     border-radius: 0 0.5em 0.5em 0;
@@ -522,12 +508,12 @@
     background: white;
     color: #111;
     padding: 4em 3.125em 2.5em;
-    border-bottom: 0.0625em solid #f0f0f0;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.5em;
+    border-bottom: 0.25em solid #f0f0f0;
 }
 
 .cv-container.cv-minimalist .profile-photo {
@@ -585,7 +571,6 @@
 
 .cv-container.cv-minimalist .summary {
     padding: 0;
-    /* Let section handle outer padding */
     background: transparent;
     border-left: none;
     font-size: 1.0625em;
