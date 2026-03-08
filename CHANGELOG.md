@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.5.0] - 2026-03-08
+
+### Added
+- feat: Add VS Code workspace file for project setup.
+- feat: add multi-template support and enhance UI/UX for applications
+
+
 ## [1.4.0] - 2026-02-27
 
 ### Added
