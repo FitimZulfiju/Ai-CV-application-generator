@@ -2,77 +2,9 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<style>
-    .notes-drop-zone {
-        column-gap: 16px;
-        width: 100% !important;
-        min-height: 100px;
-        display: block !important;
-        column-count: 1;
-    }
-
-    @@media(min-width: 600px) {
-        .notes-drop-zone {
-            column-count: 2;
-        }
-    }
-
-    @@media(min-width: 960px) {
-        .notes-drop-zone {
-            column-count: 3;
-        }
-    }
-
-    @@media(min-width: 1280px) {
-        .notes-drop-zone {
-            column-count: 4;
-        }
-    }
-
-    @@media(min-width: 1920px) {
-        .notes-drop-zone {
-            column-count: 5;
-        }
-    }
-
-    .mud-drop-item {
-        display: block !important;
-        width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* Target the wrapper we added in the markup for 100% reliable spacing */
-    .masonry-item-wrapper {
-        display: block !important;
-        width: 100% !important;
-        margin-bottom: 16px !important;
-        /* Forces the vertical gap to match the horizontal column-gap */
-        break-inside: avoid-column !important;
-        /* Prevents splitting across columns */
-        padding: 0 !important;
-    }
-
-    .note-item-wrapper {
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    @@media(max-width: 640px) {
-        .notes-header-stack {
-            flex-direction: column !important;
-            align-items: stretch !important;
-        }
-
-        .notes-search-stack {
-            width: 100% !important;
-            margin-top: 8px;
-        }
-    }
-</style>
-
 <PageTitle>@Localizer["Notes"]</PageTitle>
 
+<div class="notes-page">
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
         Class="mb-6 notes-header-stack gap-4">
@@ -145,3 +77,4 @@
 
 <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed; bottom: 24px; right: 24px;"
     OnClick="AddNote" />
+</div>

@@ -1,5 +1,4 @@
 @attribute [Microsoft.AspNetCore.Components.Route(NavUri.GeneratePage)]
-
 @attribute [Authorize]
 
 <PageTitle>@Localizer["GenerateApplication"]</PageTitle>
@@ -9,9 +8,6 @@
 
     <MudGrid>
         <MudItem xs="12" Class="d-print-none">
-            @*  <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Class="mb-4">
-                    @Localizer["CostDisclaimer"]
-                </MudAlert> *@
             <div class="d-print-none">
                 <MudCard Elevation="3" Class="pa-4">
                     <MudText Typo="Typo.h6" Class="mb-1">📋 @Localizer["JobDetails"]</MudText>

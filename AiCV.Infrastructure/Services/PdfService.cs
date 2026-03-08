@@ -143,7 +143,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
-                    page.Margin(1.25f, Unit.Centimetre);
+                    page.Margin(0.75f, Unit.Centimetre);
                     page.DefaultTextStyle(x =>
                         x.FontSize(size).FontFamily("Lato").FontColor(_textDark)
                     );
@@ -199,7 +199,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
-                    page.Margin(1.25f, Unit.Centimetre);
+                    page.Margin(0.75f, Unit.Centimetre);
                     page.DefaultTextStyle(x =>
                         x.FontSize(size).FontFamily("Lato").FontColor(_textDark)
                     );
@@ -223,7 +223,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(1.25f, Unit.Centimetre);
+                page.Margin(0.75f, Unit.Centimetre);
                 page.DefaultTextStyle(x =>
                     x.FontSize(page1Size).FontFamily("Lato").FontColor(_textDark)
                 );
@@ -235,7 +235,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(1.25f, Unit.Centimetre);
+                page.Margin(0.75f, Unit.Centimetre);
                 page.DefaultTextStyle(x =>
                     x.FontSize(page2Size).FontFamily("Lato").FontColor(_textDark)
                 );
@@ -246,7 +246,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(1.25f, Unit.Centimetre);
+                page.Margin(0.75f, Unit.Centimetre);
                 page.DefaultTextStyle(x =>
                     x.FontSize(page3Size).FontFamily("Lato").FontColor(_textDark)
                 );
@@ -279,7 +279,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
-                    page.Margin(1.25f, Unit.Centimetre);
+                    page.Margin(0.75f, Unit.Centimetre);
                     page.DefaultTextStyle(x =>
                         x.FontSize(size).FontFamily("Lato").FontColor(_textDark)
                     );
@@ -394,8 +394,8 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     // 2. Text Layer
                     layers
                         .PrimaryLayer()
-                        .PaddingVertical(1, Unit.Centimetre)
-                        .PaddingHorizontal(1, Unit.Centimetre)
+                        .PaddingVertical(0.75f, Unit.Centimetre)
+                        .PaddingHorizontal(0.75f, Unit.Centimetre)
                         .MinHeight(3f, Unit.Centimetre)
                         .Column(col =>
                         {

@@ -128,34 +128,53 @@ else
                     <h3 class="section-title">@Localizer["PersonalProjectsCv"]</h3>
                     @if (Profile.Projects != null && Profile.Projects.Any())
                     {
-                        @foreach (var proj in Profile.Projects)
+                        var projectList = Profile.Projects.OrderByDescending(p => p.StartDate).ToList();
+                        for (int i = 0; i < projectList.Count; i++)
                         {
-                            <div class="project">
+                            var proj = projectList[i];
+                            var isLast = i == projectList.Count - 1;
+                            <div class="project" style="@(!isLast ? "margin-bottom: 1.5em;" : "")">
                                 <div class="project-header">
                                     <h4 class="project-title"><FormattedText Text="@proj.Name" /></h4>
-                                    <span class="project-date">@proj.StartDate?.ToString("yyyy") - @(proj.EndDate.HasValue? proj.EndDate.Value.ToString("yyyy") : Localizer["Present"])</span>
+                                    <span class="project-date">@proj.StartDate?.ToString("yyyy") - @(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : Localizer["Present"])</span>
                                 </div>
-                                <p class="project-links">
-                                    @if (!string.IsNullOrEmpty(proj.Link))
-                                    {
-                                        <strong>@Localizer["GitHubLabel"]</strong>
-                                        <a href="@proj.Link" target="_blank"><FormattedText Text="@proj.Link" /></a>
+                                @if (!string.IsNullOrEmpty(proj.Link) || !string.IsNullOrEmpty(proj.Technologies))
+                                {
+                                    <p class="project-links">
+                                        @if (!string.IsNullOrEmpty(proj.Link))
+                                        {
+                                            <strong>@Localizer["GitHubLabel"]</strong>
+                                            <a href="@proj.Link" target="_blank"><FormattedText Text="@proj.Link" /></a>
 
-                                        <span> | </span>
-                                    }
-                                    <strong>@Localizer["TechnologiesLabel"]</strong> <FormattedText Text="@proj.Technologies" />
-                                </p>
-                                <ul class="project-features">
-                                    <FormattedText Text="@proj.Description" IsDescription="true" />
-                                </ul>
+                                            @if (!string.IsNullOrEmpty(proj.Technologies))
+                                            {
+                                                <span> | </span>
+                                            }
+                                        }
+                                        @if (!string.IsNullOrEmpty(proj.Technologies))
+                                        {
+                                            <strong>@Localizer["TechnologiesLabel"]</strong> <FormattedText Text="@proj.Technologies" />
+                                        }
+                                    </p>
+                                }
+                                @if (!string.IsNullOrEmpty(proj.Role))
+                                {
+                                    <p class="project-role"><FormattedText Text="@proj.Role" /></p>
+                                }
+                                @if (!string.IsNullOrEmpty(proj.Description))
+                                {
+                                    <ul class="project-features">
+                                        <FormattedText Text="@proj.Description" IsDescription="true" />
+                                    </ul>
+                                }
+
                                 @if (!string.IsNullOrEmpty(proj.SectionTitle) || !string.IsNullOrEmpty(proj.SectionDescription))
                                 {
                                     if (!string.IsNullOrEmpty(proj.SectionDescription))
                                     {
-                                        <!-- DEBUG: Raw Description: @proj.SectionDescription -->
                                         if (!string.IsNullOrEmpty(proj.SectionTitle))
                                         {
-                                            <h5 class="project-section-title"><FormattedText Text="@proj.SectionTitle" /></h5>
+                                            <h5 class="project-section-title" style="margin-top: 0.5em;"><FormattedText Text="@proj.SectionTitle" /></h5>
                                         }
                                         <ul class="project-features">
                                             <FormattedText Text="@proj.SectionDescription" IsDescription="true" />
@@ -169,7 +188,7 @@ else
 
                                         if (!string.IsNullOrEmpty(sectionHeader))
                                         {
-                                            <h5 class="project-section-title"><FormattedText Text="@sectionHeader" /></h5>
+                                            <h5 class="project-section-title" style="margin-top: 0.5em;"><FormattedText Text="@sectionHeader" /></h5>
                                         }
                                         if (sectionDetails.Any())
                                         {

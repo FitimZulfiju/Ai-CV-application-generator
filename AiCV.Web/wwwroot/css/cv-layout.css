@@ -135,7 +135,7 @@
 }
 
 .cv-container.cv-professional .section-title {
-    font-size: 1.375em;
+    font-size: 1.5rem !important;
     font-weight: 700;
     color: var(--primary-dark);
     margin-bottom: 1.25em;
@@ -153,6 +153,11 @@
     border-radius: 0.5em;
     border-left: 0.25em solid var(--primary-color);
     transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 1.25em;
+}
+
+.cv-container.cv-professional .skill-category:last-child {
+    margin-bottom: 0;
 }
 
 .cv-container.cv-professional .skill-title {
@@ -167,22 +172,27 @@
     margin-bottom: 1.875em;
     padding-bottom: 1.562em;
     border-bottom: 0.062em solid var(--border-color);
+    font-size: 1.15rem !important;
 }
 
 .cv-container.cv-professional .job-title {
-    font-size: 1.062em;
+    font-size: 1.15em;
     font-weight: 700;
     color: var(--text-dark);
     margin-bottom: 0.25em;
 }
 
 .cv-container.cv-professional .company {
-    font-size: 0.875em;
+    font-size: 0.95em;
     color: var(--primary-color);
     font-weight: 600;
 }
 
 /* Achievements */
+.cv-container.cv-professional .achievements li {
+    font-size: 0.95em;
+}
+
 .cv-container.cv-professional .achievements li::before {
     content: '•';
     color: var(--primary-color);
@@ -233,12 +243,25 @@
     gap: 1.25em;
 }
 
-.cv-container .job-dates {
+.cv-container .project-header,
+.cv-container .education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.25em;
+    gap: 1.25em;
+}
+
+.cv-container .job-dates,
+.cv-container .project-date,
+.cv-container .education-date {
     text-align: right;
     flex-shrink: 0;
 }
 
-.cv-container .date {
+.cv-container .date,
+.cv-container .project-date,
+.cv-container .education-date {
     font-size: 0.812em;
     color: var(--text-medium);
     font-weight: 600;
@@ -258,6 +281,7 @@
 .cv-container .course-list {
     list-style: none;
     padding-left: 0;
+    font-size: 0.95em;
 }
 
 .cv-container .achievements li,
@@ -275,11 +299,26 @@
     margin-bottom: 0.625em;
 }
 
+.cv-container .language-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
+    justify-content: center;
+    margin-top: 0.5em;
+}
+
+.cv-container .language-item {
+    font-size: 0.9em;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
 .cv-container .interests {
     display: flex;
     flex-wrap: wrap;
     gap: 0.625em;
     margin-top: 0.938em;
+    justify-content: center;
 }
 
 .cv-container .interest-tag {
@@ -383,7 +422,7 @@
 }
 
 .cv-container.cv-modern .section-title {
-    font-size: 1.375em;
+    font-size: 1.5rem !important;
     font-weight: 700;
     color: var(--modern-primary);
     border-left: 0.3125em solid var(--modern-accent);
@@ -425,31 +464,50 @@
     background: white;
     box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.05);
     border-radius: 0.5em;
-    border-left: none;
-    border-top: 0.1875em solid var(--modern-accent);
+    border-left: 0.25em solid var(--modern-accent);
+    border-top: none;
     padding: 1.25em;
+    margin-bottom: 1.25em;
+}
+
+.cv-container.cv-modern .skill-category:last-child {
+    margin-bottom: 0;
 }
 
 .cv-container.cv-modern .job {
     border-bottom: 0.0625em solid #eee;
     padding-bottom: 2em;
     margin-bottom: 2em;
+    font-size: 1.15rem !important;
+}
+
+.cv-container.cv-modern .job-title {
+    font-size: 1.15em;
+    font-weight: 700;
 }
 
 .cv-container.cv-modern .company {
     color: var(--modern-accent);
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.8125em;
+    font-size: 0.9em;
     letter-spacing: 0.05em;
 }
 
-.cv-container.cv-modern .education,
+.cv-container.cv-modern .education {
+    background: white;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
+    border-left: 0.25em solid var(--modern-accent);
+    border-radius: 0.25em;
+    padding: 1.25em;
+}
+
 .cv-container.cv-modern .project {
     background: white;
     box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
     border-left: 0.25em solid var(--modern-primary);
     border-radius: 0.25em;
+    padding: 1.25em;
 }
 
 /* --- MINIMALIST TEMPLATE --- */
@@ -512,7 +570,7 @@
 }
 
 .cv-container.cv-minimalist .section-title {
-    font-size: 1.125em;
+    font-size: 1.25rem !important;
     font-weight: 600;
     color: #111;
     border-bottom: 0.125em solid #111;
@@ -560,15 +618,11 @@
     border-bottom: none;
     margin-bottom: 2.5em;
     position: relative;
-}
-
-.cv-container.cv-minimalist .job-title {
-    font-size: 1.25em;
-    font-weight: 600;
+    font-size: 1.15rem !important;
 }
 
 .cv-container.cv-minimalist .company {
-    font-size: 0.9375em;
+    font-size: 1em;
     color: #666;
     font-weight: 400;
     font-style: italic;

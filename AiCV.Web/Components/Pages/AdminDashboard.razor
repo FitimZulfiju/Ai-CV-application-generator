@@ -71,21 +71,6 @@
                                     @Localizer["ApplicationsLast30Days"]
                                 </MudText>
                             </MudStack>
-                            <!-- Legend -->
-                            @*  <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
-                                @foreach (var series in _dailyChartSeries)
-                                {
-
-                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-                                        <MudIcon Icon="@Icons.Material.Filled.Circle"
-                                                 Size="Size.Small"
-                                                 Color="Color.Primary" />
-                                        <MudText Typo="Typo.body2" Style="line-height:1;">
-                                            @series.Name
-                                        </MudText>
-                                    </MudStack>
-                                }
-                            </MudStack> *@
                         </MudStack>
                     </MudCardHeader>
                     <MudChart ChartType="ChartType.Line"
