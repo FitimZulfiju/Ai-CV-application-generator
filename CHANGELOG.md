@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.6.2] - 2026-03-09
+
+### Changed
+- Revert to Pull Request method for changelog to comply with repo rules
+
 ## [1.6.0] - 2026-03-09
 
 ### Changed
