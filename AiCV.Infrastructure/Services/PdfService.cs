@@ -1412,8 +1412,14 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
             // Inherit parent styles or apply new ones from current tag
             bool currentBold =
-                isBold || tagName == "strong" || tagName == "b" || tagName.StartsWith('h');
-            bool currentItalic = isItalic || tagName == "em" || tagName == "i";
+                isBold
+                || tagName == "strong"
+                || tagName == "b"
+                || tagName.StartsWith('h')
+                || tagName == "code"
+                || tagName == "pre";
+            bool currentItalic =
+                isItalic || tagName == "em" || tagName == "i" || tagName == "blockquote";
             bool currentUnderline = isUnderline || tagName == "u";
             string? currentColor = color;
             string? currentLink = linkUrl;
@@ -1481,7 +1487,17 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
             // Add a newline for block-level tags only if we are in a block context
             // AND there is more content (tags or text) following this tag.
-            if (isBlock && (tagName == "p" || tagName == "div"))
+            // AND the following content doesn't already start with a newline.
+            if (
+                isBlock
+                && (
+                    tagName == "p"
+                    || tagName == "div"
+                    || tagName.StartsWith('h')
+                    || tagName == "blockquote"
+                    || tagName == "pre"
+                )
+            )
             {
                 var remaining = input[(match.Index + match.Length)..];
                 if (
@@ -1489,7 +1505,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                     || (!string.IsNullOrWhiteSpace(remaining) && remaining.Trim().Length > 0)
                 )
                 {
-                    textDescriptor.Span("\n");
+                    if (!remaining.TrimStart(' ', '\t', '\r').StartsWith('\n'))
+                    {
+                        textDescriptor.Span("\n");
+                    }
                 }
             }
 
@@ -1578,33 +1597,28 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         // Handle Lists (<ul><li>...</li></ul>)
         if (pText.Contains("<li>", StringComparison.OrdinalIgnoreCase))
         {
-            // Replace <li> with bullet
+            // 1. Strip nested <p> tags inside <li> to prevent extra gaps from FormatHtmlToText
+            pText = LiWithNestedPRegex().Replace(pText, "<li>$1</li>");
+
+            // 2. Determine bullet replacement
+            string bRep = "• ";
             if (!string.IsNullOrEmpty(bullet))
             {
-                string bulletReplacement = bullet;
-
                 if (bullet.Contains('\u25B8'))
-                {
-                    // Keep using span for text-based bullets (Right Arrow)
-                    bulletReplacement = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
-                }
-                else if (bullet.Contains('\u2713')) // ✓ Checkmark
-                {
-                    // Use special placeholder for Checkmark to render as SVG
-                    bulletReplacement = checkmarkPlaceholder;
-                }
-
-                pText = LiOpenTagRegex().Replace(pText, bulletReplacement);
-            }
-            else
-            {
-                pText = LiOpenTagRegex().Replace(pText, "• ");
+                    bRep = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
+                else if (bullet.Contains('\u2713'))
+                    bRep = checkmarkPlaceholder;
+                else
+                    bRep = bullet;
             }
 
-            // Replace </li> with newline
-            pText = LiCloseTagRegex().Replace(pText, "\n");
+            // 3. Flatten accurately: remove <ul>/</ul>, strip whitespace around </li>,
+            // and replace <li> (with its surrounding whitespace) with \n + bullet.
             pText = ListTagRegex().Replace(pText, "");
-            pText = pText.Replace("&#8226;", "• ");
+            pText = LiCloseWithWhitespaceRegex().Replace(pText, "");
+            pText = LiOpenWithWhitespaceRegex().Replace(pText, "\n" + bRep);
+
+            pText = pText.Trim().Replace("&#8226;", "• ");
         }
         else if (
             !string.IsNullOrEmpty(bullet)
@@ -1636,10 +1650,19 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 if (!string.IsNullOrEmpty(cleanLine))
                     sb.AppendLine($"{bulletReplacement}{cleanLine}");
             }
-            return sb.ToString().Trim();
+            pText = sb.ToString().Trim();
         }
 
         pText = BrTagRegex().Replace(pText, "\n");
+
+        // Advanced Cleanup:
+        // 1. Collapse multiple consecutive newlines into a maximum of two (or one for high density)
+        // For CVs, we typically want a single newline between blocks unless explicitly spaced.
+        pText = MultipleNewlineRegex().Replace(pText, "\n");
+
+        // 2. Remove whitespace between block tags that often causes "ghost" lines
+        // e.g. "</p>  \n  <p>" -> "</p><p>"
+        pText = BlockGapsRegex().Replace(pText, "$1$2");
 
         // Decode HTML entities
         // Entities already decoded at top
@@ -1737,7 +1760,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
 #pragma warning disable SYSLIB1045 // Pattern with backreferences not supported by GeneratedRegex
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
-        @"<(strong|b|em|i|u|span|div|p|h1|h2|h3|h4|h5|h6|a)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
+        @"<(strong|b|em|i|u|span|div|p|h1|h2|h3|h4|h5|h6|a|blockquote|code|pre)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline
     );
 #pragma warning restore SYSLIB1045
@@ -1782,6 +1805,27 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         RegexOptions.IgnoreCase
     )]
     private static partial Regex AutoLinkRegex();
+
+    [GeneratedRegex(@"</li>\s*", RegexOptions.IgnoreCase)]
+    private static partial Regex LiCloseWithWhitespaceRegex();
+
+    [GeneratedRegex(@"\s*<li>", RegexOptions.IgnoreCase)]
+    private static partial Regex LiOpenWithWhitespaceRegex();
+
+    [GeneratedRegex(
+        @"<li>\s*<p>(.*?)</p>\s*</li>",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline
+    )]
+    private static partial Regex LiWithNestedPRegex();
+
+    [GeneratedRegex(@"\n{2,}")]
+    private static partial Regex MultipleNewlineRegex();
+
+    [GeneratedRegex(
+        @"(</p>|</div>|</h1>|</h2>|h3>|</h4>|</h5>|</h6>)\s+(<p|<div>|<h1|<h2|<h3|<h4|<h5|<h6)",
+        RegexOptions.IgnoreCase
+    )]
+    private static partial Regex BlockGapsRegex();
 
     /// <summary>
     /// Renders text with full markdown support into a TextDescriptor.

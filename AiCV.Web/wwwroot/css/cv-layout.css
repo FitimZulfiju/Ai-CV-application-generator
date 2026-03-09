@@ -302,6 +302,17 @@
     padding-left: 0.5em;
     text-indent: -0.5em;
     display: block;
+    margin-bottom: 0.15rem !important;
+    /* Low margin to prevent gaps */
+    line-height: 1.4;
+    /* Tightened from 1.5 */
+}
+
+/* Ensure Markdig's raw <ul> tags don't add own padding/margin */
+.cv-container ul {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
 }
 
 /* Remove trailing margin/newlines from last item in sections */
@@ -312,12 +323,27 @@
     margin-bottom: 0;
 }
 
-.cv-container .achievements li {
-    font-size: var(--font-size-body);
-    color: var(--text-medium);
-    line-height: 1.7;
-    margin-bottom: 0.625em;
+/* Fix gaps in lists and blocks by removing p tag margins */
+.cv-container .summary li p,
+.cv-container .achievements li p,
+.cv-container .project-features li p,
+.cv-container .course-list li p,
+.cv-container blockquote p,
+.cv-container code,
+.cv-container pre {
+    margin: 0 !important;
+    display: inline;
 }
+
+/* Ensure blockquotes don't add massive gaps */
+.cv-container blockquote {
+    margin: 0.5rem 0 0.5rem 1rem !important;
+    padding-left: 0.5rem !important;
+    border-left: 0.2rem solid var(--border-color) !important;
+    font-style: italic;
+}
+
+
 
 .cv-container .language-list {
     display: flex;

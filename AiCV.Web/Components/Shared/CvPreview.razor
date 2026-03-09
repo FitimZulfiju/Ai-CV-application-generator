@@ -84,9 +84,9 @@ else
                                         <span class="duration">@CalculateDuration(job.StartDate, job.EndDate, job.IsCurrentRole)</span>
                                     </div>
                                 </div>
-                                <ul class="achievements">
+                                <div class="achievements">
                                     <FormattedText Text="@job.Description" IsDescription="true" />
-                                </ul>
+                                </div>
                             </div>
                         }
                     }
@@ -163,9 +163,9 @@ else
                                 }
                                 @if (!string.IsNullOrEmpty(proj.Description))
                                 {
-                                    <ul class="project-features">
+                                    <div class="project-features">
                                         <FormattedText Text="@proj.Description" IsDescription="true" />
-                                    </ul>
+                                    </div>
                                 }
 
                                 @if (!string.IsNullOrEmpty(proj.SectionTitle) || !string.IsNullOrEmpty(proj.SectionDescription))
@@ -176,9 +176,9 @@ else
                                         {
                                             <h5 class="project-section-title" style="margin-top: 0.5em;"><FormattedText Text="@proj.SectionTitle" /></h5>
                                         }
-                                        <ul class="project-features">
+                                        <div class="project-features">
                                             <FormattedText Text="@proj.SectionDescription" IsDescription="true" />
-                                        </ul>
+                                        </div>
                                     }
                                     else if (!string.IsNullOrEmpty(proj.SectionTitle))
                                     {
@@ -192,9 +192,9 @@ else
                                         }
                                         if (sectionDetails.Any())
                                         {
-                                            <ul class="project-features">
+                                            <div class="project-features">
                                                 <FormattedText Text="@string.Join("\n", sectionDetails)" IsDescription="true" />
-                                            </ul>
+                                            </div>
                                         }
                                     }
                                 }

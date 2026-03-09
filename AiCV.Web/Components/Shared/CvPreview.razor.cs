@@ -75,6 +75,12 @@ public partial class CvPreview
         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
         var formatted = Markdown.ToHtml(pText, pipeline);
 
+        // Strip nested <p> tags inside <li> to prevent extra gaps
+        if (formatted.Contains("<li>", StringComparison.OrdinalIgnoreCase))
+        {
+            formatted = LiWithNestedPRegex().Replace(formatted, "<li>$1</li>");
+        }
+
         return formatted;
     }
 
@@ -107,4 +113,11 @@ public partial class CvPreview
 
     [System.Text.RegularExpressions.GeneratedRegex(@"<u>(.*?)</u>")]
     private static partial System.Text.RegularExpressions.Regex UnderlineRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(
+        @"<li>\s*<p>(.*?)</p>\s*</li>",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            | System.Text.RegularExpressions.RegexOptions.Singleline
+    )]
+    private static partial System.Text.RegularExpressions.Regex LiWithNestedPRegex();
 }
