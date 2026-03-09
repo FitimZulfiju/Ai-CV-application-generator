@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     outputs:
-      version: ${{ steps.version.outputs.version }}
+      version: ${{ steps.check_changelog.outputs.is_changelog == 'true' && steps.current_version.outputs.extracted_version || steps.version.outputs.version }}
       is_changelog: ${{ steps.check_changelog.outputs.is_changelog }}
 
     steps:
@@ -52,18 +52,29 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --format='%s')
           echo "Commit message: $COMMIT_MSG"
-          # Check for:
-          # 1. Direct changelog commit: "docs: update changelog for vX.X.X"
-          # 2. Merge commit from changelog branch: "Merge pull request #X from .../automated-changelog-update"
-          # 3. Manual skip: "[skip changelog]" in message
           if [[ "$COMMIT_MSG" == docs:\ update\ changelog* ]] || \
              [[ "$COMMIT_MSG" == *"automated-changelog-update"* ]] || \
              [[ "$COMMIT_MSG" == *"[skip changelog]"* ]]; then
-            echo "This is a changelog update commit. Skipping version bump."
+            echo "This is a changelog update commit."
             echo "is_changelog=true" >> $GITHUB_OUTPUT
           else
-            echo "This is NOT a changelog commit. Proceeding with version calculation."
             echo "is_changelog=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get Current Version for Changelog Merge
+        if: steps.check_changelog.outputs.is_changelog == 'true'
+        id: current_version
+        run: |
+          # Try to extract version from commit message or tags
+          COMMIT_MSG=$(git log -1 --format='%s')
+          if [[ "$COMMIT_MSG" =~ v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            VER="${BASH_REMATCH[1]}"
+            echo "extracted_version=$VER" >> $GITHUB_OUTPUT
+            echo "Extracted from message: $VER"
+          else
+            VER=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "1.0.0")
+            echo "extracted_version=$VER" >> $GITHUB_OUTPUT
+            echo "Fallback to tag: $VER"
           fi
 
       - name: Calculate Version
@@ -98,6 +109,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
+        if: steps.check_changelog.outputs.is_changelog != 'true'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -173,12 +185,24 @@ jobs:
           echo "Current git status:"
           git status
 
-      - name: Update Changelog (Direct Commit)
+      - name: Create Changelog Pull Request
         if: steps.check_changelog.outputs.is_changelog != 'true' && steps.version.outputs.version != ''
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: peter-evans/create-pull-request@v6
         with:
-          commit_message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip changelog]"
-          file_pattern: "CHANGELOG.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip changelog]"
+          title: "🚀 Release v${{ steps.version.outputs.version }} - Update Changelog"
+          body: |
+            ## 🚀 Automated Release PR
+
+            This PR updates the `CHANGELOG.md` for version **v${{ steps.version.outputs.version }}**.
+
+            **Instructions:**
+            - Merging this PR will trigger the **Production Deployment** (Watchtower will pull the `latest` tag).
+            - The Docker image `timi74/aicv:${{ steps.version.outputs.version }}` has already been pushed to Docker Hub and is waiting for promotion.
+          branch: "automated-changelog-update-v${{ steps.version.outputs.version }}"
+          base: "master"
+          delete-branch: true
 
       - name: Create GitHub Release
         if: steps.check_changelog.outputs.is_changelog != 'true' && steps.version.outputs.version != ''
@@ -218,9 +242,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-production:
-    name: 🚀 Approval Gate -> Production
+    name: 🚀 Production Release
     needs: docker-push
-    if: needs.docker-push.outputs.is_changelog != 'true' && needs.docker-push.outputs.version != ''
+    if: needs.docker-push.outputs.is_changelog == 'true' && needs.docker-push.outputs.version != ''
     runs-on: ubuntu-latest
     environment: Production
     steps:
