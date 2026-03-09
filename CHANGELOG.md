@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.6.0] - 2026-03-09
+
+### Changed
+- chore: update projects to .NET 10, fix CV rendering, and harmonize test cancellation
+- Merge pull request #40 from FitimZulfiju/automated-changelog-update
+- docs: update changelog for v1.5.0
+
 ## [1.5.0] - 2026-03-08
 
 ### Added
