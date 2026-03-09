@@ -88,23 +88,16 @@ jobs:
           sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
           }' CHANGELOG.md
 
-      - name: Commit Changelog to Dev
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip staging]"
-          file_pattern: "CHANGELOG.md"
-          branch: "dev"
-
       - name: Create or Update Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: prepare release PR [skip staging]"
+          commit-message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip staging]"
           title: "🚀 PR: Release candidate v${{ steps.version.outputs.version }}"
           body: |
             ## 🚀 New Release Candidate
 
-            This PR was automatically created from the `dev` branch.
+            This PR was automatically created from the `dev` branch. It includes the updated `CHANGELOG.md` for **v${{ steps.version.outputs.version }}**.
 
             **Review Checklist:**
             1. [ ] Code changes look correct.
@@ -113,7 +106,7 @@ jobs:
 
             **Deployment Note:**
             Merging this PR into `master` will trigger the production build, Docker `latest` push, and official GitHub Tag/Release.
-          branch: "release-v${{ steps.version.outputs.version }}"
+          branch: "dev-to-master-v${{ steps.version.outputs.version }}"
           base: "master"
 
   production:
