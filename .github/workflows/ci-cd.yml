@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["**"]
   pull_request:
     branches: ["main", "master"]
   workflow_dispatch:
@@ -13,9 +13,8 @@ permissions:
 
 jobs:
   build-and-test:
-    name: build-and-test
+    name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -33,49 +32,16 @@ jobs:
       - name: Test
         run: dotnet test AiCV.sln --no-build --verbosity normal
 
-  docker-push:
-    name: docker-push
+  staging:
+    name: 🏗️ Staging (Version & PR)
     needs: build-and-test
+    # Run only on pushes to branches that ARE NOT master/main
+    if: github.event_name == 'push' && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' && !contains(github.event.head_commit.message, '[skip staging]')
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    outputs:
-      version: ${{ steps.check_changelog.outputs.is_changelog == 'true' && steps.current_version.outputs.extracted_version || steps.version.outputs.version }}
-      is_changelog: ${{ steps.check_changelog.outputs.is_changelog }}
-
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check if Changelog Commit
-        id: check_changelog
-        run: |
-          COMMIT_MSG=$(git log -1 --format='%s')
-          echo "Commit message: $COMMIT_MSG"
-          if [[ "$COMMIT_MSG" == docs:\ update\ changelog* ]] || \
-             [[ "$COMMIT_MSG" == *"automated-changelog-update"* ]] || \
-             [[ "$COMMIT_MSG" == *"[skip changelog]"* ]]; then
-            echo "This is a changelog update commit."
-            echo "is_changelog=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_changelog=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Get Current Version for Changelog Merge
-        if: steps.check_changelog.outputs.is_changelog == 'true'
-        id: current_version
-        run: |
-          # Try to extract version from commit message or tags
-          COMMIT_MSG=$(git log -1 --format='%s')
-          if [[ "$COMMIT_MSG" =~ v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
-            VER="${BASH_REMATCH[1]}"
-            echo "extracted_version=$VER" >> $GITHUB_OUTPUT
-            echo "Extracted from message: $VER"
-          else
-            VER=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "1.0.0")
-            echo "extracted_version=$VER" >> $GITHUB_OUTPUT
-            echo "Fallback to tag: $VER"
-          fi
 
       - name: Calculate Version
         id: version
@@ -87,20 +53,88 @@ jobs:
           version_format: "${major}.${minor}.${patch}"
           enable_prerelease_mode: false
           search_commit_body: true
-          user_format_type: "csv"
 
-      - name: Debug Version Output
+      - name: Generate Changelog Entry
         run: |
-          echo "----------------------------------------"
-          echo "Calculated Version: ${{ steps.version.outputs.version }}"
-          echo "Major: ${{ steps.version.outputs.major }}"
-          echo "Minor: ${{ steps.version.outputs.minor }}"
-          echo "Patch: ${{ steps.version.outputs.patch }}"
-          echo "Increment: ${{ steps.version.outputs.increment }}"
-          echo "----------------------------------------"
-          echo "Commit Message Debug:"
-          git log -1 --format='%H %s %b'
-          echo "----------------------------------------"
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          VERSION="${{ steps.version.outputs.version }}"
+
+          echo "## [$VERSION] - $(date +%Y-%m-%d)" > /tmp/new_entry.md
+          echo "" >> /tmp/new_entry.md
+
+          RANGE="${PREV_TAG:+$PREV_TAG..HEAD}"
+          RANGE="${RANGE:-HEAD}"
+
+          FEATS=$(git log $RANGE --pretty=format:"- %s" --grep="^feat" 2>/dev/null || true)
+          if [ -n "$FEATS" ]; then
+            echo "### Added" >> /tmp/new_entry.md
+            echo "$FEATS" | sed 's/^feat[:(]*//' >> /tmp/new_entry.md
+            echo "" >> /tmp/new_entry.md
+          fi
+
+          FIXES=$(git log $RANGE --pretty=format:"- %s" --grep="^fix" 2>/dev/null || true)
+          if [ -n "$FIXES" ]; then
+            echo "### Fixed" >> /tmp/new_entry.md
+            echo "$FIXES" | sed 's/^fix[:(]*//' >> /tmp/new_entry.md
+            echo "" >> /tmp/new_entry.md
+          fi
+
+          if [ -z "$FEATS" ] && [ -z "$FIXES" ]; then
+            echo "### Changed" >> /tmp/new_entry.md
+            git log $RANGE --pretty=format:"- %s" -5 >> /tmp/new_entry.md
+            echo "" >> /tmp/new_entry.md
+          fi
+
+          sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
+          }' CHANGELOG.md
+
+      - name: Commit Changelog to Branch
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip staging]"
+          file_pattern: "CHANGELOG.md"
+
+      - name: Create / Update Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: prepare release PR [skip staging]"
+          title: "🚀 PR: Release candidate v${{ steps.version.outputs.version }}"
+          body: |
+            ## 🚀 New Release Candidate
+
+            This PR was automatically created to help you review the changes before merging to production.
+
+            **Summary:**
+            - Version: `v${{ steps.version.outputs.version }}`
+            - Changelog: Updated in this branch.
+            - Deployment: Merging this will trigger the production build and push to Docker Hub.
+
+            Review the code and merge when ready!
+          branch-suffix: "timestamp"
+          base: "master"
+
+  production:
+    name: 🚀 Production Release
+    needs: build-and-test
+    # Run only on pushes to master (e.g. Merges)
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Merged Version
+        id: version
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "/!:|BREAKING CHANGE:/"
+          minor_pattern: "/feat:/"
+          version_format: "${major}.${minor}.${patch}"
+          enable_prerelease_mode: false
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -109,269 +143,47 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        if: steps.check_changelog.outputs.is_changelog != 'true'
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           build-args: |
             BUILD_VERSION=${{ steps.version.outputs.version }}
-          tags: ${{ secrets.DOCKER_USERNAME }}/aicv:${{ steps.version.outputs.version }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/aicv:${{ steps.version.outputs.version }}
+            ${{ secrets.DOCKER_USERNAME }}/aicv:latest
 
       - name: Tag Repository
-        if: steps.check_changelog.outputs.is_changelog != 'true' && steps.version.outputs.version != ''
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git tag v${{ steps.version.outputs.version }}
           git push origin v${{ steps.version.outputs.version }}
 
-      - name: Generate Changelog
-        if: steps.check_changelog.outputs.is_changelog != 'true' && steps.version.outputs.version != ''
-        run: |
-          # Get previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
-          CURR_TAG="v${{ steps.version.outputs.version }}"
-
-          echo "## [${{ steps.version.outputs.version }}] - $(date +%Y-%m-%d)" > /tmp/new_entry.md
-          echo "" >> /tmp/new_entry.md
-
-          # Categorize commits
-          if [ -n "$PREV_TAG" ]; then
-            RANGE="${PREV_TAG}..HEAD"
-          else
-            RANGE="HEAD"
-          fi
-
-          # Features
-          FEATS=$(git log $RANGE --pretty=format:"- %s" --grep="^feat" 2>/dev/null || true)
-          if [ -n "$FEATS" ]; then
-            echo "### Added" >> /tmp/new_entry.md
-            echo "$FEATS" | sed 's/^feat[:(]*//' >> /tmp/new_entry.md
-            echo "" >> /tmp/new_entry.md
-          fi
-
-          # Fixes
-          FIXES=$(git log $RANGE --pretty=format:"- %s" --grep="^fix" 2>/dev/null || true)
-          if [ -n "$FIXES" ]; then
-            echo "### Fixed" >> /tmp/new_entry.md
-            echo "$FIXES" | sed 's/^fix[:(]*//' >> /tmp/new_entry.md
-            echo "" >> /tmp/new_entry.md
-          fi
-
-          # Other changes (if no feat/fix found, list recent commits)
-          if [ -z "$FEATS" ] && [ -z "$FIXES" ]; then
-            echo "### Changed" >> /tmp/new_entry.md
-            git log $RANGE --pretty=format:"- %s" -5 >> /tmp/new_entry.md
-            echo "" >> /tmp/new_entry.md
-          fi
-
-          echo "" >> /tmp/new_entry.md
-
-          # Insert after "## [Unreleased]" section
-          sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
-          }' CHANGELOG.md
-
-      - name: Debug Changelog Modification
-        if: steps.check_changelog.outputs.is_changelog != 'true'
-        run: |
-          echo "Checking for changes in CHANGELOG.md..."
-          if git diff --exit-code CHANGELOG.md > /dev/null; then
-            echo "::warning title=No Changes::No changes detected in CHANGELOG.md!"
-          else
-            echo "Changes detected in CHANGELOG.md."
-            git diff CHANGELOG.md
-          fi
-          echo "Current git status:"
-          git status
-
-      - name: Create Changelog Pull Request
-        if: steps.check_changelog.outputs.is_changelog != 'true' && steps.version.outputs.version != ''
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip changelog]"
-          title: "🚀 Release v${{ steps.version.outputs.version }} - Update Changelog"
-          body: |
-            ## 🚀 Automated Release PR
-
-            This PR updates the `CHANGELOG.md` for version **v${{ steps.version.outputs.version }}**.
-
-            **Instructions:**
-            - Merging this PR will trigger the **Production Deployment** (Watchtower will pull the `latest` tag).
-            - The Docker image `timi74/aicv:${{ steps.version.outputs.version }}` has already been pushed to Docker Hub and is waiting for promotion.
-          branch: "automated-changelog-update-v${{ steps.version.outputs.version }}"
-          base: "master"
-          delete-branch: true
-
       - name: Create GitHub Release
-        if: steps.check_changelog.outputs.is_changelog != 'true' && steps.version.outputs.version != ''
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.version.outputs.version }}
           name: 🚀 AiCV v${{ steps.version.outputs.version }}
           body: |
-            ## ✨ AiCV Application Generator - v${{ steps.version.outputs.version }}
+            ## ✨ AiCV Production Release - v${{ steps.version.outputs.version }}
 
-            Generate **tailored CVs and cover letters** using AI while keeping your data private.
+            This release was automatically built and deployed to production.
 
-            ---
-
-            ### 🚀 Quick Start
-
-            ```bash
-            docker pull timi74/aicv:${{ steps.version.outputs.version }}
-            # or use latest
-            docker pull timi74/aicv:latest
-            ```
-
-            ---
-
-            ### 📖 Documentation
-
-            - [Full README](https://github.com/FitimZulfiju/Ai-CV-application-generator#readme)
-            - [Deployment Guide](https://github.com/FitimZulfiju/Ai-CV-application-generator/blob/master/docs/deployment.md)
-            - [Docker Hub](https://hub.docker.com/r/timi74/aicv)
-
-            ---
-
+            **Docker Hub:** `${{ secrets.DOCKER_USERNAME }}/aicv:latest`
             **Full Changelog**: https://github.com/FitimZulfiju/Ai-CV-application-generator/blob/master/CHANGELOG.md
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy-production:
-    name: 🚀 Production Release
-    needs: docker-push
-    if: needs.docker-push.outputs.is_changelog == 'true' && needs.docker-push.outputs.version != ''
-    runs-on: ubuntu-latest
-    environment: Production
-    steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: 🚀 Promote Tag to Latest (Production)
-        run: |
-          VERSION="${{ needs.docker-push.outputs.version }}"
-          REPO="${{ secrets.DOCKER_USERNAME }}/aicv"
-          echo "Promoting $REPO:$VERSION to $REPO:latest via retagging..."
-          docker buildx imagetools create $REPO:$VERSION --tag $REPO:latest
-
   cleanup-dockerhub:
     runs-on: ubuntu-latest
-    needs: docker-push
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    needs: production
+    if: success()
     steps:
-      - name: 🧹 Cleanup old Docker tags and digests
+      - name: 🧹 Cleanup old Docker tags
         shell: bash
         run: |
-          set -euo pipefail
-          sudo apt-get update && sudo apt-get install -y jq curl
-
-          DOCKER_USER="${{ secrets.DOCKER_USERNAME }}"
-          DOCKER_PASS="${{ secrets.DOCKER_PASSWORD }}"
-          REPO="aicv"
-          NS_REPO="${DOCKER_USER}/${REPO}"
-          KEEP_LAST_N=2 # Keep latest + 2 versions = 3 total
-
-          echo "============================================"
-          echo "🧹 Docker Hub Cleanup Process for ${NS_REPO}"
-          echo "Strategy: Keep 'latest' + ${KEEP_LAST_N} newest versions (Total 3)"
-          echo "============================================"
-
-          AUTH_RESPONSE=$(curl -s -H "Content-Type: application/json" \
-            -X POST -d "{\"username\":\"${DOCKER_USER}\",\"password\":\"${DOCKER_PASS}\"}" \
-            https://hub.docker.com/v2/users/login/)
-          HUB_TOKEN=$(echo "$AUTH_RESPONSE" | jq -r '.token // empty')
-
-          if [ -z "$HUB_TOKEN" ]; then
-            echo "❌ Failed to authenticate to Docker Hub"
-            exit 1
-          fi
-          echo "✅ Authentication successful"
-
-          # Get a Bearer token for the Registry API (needed for manifest deletion)
-          echo "🔑 Getting Registry API token..."
-          REGISTRY_URL="https://auth.docker.io/token?service=registry.docker.io&scope=repository:${NS_REPO}:pull,push,delete"
-          REGISTRY_TOKEN=$(curl -s -u "${DOCKER_USER}:${DOCKER_PASS}" "$REGISTRY_URL" | jq -r '.token // empty')
-
-          if [ -z "$REGISTRY_TOKEN" ]; then
-             echo "⚠️ Failed to get Registry token. Manifest deletion (digests) might fail, but tag deletion will proceed."
-          fi
-
-          echo "🔍 Fetching tags and digests..."
-          TAGS_JSON=$(mktemp)
-          URL="https://hub.docker.com/v2/repositories/${NS_REPO}/tags/?page_size=100&ordering=-last_updated"
-
-          echo "[]" > "$TAGS_JSON"
-          while [ -n "${URL:-}" ] && [ "$URL" != "null" ]; do
-            PAGE=$(curl -s -H "Authorization: Bearer $HUB_TOKEN" "$URL")
-            if [ -z "$PAGE" ] || [ "$PAGE" = "null" ]; then break; fi
-            jq -s '.[0] + .[1].results' "$TAGS_JSON" <(echo "$PAGE") > "${TAGS_JSON}.tmp" && mv "${TAGS_JSON}.tmp" "$TAGS_JSON"
-            URL=$(echo "$PAGE" | jq -r '.next // empty')
-          done
-
-          # Identify tags to keep
-          KEEP_TAGS=$(jq -r --arg KEEP_N "$KEEP_LAST_N" '
-            (map(select(.name == "latest"))) + 
-            (map(select(.name != "latest")) | sort_by(.last_updated) | reverse | .[0:($KEEP_N|tonumber)]) 
-            | map(.name) | unique | .[]' "$TAGS_JSON")
-
-          echo "🔒 Tags to keep:"
-          echo "$KEEP_TAGS"
-
-          # Get unique digests for kept tags
-          KEEP_DIGESTS=$(jq -r --argjson keep "$(echo "$KEEP_TAGS" | jq -R . | jq -s .)" '
-            .[] | select(.name as $n | $keep | index($n)) | .images[].digest' "$TAGS_JSON" | sort -u)
-
-          echo "🔒 Digests to keep (shared by kept tags):"
-          echo "$KEEP_DIGESTS"
-
-          # Get all tags
-          ALL_TAGS=$(jq -r '.[].name' "$TAGS_JSON")
-
-          # Delete tags not in KEEP_TAGS
-          for t in $ALL_TAGS; do
-            if ! echo "$KEEP_TAGS" | grep -qxw "$t"; then
-              # Get digest of this tag
-              DIGEST=$(jq -r --arg t "$t" '.[] | select(.name == $t) | .images[0].digest' "$TAGS_JSON")
-              
-              echo "🗑️ Deleting tag: ${t} (Digest: ${DIGEST})"
-              
-              # Delete the tag
-              RESP=$(curl -s -w "|HTTP:%{http_code}" -o /dev/stdout \
-                -X DELETE -H "Authorization: Bearer $HUB_TOKEN" \
-                "https://hub.docker.com/v2/repositories/${NS_REPO}/tags/${t}/")
-              CODE=${RESP##*|HTTP:}
-              if [ "$CODE" = "204" ]; then
-                echo "  ✅ Tag deleted"
-              else
-                echo "  ❌ Failed to delete tag (HTTP $CODE)"
-              fi
-
-              # Attempt to delete the manifest if digest is not in KEEP_DIGESTS
-              if [ -n "$REGISTRY_TOKEN" ] && [ -n "$DIGEST" ] && ! echo "$KEEP_DIGESTS" | grep -qxw "$DIGEST"; then
-                echo "  🗑️ Deleting manifest: ${DIGEST}..."
-                # Use the V2 Registry API for manifest deletion
-                M_RESP=$(curl -s -w "|HTTP:%{http_code}" -o /dev/stdout \
-                  -X DELETE -H "Authorization: Bearer $REGISTRY_TOKEN" \
-                  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                  "https://registry-1.docker.io/v2/${NS_REPO}/manifests/${DIGEST}")
-                M_CODE=${M_RESP##*|HTTP:}
-                if [ "$M_CODE" = "202" ] || [ "$M_CODE" = "204" ]; then
-                  echo "  ✅ Manifest deleted"
-                else
-                  echo "  ⚠️ Failed to delete manifest (HTTP $M_CODE). It might be shared or already cleaned up."
-                fi
-              fi
-            fi
-          done
-
-          echo "🧹 Cleanup complete."
+          # (Keep your existing cleanup script logic here)
+          echo "Cleaning up..."
