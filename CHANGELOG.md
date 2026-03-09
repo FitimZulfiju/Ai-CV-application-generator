@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.7.0] - 2026-03-09
+
+### Added
+- feat: test the new dev-to-master CI/CD review workflow
+
+### Fixed
+- fix: fix CI/CD PR creation by consolidating changelog and PR steps
+
+## [1.7.0] - 2026-03-09
+
+### Added
+- feat: test the new dev-to-master CI/CD review workflow
+
+## [1.6.4] - 2026-03-09
+
+### Changed
+- Merge pull request #43 from FitimZulfiju/master
+- chore: merge dev into master and resolve conflicts
+- docs: update changelog for v1.6.3 [skip staging]
+- chore: finalize dev-to-master workflow with docker cleanup intact
+- chore: implement dev-to-master CI/CD workflow
 ## [1.6.3] - 2026-03-09
 
 ### Changed
