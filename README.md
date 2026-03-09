@@ -1,4 +1,4 @@
-# AiCV – AI‑Assisted CV Application Generator
+# AiCV – The AI‑Assisted CV Application Generator (Workflow Test)
 
 **AiCV** is an open‑source, self‑hosted **experimental .NET application** that explores AI‑assisted workflows for generating CVs and cover letters based on job postings.
 
