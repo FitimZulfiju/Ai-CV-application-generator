@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.3] - 2026-03-09
 
 ### Changed
+- chore: finalize dev-to-master workflow with docker cleanup intact
+- chore: implement dev-to-master CI/CD workflow
+- docs: update changelog for v1.6.2 [skip changelog]
+- docs: update changelog for v1.6.3 [skip staging]
+- Refactor CI/CD to implement Branch-based Staging with Auto-PR and Review flow
+## [1.6.3] - 2026-03-09
+
+### Changed
 - Refactor CI/CD to implement Branch-based Staging with Auto-PR and Review flow
 
 ## [1.6.2] - 2026-03-09
