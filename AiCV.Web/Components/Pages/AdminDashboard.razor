@@ -59,83 +59,57 @@
                 </MudCard>
             </MudItem>
 
-            <!-- Usage Trends Chart (Line Chart) -->
-            <MudItem xs="12" md="12">
-                <MudCard Elevation="3" Class="custom-chard-card">
-                    <MudCardHeader>
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                            <!-- Title -->
-                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-                                <MudIcon Icon="@Icons.Material.Filled.ShowChart" />
-                                <MudText Typo="Typo.h6">
-                                    @Localizer["ApplicationsLast30Days"]
-                                </MudText>
-                            </MudStack>
-                        </MudStack>
-                    </MudCardHeader>
-                    <MudChart ChartType="ChartType.Line"
-                              ChartSeries="@_dailyChartSeries"
-                              AxisChartOptions="@(new AxisChartOptions {  MatchBoundsToSize = true })"
-                              XAxisLabels="@_dailyLabels"
-                              Width="100%"
-                              Height="250px"
-                              ChartOptions="@_chartOptions" />
-                </MudCard>
-            </MudItem>
-
-            <style>
-                .custom-chard-card .mud-chart-legend,
-                .custom-chard-card .mud-chart-legend-container {
-                    display: none !important;
-                    align-items: end;
-                }
-            </style>
-
             <!-- Activity Stats -->
             <MudItem xs="12" md="6">
                 <MudCard Elevation="3" Class="pa-4">
-                    <MudText Typo="Typo.h6" Class="mb-3">@Localizer["ActivityOverview"]</MudText>
-                    <MudSimpleTable Hover="true">
+                    <MudText Typo="Typo.h6">@Localizer["ActivityOverview"]</MudText>
+                    <MudSimpleTable Dense="true" Hover="true">
                         <tbody>
-                            <tr>
-                                <td>
-                                    <MudIcon Icon="@Icons.Material.Filled.Today" Size="Size.Small" />
-                                    @Localizer["Today"]
-                                </td>
-                                <td>
+                            <MudTr>
+                                <MudTd>
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                        <MudIcon Icon="@Icons.Material.Filled.Today" Size="Size.Small" />
+                                        <MudText>@Localizer["Today"]</MudText>
+                                    </MudStack>
+                                </MudTd>
+                                <MudTd>
                                     <MudChip T="string" Size="Size.Small" Color="Color.Primary">
                                         @_statistics.ApplicationsToday
                                     </MudChip>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Small" />
-                                    @Localizer["ThisWeek"]
-                                </td>
-                                <td>
+                                </MudTd>
+                            </MudTr>
+                            <MudTr>
+                                <MudTd>
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                        <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Small" />
+                                        <MudText>@Localizer["ThisWeek"]</MudText>
+                                    </MudStack>
+                                </MudTd>
+                                <MudTd>
                                     <MudChip T="string" Size="Size.Small" Color="Color.Info">
                                         @_statistics.ApplicationsThisWeek
                                     </MudChip>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="Size.Small" />
-                                    @Localizer["ThisMonth"]
-                                </td>
-                                <td>
+                                </MudTd>
+                            </MudTr>
+                            <MudTr>
+                                <MudTd>
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="Size.Small" />
+                                        <MudText>@Localizer["ThisMonth"]</MudText>
+                                    </MudStack>
+                                </MudTd>
+                                <MudTd>
                                     <MudChip T="string" Size="Size.Small" Color="Color.Success">
                                         @_statistics.ApplicationsThisMonth
                                     </MudChip>
-                                </td>
-                            </tr>
+                                </MudTd>
+                            </MudTr>
                         </tbody>
                     </MudSimpleTable>
                 </MudCard>
+            </MudItem>
 
-                <MudDivider Class="pa-1" />
-
+            <MudItem xs="12" md="6">
                 <MudCard Elevation="3" Class="pa-4 pt-4">
                     <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-3">
                         <MudIcon Icon="@Icons.Material.Filled.Leaderboard" Class="mr-2" />
@@ -165,23 +139,6 @@
                 </MudCard>
             </MudItem>
 
-            <!-- System Overview Donut -->
-            <MudItem xs="12" md="6">
-                <MudCard Elevation="3" Class="pa-4">
-                    <MudText Typo="Typo.h6" Class="mb-3">@Localizer["SystemOverview"]</MudText>
-                    <MudChart ChartType="ChartType.Donut" LegendPosition="Position.End"
-                              InputData="@(new double[] { _statistics.TotalUsers, _statistics.TotalProfiles, _statistics.TotalApplicationsGenerated })"
-                              InputLabels="@(
-                              new string[]
-                              {
-                                $"{Localizer["Users"]} ({_statistics.TotalUsers})",
-                                $"{Localizer["Profiles"]} ({_statistics.TotalProfiles})",
-                                $"{Localizer["Applications"]} ({_statistics.TotalApplicationsGenerated})"
-                              })"
-                          Height="320px" />
-            </MudCard>
-        </MudItem>
-
             <!-- All Users Table with Management -->
             <MudItem xs="12">
                 <MudCard Elevation="3" Class="pa-4">
@@ -206,7 +163,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd DataLabel="Status">
-                            @if (context.IsLockedOut)
+                                @if (context.IsLockedOut)
                                 {
                                     <MudChip T="string" Size="Size.Small" Color="Color.Error"
                                              Icon="@Icons.Material.Filled.Lock">@Localizer["Locked"]</MudChip>

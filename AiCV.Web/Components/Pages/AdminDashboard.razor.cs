@@ -26,10 +26,6 @@ public partial class AdminDashboard
     private AdminStatisticsDto? _statistics;
     private bool _loading = true;
 
-    // Chart data
-    private List<ChartSeries> _dailyChartSeries = [];
-    private string[] _dailyLabels = [];
-    private readonly ChartOptions _chartOptions = new() { YAxisTicks = 1 };
     protected override async Task OnInitializedAsync()
     {
         await LoadStatistics();
@@ -41,28 +37,11 @@ public partial class AdminDashboard
         try
         {
             _statistics = await StatisticsService.GetStatisticsAsync();
-            PrepareChartData();
         }
         finally
         {
             _loading = false;
         }
-    }
-
-    private void PrepareChartData()
-    {
-        if (_statistics == null)
-            return;
-
-        // Prepare daily chart data
-        double[] dailyData = [.. _statistics.DailyApplicationCounts.Select(d => (double)d.Count)];
-
-        _dailyLabels =
-        [
-            .. _statistics.DailyApplicationCounts.Select(d => d.Date.ToString("MM/dd")),
-        ];
-
-        _dailyChartSeries = [new ChartSeries { Name = "Applications", Data = dailyData }];
     }
 
     private static Color GetRankColor(int index) =>
@@ -77,7 +56,7 @@ public partial class AdminDashboard
     private async Task ToggleUserLockout(string userId, bool lockout)
     {
         var action = lockout ? "lock" : "unlock";
-        var confirmed = await DialogService.ShowMessageBox(
+        var confirmed = await DialogService.ShowMessageBoxAsync(
             "Confirm Action",
             $"Are you sure you want to {action} this user account?",
             yesText: "Yes",

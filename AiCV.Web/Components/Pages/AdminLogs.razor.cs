@@ -18,7 +18,7 @@ public partial class AdminLogs
 
     private async Task ClearLogs()
     {
-        var confirmed = await DialogService.ShowMessageBox(
+        var confirmed = await DialogService.ShowMessageBoxAsync(
             "Clear Logs",
             "Delete logs older than 30 days?",
             yesText: "Yes",
@@ -43,7 +43,7 @@ public partial class AdminLogs
         await DialogService.ShowAsync<LogDetailsDialog>("Log Details", parameters, options);
     }
 
-    private Color GetLevelColor(string level) =>
+    private static Color GetLevelColor(string level) =>
         level switch
         {
             "Error" => Color.Error,

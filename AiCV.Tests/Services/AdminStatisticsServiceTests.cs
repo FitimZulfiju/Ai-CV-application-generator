@@ -63,7 +63,7 @@ public class AdminStatisticsServiceTests
             }
         );
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var stats = await _service.GetStatisticsAsync();
@@ -95,7 +95,7 @@ public class AdminStatisticsServiceTests
                 CreatedDate = DateTime.UtcNow,
             }
         );
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var bytes = await _service.GetStatisticsCsvAsync();

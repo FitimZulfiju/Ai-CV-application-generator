@@ -12,7 +12,8 @@ public class CVServiceTests
 
         // Create a mock factory that returns a new context with the in-memory options
         var mockFactory = new Mock<IDbContextFactory<ApplicationDbContext>>();
-        mockFactory.Setup(f => f.CreateDbContextAsync(It.IsAny<CancellationToken>()))
+        mockFactory
+            .Setup(f => f.CreateDbContextAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(() => new ApplicationDbContext(options));
 
         _contextFactory = mockFactory.Object;
@@ -37,10 +38,21 @@ public class CVServiceTests
     {
         // Arrange
         const string userId = "new-user-with-no-profile";
-        await using (var context = await _contextFactory.CreateDbContextAsync())
+        await using (
+            var context = await _contextFactory.CreateDbContextAsync(
+                TestContext.Current.CancellationToken
+            )
+        )
         {
-            context.Users.Add(new User { Id = userId, UserName = "testuser", Email = "test@example.com" });
-            await context.SaveChangesAsync();
+            context.Users.Add(
+                new User
+                {
+                    Id = userId,
+                    UserName = "testuser",
+                    Email = "test@example.com",
+                }
+            );
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
         var service = new CVService(_contextFactory);
@@ -53,9 +65,13 @@ public class CVServiceTests
         Assert.Equal(userId, result.UserId);
 
         // Verify it was saved to DB
-        // Verify it was saved to DB
-        await using var verifyContext = await _contextFactory.CreateDbContextAsync();
-        var savedProfile = await verifyContext.CandidateProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        await using var verifyContext = await _contextFactory.CreateDbContextAsync(
+            TestContext.Current.CancellationToken
+        );
+        var savedProfile = await verifyContext.CandidateProfiles.FirstOrDefaultAsync(
+            p => p.UserId == userId,
+            TestContext.Current.CancellationToken
+        );
         Assert.NotNull(savedProfile);
     }
 
@@ -64,15 +80,21 @@ public class CVServiceTests
     {
         // Arrange
         const string userId = "existing-user";
-        await using (var context = await _contextFactory.CreateDbContextAsync())
+        await using (
+            var context = await _contextFactory.CreateDbContextAsync(
+                TestContext.Current.CancellationToken
+            )
+        )
         {
-            context.CandidateProfiles.Add(new CandidateProfile
-            {
-                UserId = userId,
-                FullName = "Test User",
-                Title = "Developer"
-            });
-            await context.SaveChangesAsync();
+            context.CandidateProfiles.Add(
+                new CandidateProfile
+                {
+                    UserId = userId,
+                    FullName = "Test User",
+                    Title = "Developer",
+                }
+            );
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
         var service = new CVService(_contextFactory);
@@ -93,10 +115,14 @@ public class CVServiceTests
         const string userId = "update-user";
         var profile = new CandidateProfile { UserId = userId, FullName = "Original Name" };
 
-        await using (var context = await _contextFactory.CreateDbContextAsync())
+        await using (
+            var context = await _contextFactory.CreateDbContextAsync(
+                TestContext.Current.CancellationToken
+            )
+        )
         {
             context.CandidateProfiles.Add(profile);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
         var service = new CVService(_contextFactory);
@@ -108,9 +134,16 @@ public class CVServiceTests
         await service.SaveProfileAsync(profile);
 
         // Assert
-        await using (var context = await _contextFactory.CreateDbContextAsync())
+        await using (
+            var context = await _contextFactory.CreateDbContextAsync(
+                TestContext.Current.CancellationToken
+            )
+        )
         {
-            var updatedProfile = await context.CandidateProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            var updatedProfile = await context.CandidateProfiles.FirstOrDefaultAsync(
+                p => p.UserId == userId,
+                TestContext.Current.CancellationToken
+            );
             Assert.NotNull(updatedProfile);
             Assert.Equal("Updated Name", updatedProfile.FullName);
         }

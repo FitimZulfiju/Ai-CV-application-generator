@@ -106,7 +106,7 @@
                                         </div>
                                         <MudPaper Outlined="true" Class="flex-grow-1 pa-2" Style="overflow-y: auto;">
                                             <MudTextField @bind-Value="_job.Description" Variant="Variant.Text"
-                                                      Required="true" RequiredError="" AutoGrow="true" Class="flex-grow-1"
+                                                      Required="true" RequiredError="" Class="flex-grow-1"
                                                       Style="min-height: 100%;" Immediate="true" DebounceInterval="300"
                                                       TextChanged="UpdatePreview" />
                                         </MudPaper>
@@ -137,7 +137,7 @@
 
                                 <!--Custom Prompt Field -->
                                 <MudTextField @bind-Value="_customPrompt" Label="@Localizer["CustomInstructions"]"
-                                          Variant="Variant.Outlined" AutoGrow="true" Adornment="Adornment.Start"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
                                           AdornmentIcon="@Icons.Material.Filled.Edit" Clearable="true" Counter="1000" MaxLength="1000"
                                           HelperText="@Localizer["JobDescriptionInstructions"]" Class="mb-1 mt-4" />
 
@@ -263,7 +263,7 @@
                         }
                     </MudButton>
                 </MudToolBar>
-                <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pt-2"
+                <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pt-2"
                          KeepPanelsAlive="false" @bind-ActivePanelIndex="_activeTabIndex">
                     <MudTabPanel Text="@Localizer["CoverLetterAndApplication"]"
                                  Icon="@Icons.Material.Filled.Description">

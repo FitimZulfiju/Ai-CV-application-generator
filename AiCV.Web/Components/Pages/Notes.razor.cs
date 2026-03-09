@@ -11,7 +11,7 @@ public partial class Notes
     private string? _userId;
     private MudDropContainer<Note>? _dropContainer;
 
-   protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -62,14 +62,16 @@ public partial class Notes
 
         if (!string.IsNullOrWhiteSpace(_searchText))
         {
-            notes = [.. notes
-                .Where(n =>
+            notes =
+            [
+                .. notes.Where(n =>
                     (n.Title?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false)
                     || (
                         n.Content?.Contains(_searchText, StringComparison.OrdinalIgnoreCase)
                         ?? false
                     )
-                )];
+                ),
+            ];
         }
 
         _displayNotes = [.. notes];
@@ -218,7 +220,7 @@ public partial class Notes
 
     private async Task DeleteNote(Note note)
     {
-        var confirm = await DialogService.ShowMessageBox(
+        var confirm = await DialogService.ShowMessageBoxAsync(
             Localizer["DeleteNote"],
             Localizer["DeleteNoteConfirmation"],
             yesText: Localizer["Delete"],

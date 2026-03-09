@@ -1,4 +1,4 @@
-﻿namespace AiCV.Infrastructure.Services;
+namespace AiCV.Infrastructure.Services;
 
 public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
     : IPdfService
@@ -306,20 +306,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     // Main content
                                     if (!string.IsNullOrWhiteSpace(letterContent))
                                     {
-                                        foreach (
-                                            var paragraph in letterContent.Split(
-                                                ["\n", "\r\n"],
-                                                StringSplitOptions.RemoveEmptyEntries
-                                            )
-                                        )
-                                        {
-                                            letterCol
-                                                .Item()
-                                                .Text(paragraph.Trim())
-                                                .FontSize(size)
-                                                .LineHeight(1.5f);
-                                            letterCol.Item().PaddingBottom(0.35f, Unit.Centimetre);
-                                        }
+                                        ComposeHtmlContent(
+                                            letterCol,
+                                            letterContent,
+                                            size,
+                                            _textDark
+                                        );
                                     }
                                     else
                                     {
@@ -405,7 +397,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                         .FontColor(headerTextCol)
                                         .LetterSpacing(0.2f)
                                 );
-                                t.Span((profile.FullName ?? "").ToUpper());
+                                ComposeMarkdownText(
+                                    t,
+                                    (profile.FullName ?? "").ToUpper(),
+                                    headerTextCol
+                                );
                             });
 
                         col.Item()
@@ -417,7 +413,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 t.DefaultTextStyle(x =>
                                     x.FontSize(10.5f).FontColor(titleTextCol).LetterSpacing(0.02f)
                                 );
-                                t.Span((profile.Title ?? "").ToUpper());
+                                ComposeMarkdownText(
+                                    t,
+                                    (profile.Title ?? "").ToUpper(),
+                                    titleTextCol
+                                );
                             });
 
                         col.Item()
@@ -429,7 +429,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 t.DefaultTextStyle(x =>
                                     x.FontColor(headerTextCol).FontSize(9).LetterSpacing(0.05f)
                                 );
-                                ComposeContactRow(t, profile, true);
+                                ComposeContactRow(t, profile, true, headerTextCol);
                             });
 
                         col.Item()
@@ -440,7 +440,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 t.DefaultTextStyle(x =>
                                     x.FontColor(headerTextCol).FontSize(9).LetterSpacing(0.05f)
                                 );
-                                ComposeLinkRow(t, profile, true);
+                                ComposeLinkRow(t, profile, true, headerTextCol);
                             });
 
                         if (!string.IsNullOrWhiteSpace(profile.Tagline))
@@ -456,9 +456,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 {
                                     t.AlignCenter();
                                     t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol).FontSize(9.5f).Italic()
+                                        x.FontColor(headerTextCol).FontSize(9.5f)
                                     );
-                                    t.Span(profile.Tagline);
+                                    ComposeMarkdownText(t, profile.Tagline, headerTextCol);
                                 });
                         }
                     });
@@ -531,7 +531,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 .FontColor(headerTextCol)
                                                 .LetterSpacing(-0.02f)
                                         );
-                                        t.Span(profile.FullName ?? "");
+                                        ComposeMarkdownText(
+                                            t,
+                                            profile.FullName ?? "",
+                                            headerTextCol
+                                        );
                                     });
 
                                 // Title
@@ -557,7 +561,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 .LetterSpacing(0.02f);
                                             return template == CvTemplate.Modern ? s.Bold() : s;
                                         });
-                                        t.Span(title);
+                                        ComposeMarkdownText(t, title, titleTextCol);
                                     });
 
                                 // Contact
@@ -570,7 +574,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                         t.DefaultTextStyle(x =>
                                             x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
                                         );
-                                        ComposeContactRow(t, profile, false);
+                                        ComposeContactRow(t, profile, false, headerTextCol);
                                     });
 
                                 col.Item()
@@ -581,7 +585,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                         t.DefaultTextStyle(x =>
                                             x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
                                         );
-                                        ComposeLinkRow(t, profile, false);
+                                        ComposeLinkRow(t, profile, false, headerTextCol);
                                     });
 
                                 if (!string.IsNullOrWhiteSpace(profile.Tagline))
@@ -599,9 +603,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                             t.DefaultTextStyle(x =>
                                                 x.FontColor(headerTextCol)
                                                     .FontSize(showPhoto ? 8.5f : 9.5f)
-                                                    .Italic()
+                                                    .LineHeight(1.2f)
                                             );
-                                            t.Span(profile.Tagline);
+                                            ComposeMarkdownText(t, profile.Tagline, headerTextCol);
                                         });
                                 }
                             });
@@ -616,7 +620,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         });
     }
 
-    private void ComposeContactRow(TextDescriptor t, CandidateProfile profile, bool isUpper)
+    private void ComposeContactRow(
+        TextDescriptor t,
+        CandidateProfile profile,
+        bool isUpper,
+        string headerTextCol
+    )
     {
         bool first = true;
         void AddPart(string label, string? value)
@@ -631,7 +640,28 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 labelText = labelText.ToUpper();
 
             t.Span($"{labelText} ");
-            t.Span(value);
+            var rawValue = value ?? "";
+            // We strip tags ONLY for the mailto: attribute to avoid broken links
+            var cleanValue = HtmlTagRegex().Replace(rawValue, "").Trim();
+            if (cleanValue.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
+                cleanValue = cleanValue[7..];
+
+            // Use the raw value for display to support <strong> etc.
+            var displayValue = isUpper ? rawValue.ToUpper() : rawValue;
+
+            if (label == "EmailLabel")
+            {
+                // Wrap in mailto: link using the clean email address
+                ComposeMarkdownText(
+                    t,
+                    $"<a href='mailto:{cleanValue}'>{displayValue}</a>",
+                    headerTextCol
+                );
+            }
+            else
+            {
+                ComposeMarkdownText(t, displayValue, headerTextCol);
+            }
             first = false;
         }
 
@@ -640,7 +670,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         AddPart("LocationLabel", profile.Location);
     }
 
-    private void ComposeLinkRow(TextDescriptor t, CandidateProfile profile, bool isUpper)
+    private void ComposeLinkRow(
+        TextDescriptor t,
+        CandidateProfile profile,
+        bool isUpper,
+        string headerTextCol
+    )
     {
         bool first = true;
         void AddLink(string label, string? value)
@@ -655,7 +690,13 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                 labelText = labelText.ToUpper();
 
             t.Span($"{labelText} ");
-            t.Span(value);
+
+            var rawValue = value ?? "";
+            // Strip tags ONLY for the URL path
+            var pureUrl = HtmlTagRegex().Replace(rawValue, "").Trim();
+            var displayValue = isUpper ? rawValue.ToUpper() : rawValue;
+
+            ComposeMarkdownText(t, $"<a href='{pureUrl}'>{displayValue}</a>", headerTextCol);
             first = false;
         }
 
@@ -1326,10 +1367,13 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     private static void FormatHtmlToText(
         TextDescriptor textDescriptor,
         string? input,
+        bool isBlock = false,
+        string? fallbackColor = null,
         bool isBold = false,
         bool isItalic = false,
         bool isUnderline = false,
-        string? color = null
+        string? color = null,
+        string? linkUrl = null
     )
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -1344,11 +1388,21 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             if (match.Index > lastIndex)
             {
                 var beforeText = input[lastIndex..match.Index];
+                // Strip whitespace for non-block content
                 var cleanBefore = HtmlTagRegex().Replace(beforeText, string.Empty);
-                if (!string.IsNullOrEmpty(cleanBefore))
+                if (
+                    !string.IsNullOrWhiteSpace(cleanBefore)
+                    || (isBlock && !string.IsNullOrEmpty(cleanBefore))
+                )
                 {
-                    var span = textDescriptor.Span(cleanBefore);
-                    ApplyStyle(span, isBold, isItalic, isUnderline, color);
+                    var span = !string.IsNullOrEmpty(linkUrl)
+                        ? textDescriptor.Hyperlink(linkUrl, cleanBefore)
+                        : textDescriptor.Span(cleanBefore);
+
+                    // Apply context color to link if no specific tag color exists
+                    var finalColor =
+                        color ?? (string.IsNullOrEmpty(linkUrl) ? null : fallbackColor);
+                    ApplyStyle(span, isBold, isItalic, isUnderline, finalColor);
                 }
             }
 
@@ -1357,10 +1411,24 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             var content = match.Groups[3].Value;
 
             // Inherit parent styles or apply new ones from current tag
-            bool currentBold = isBold || tagName == "strong" || tagName == "b";
+            bool currentBold =
+                isBold || tagName == "strong" || tagName == "b" || tagName.StartsWith('h');
             bool currentItalic = isItalic || tagName == "em" || tagName == "i";
             bool currentUnderline = isUnderline || tagName == "u";
             string? currentColor = color;
+            string? currentLink = linkUrl;
+
+            if (tagName == "a")
+            {
+                var hrefMatch = HrefAttributeRegex().Match(attributes);
+                if (hrefMatch.Success)
+                {
+                    currentLink =
+                        hrefMatch.Groups[1].Value
+                        + hrefMatch.Groups[2].Value
+                        + hrefMatch.Groups[3].Value;
+                }
+            }
 
             if (!string.IsNullOrEmpty(attributes))
             {
@@ -1402,11 +1470,28 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             FormatHtmlToText(
                 textDescriptor,
                 content,
+                isBlock,
+                fallbackColor ?? color, // Pass current color as fallback for children
                 currentBold,
                 currentItalic,
                 currentUnderline,
-                currentColor
+                currentColor,
+                currentLink
             );
+
+            // Add a newline for block-level tags only if we are in a block context
+            // AND there is more content (tags or text) following this tag.
+            if (isBlock && (tagName == "p" || tagName == "div"))
+            {
+                var remaining = input[(match.Index + match.Length)..];
+                if (
+                    HtmlTagRegex().IsMatch(remaining)
+                    || (!string.IsNullOrWhiteSpace(remaining) && remaining.Trim().Length > 0)
+                )
+                {
+                    textDescriptor.Span("\n");
+                }
+            }
 
             lastIndex = match.Index + match.Length;
         }
@@ -1415,11 +1500,20 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         if (lastIndex < input.Length)
         {
             var remainingText = input[lastIndex..];
+            // Check if remaining text has actual content or if we should skip whitespace in non-block mode
             var cleanRemaining = HtmlTagRegex().Replace(remainingText, string.Empty);
-            if (!string.IsNullOrEmpty(cleanRemaining))
+            if (
+                !string.IsNullOrWhiteSpace(cleanRemaining)
+                || (isBlock && !string.IsNullOrEmpty(cleanRemaining))
+            )
             {
-                var span = textDescriptor.Span(cleanRemaining);
-                ApplyStyle(span, isBold, isItalic, isUnderline, color);
+                var span = !string.IsNullOrEmpty(linkUrl)
+                    ? textDescriptor.Hyperlink(linkUrl, cleanRemaining)
+                    : textDescriptor.Span(cleanRemaining);
+
+                // If this is a link and no specific color was found in the HTML, use the fallbackColor or theme color
+                var finalColor = color ?? (string.IsNullOrEmpty(linkUrl) ? null : fallbackColor);
+                ApplyStyle(span, isBold, isItalic, isUnderline, finalColor);
             }
         }
     }
@@ -1445,26 +1539,40 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     // SVG Path for Checkmark (Material Design)
     private const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
-    private string PreprocessHtml(string? input, string bullet = "")
+    private string PreprocessHtml(string? input, bool isBlock = true, string bullet = "")
     {
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
 
         string pText = WebUtility.HtmlDecode(input ?? "");
 
-        // Standardize markdown-style bolding to HTML strong tags for consistency
-        pText = MarkdownBoldRegex().Replace(pText, "<strong>$1</strong>");
+        // Strip mailto: from input text before processing to avoid display issues
+        if (pText.Contains("mailto:", StringComparison.OrdinalIgnoreCase))
+        {
+            pText = pText.Replace("mailto:", "", StringComparison.OrdinalIgnoreCase);
+        }
 
-        // Standardize markdown-style italic to HTML em tags
-        pText = MarkdownItalicAsteriskRegex().Replace(pText, "<em>$1</em>");
-        pText = MarkdownItalicUnderscoreRegex().Replace(pText, "<em>$1</em>");
+        // Run Markdig for full markdown support
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        pText = Markdown.ToHtml(pText, pipeline);
+
+        if (!isBlock)
+        {
+            pText = pText.Trim();
+            // If it's a single paragraph, strip the <p> tags for inline rendering
+            if (
+                pText.StartsWith("<p>", StringComparison.OrdinalIgnoreCase)
+                && pText.EndsWith("</p>", StringComparison.OrdinalIgnoreCase)
+                && pText.IndexOf("<p>", 3, StringComparison.OrdinalIgnoreCase) == -1
+            ) // Only one <p> tag
+            {
+                pText = pText[3..^4];
+            }
+        }
 
         // Handle HR tags - Convert to unique placeholder
         pText = HrTagRegex().Replace(pText, "[[HR]]");
 
-        // Use a placeholder for the checkmark so we can render it as SVG later
-        // We'll replace the unicode char or the request for a checkmark bullet with this placeholder
-        // Note: We use a space after the placeholder to ensure separation from text
         const string checkmarkPlaceholder = "[[CHECKMARK]]";
 
         // Handle Lists (<ul><li>...</li></ul>)
@@ -1519,7 +1627,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
             foreach (var line in lines)
             {
-                var cleanLine = line.Trim().TrimStart('-', '*').Trim();
+                var cleanLine = line.Trim();
 
                 // Explicitly handle <br> tags here because we return early from this block
                 // transforming them into newlines *within* the same bullet point
@@ -1532,9 +1640,6 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         }
 
         pText = BrTagRegex().Replace(pText, "\n");
-        // Convert </p> to newline
-        pText = PCloseTagRegex().Replace(pText, "\n");
-        pText = POpenTagRegex().Replace(pText, "");
 
         // Decode HTML entities
         // Entities already decoded at top
@@ -1545,6 +1650,49 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
 
         // Handle standalone right arrows (keep as text span)
         pText = pText.Replace("\u25B8", $"<span style='color:{_primaryColor}'>\u25B8</span>");
+
+        // Auto-link URLs and emails (very basic detection, avoiding already linked ones)
+        if (!pText.Contains("<a", StringComparison.OrdinalIgnoreCase))
+        {
+            pText = AutoLinkRegex()
+                .Replace(
+                    pText,
+                    match =>
+                    {
+                        var val = match.Value;
+
+                        // Check if it's an email - handle with mailto:
+                        if (
+                            val.Contains('@')
+                            && !val.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                        )
+                        {
+                            var email = val.StartsWith(
+                                "mailto:",
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                                ? val[7..]
+                                : val;
+                            return $"<a href='mailto:{email}'>{email}</a>";
+                        }
+
+                        // Handle standard URLs
+                        if (val.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return $"<a href='http://{val}'>{val}</a>";
+                        }
+
+                        // For already specified http/https URLs
+                        if (val.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return $"<a href='{val}'>{val}</a>";
+                        }
+
+                        // Default case (should be caught by above, but as a safety)
+                        return $"<a href='{val}'>{val}</a>";
+                    }
+                );
+        }
 
         return pText.Trim();
     }
@@ -1578,7 +1726,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     }
 
     // GeneratedRegex patterns
-    [GeneratedRegex("<.*?>")]
+    [GeneratedRegex(@"<[a-zA-Z/][^>]*>", RegexOptions.IgnoreCase)]
     private static partial Regex HtmlTagRegex();
 
     [GeneratedRegex("^[0-9a-fA-F]{3,8}$")]
@@ -1587,21 +1735,15 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     [GeneratedRegex(@"/Type\s*/Page\b", RegexOptions.IgnoreCase)]
     private static partial Regex PageTypeRegex();
 
-    [GeneratedRegex(@"\*\*(.*?)\*\*", RegexOptions.Singleline)]
-    private static partial Regex MarkdownBoldRegex();
-
-    [GeneratedRegex(@"\*(.*?)\*", RegexOptions.Singleline)]
-    private static partial Regex MarkdownItalicAsteriskRegex();
-
-    [GeneratedRegex(@"_(.*?)_", RegexOptions.Singleline)]
-    private static partial Regex MarkdownItalicUnderscoreRegex();
-
 #pragma warning disable SYSLIB1045 // Pattern with backreferences not supported by GeneratedRegex
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
-        @"<(strong|b|em|i|u|span)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
+        @"<(strong|b|em|i|u|span|div|p|h1|h2|h3|h4|h5|h6|a)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline
     );
 #pragma warning restore SYSLIB1045
+
+    [GeneratedRegex(@"href\s*=\s*(?:""([^""]*)""|'([^']*)'|([^""'\s>]+))", RegexOptions.IgnoreCase)]
+    private static partial Regex HrefAttributeRegex();
 
     private static Regex HtmlTagWithStyleRegex() => HtmlTagWithStyleRegexInstance;
 
@@ -1632,24 +1774,29 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     [GeneratedRegex(@"<br.*?>", RegexOptions.IgnoreCase)]
     private static partial Regex BrTagRegex();
 
-    [GeneratedRegex(@"</p>", RegexOptions.IgnoreCase)]
-    private static partial Regex PCloseTagRegex();
-
-    [GeneratedRegex(@"<p.*?>", RegexOptions.IgnoreCase)]
-    private static partial Regex POpenTagRegex();
-
     [GeneratedRegex(@"<hr\s*/?>", RegexOptions.IgnoreCase)]
     private static partial Regex HrTagRegex();
 
+    [GeneratedRegex(
+        @"\b((?:https?://|www\.)[^\s<]*[^\s<.,!?;:]|[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})\b",
+        RegexOptions.IgnoreCase
+    )]
+    private static partial Regex AutoLinkRegex();
+
     /// <summary>
-    /// Renders text with HTML and Markdown support into a TextDescriptor.
+    /// Renders text with full markdown support into a TextDescriptor.
     /// Used for single-line or inline candidate-provided fields.
     /// </summary>
-    private void ComposeMarkdownText(TextDescriptor t, string? content)
+    private void ComposeMarkdownText(TextDescriptor t, string? content, string? color = null)
     {
         if (string.IsNullOrWhiteSpace(content))
             return;
-        FormatHtmlToText(t, PreprocessHtml(content));
+        FormatHtmlToText(
+            t,
+            PreprocessHtml(content, isBlock: false),
+            isBlock: false,
+            fallbackColor: color
+        );
     }
 
     /// <summary>
@@ -1668,7 +1815,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             return;
 
         // Preprocess will convert bullets/checkmarks to placeholders if needed
-        var preprocessed = PreprocessHtml(input, bullet);
+        var preprocessed = PreprocessHtml(input, isBlock: true, bullet);
         var parts = preprocessed.Split(["[[HR]]"], StringSplitOptions.None);
 
         for (int i = 0; i < parts.Length; i++)
@@ -1698,7 +1845,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     t.DefaultTextStyle(s =>
                                         s.FontSize(fontSize).FontColor(fontColor).LineHeight(1.5f)
                                     );
-                                    FormatHtmlToText(t, segment);
+                                    FormatHtmlToText(
+                                        t,
+                                        segment,
+                                        isBlock: true,
+                                        fallbackColor: fontColor
+                                    );
                                 });
                         }
                     }
@@ -1729,7 +1881,12 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 .LineHeight(1.5f)
                                         );
                                         // Even if segment is empty (e.g. checkmark only), FormatHtmlToText is safe
-                                        FormatHtmlToText(t, segment.Trim());
+                                        FormatHtmlToText(
+                                            t,
+                                            segment.Trim(),
+                                            isBlock: true,
+                                            fallbackColor: fontColor
+                                        );
                                     });
                             });
                     }

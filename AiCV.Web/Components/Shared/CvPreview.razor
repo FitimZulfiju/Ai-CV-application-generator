@@ -20,9 +20,9 @@ else
                         <h1 class="name"><FormattedText Text="@Profile.FullName" /></h1>
                         <h2 class="title"><FormattedText Text="@Profile.Title" /></h2>
                         <div class="contact-info-wrapper">
-                            @Localizer["EmailLabel"] <a href="mailto:@Profile.Email"><FormattedText Text="@Profile.Email" /></a> | @Localizer["PhoneLabel"] <FormattedText Text="@Profile.PhoneNumber" />
+                            @Localizer["EmailLabel"] <FormattedText Text="@Profile.Email" /> | @Localizer["PhoneLabel"] <FormattedText Text="@Profile.PhoneNumber" />
                             | @Localizer["LocationLabel"] <FormattedText Text="@Profile.Location" /><br>
-                            @Localizer["LinkedInLabel"] <a href="@Profile.LinkedInUrl" target="_blank"><FormattedText Text="@Profile.LinkedInUrl" /></a> | @Localizer["GitHubLabel"] <a href="@Profile.PortfolioUrl" target="_blank"><FormattedText Text="@Profile.PortfolioUrl" /></a>
+                            @Localizer["LinkedInLabel"] <FormattedText Text="@Profile.LinkedInUrl" /> | @Localizer["GitHubLabel"] <FormattedText Text="@Profile.PortfolioUrl" />
                         </div>
                         @if (!string.IsNullOrEmpty(Profile.Tagline))
                         {

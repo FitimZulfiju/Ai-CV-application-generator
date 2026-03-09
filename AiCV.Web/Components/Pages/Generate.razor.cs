@@ -9,32 +9,32 @@ public partial class Generate
     private string? _detectedCompanyName;
     private string? _detectedJobTitle;
     private CandidateProfile? _cachedProfile;
-    private bool _isGenerating = false;
-    private bool _isFetching = false;
-    private bool _isPrintingCoverLetter = false;
-    private bool _isPrintingResume = false;
-    private bool _isSaving = false;
-    private bool _isAlreadySaved = false;
+    private bool _isGenerating;
+    private bool _isFetching;
+    private bool _isPrintingCoverLetter;
+    private bool _isPrintingResume;
+    private bool _isSaving;
+    private bool _isAlreadySaved;
     private string _savedCoverLetter = string.Empty;
     private string _savedResumeJson = string.Empty;
     private string _generatedEmail = string.Empty;
     private string _savedEmail = string.Empty;
-    private bool _previewCoverLetter = false;
+    private bool _previewCoverLetter;
     private bool _previewResume = true;
     private string _resumeJson = string.Empty;
     private string _originalResumeJson = string.Empty;
-    private bool _manualEntry = false;
-    private bool _includeProfilePicture = false;
+    private bool _manualEntry;
+    private bool _includeProfilePicture;
 
     private static string GetDisplayStyle(bool visible) => visible ? string.Empty : "display:none";
 
     private MudForm? _form;
     private int? _activeConfigId;
     private List<UserAIConfiguration> _configuredProviders = [];
-    private bool _hasConfiguredProvider = false;
-    private bool _showAdvancedEditor = false;
+    private bool _hasConfiguredProvider;
+    private bool _showAdvancedEditor;
     private int _splitterSize = 30;
-    private int _activeTabIndex = 0;
+    private int _activeTabIndex;
     private CvTemplate _selectedTemplateInPreview = CvTemplate.Professional;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
@@ -254,7 +254,7 @@ public partial class Generate
 
     private async Task GenerateContent()
     {
-        await _form!.Validate();
+        await _form!.ValidateAsync();
         if (!_form.IsValid)
             return;
 

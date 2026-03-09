@@ -81,13 +81,14 @@ else
                                     </MudAvatar>
                                 }
 
-                                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-                                    <ActivatorContent>
+                                <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
+                                    <CustomContent>
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                                   StartIcon="@Icons.Material.Filled.CloudUpload">
+                                                   StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="@context.OpenFilePickerAsync">
                                             @Localizer["UploadPicture"]
                                         </MudButton>
-                                    </ActivatorContent>
+                                    </CustomContent>
+                                    <SelectedTemplate />
                                 </MudFileUpload>
 
                                 @if (!string.IsNullOrEmpty(_profile.ProfilePictureUrl))
@@ -139,12 +140,12 @@ else
                         </MudItem>
                         <MudItem xs="12" sm="6" Class="pt-2">
                             <MudTextField @bind-Value="_profile.Tagline" Label="@Localizer["Tagline"]"
-                                          Variant="Variant.Outlined" Adornment="Adornment.Start" AutoGrow="true"
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
                                           AdornmentIcon="@Icons.Material.Filled.ShortText" />
                         </MudItem>
                         <MudItem xs="12" Class="pt-2">
-                            <MudTextField @bind-Value="_profile.ProfessionalSummary"
-                                          Label="@Localizer["ProfessionalSummary"]" Variant="Variant.Outlined" AutoGrow="true"
+                            <MudTextField @bind-Value="_profile.ProfessionalSummary" Sizing="InputSizing.Auto"
+                                          Label="@Localizer["ProfessionalSummary"]" Variant="Variant.Outlined"
                                           Clearable="true" Immediate="true" />
                         </MudItem>
                     </MudGrid>
@@ -211,7 +212,7 @@ else
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
                                     <MudTextField @bind-Value="exp.Description" Label="@Localizer["Description"]" Lines="3"
-                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                                  Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
                                 </MudItem>
                             </MudGrid>
                         </MudCard>
@@ -252,7 +253,7 @@ else
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2">
                                     <MudTextField @bind-Value="edu.Description" Label="@Localizer["Description"]" Lines="3"
-                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true"
+                                                  Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true"
                                                   HelperText="@Localizer["EducationDescriptionHelper"]" />
                                 </MudItem>
                             </MudGrid>
@@ -335,7 +336,7 @@ else
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-1">
                                     <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]"
-                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                                  Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
                                 </MudItem>
                                 <MudItem xs="12" sm="11" Class="pt-2">
                                     <div class="pl-5">
@@ -354,7 +355,7 @@ else
                                 </MudItem>
                                 <MudItem xs="12" Class="pt-2 ml-5">
                                     <MudTextField @bind-Value="proj.SectionDescription" Label="@Localizer["Description"]"
-                                                  Variant="Variant.Outlined" AutoGrow="true" Clearable="true" />
+                                                  Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
                                 </MudItem>
                             </MudGrid>
                         </MudCard>

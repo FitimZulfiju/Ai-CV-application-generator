@@ -44,7 +44,7 @@ public partial class MyApplications
 
     private async Task DeleteApplication(GeneratedApplication app)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Delete Application",
             $"Are you sure you want to delete the application for {app.JobPosting?.CompanyName}?",
             yesText: "Delete",

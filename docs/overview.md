@@ -56,8 +56,13 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
   * Preview in HTML and plain text
 * Outputs:
 
-  * Save/download as PDF
-  * Export as Markdown or JSON
+  * High-fidelity PDF generation with theme-specific styling
+  * Interactive HTML preview with smart Markdown rendering
+  * Export as Markdown or JSON for external use
+* Premium CV Templates:
+
+  * Multiple professional layouts (Modern, Minimalist, Professional)
+  * Dynamic rendering of profile data with Markdown support
 * Session management:
 
   * Prevents data loss during updates
@@ -146,8 +151,7 @@ See [docs/privacy.md](docs/privacy.md) for details on API key encryption, AI req
 * Enhanced prompt customization
 * Multi-profile support
 * Additional AI provider integrations
-* Improved UI/UX
-* CV and cover letter template customization
+* Improved UI/UX (Accessibility and Accessibility)
 
 ---
 

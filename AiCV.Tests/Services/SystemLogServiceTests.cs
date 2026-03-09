@@ -28,7 +28,9 @@ public class SystemLogServiceTests
         );
 
         // Assert
-        var log = await _context.SystemLogs.FirstOrDefaultAsync();
+        var log = await _context.SystemLogs.FirstOrDefaultAsync(
+            TestContext.Current.CancellationToken
+        );
         Assert.NotNull(log);
         Assert.Equal("Error", log.Level);
         Assert.Equal("Test Error", log.Message);
@@ -57,7 +59,7 @@ public class SystemLogServiceTests
                 Timestamp = DateTime.UtcNow,
             }
         );
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var logs = await _service.GetLogsAsync();
@@ -76,7 +78,7 @@ public class SystemLogServiceTests
             new SystemLog { Level = "Info", Message = "Info Log" },
             new SystemLog { Level = "Error", Message = "Error Log" }
         );
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var logs = await _service.GetLogsAsync(level: "Error");
@@ -104,13 +106,13 @@ public class SystemLogServiceTests
                 Timestamp = DateTime.UtcNow.AddDays(-1),
             }
         );
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         await _service.ClearLogsAsync(daysToKeep: 30);
 
         // Assert
-        var logs = await _context.SystemLogs.ToListAsync();
+        var logs = await _context.SystemLogs.ToListAsync(TestContext.Current.CancellationToken);
         Assert.Single(logs);
         Assert.Equal("New Log", logs[0].Message);
     }

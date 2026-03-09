@@ -65,8 +65,14 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
 * **Multi-Language UI**
   English, Albanian (Shqip), Danish (Dansk).
 
+* **Premium CV Templates**
+  Multiple professional layouts (Modern, Minimalist, Professional) optimized for both digital viewing and printing.
+
+* **Smart Markdown Rendering**
+  Context-aware formatting engine that balances full Markdown support (bold, italic, links) with perfect document alignment, preventing line breaks and trailing whitespace.
+
 * **Export Options**
-  PDF generation and Markdown/JSON exports.
+  High-fidelity PDF generation via QuestPDF and structured Markdown/JSON exports for external use.
 
 ---
 

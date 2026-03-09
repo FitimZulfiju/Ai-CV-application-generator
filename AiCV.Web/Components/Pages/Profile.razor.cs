@@ -259,7 +259,7 @@ public partial class Profile
         return string.Join(" ", parts);
     }
 
-    private async Task UploadFiles(IBrowserFile file)
+    private async Task UploadFiles(InputFileChangeEventArgs file)
     {
         if (file == null || _profile == null)
             return;
@@ -267,7 +267,7 @@ public partial class Profile
         try
         {
             // Resize image to max 400x400 (approx 3cm at 300dpi is 354px)
-            var resizedFile = await file.RequestImageFileAsync(file.ContentType, 400, 400);
+            var resizedFile = await file.File.RequestImageFileAsync(file.File.ContentType, 400, 400);
 
             // Ensure uploads directory exists for the specific user
             var webRootPath =
@@ -279,7 +279,7 @@ public partial class Profile
             }
 
             // Generate unique filename
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.File.Name)}";
             var filePath = Path.Combine(uploadPath, fileName);
 
             await using (var stream = new FileStream(filePath, FileMode.Create))
@@ -337,8 +337,6 @@ public partial class Profile
             Snackbar.Add($"Error removing profile picture: {ex.Message}", Severity.Error);
         }
     }
-
-    // Track previous state hash or simply save periodically if _profile is not null
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

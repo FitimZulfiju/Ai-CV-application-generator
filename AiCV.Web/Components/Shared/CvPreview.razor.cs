@@ -34,21 +34,31 @@ public partial class CvPreview
             return string.Empty;
 
         // Decode entities (robustly handle multiple levels of encoding if present)
-        var formatted = System.Net.WebUtility.HtmlDecode(summary ?? "");
-        if (formatted.Contains("&lt;") || formatted.Contains("&amp;"))
-            formatted = System.Net.WebUtility.HtmlDecode(formatted);
+        var pText = System.Net.WebUtility.HtmlDecode(summary ?? "");
+        if (pText.Contains("&lt;") || pText.Contains("&amp;"))
+            pText = System.Net.WebUtility.HtmlDecode(pText);
 
-        // Standardize markdown-style bolding to HTML strong tags for consistency with PDF rendering
-        formatted = BoldRegex().Replace(formatted, "<strong>$1</strong>");
+        // Strip mailto: from input text before processing to avoid display issues
+        if (pText.Contains("mailto:", StringComparison.OrdinalIgnoreCase))
+            pText = pText.Replace("mailto:", "", StringComparison.OrdinalIgnoreCase);
 
-        // Standardize markdown-style italic to HTML em tags
-        formatted = ItalicAsteriskRegex().Replace(formatted, "<em>$1</em>");
-        formatted = ItalicUnderscoreRegex().Replace(formatted, "<em>$1</em>");
+        // Run Markdig for full markdown support
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        var formatted = Markdown.ToHtml(pText, pipeline).Trim();
+
+        // If it's single-line/inline (FormatSummary is used for headers too)
+        // strip the wrapping <p> tags if it's a single paragraph
+        if (
+            formatted.StartsWith("<p>", StringComparison.OrdinalIgnoreCase)
+            && formatted.EndsWith("</p>", StringComparison.OrdinalIgnoreCase)
+            && formatted.IndexOf("<p>", 3, StringComparison.OrdinalIgnoreCase) == -1
+        )
+        {
+            formatted = formatted[3..^4];
+        }
 
         // Handle underline
-        formatted = UnderlineRegex().Replace(formatted, "<u>$1</u>");
-
-        return formatted.Replace("\n", "<br>");
+        return UnderlineRegex().Replace(formatted, "<u>$1</u>");
     }
 
     public static string FormatDescription(string? description)
@@ -56,32 +66,16 @@ public partial class CvPreview
         if (string.IsNullOrEmpty(description))
             return string.Empty;
 
-        // If description is already HTML (li tags), return as is
-        if (description.Contains("<li>"))
-            return description;
+        // Strip mailto: from input text before processing
+        var pText = description;
+        if (pText.Contains("mailto:", StringComparison.OrdinalIgnoreCase))
+            pText = pText.Replace("mailto:", "", StringComparison.OrdinalIgnoreCase);
 
-        // Otherwise, split by newlines and wrap in li
-        var lines = description.Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries);
-        var sb = new System.Text.StringBuilder();
-        foreach (var line in lines)
-        {
-            // Decode and handle bold/italic/underline/colors
-            var cleanLine = System.Net.WebUtility.HtmlDecode(
-                line.Trim().TrimStart('-', '*').Trim() ?? ""
-            );
-            if (cleanLine.Contains("&lt;") || cleanLine.Contains("&amp;"))
-                cleanLine = System.Net.WebUtility.HtmlDecode(cleanLine);
+        // Run Markdig for full markdown support
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        var formatted = Markdown.ToHtml(pText, pipeline);
 
-            if (!string.IsNullOrEmpty(cleanLine))
-            {
-                cleanLine = BoldRegex().Replace(cleanLine, "<strong>$1</strong>");
-                cleanLine = ItalicAsteriskRegex().Replace(cleanLine, "<em>$1</em>");
-                cleanLine = ItalicUnderscoreRegex().Replace(cleanLine, "<em>$1</em>");
-                cleanLine = UnderlineRegex().Replace(cleanLine, "<u>$1</u>");
-                sb.AppendLine($"<li>{cleanLine}</li>");
-            }
-        }
-        return sb.ToString();
+        return formatted;
     }
 
     private string CalculateDuration(DateTime? start, DateTime? end, bool isCurrentRole = false)
@@ -110,15 +104,6 @@ public partial class CvPreview
 
         return string.Join(" ", parts);
     }
-
-    [System.Text.RegularExpressions.GeneratedRegex(@"\*\*(.*?)\*\*")]
-    private static partial System.Text.RegularExpressions.Regex BoldRegex();
-
-    [System.Text.RegularExpressions.GeneratedRegex(@"\*(.*?)\*")]
-    private static partial System.Text.RegularExpressions.Regex ItalicAsteriskRegex();
-
-    [System.Text.RegularExpressions.GeneratedRegex(@"_(.*?)_")]
-    private static partial System.Text.RegularExpressions.Regex ItalicUnderscoreRegex();
 
     [System.Text.RegularExpressions.GeneratedRegex(@"<u>(.*?)</u>")]
     private static partial System.Text.RegularExpressions.Regex UnderlineRegex();

@@ -20,7 +20,7 @@ public partial class UserSettingsPage
     private bool _isTestingConnection;
     private bool _showNewApiKey;
     private bool _showCostAlert = true;
-    private bool _isDeleted = false;
+    private bool _isDeleted;
 
     // Available providers for dropdown
     private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
@@ -377,7 +377,7 @@ public partial class UserSettingsPage
 
     private async Task DeleteConfiguration(UserAIConfiguration config)
     {
-        var confirmed = await DialogService.ShowMessageBox(
+        var confirmed = await DialogService.ShowMessageBoxAsync(
             Localizer["DeleteConfiguration"],
             Localizer["DeleteConfigConfirmation"],
             yesText: Localizer["Delete"],
@@ -431,7 +431,7 @@ public partial class UserSettingsPage
         if (_isProtected)
             return;
 
-        var confirmed = await DialogService.ShowMessageBox(
+        var confirmed = await DialogService.ShowMessageBoxAsync(
             Localizer["DeleteAccount"],
             Localizer["DeleteAccountWarning"],
             yesText: Localizer["DeleteMyAccountPermanently"],

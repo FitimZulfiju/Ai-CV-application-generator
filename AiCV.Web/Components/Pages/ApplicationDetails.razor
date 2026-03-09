@@ -74,7 +74,7 @@
             </div>
         </MudStack>
 
-        <MudTabs Elevation="2" Rounded="true" PanelClass="pt-4" @bind-ActivePanelIndex="_activeTabIndex">
+        <MudTabs Elevation="2" Rounded="true" TabPanelsClass="pt-4" @bind-ActivePanelIndex="_activeTabIndex">
             <MudTabPanel Text="@Localizer["CoverLetter"]" Icon="@Icons.Material.Filled.Description">
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
@@ -104,7 +104,9 @@
                 {
 
                     <MudPaper Elevation="1" Class="pa-4">
-                        <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.ApplicationEmailContent</MudText>
+                        <div class="summary">
+                            <FormattedText Text="@_application.ApplicationEmailContent" />
+                        </div>
                     </MudPaper>
                 }
                 else
@@ -125,7 +127,9 @@
                         </MudStack>
                         <MudDivider Class="mb-4" />
                     }
-                    <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_application.JobPosting?.Description</MudText>
+                    <div class="summary">
+                        <FormattedText Text="@_application.JobPosting?.Description" />
+                    </div>
                 </MudPaper>
             </MudTabPanel>
         </MudTabs>

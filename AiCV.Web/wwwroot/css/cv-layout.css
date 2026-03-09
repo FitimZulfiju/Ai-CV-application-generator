@@ -47,17 +47,19 @@
 .cv-container.cv-professional .contact-info-wrapper a {
     color: white;
     text-decoration: none;
-    border-bottom: 0.062em solid rgba(255, 255, 255, 0.5);
-    transition: border-bottom 0.2s ease;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+    transition: all 0.2s ease;
 }
 
 .cv-container.cv-professional .contact-info-wrapper a:hover {
     border-bottom: 0.062em solid white;
+    opacity: 0.9;
 }
 
 .cv-container .tagline {
     font-size: var(--font-size-tagline);
     font-weight: 500;
+    opacity: 0.9;
 }
 
 /* Shared Profile Photo Styles */
@@ -302,6 +304,14 @@
     display: block;
 }
 
+/* Remove trailing margin/newlines from last item in sections */
+.cv-container .summary p:last-child,
+.cv-container .achievements p:last-child,
+.cv-container .project-features p:last-child,
+.cv-container .skill-list p:last-child {
+    margin-bottom: 0;
+}
+
 .cv-container .achievements li {
     font-size: var(--font-size-body);
     color: var(--text-medium);
@@ -413,7 +423,7 @@
 
 .cv-container.cv-modern .contact-info-wrapper {
     font-size: var(--font-size-meta);
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     display: block;
     margin-top: 1rem;
     line-height: 1.6;
@@ -423,11 +433,13 @@
     color: white;
     font-weight: 500;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+    transition: all 0.2s ease;
 }
 
 .cv-container.cv-modern .contact-info-wrapper a:hover {
-    border-bottom: 1px solid white;
+    border-bottom: 0.062em solid white;
+    opacity: 0.9;
 }
 
 .cv-container.cv-modern .section-title {
@@ -586,6 +598,12 @@
     color: #111;
     text-decoration: none;
     border-bottom: 0.0625em solid #ccc;
+    transition: all 0.2s ease;
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper a:hover {
+    border-bottom: 0.0625em solid #111;
+    opacity: 0.8;
 }
 
 .cv-container.cv-minimalist .section-title {
