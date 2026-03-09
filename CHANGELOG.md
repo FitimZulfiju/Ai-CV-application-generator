@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.7.0] - 2026-03-09
+
+### Added
+- feat: test the new dev-to-master CI/CD review workflow
+
 ## [1.6.4] - 2026-03-09
 
 ### Changed
