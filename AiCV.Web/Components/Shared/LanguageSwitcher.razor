@@ -1,6 +1,6 @@
 <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-    <ActivatorContent>
-        <MudButton Color="Color.Inherit" Variant="Variant.Text">
+    <ActivatorContent Context="menuContect">
+        <MudButton Color="Color.Inherit" Variant="Variant.Text" OnClick="@menuContect.ToggleAsync">
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Language" Size="Size.Small" />
                 <span>@CurrentLanguageCode</span>

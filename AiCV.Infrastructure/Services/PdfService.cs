@@ -1889,6 +1889,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                     t.DefaultTextStyle(s =>
                                         s.FontSize(fontSize).FontColor(fontColor).LineHeight(1.5f)
                                     );
+                                    t.ParagraphSpacing(fontSize * 0.5f);
                                     FormatHtmlToText(
                                         t,
                                         segment,
@@ -1924,6 +1925,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 .FontColor(fontColor)
                                                 .LineHeight(1.5f)
                                         );
+                                        t.ParagraphSpacing(fontSize * 0.5f);
                                         // Even if segment is empty (e.g. checkmark only), FormatHtmlToText is safe
                                         FormatHtmlToText(
                                             t,
