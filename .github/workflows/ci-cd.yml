@@ -113,7 +113,7 @@ jobs:
     name: 🚀 Production Release
     needs: build-and-test
     # Run only on pushes (merges) to 'master'
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, '[skip staging]')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -130,6 +130,7 @@ jobs:
           minor_pattern: "/feat:/"
           version_format: "${major}.${minor}.${patch}"
           enable_prerelease_mode: false
+          search_commit_body: true
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
