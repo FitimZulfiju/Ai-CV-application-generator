@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - fix: sync changelog back to dev to prevent divergence
 
+## [1.7.2] - 2026-03-17
+
+### Fixed
+- fix: sync changelog back to dev to prevent divergence
+
 ## [1.7.0] - 2026-03-17
 
 ### Added
