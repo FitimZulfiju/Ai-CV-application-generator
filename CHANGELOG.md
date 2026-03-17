@@ -19,26 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: align CI/CD versioning logic and ensure production release triggers on master
 - fix: resolve LanguageSwitcher production failure by using fingerprinted assets in .NET 9/10 and fixing activator typo
 - fix(ci-cd): improve dockerhub cleanup script to delete orphaned digests
-- fix: PDF paragraph spacing, NuGet updates, and UI cleanups\n\n- Add ParagraphSpacing to PDF cover letter to match HTML preview gaps\n- Update EF Core packages to 10.0.5 and Npgsql to 10.0.1\n- Remove commented-out beta warning from MainLayout\n- Fix LanguageSwitcher menu activator context and toggle
+- fix: PDF paragraph spacing, NuGet updates, and UI cleanups
 - fix: fix CI/CD PR creation by consolidating changelog and PR steps
-
-## [1.6.10] - 2026-03-17
-
-### Added
-- feat: update packages.
-- feat: test the new dev-to-master CI/CD review workflow
-
-### Fixed
-- fix: align CI/CD versioning logic and ensure production release triggers on master
-- fix: resolve LanguageSwitcher production failure by using fingerprinted assets in .NET 9/10 and fixing activator typo
-- fix(ci-cd): improve dockerhub cleanup script to delete orphaned digests
-- fix: PDF paragraph spacing, NuGet updates, and UI cleanups\n\n- Add ParagraphSpacing to PDF cover letter to match HTML preview gaps\n- Update EF Core packages to 10.0.5 and Npgsql to 10.0.1\n- Remove commented-out beta warning from MainLayout\n- Fix LanguageSwitcher menu activator context and toggle
-- fix: fix CI/CD PR creation by consolidating changelog and PR steps
-
-## [1.7.0] - 2026-03-09
-
-### Added
-- feat: test the new dev-to-master CI/CD review workflow
 
 ## [1.6.4] - 2026-03-09
 
