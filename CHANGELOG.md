@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.7.1] - 2026-03-17
+
+### Changed
+- Merge pull request #54 from FitimZulfiju/dev-to-master-v1.7.0
+- docs: update changelog for v1.7.0 [skip staging]
 ## [1.7.0] - 2026-03-17
 
 ### Added
