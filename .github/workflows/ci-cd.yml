@@ -88,26 +88,46 @@ jobs:
           sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
           }' CHANGELOG.md
 
+      - name: Sync Changelog to dev Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add CHANGELOG.md
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: update changelog for v${{ steps.version.outputs.version }} [skip staging]"
+            git push origin HEAD:dev
+          else
+            echo "No changelog changes to sync."
+          fi
+
       - name: Create or Update Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs: update changelog for v${{ steps.version.outputs.version }} [skip staging]"
-          title: "🚀 PR: Release candidate v${{ steps.version.outputs.version }}"
-          body: |
-            ## 🚀 New Release Candidate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PR_TITLE="🚀 PR: Release candidate v$VERSION"
+          PR_BODY="## 🚀 New Release Candidate
 
-            This PR was automatically created from the `dev` branch. It includes the updated `CHANGELOG.md` for **v${{ steps.version.outputs.version }}**.
+          This PR was automatically created from the \`dev\` branch. It includes the updated \`CHANGELOG.md\` for **v$VERSION**.
 
-            **Review Checklist:**
-            1. [ ] Code changes look correct.
-            2. [ ] `CHANGELOG.md` accurately reflects the work.
-            3. [ ] Ready for production?
+          **Review Checklist:**
+          1. [ ] Code changes look correct.
+          2. [ ] \`CHANGELOG.md\` accurately reflects the work.
+          3. [ ] Ready for production?
 
-            **Deployment Note:**
-            Merging this PR into `master` will trigger the production build, Docker `latest` push, and official GitHub Tag/Release.
-          branch: "dev-to-master-v${{ steps.version.outputs.version }}"
-          base: "master"
+          **Deployment Note:**
+          Merging this PR into \`master\` will trigger the production build, Docker \`latest\` push, and official GitHub Tag/Release."
+
+          # Check if PR already exists
+          EXISTING_PR=$(gh pr list -B master -H dev --state open --json number -q '.[0].number')
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists. Updating title."
+            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+          else
+            echo "Creating new PR for v$VERSION"
+            gh pr create --base master --head dev --title "$PR_TITLE" --body "$PR_BODY"
+          fi
 
   production:
     name: 🚀 Production Release

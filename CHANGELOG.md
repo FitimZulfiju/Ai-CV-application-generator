@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.8.0] - 2026-03-17
+
+### Added
+- feat: enforce production release automation and branch sync flow
+
+### Fixed
+- fix: restore PR creation by using GitHub CLI directly
+- fix: sync changelog back to dev to prevent divergence
+
 ## [1.7.2] - 2026-03-17
 
 ### Changed
