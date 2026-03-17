@@ -107,7 +107,6 @@
     background: var(--bg-light);
     border-left: 0.3rem solid var(--primary-color);
     margin: 0;
-    white-space: pre-wrap;
 }
 
 /* Cover Letter specific summary override */
@@ -202,10 +201,7 @@
 }
 
 .cv-container.cv-professional .achievements li::before {
-    content: '•';
-    color: var(--primary-color);
-    font-weight: bold;
-    font-size: 1.25rem;
+    content: none;
 }
 
 /* Education */
@@ -241,9 +237,7 @@
 }
 
 .cv-container.cv-professional .project-features li::before {
-    content: '✓';
-    color: var(--accent-color);
-    font-weight: bold;
+    content: none;
 }
 
 /* Shared styles applied to all templates if no template class matches or for common elements */
@@ -302,10 +296,26 @@
     padding-left: 0.5em;
     text-indent: -0.5em;
     display: block;
-    margin-bottom: 0.15rem !important;
-    /* Low margin to prevent gaps */
-    line-height: 1.4;
-    /* Tightened from 1.5 */
+    margin-bottom: 0 !important;
+    /* No margin between description rows */
+    line-height: 1.2;
+    /* Consistent tight line height */
+}
+
+/* Add a small gap between header and description */
+.cv-container .achievements,
+.cv-container .project-features {
+    margin-top: 0.35rem;
+}
+
+/* Education divider matches PdfService */
+.cv-container .recognition {
+    border-top: 0.0625em solid var(--border-color);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: var(--font-size-body);
+    line-height: 1.2;
 }
 
 /* Ensure Markdig's raw <ul> tags don't add own padding/margin */
@@ -316,6 +326,24 @@
 }
 
 /* Remove trailing margin/newlines from last item in sections */
+.cv-container .summary,
+.cv-container .achievements,
+.cv-container .project-features,
+.cv-container .skill-list,
+.cv-container .summary p,
+.cv-container .achievements p,
+.cv-container .project-features p,
+.cv-container .skill-list p {
+    white-space: pre-wrap;
+}
+
+.cv-container .summary p,
+.cv-container .achievements p,
+.cv-container .project-features p,
+.cv-container .skill-list p {
+    margin-bottom: 0;
+}
+
 .cv-container .summary p:last-child,
 .cv-container .achievements p:last-child,
 .cv-container .project-features p:last-child,

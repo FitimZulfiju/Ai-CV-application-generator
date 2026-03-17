@@ -877,7 +877,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                             exp.Description,
                                             fontSize - 1,
                                             _textMedium,
-                                            "• "
+                                            "",
+                                            1.2f,
+                                            0f
                                         )
                                     );
                             }
@@ -988,6 +990,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 // Separator line (matches CSS .recognition border-top)
                                                 c.Item()
                                                     .PaddingTop(0.25f, Unit.Centimetre)
+                                                    .PaddingBottom(0.25f, Unit.Centimetre)
                                                     .LineHorizontal(1)
                                                     .LineColor(_borderColor);
 
@@ -998,7 +1001,10 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                             col,
                                                             edu.Description,
                                                             fontSize - 1,
-                                                            _textMedium
+                                                            _textMedium,
+                                                            null,
+                                                            1.2f,
+                                                            0f
                                                         )
                                                     );
                                             }
@@ -1130,13 +1136,16 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                             {
                                                 // CSS uses ✓ (U+2713) for project features
                                                 c.Item()
+                                                    .PaddingTop(0.2f, Unit.Centimetre)
                                                     .Column(col =>
                                                         ComposeHtmlContent(
                                                             col,
                                                             proj.Description,
                                                             fontSize - 1,
                                                             _textMedium,
-                                                            "\u2713 "
+                                                            null,
+                                                            1.2f,
+                                                            0f
                                                         )
                                                     );
                                             }
@@ -1165,13 +1174,16 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 }
 
                                                 c.Item()
+                                                    .PaddingTop(0.1f, Unit.Centimetre)
                                                     .Column(col =>
                                                         ComposeHtmlContent(
                                                             col,
                                                             proj.SectionDescription,
                                                             fontSize - 1,
                                                             _textMedium,
-                                                            "\u2713 "
+                                                            null,
+                                                            1.2f,
+                                                            0f
                                                         )
                                                     );
                                             }
@@ -1206,13 +1218,16 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                                 if (sectionDetails.Length > 0)
                                                 {
                                                     c.Item()
+                                                        .PaddingTop(0.1f, Unit.Centimetre)
                                                         .Column(col =>
                                                             ComposeHtmlContent(
                                                                 col,
                                                                 string.Join("\n", sectionDetails),
                                                                 fontSize - 1,
                                                                 _textMedium,
-                                                                "\u2713 "
+                                                                null,
+                                                                1.2f,
+                                                                0f
                                                             )
                                                         );
                                                 }
@@ -1558,7 +1573,7 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     // SVG Path for Checkmark (Material Design)
     private const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
-    private string PreprocessHtml(string? input, bool isBlock = true, string bullet = "")
+    private string PreprocessHtml(string? input, bool isBlock = true, string? bullet = null)
     {
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
@@ -1601,15 +1616,13 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             pText = LiWithNestedPRegex().Replace(pText, "<li>$1</li>");
 
             // 2. Determine bullet replacement
-            string bRep = "• ";
+            string bRep = bullet ?? "";
             if (!string.IsNullOrEmpty(bullet))
             {
                 if (bullet.Contains('\u25B8'))
                     bRep = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
                 else if (bullet.Contains('\u2713'))
                     bRep = checkmarkPlaceholder;
-                else
-                    bRep = bullet;
             }
 
             // 3. Flatten accurately: remove <ul>/</ul>, strip whitespace around </li>,
@@ -1619,6 +1632,17 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
             pText = LiOpenWithWhitespaceRegex().Replace(pText, "\n" + bRep);
 
             pText = pText.Trim().Replace("&#8226;", "• ");
+
+            // Support manual bullets and checkmarks typed in markdown
+            // Convert manual checkmarks at start of lines to the styled SVG placeholder
+            pText = pText.Replace("\n\u2713", "\n" + checkmarkPlaceholder);
+            if (pText.StartsWith('\u2713'))
+                pText = checkmarkPlaceholder + pText[1..];
+
+            // Ensure manual dot bullets have a space
+            pText = pText.Replace("\n•", "\n• ");
+            if (pText.StartsWith('•'))
+                pText = "• " + pText[1..];
         }
         else if (
             !string.IsNullOrEmpty(bullet)
@@ -1785,12 +1809,6 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
     [GeneratedRegex(@"font-style\s*:\s*([^;]+)", RegexOptions.IgnoreCase)]
     private static partial Regex FontStyleStyleRegex();
 
-    [GeneratedRegex(@"<li>", RegexOptions.IgnoreCase)]
-    private static partial Regex LiOpenTagRegex();
-
-    [GeneratedRegex(@"</li>", RegexOptions.IgnoreCase)]
-    private static partial Regex LiCloseTagRegex();
-
     [GeneratedRegex(@"<ul>|</ul>|<ol>|</ol>", RegexOptions.IgnoreCase)]
     private static partial Regex ListTagRegex();
 
@@ -1852,7 +1870,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
         string? input,
         float fontSize,
         string fontColor,
-        string bullet = ""
+        string? bullet = null,
+        float lineHeight = 1.2f,
+        float paragraphSpacing = 0f
     )
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -1887,9 +1907,11 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(s =>
-                                        s.FontSize(fontSize).FontColor(fontColor).LineHeight(1.5f)
+                                        s.FontSize(fontSize)
+                                            .FontColor(fontColor)
+                                            .LineHeight(lineHeight)
                                     );
-                                    t.ParagraphSpacing(fontSize * 0.5f);
+                                    t.ParagraphSpacing(paragraphSpacing);
                                     FormatHtmlToText(
                                         t,
                                         segment,
@@ -1923,9 +1945,9 @@ public partial class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvRe
                                         t.DefaultTextStyle(s =>
                                             s.FontSize(fontSize)
                                                 .FontColor(fontColor)
-                                                .LineHeight(1.5f)
+                                                .LineHeight(lineHeight)
                                         );
-                                        t.ParagraphSpacing(fontSize * 0.5f);
+                                        t.ParagraphSpacing(paragraphSpacing);
                                         // Even if segment is empty (e.g. checkmark only), FormatHtmlToText is safe
                                         FormatHtmlToText(
                                             t,
