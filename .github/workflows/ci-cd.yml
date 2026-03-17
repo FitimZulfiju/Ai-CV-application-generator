@@ -88,6 +88,19 @@ jobs:
           sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
           }' CHANGELOG.md
 
+      - name: Sync Changelog to dev Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add CHANGELOG.md
+          # Check if there are changes to commit
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: update changelog for v${{ steps.version.outputs.version }} [skip staging]"
+            git push origin HEAD:dev
+          else
+            echo "No changelog changes to sync."
+          fi
+
       - name: Create or Update Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
