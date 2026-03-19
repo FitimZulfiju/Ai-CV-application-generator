@@ -158,13 +158,14 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         string fontColor,
         string? bullet = null,
         float lineHeight = 1.2f,
-        float paragraphSpacing = 0f
+        float paragraphSpacing = 0f,
+        bool preserveParagraphBreaks = false
     )
     {
         if (string.IsNullOrWhiteSpace(input))
             return;
 
-        var preprocessed = PreprocessHtml(input, isBlock: true, bullet);
+        var preprocessed = PreprocessHtml(input, isBlock: true, bullet, preserveParagraphBreaks);
         var parts = preprocessed.Split(["[[HR]]"], StringSplitOptions.None);
 
         for (int i = 0; i < parts.Length; i++)
@@ -180,23 +181,15 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     {
                         if (!string.IsNullOrWhiteSpace(segment))
                         {
-                            column
-                                .Item()
-                                .Text(t =>
-                                {
-                                    t.DefaultTextStyle(s =>
-                                        s.FontSize(fontSize)
-                                            .FontColor(fontColor)
-                                            .LineHeight(lineHeight)
-                                    );
-                                    t.ParagraphSpacing(paragraphSpacing);
-                                    FormatHtmlToText(
-                                        t,
-                                        segment,
-                                        isBlock: true,
-                                        fallbackColor: fontColor
-                                    );
-                                });
+                            ComposeTextSegment(
+                                column,
+                                segment,
+                                fontSize,
+                                fontColor,
+                                lineHeight,
+                                paragraphSpacing,
+                                preserveParagraphBreaks
+                            );
                         }
                     }
                     else
@@ -240,6 +233,46 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     .LineHorizontal(1)
                     .LineColor(_borderColor);
             }
+        }
+    }
+
+    private static void ComposeTextSegment(
+        ColumnDescriptor column,
+        string segment,
+        float fontSize,
+        string fontColor,
+        float lineHeight,
+        float paragraphSpacing,
+        bool preserveParagraphBreaks
+    )
+    {
+        var paragraphs = preserveParagraphBreaks
+            ? segment.Split(
+                ["[[PARAGRAPH]]"],
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            )
+            : [segment];
+
+        for (int paragraphIndex = 0; paragraphIndex < paragraphs.Length; paragraphIndex++)
+        {
+            var paragraph = paragraphs[paragraphIndex];
+            if (string.IsNullOrWhiteSpace(paragraph))
+                continue;
+
+            var item = column.Item();
+            if (preserveParagraphBreaks && paragraphIndex < paragraphs.Length - 1)
+                item = item.PaddingBottom(paragraphSpacing, Unit.Point);
+
+            item.Text(t =>
+            {
+                t.DefaultTextStyle(s =>
+                    s.FontSize(fontSize)
+                        .FontColor(fontColor)
+                        .LineHeight(lineHeight)
+                );
+                t.ParagraphSpacing(paragraphSpacing);
+                FormatHtmlToText(t, paragraph, isBlock: true, fallbackColor: fontColor);
+            });
         }
     }
 
@@ -374,7 +407,12 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         }
     }
 
-    protected string PreprocessHtml(string? input, bool isBlock = true, string? bullet = null)
+    protected string PreprocessHtml(
+        string? input,
+        bool isBlock = true,
+        string? bullet = null,
+        bool preserveParagraphBreaks = false
+    )
     {
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
@@ -419,8 +457,12 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         }
 
         pText = BrTagRegex().Replace(pText, "\n");
-        pText = MultipleNewlineRegex().Replace(pText, "\n");
-        pText = BlockGapsRegex().Replace(pText, "$1$2");
+        pText = preserveParagraphBreaks
+            ? ParagraphBreakRegex().Replace(pText, "$1[[PARAGRAPH]]$2")
+            : BlockGapsRegex().Replace(pText, "$1$2");
+        pText = preserveParagraphBreaks
+            ? MultipleParagraphBreakRegex().Replace(pText, "[[PARAGRAPH]]")
+            : MultipleNewlineRegex().Replace(pText, "\n");
         pText = pText.Replace("\u2713", checkmarkPlaceholder);
         pText = pText.Replace("\u25B8", $"<span style='color:{_primaryColor}'>\u25B8</span>");
 
@@ -543,11 +585,20 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     [GeneratedRegex(@"\n{2,}")]
     protected static partial Regex MultipleNewlineRegex();
 
+    [GeneratedRegex(@"(\[\[PARAGRAPH\]\]){2,}")]
+    protected static partial Regex MultipleParagraphBreakRegex();
+
     [GeneratedRegex(
         @"(</p>|</div>|</h1>|</h2>|h3>|</h4>|<h5>|</h6>)\s+(<p|<div>|<h1|<h2|<h3|<h4|<h5|<h6)",
         RegexOptions.IgnoreCase
     )]
     protected static partial Regex BlockGapsRegex();
+
+    [GeneratedRegex(
+        @"(</p>|</div>|</h1>|</h2>|</h3>|</h4>|</h5>|</h6>)\s*(<p|<div|<h1|<h2|<h3|<h4|<h5|<h6)",
+        RegexOptions.IgnoreCase
+    )]
+    protected static partial Regex ParagraphBreakRegex();
 
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
         @"<(strong|b|em|i|u|span|div|p|h1|h2|h3|h4|h5|h6|a|blockquote|code|pre)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
