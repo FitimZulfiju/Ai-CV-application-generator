@@ -1,40 +1,12 @@
-@if (Profile == null)
+@if (Template == CvTemplate.Professional)
 {
-    <MudAlert Severity="Severity.Warning">@Localizer["NoProfileData"]</MudAlert>
+    <ProfessionalCoverLetter Profile="Profile" LetterContent="@LetterContent" />
 }
-else
+else if (Template == CvTemplate.Modern)
 {
-    <div class="cv-container cover-letter @GetTemplateClass()">
-        <div class="container">
-            <div class="page">
-                <!-- Header Section (Same as CV) -->
-                <header class="header">
-
-                    <div class="header-text">
-                        <h1 class="name">
-                            <FormattedText Text="@Profile.FullName" />
-                        </h1>
-                        <h2 class="title">
-                            <FormattedText Text="@Profile.Title" />
-                        </h2>
-                        <div class="contact-info-wrapper">
-                            @Localizer["EmailLabel"] <a href="mailto:@Profile.Email"><FormattedText Text="@Profile.Email" /></a> |
-                            @Localizer["PhoneLabel"] <FormattedText Text="@Profile.PhoneNumber" />
-                            | @Localizer["LocationLabel"]
-                            <FormattedText Text="@Profile.Location" /><br>
-                            @Localizer["LinkedInLabel"] <a href="@Profile.LinkedInUrl"
-                                                           target="_blank"><FormattedText Text="@Profile.LinkedInUrl" /></a>
-                        </div>
-                    </div>
-                </header>
-
-                <!-- Cover Letter Body -->
-                <section class="section">
-                    <div class="summary">
-                        <FormattedText Text="@LetterContent" />
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
+    <ModernCoverLetter Profile="Profile" LetterContent="@LetterContent" />
+}
+else if (Template == CvTemplate.Minimalist)
+{
+    <MinimalistCoverLetter Profile="Profile" LetterContent="@LetterContent" />
 }

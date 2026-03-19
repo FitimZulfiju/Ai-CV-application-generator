@@ -6,7 +6,7 @@
     <div class="flex-grow-1">
         <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
             <div class="d-flex align-center justify-space-between pb-3">
-                <MudText Typo="Typo.h5" Class="settings-title-nowrap">⚙️ @Localizer["Settings"]</MudText>
+                <MudText Typo="Typo.h5" Class="settings-title-nowrap d-flex align-center gap-2"><MudIcon Icon="@Icons.Material.Filled.Settings" /> @Localizer["Settings"]</MudText>
                 <div class="d-flex align-items-center settings-alert">
                     @if (_showCostAlert)
                     {

@@ -1,0 +1,143 @@
+/* --- MINIMALIST TEMPLATE --- */
+
+.cv-container.cv-minimalist {
+    background: white;
+    color: #333;
+}
+
+.cv-container.cv-minimalist .header {
+    background: white;
+    color: #111;
+    padding: 4rem var(--cv-padding-x) var(--cv-padding-y);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    border-bottom: 0.25em solid #f0f0f0;
+}
+
+.cv-container.cv-minimalist .section {
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+}
+
+.cv-container.cv-minimalist .name {
+    font-size: var(--font-size-name);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.cv-container.cv-minimalist .title {
+    font-size: var(--font-size-title);
+    font-weight: 400;
+    color: #666;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper {
+    font-size: var(--font-size-meta);
+    color: #888;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper a {
+    color: #111;
+    text-decoration: none;
+    border-bottom: 0.0625em solid #ccc;
+    transition: all 0.2s ease;
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper a:hover {
+    border-bottom: 0.0625em solid #111;
+    opacity: 0.8;
+}
+
+.cv-container.cv-minimalist .section-title {
+    font-size: var(--font-size-section-title) !important;
+    font-weight: 600;
+    color: #111;
+    border-bottom: 0.15rem solid #111;
+    width: 100%;
+    padding-bottom: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+}
+
+.cv-container.cv-minimalist .summary {
+    padding: 0;
+    background: transparent;
+    border-left: none;
+    font-size: var(--font-size-body);
+    line-height: 1.8;
+    color: #444;
+    text-align: left;
+}
+
+.cv-container.cover-letter.cv-minimalist .summary {
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    line-height: 2;
+    letter-spacing: 0.02em;
+    font-size: var(--font-size-body);
+}
+
+.cv-container.cv-minimalist .skill-category {
+    background: transparent;
+    border: none;
+    border-bottom: 0.0625em solid #f0f0f0;
+    border-radius: 0;
+    padding: 1rem 0;
+}
+
+.cv-container.cv-minimalist .skill-title {
+    font-size: var(--font-size-item-title);
+    font-weight: 600;
+    color: #111;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25em;
+}
+
+.cv-container.cv-minimalist .skill-list {
+    font-size: var(--font-size-body);
+    line-height: 1.6;
+    color: #444;
+}
+
+.cv-container.cv-minimalist .job {
+    border-bottom: none;
+    margin-bottom: var(--cv-item-spacing);
+    position: relative;
+    font-size: var(--font-size-body);
+}
+
+.cv-container.cv-minimalist .company {
+    font-size: var(--font-size-meta);
+    color: #666;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.cv-container.cv-minimalist .education,
+.cv-container.cv-minimalist .project {
+    background: transparent;
+    border: none;
+    border-bottom: 0.0625em solid #f0f0f0;
+    border-radius: 0;
+    padding: 1.5rem 0;
+}
+
+/* Responsive Overrides */
+@media (max-width: 48em) {
+    .cv-container.cv-minimalist .header {
+        flex-direction: column;
+        text-align: center;
+    }
+}

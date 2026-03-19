@@ -27,7 +27,7 @@
             @if (_activeTabIndex < 2)
             {
                 <div style="width: 200px;" class="hide-on-mobile">
-                    <MudSelect T="CvTemplate" Value="@_application.Template" ValueChanged="OnTemplateChanged" Label="@Localizer["PreviewTemplate"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
+                    <MudSelect T="CvTemplate" @bind-Value="_application.Template" @bind-Value:after="OnTemplateSelected" Label="@Localizer["PreviewTemplate"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
                         <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
                         <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
                         <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>

@@ -12,15 +12,14 @@ window.cvScaler = {
 
             if (isCoverLetter) {
                 // COVER LETTER STRATEGY:
-                // Start with Standard Size (1.0rem). 
-                // Only shrink if it overflows 900px (safety buffer). Never grow beyond standard.
-                maxHeight = 900;
-                minFontSizeRem = 0.25; 
+                // Standard Size (1.0rem). 
+                // A4 Height is ~1122px, we give a buffer.
+                maxHeight = 1100;
+                minFontSizeRem = 0.85; // Never shrink cover letter too much
             } else {
                 // CV STRATEGY (Smart Scaling):
-                // Start with Standard Size (0.95rem).
-                // Only shrink if it overflows the specific page limit.
-                maxHeight = hasFooter ? 990 : 1035; 
+                // A4 Height is ~1122px.
+                maxHeight = hasFooter ? 1060 : 1100; 
                 minFontSizeRem = 0.55;
             }
 

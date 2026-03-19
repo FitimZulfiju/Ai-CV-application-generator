@@ -88,3 +88,194 @@
     margin: 0.35em 0;
     /* Balanced margins */
 }
+
+/* Shared Profile Photo Styles */
+.cv-container .profile-photo-wrapper {
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.cv-container .profile-photo {
+    width: 7.5em;
+    height: 7.5em;
+    border-radius: 50%;
+    border: 0.25em solid white;
+    object-fit: cover;
+    box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.2);
+}
+
+/* Shared styles applied to all templates if no template class matches or for common elements */
+.cv-container .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75em;
+    gap: 1.25em;
+}
+
+.cv-container .project-header,
+.cv-container .education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.25em;
+    gap: 1.25em;
+}
+
+.cv-container .job-dates,
+.cv-container .project-date,
+.cv-container .education-date {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.cv-container .date,
+.cv-container .project-date,
+.cv-container .education-date {
+    font-size: var(--font-size-meta);
+    color: var(--text-medium);
+    font-weight: 600;
+    display: block;
+}
+
+.cv-container .duration {
+    font-size: var(--font-size-meta);
+    color: var(--text-light);
+    font-style: italic;
+    display: block;
+    margin-top: 0.125em;
+}
+
+.cv-container .achievements,
+.cv-container .project-features,
+.cv-container .course-list {
+    list-style: none;
+    padding-left: 0;
+    font-size: var(--font-size-body);
+}
+
+.cv-container .achievements li,
+.cv-container .project-features li,
+.cv-container .course-list li {
+    padding-left: 0.5em;
+    text-indent: -0.5em;
+    display: block;
+    margin-bottom: 0 !important;
+    /* No margin between description rows */
+    line-height: 1.2;
+    /* Consistent tight line height */
+}
+
+/* Add a small gap between header and description */
+.cv-container .achievements,
+.cv-container .project-features {
+    margin-top: 0.35rem;
+}
+
+/* Education divider matches PdfService */
+.cv-container .recognition {
+    border-top: 0.0625em solid var(--border-color);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: var(--font-size-body);
+    line-height: 1.2;
+}
+
+/* Ensure Markdig's raw <ul> tags don't add own padding/margin */
+.cv-container ul {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* Remove trailing margin/newlines from last item in sections */
+.cv-container .summary,
+.cv-container .achievements,
+.cv-container .project-features,
+.cv-container .skill-list,
+.cv-container .summary p,
+.cv-container .achievements p,
+.cv-container .project-features p,
+.cv-container .skill-list p {
+    white-space: pre-wrap;
+}
+
+.cv-container .summary p,
+.cv-container .achievements p,
+.cv-container .project-features p,
+.cv-container .skill-list p {
+    margin-bottom: 0;
+}
+
+.cv-container .summary p:last-child,
+.cv-container .achievements p:last-child,
+.cv-container .project-features p:last-child,
+.cv-container .skill-list p:last-child {
+    margin-bottom: 0;
+}
+
+/* Fix gaps in lists and blocks by removing p tag margins */
+.cv-container .summary li p,
+.cv-container .achievements li p,
+.cv-container .project-features li p,
+.cv-container .course-list li p,
+.cv-container blockquote p,
+.cv-container code,
+.cv-container pre {
+    margin: 0 !important;
+    display: inline;
+}
+
+/* Ensure blockquotes don't add massive gaps */
+.cv-container blockquote {
+    margin: 0.5rem 0 0.5rem 1rem !important;
+    padding-left: 0.5rem !important;
+    border-left: 0.2rem solid var(--border-color) !important;
+    font-style: italic;
+}
+
+
+
+.cv-container .language-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
+    justify-content: center;
+    margin-top: 0.5em;
+}
+
+.cv-container .language-item {
+    font-size: var(--font-size-meta);
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.cv-container .interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625em;
+    margin-top: 0.938em;
+    justify-content: center;
+}
+
+.cv-container .interest-tag {
+    display: inline-block;
+    padding: 0.5em 1em;
+    background: var(--bg-light);
+    border: 0.062em solid var(--border-color);
+    border-radius: 1.25em;
+    font-size: var(--font-size-meta);
+    color: var(--text-medium);
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.cv-container .footer {
+    text-align: center;
+    padding: 1.562em;
+    background: var(--bg-light);
+    color: var(--text-light);
+    font-size: var(--font-size-meta);
+    font-style: italic;
+}

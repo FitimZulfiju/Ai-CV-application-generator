@@ -1,0 +1,62 @@
+@if (Profile != null)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProject" Class="mb-4"
+               StartIcon="@Icons.Material.Filled.Add">@Localizer["AddProject"]</MudButton>
+    <MudStack Spacing="4">
+        @foreach (var proj in Profile.Projects)
+        {
+            <MudCard Class="pa-3" Elevation="2">
+                <MudGrid>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField @bind-Value="proj.Name" Label="@Localizer["ProjectName"]"
+                                      Variant="Variant.Text" Clearable="true" Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Label" />
+                    </MudItem>
+                    <MudItem xs="12" sm="2">
+                        <MudTextField @bind-Value="proj.Role" Label="@Localizer["Role"]" Variant="Variant.Text"
+                                      Clearable="true" Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Person" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="2">
+                        <MudDatePicker @bind-Date="proj.StartDate" Label="@Localizer["StartDate"]"
+                                       Clearable="true" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="2">
+                        <MudDatePicker @bind-Date="proj.EndDate" Label="@Localizer["EndDate"]" Clearable="true" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" Class="pt-2">
+                        <MudTextField @bind-Value="proj.Link" Label="@Localizer["LinkGitHubLive"]"
+                                      Variant="Variant.Outlined" Clearable="true" Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Link" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" Class="pt-2">
+                        <MudTextField @bind-Value="proj.Technologies" Label="@Localizer["TechnologiesUsed"]"
+                                      Clearable="true" Variant="Variant.Outlined" />
+                    </MudItem>
+                    <MudItem xs="12" Class="pt-1">
+                        <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]"
+                                      Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
+                    </MudItem>
+                    <MudItem xs="12" sm="11" Class="pt-2">
+                        <div class="pl-5">
+                            <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]"
+                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Subject"
+                                          Variant="Variant.Text" Clearable="true"></MudTextField>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="12" sm="1">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                                   Class="ml-auto d-flex align-items-end" Size="Size.Small"
+                                   OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">
+                            @Localizer["Remove"]
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" Class="pt-2 ml-5">
+                        <MudTextField @bind-Value="proj.SectionDescription" Label="@Localizer["Description"]"
+                                      Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
+                    </MudItem>
+                </MudGrid>
+            </MudCard>
+        }
+    </MudStack>
+}

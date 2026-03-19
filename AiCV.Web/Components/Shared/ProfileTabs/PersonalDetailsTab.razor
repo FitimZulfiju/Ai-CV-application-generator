@@ -1,0 +1,89 @@
+@if (Profile != null)
+{
+    <MudCard Class="pa-3" Elevation="2">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="pt-2">
+                    @if (!string.IsNullOrEmpty(Profile.ProfilePictureUrl))
+                    {
+                        <MudAvatar Size="Size.Large" Color="Color.Default">
+                            <MudImage Src="@Profile.ProfilePictureUrl" />
+                        </MudAvatar>
+                    }
+                    else
+                    {
+                        <MudAvatar Size="Size.Large" Color="Color.Primary">
+                            @(Profile.FullName?.FirstOrDefault() ?? 'U')
+                        </MudAvatar>
+                    }
+
+                    <MudFileUpload T="IBrowserFile" OnFilesChanged="OnFilesChanged">
+                        <CustomContent>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="@context.OpenFilePickerAsync">
+                                @Localizer["UploadPicture"]
+                            </MudButton>
+                        </CustomContent>
+                        <SelectedTemplate />
+                    </MudFileUpload>
+
+                    @if (!string.IsNullOrEmpty(Profile.ProfilePictureUrl))
+                    {
+                        <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.Delete" OnClick="OnDeletePicture">
+                            @Localizer["Delete"]
+                        </MudButton>
+                    }
+
+                    <MudSwitch @bind-Value="Profile.ShowProfilePicture" Color="Color.Primary"
+                               Label="@Localizer["ShowInCv"]" />
+                </MudStack>
+            </MudItem>
+            <MudItem xs="12" sm="2" Class="pt-2">
+                <MudTextField @bind-Value="Profile.FullName" Label="@Localizer["FullName"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Badge" />
+            </MudItem>
+            <MudItem xs="12" sm="3" Class="pt-2">
+                <MudTextField @bind-Value="Profile.Title" Label="@Localizer["ProfessionalTitle"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Work" />
+            </MudItem>
+            <MudItem xs="12" sm="2" Class="pt-2">
+                <MudTextField @bind-Value="Profile.Email" Label="@Localizer["Email"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Email" />
+            </MudItem>
+            <MudItem xs="12" sm="2" Class="pt-2">
+                <MudTextField @bind-Value="Profile.PhoneNumber" Label="@Localizer["PhoneNumber"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Phone" />
+            </MudItem>
+            <MudItem xs="12" sm="3" Class="pt-2">
+                <MudTextField @bind-Value="Profile.Location" Label="@Localizer["Location"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+            </MudItem>
+            <MudItem xs="12" sm="3" Class="pt-2">
+                <MudTextField @bind-Value="Profile.LinkedInUrl" Label="@Localizer["LinkedInUrl"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
+            </MudItem>
+            <MudItem xs="12" sm="3" Class="pt-2">
+                <MudTextField @bind-Value="Profile.PortfolioUrl" Label="@Localizer["PortfolioUrl"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Link" />
+            </MudItem>
+            <MudItem xs="12" sm="6" Class="pt-2">
+                <MudTextField @bind-Value="Profile.Tagline" Label="@Localizer["Tagline"]"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.ShortText" />
+            </MudItem>
+            <MudItem xs="12" Class="pt-2">
+                <MudTextField @bind-Value="Profile.ProfessionalSummary" Sizing="InputSizing.Auto"
+                              Label="@Localizer["ProfessionalSummary"]" Variant="Variant.Outlined"
+                              Clearable="true" Immediate="true" />
+            </MudItem>
+        </MudGrid>
+    </MudCard>
+}

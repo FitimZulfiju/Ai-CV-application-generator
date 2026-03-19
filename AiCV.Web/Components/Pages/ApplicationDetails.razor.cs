@@ -24,7 +24,6 @@ public partial class ApplicationDetails
 
     protected override async Task OnParametersSetAsync()
     {
-        // If navigating to a different application, reload data
         if (Id != _previousId)
         {
             _previousId = Id;
@@ -34,7 +33,6 @@ public partial class ApplicationDetails
 
     private async Task LoadApplicationAsync()
     {
-        // Clear old data first
         _application = null;
         _tailoredResume = null;
         _cachedProfile = null;
@@ -46,12 +44,10 @@ public partial class ApplicationDetails
         {
             _application = await CVService.GetApplicationAsync(Id);
 
-            // Load the original profile for cover letter preview
             if (_application != null)
             {
                 try
                 {
-                    // Get current authenticated user's ID
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var user = authState.User;
                     var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -61,8 +57,6 @@ public partial class ApplicationDetails
                         _cachedProfile = await CVService.GetProfileAsync(userId);
                         if (_cachedProfile == null)
                         {
-                            // Profile not found (Ghost User), but we can still view the application details.
-                            // Just won't be able to preview cover letter with personal details.
                             Snackbar.Add(
                                 "Warning: User profile not found. Cover letter preview may be incomplete.",
                                 Severity.Warning
@@ -76,7 +70,6 @@ public partial class ApplicationDetails
                 }
             }
 
-            // Deserialize the tailored resume JSON
             if (_application != null && !string.IsNullOrEmpty(_application.TailoredResumeJson))
             {
                 try
@@ -179,17 +172,17 @@ public partial class ApplicationDetails
         Snackbar.Add("Copied to clipboard!", Severity.Success);
     }
 
-    private async Task OnTemplateChanged(CvTemplate newTemplate)
+    private async Task OnTemplateSelected()
     {
         if (_application == null)
             return;
 
-        _application.Template = newTemplate;
+        StateHasChanged();
+
         try
         {
             await CVService.SaveApplicationAsync(_application);
             Snackbar.Add(Localizer["TemplateUpdated"], Severity.Success);
-            StateHasChanged();
         }
         catch (Exception ex)
         {

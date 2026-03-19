@@ -1,0 +1,68 @@
+@if (Profile != null)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddExperience" Class="mb-4"
+               StartIcon="@Icons.Material.Filled.Add">@Localizer["AddExperience"]</MudButton>
+
+    <MudStack Spacing="4">
+        @foreach (var exp in Profile.WorkExperience)
+        {
+            <MudCard Class="pa-3" Elevation="2">
+                <MudGrid>
+                    <MudItem xs="12" sm="4">
+                        <MudTextField @bind-Value="exp.CompanyName" Label="@Localizer["Company"]"
+                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Business" />
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <MudTextField @bind-Value="exp.JobTitle" Label="@Localizer["JobTitle"]"
+                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Work" />
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <MudTextField @bind-Value="exp.Location" Label="@Localizer["Location"]"
+                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+                    </MudItem>
+                    <MudItem xs="12" sm="2">
+                        <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" />
+                    </MudItem>
+                    <MudItem xs="12" sm="2">
+                        <MudDatePicker @bind-Date="exp.EndDate"
+                                       Label="@(exp.IsCurrentRole ? Localizer["Present"] : Localizer["EndDate"])"
+                                       Disabled="@exp.IsCurrentRole" />
+                    </MudItem>
+                    <MudItem xs="4" sm="2" Class="d-flex align-center">
+                        @if (!exp.IsCurrentRole)
+                        {
+                            <MudChip T="string"
+                                     Color="Color.Info"
+                                     Variant="Variant.Outlined"
+                                     Size="Size.Small">
+                                @CalculateDuration(exp.StartDate, exp.EndDate, exp.IsCurrentRole)
+                            </MudChip>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="4" sm="3">
+                        <MudSwitch T="bool"
+                                   @bind-Value="exp.IsCurrentRole"
+                                   Color="Color.Primary"
+                                   Label="@Localizer["CurrentRole"]" />
+                    </MudItem>
+
+                    <MudItem xs="4" sm="3">
+                        <MudButton Class="ml-auto d-flex align-items-end" Variant="Variant.Outlined"
+                                   Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveExperience(exp))"
+                                   StartIcon="@Icons.Material.Filled.Delete">
+                            @Localizer["Remove"]
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" Class="pt-2">
+                        <MudTextField @bind-Value="exp.Description" Label="@Localizer["Description"]" Lines="3"
+                                      Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
+                    </MudItem>
+                </MudGrid>
+            </MudCard>
+        }
+    </MudStack>
+}

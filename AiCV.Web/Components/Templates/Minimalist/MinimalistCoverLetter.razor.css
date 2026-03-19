@@ -1,0 +1,41 @@
+/* --- MINIMALIST COVER LETTER --- */
+
+.cv-container.cv-minimalist .header {
+    background: white;
+    color: var(--text-dark);
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    text-align: center;
+    border-bottom: 2px solid var(--border-color);
+    min-height: 10em;
+}
+
+.cv-container.cv-minimalist .name {
+    font-size: var(--font-size-name);
+    font-weight: 300;
+    color: var(--text-dark);
+}
+
+.cv-container.cv-minimalist .title {
+    font-size: var(--font-size-title);
+    color: var(--text-medium);
+    font-weight: 400;
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper {
+    color: var(--text-medium);
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper a {
+    color: var(--primary-color);
+}
+
+.cv-container.cover-letter.cv-minimalist .summary {
+    padding: 3.5em;
+    font-size: var(--font-size-body);
+    color: var(--text-dark);
+    line-height: 1.8;
+}
+
+.cv-container.cover-letter.cv-minimalist .page {
+    /* No fixed height here */
+}

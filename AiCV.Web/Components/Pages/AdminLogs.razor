@@ -5,7 +5,10 @@
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
     <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4" Wrap="Wrap.Wrap">
-        <MudText Typo="Typo.h5">📋 @Localizer["SystemLogs"]</MudText>
+        <MudText Typo="Typo.h5" Class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.ListAlt" Class="mr-2" />
+            @Localizer["SystemLogs"]
+        </MudText>
         <MudSpacer />
         <MudStack Row="true" Spacing="2">
             <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"
