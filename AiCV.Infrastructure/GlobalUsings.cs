@@ -34,3 +34,7 @@ global using System.Text;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using System.Text.RegularExpressions;
+global using AiCV.Infrastructure.Services.PdfTemplates;
+global using AiCV.Infrastructure.Services.PdfTemplates.Minimalist;
+global using AiCV.Infrastructure.Services.PdfTemplates.Modern;
+global using AiCV.Infrastructure.Services.PdfTemplates.Professional;

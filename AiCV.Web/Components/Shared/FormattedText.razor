@@ -1,4 +1,4 @@
-@((MarkupString)(IsDescription ? CvPreview.FormatDescription(Text) : CvPreview.FormatSummary(Text)))
+@((MarkupString)(IsDescription ? CvTextFormatter.FormatDescription(Text) : CvTextFormatter.FormatSummary(Text)))
 
 @code {
     [Parameter]

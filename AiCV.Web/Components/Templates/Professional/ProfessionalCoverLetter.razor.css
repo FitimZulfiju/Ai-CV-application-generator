@@ -1,0 +1,55 @@
+/* --- PROFESSIONAL COVER LETTER --- */
+
+/* Re-use Header from CV Template */
+.cv-container.cv-professional .header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    text-align: center;
+    position: relative;
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--accent-color);
+}
+
+.cv-container.cv-professional .name {
+    font-size: var(--font-size-name);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.cv-container.cv-professional .title {
+    font-size: var(--font-size-title);
+    font-weight: 400;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+    letter-spacing: 0.05em;
+}
+
+.cv-container.cv-professional .contact-info-wrapper {
+    text-align: center;
+    font-size: var(--font-size-meta);
+    color: white;
+    line-height: 1.6;
+}
+
+.cv-container.cv-professional .contact-info-wrapper a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+}
+
+/* Specific Summary Styling for Cover Letter */
+.cv-container.cover-letter.cv-professional .summary {
+    background: transparent;
+    border-left: none;
+    padding: 2.5em 3.5em;
+    text-align: left;
+    color: var(--text-dark);
+}
+
+.cv-container.cover-letter.cv-professional .page {
+    /* No fixed height here - let scaler handle it */
+}

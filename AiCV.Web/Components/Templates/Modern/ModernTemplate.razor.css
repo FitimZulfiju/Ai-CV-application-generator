@@ -1,0 +1,181 @@
+/* --- MODERN TEMPLATE --- */
+
+.cv-container.cv-modern {
+    --modern-primary: #2c3e50;
+    --modern-primary-dark: #1a252f;
+    --modern-accent: #e67e22;
+    --modern-bg: #f8f9fa;
+    --modern-text: #2c3e50;
+    --modern-text-light: #7f8c8d;
+}
+
+.cv-container.cv-modern .header {
+    background: var(--modern-primary);
+    color: white;
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    display: flex;
+    align-items: center;
+    gap: 2.5em;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    min-height: 10em;
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--modern-accent);
+}
+
+.cv-container.cv-modern .header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.05), transparent);
+}
+
+.cv-container.cv-modern .header-text {
+    flex-grow: 1;
+    z-index: 1;
+}
+
+.cv-container.cv-modern .name {
+    font-size: var(--font-size-name);
+    font-weight: 800;
+    margin-bottom: 0.1rem;
+    color: white;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.cv-container.cv-modern .title {
+    font-size: var(--font-size-title);
+    color: var(--modern-accent);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cv-container.cv-modern .contact-info-wrapper {
+    font-size: var(--font-size-meta);
+    color: rgba(255, 255, 255, 0.9);
+    display: block;
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
+.cv-container.cv-modern .contact-info-wrapper a {
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+    transition: all 0.2s ease;
+}
+
+.cv-container.cv-modern .contact-info-wrapper a:hover {
+    border-bottom: 0.062em solid white;
+    opacity: 0.9;
+}
+
+.cv-container.cv-modern .section-title {
+    font-size: var(--font-size-section-title) !important;
+    font-weight: 700;
+    color: var(--modern-primary);
+    border-left: 0.35rem solid var(--modern-accent);
+    padding-left: 1rem;
+    padding-bottom: 0;
+    border-bottom: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+.cv-container.cv-modern .section {
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    border-bottom: 0.0625em solid #eee;
+}
+
+.cv-container.cv-modern .summary {
+    background: white;
+    border-left: 0.3125em solid var(--modern-primary);
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
+    padding: var(--cv-padding-y);
+    margin: 0;
+    font-size: var(--font-size-body);
+    line-height: 1.8;
+    border-radius: 0 0.5em 0.5em 0;
+}
+
+.cv-container.cover-letter.cv-modern .summary {
+    background: transparent;
+    border-left: none;
+    box-shadow: none;
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    font-size: var(--font-size-body);
+    color: var(--modern-text);
+}
+
+.cv-container.cv-modern .skill-category {
+    background: white;
+    box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.05);
+    border-radius: 0.5em;
+    border-left: 0.25em solid var(--modern-accent);
+    border-top: none;
+    padding: 1.5rem var(--cv-padding-x);
+    margin-bottom: var(--cv-item-spacing);
+}
+
+.cv-container.cv-modern .skill-title {
+    font-size: var(--font-size-body);
+    font-weight: 700;
+    color: var(--modern-primary);
+    margin-bottom: 0.25em;
+}
+
+.cv-container.cv-modern .skill-list {
+    font-size: var(--font-size-body);
+    line-height: 1.5;
+    color: var(--text-medium);
+}
+
+.cv-container.cv-modern .skill-category:last-child {
+    margin-bottom: 0;
+}
+
+.cv-container.cv-modern .job {
+    border-bottom: 0.0625em solid #eee;
+    padding-bottom: 1.5rem;
+    margin-bottom: var(--cv-item-spacing);
+}
+
+.cv-container.cv-modern .job-title {
+    font-size: var(--font-size-item-title);
+    font-weight: 700;
+}
+
+.cv-container.cv-modern .company {
+    color: var(--modern-accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.05em;
+}
+
+.cv-container.cv-modern .education {
+    background: white;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
+    border-left: 0.25em solid var(--modern-accent);
+    border-radius: 0.25em;
+    padding: 1.25rem;
+}
+
+.cv-container.cv-modern .project {
+    background: white;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
+    border-left: 0.25em solid var(--modern-primary);
+    border-radius: 0.25em;
+    padding: 1.25rem;
+}
+
+

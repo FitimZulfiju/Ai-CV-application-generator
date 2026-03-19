@@ -1,0 +1,47 @@
+/* --- MODERN COVER LETTER --- */
+
+.cv-container.cv-modern {
+    --modern-primary: #2c3e50;
+    --modern-accent: #e67e22;
+}
+
+.cv-container.cv-modern .header {
+    background: var(--modern-primary);
+    color: white;
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    display: flex;
+    align-items: center;
+    gap: 2.5em;
+    text-align: left;
+    min-height: 10em;
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--modern-accent);
+}
+
+.cv-container.cv-modern .name {
+    font-size: var(--font-size-name);
+    color: white;
+}
+
+.cv-container.cv-modern .title {
+    font-size: var(--font-size-title);
+    color: var(--modern-accent);
+    text-transform: uppercase;
+}
+
+.cv-container.cv-modern .contact-info-wrapper a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+}
+
+.cv-container.cover-letter.cv-modern .summary {
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    font-size: var(--font-size-body);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+
+.cv-container.cover-letter.cv-modern .page {
+    /* No fixed height here */
+}

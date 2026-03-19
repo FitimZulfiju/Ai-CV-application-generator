@@ -41,12 +41,10 @@ public partial class Profile
 
         if (_profile == null)
         {
-            // User likely deleted from DB but cookie persists. Force logout.
             Navigation.NavigateTo($"/{NavUri.LogoutPage}", true);
             return;
         }
 
-        // Initialize categorized skills from database
         if (_profile.Skills != null && _profile.Skills.Count != 0)
         {
             _skillCategories =
@@ -56,13 +54,11 @@ public partial class Profile
                     .Select(g => new SkillCategoryViewModel
                     {
                         Name = g.Key,
-                        // Use Distinct to prevent any duplicates
                         Skills = [.. g.Select(s => s.Name).Distinct()],
                     }),
             ];
         }
 
-        // Auto-migrate SectionTitle to SectionDescription for backward compatibility
         if (_profile.Projects != null)
         {
             foreach (var proj in _profile.Projects)
@@ -84,88 +80,6 @@ public partial class Profile
                 }
             }
         }
-    }
-
-    private void AddCategory()
-    {
-        _skillCategories.Add(new SkillCategoryViewModel { Name = "New Category" });
-        UpdateProfileSkills();
-    }
-
-    private void RemoveCategory(SkillCategoryViewModel category)
-    {
-        _skillCategories.Remove(category);
-        UpdateProfileSkills();
-    }
-
-    private void AddSkill(SkillCategoryViewModel category)
-    {
-        if (!string.IsNullOrWhiteSpace(category.NewSkillInput))
-        {
-            var t = category.NewSkillInput.Trim();
-            if (!category.Skills.Contains(t))
-            {
-                category.Skills.Add(t);
-                UpdateProfileSkills();
-            }
-            category.NewSkillInput = "";
-        }
-    }
-
-    private void RemoveSkill(SkillCategoryViewModel category, string skill)
-    {
-        category.Skills.Remove(skill);
-        UpdateProfileSkills();
-    }
-
-    private void AddExperience()
-    {
-        _profile?.WorkExperience.Add(new Experience { StartDate = DateTime.Now });
-    }
-
-    private void RemoveExperience(Experience exp)
-    {
-        _profile?.WorkExperience.Remove(exp);
-    }
-
-    private void AddEducation()
-    {
-        _profile?.Educations.Add(new Education { StartDate = DateTime.Now });
-    }
-
-    private void RemoveEducation(Education edu)
-    {
-        _profile?.Educations.Remove(edu);
-    }
-
-    private void AddProject()
-    {
-        _profile?.Projects.Add(new Project { StartDate = DateTime.Now });
-    }
-
-    private void RemoveProject(Project proj)
-    {
-        _profile?.Projects.Remove(proj);
-    }
-
-    private void AddLanguage()
-    {
-        _profile?.Languages.Add(new Language());
-    }
-
-    private void RemoveLanguage(Language lang)
-    {
-        _profile?.Languages.Remove(lang);
-    }
-
-    private void AddInterest()
-    {
-        _profile?.Interests.Add(new Interest());
-    }
-
-    private void RemoveInterest(Interest interest)
-    {
-        _profile?.Interests.Remove(interest);
     }
 
     private void UpdateProfileSkills()
@@ -192,7 +106,7 @@ public partial class Profile
             await Task.Yield();
             try
             {
-                UpdateProfileSkills(); // Ensure it's up to date before saving
+                UpdateProfileSkills();
                 await CVService.SaveProfileAsync(_profile);
                 Snackbar.Add("Profile saved successfully!", Severity.Success);
             }
@@ -232,33 +146,6 @@ public partial class Profile
         }
     }
 
-    private string CalculateDuration(DateTime? start, DateTime? end, bool isCurrentRole = false)
-    {
-        if (!start.HasValue || isCurrentRole)
-            return "";
-
-        var endDate = end ?? DateTime.Now;
-        var totalMonths =
-            ((endDate.Year - start.Value.Year) * 12) + endDate.Month - start.Value.Month + 1;
-
-        var years = totalMonths / 12;
-        var months = totalMonths % 12;
-
-        var parts = new List<string>();
-        if (years > 0)
-        {
-            var yearKey = years > 1 ? "Years" : "Year";
-            parts.Add($"{years} {Localizer[yearKey]}");
-        }
-        if (months > 0)
-        {
-            var monthKey = months > 1 ? "Months" : "Month";
-            parts.Add($"{months} {Localizer[monthKey]}");
-        }
-
-        return string.Join(" ", parts);
-    }
-
     private async Task UploadFiles(InputFileChangeEventArgs file)
     {
         if (file == null || _profile == null)
@@ -266,10 +153,12 @@ public partial class Profile
 
         try
         {
-            // Resize image to max 400x400 (approx 3cm at 300dpi is 354px)
-            var resizedFile = await file.File.RequestImageFileAsync(file.File.ContentType, 400, 400);
+            var resizedFile = await file.File.RequestImageFileAsync(
+                file.File.ContentType,
+                400,
+                400
+            );
 
-            // Ensure uploads directory exists for the specific user
             var webRootPath =
                 Environment.WebRootPath ?? Path.Combine(Environment.ContentRootPath, "wwwroot");
             var uploadPath = Path.Combine(webRootPath, "uploads", _profile.UserId);
@@ -278,7 +167,6 @@ public partial class Profile
                 Directory.CreateDirectory(uploadPath);
             }
 
-            // Generate unique filename
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.File.Name)}";
             var filePath = Path.Combine(uploadPath, fileName);
 
@@ -292,10 +180,9 @@ public partial class Profile
             var url = $"/uploads/{_profile.UserId}/{fileName}";
             _profile.ProfilePictureUrl = url;
 
-            // Use dedicated update method to ensure persistence
             await CVService.UpdateProfilePictureAsync(_profile.Id, url);
 
-            StateHasChanged(); // Force UI update to show the new image
+            StateHasChanged();
             Snackbar.Add("Profile picture uploaded and saved!", Severity.Success);
         }
         catch (Exception ex)

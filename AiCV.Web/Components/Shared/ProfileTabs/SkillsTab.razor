@@ -1,0 +1,35 @@
+@if (Profile != null)
+{
+    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-4"
+                   StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
+        <MudText Typo="Typo.body2" Class="mb-4">@Localizer["SkillsHelper"]</MudText>
+    </MudStack>
+    <MudGrid>
+        @foreach (var category in SkillCategories)
+        {
+            <MudItem xs="12" md="6">
+                <MudCard Class="pa-3" Elevation="2">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        <MudTextField @bind-Value="category.Name" Label="@Localizer["CategoryName"]"
+                                      Variant="Variant.Text" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                       OnClick="@(() => RemoveCategory(category))" />
+                        <MudTextField Class="" @bind-Value="category.NewSkillInput"
+                                      Label="@($"{Localizer["AddSkill"]} {category.Name}")" Variant="Variant.Outlined"
+                                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add"
+                                      OnAdornmentClick="@(() => AddSkill(category))" />
+                    </MudStack>
+                    <MudChipSet T="string" Class="mt-1">
+                        @foreach (var skill in category.Skills.ToList())
+                        {
+                            var s = skill;
+                            <MudChip T="string" Value="@s" Text="@s" Color="Color.Primary"
+                                     OnClose="@((MudChip<string> chip) => RemoveSkill(category, s))" />
+                        }
+                    </MudChipSet>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
