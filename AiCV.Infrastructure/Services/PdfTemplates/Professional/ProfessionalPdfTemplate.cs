@@ -429,7 +429,17 @@ public class ProfessionalPdfTemplate(
                 .Column(letterCol =>
                 {
                     if (!string.IsNullOrWhiteSpace(letterContent))
-                        ComposeHtmlContent(letterCol, letterContent, fontSize, _textDark);
+                    {
+                        ComposeHtmlContent(
+                            letterCol,
+                            letterContent,
+                            fontSize,
+                            _textDark,
+                            lineHeight: 1.35f,
+                            paragraphSpacing: 8f,
+                            preserveParagraphBreaks: true
+                        );
+                    }
                     else
                         letterCol.Item().Text("No content provided.").Italic();
                 });
