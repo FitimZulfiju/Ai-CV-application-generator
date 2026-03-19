@@ -116,7 +116,35 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
             }
         }
 
-        float page3Size = page2Size;
+        float[] page3FontSizes =
+        [
+            page2Size,
+            10f,
+            9.5f,
+            9f,
+            8.5f,
+            8f,
+            7.5f,
+            7f,
+        ];
+        float page3Size = page3FontSizes[0];
+        foreach (var size in page3FontSizes.Distinct())
+        {
+            var p3Doc = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(0.75f, Unit.Centimetre);
+                    page.Content().Element(c => builder.ComposePageThree(c, profile, size));
+                });
+            });
+            if (builder.GetPageCount(p3Doc.GeneratePdf()) <= 1)
+            {
+                page3Size = size;
+                break;
+            }
+        }
 
         var document = Document.Create(container =>
         {
