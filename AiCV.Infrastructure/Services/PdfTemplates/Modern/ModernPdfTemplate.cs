@@ -2,6 +2,11 @@ namespace AiCV.Infrastructure.Services.PdfTemplates.Modern;
 
 public class ModernPdfTemplate : PdfTemplateBase
 {
+    protected override bool UseSectionSeparators => true;
+    protected override bool CenterLanguageContent => true;
+    protected override bool UseInterestChips => true;
+    protected override bool UseReferencesFooterPanel => true;
+
     public ModernPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)
     {
@@ -163,13 +168,37 @@ public class ModernPdfTemplate : PdfTemplateBase
             .Item()
             .PaddingBottom(0.3f, Unit.Centimetre)
             .PaddingTop(0.3f, Unit.Centimetre)
-            .PaddingBottom(0.1f, Unit.Centimetre)
             .BorderLeft(4f)
             .BorderColor(_accentColor)
             .PaddingLeft(10)
             .Row(row =>
             {
                 row.AutoItem()
+                    .BorderBottom(1.5f)
+                    .BorderColor(_primaryColor)
+                    .PaddingBottom(2)
+                    .Text(title.ToUpper())
+                    .FontSize(12)
+                    .Bold()
+                    .FontColor(_primaryColor)
+                    .LetterSpacing(0.06f);
+            });
+    }
+
+    protected override void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
+    {
+        column
+            .Item()
+            .PaddingBottom(0.3f, Unit.Centimetre)
+            .BorderLeft(4f)
+            .BorderColor(_accentColor)
+            .PaddingLeft(10)
+            .Row(row =>
+            {
+                row.AutoItem()
+                    .BorderBottom(1.5f)
+                    .BorderColor(_primaryColor)
+                    .PaddingBottom(2)
                     .Text(title.ToUpper())
                     .FontSize(12)
                     .Bold()
@@ -417,6 +446,23 @@ public class ModernPdfTemplate : PdfTemplateBase
                                                         edu.InstitutionName ?? ""
                                                     );
                                                 });
+                                            if (!string.IsNullOrEmpty(edu.Description))
+                                            {
+                                                c.Item()
+                                                    .PaddingTop(0.25f, Unit.Centimetre)
+                                                    .PaddingBottom(0.25f, Unit.Centimetre)
+                                                    .LineHorizontal(1)
+                                                    .LineColor(_borderColor);
+                                                c.Item()
+                                                    .Column(cc =>
+                                                        ComposeHtmlContent(
+                                                            cc,
+                                                            edu.Description,
+                                                            fontSize - 1,
+                                                            _textMedium
+                                                        )
+                                                    );
+                                            }
                                         });
                                 });
                             if (i < eduList.Count - 1)
@@ -424,6 +470,8 @@ public class ModernPdfTemplate : PdfTemplateBase
                         }
                     });
             }
+
+            ComposePageThreeAdditionalSections(col, profile, fontSize);
         });
     }
 
@@ -458,7 +506,9 @@ public class ModernPdfTemplate : PdfTemplateBase
                         );
                     }
                     else
+                    {
                         letterCol.Item().Text("No content provided.").Italic();
+                    }
                 });
         });
     }

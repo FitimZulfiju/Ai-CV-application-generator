@@ -2,6 +2,11 @@ namespace AiCV.Infrastructure.Services.PdfTemplates.Minimalist;
 
 public class MinimalistPdfTemplate : PdfTemplateBase
 {
+    protected override bool UseSectionSeparators => true;
+    protected override bool CenterLanguageContent => true;
+    protected override bool UseInterestChips => true;
+    protected override bool UseReferencesFooterPanel => true;
+
     public MinimalistPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)
     {
@@ -135,6 +140,26 @@ public class MinimalistPdfTemplate : PdfTemplateBase
             .Item()
             .PaddingBottom(0.3f, Unit.Centimetre)
             .PaddingTop(0.3f, Unit.Centimetre)
+            .Row(row =>
+            {
+                row.AutoItem()
+                    .Width(17, Unit.Centimetre)
+                    .BorderBottom(1.5f)
+                    .BorderColor(_primaryDark)
+                    .PaddingBottom(2)
+                    .Text(title.ToUpper())
+                    .FontSize(11)
+                    .Bold()
+                    .FontColor(_primaryDark)
+                    .LetterSpacing(0.15f);
+            });
+    }
+
+    protected override void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
+    {
+        column
+            .Item()
+            .PaddingBottom(0.3f, Unit.Centimetre)
             .Row(row =>
             {
                 row.AutoItem()
@@ -389,11 +414,32 @@ public class MinimalistPdfTemplate : PdfTemplateBase
                                                         edu.InstitutionName ?? ""
                                                     );
                                                 });
+                                            if (!string.IsNullOrEmpty(edu.Description))
+                                            {
+                                                c.Item()
+                                                    .PaddingTop(0.25f, Unit.Centimetre)
+                                                    .PaddingBottom(0.25f, Unit.Centimetre)
+                                                    .LineHorizontal(1)
+                                                    .LineColor(_borderColor);
+                                                c.Item()
+                                                    .Column(cc =>
+                                                        ComposeHtmlContent(
+                                                            cc,
+                                                            edu.Description,
+                                                            fontSize - 1,
+                                                            _textMedium
+                                                        )
+                                                    );
+                                            }
                                         });
                                 });
+                            if (i < eduList.Count - 1)
+                                table.Cell().ColumnSpan(1).LineHorizontal(1).LineColor("#E0E0E0");
                         }
                     });
             }
+
+            ComposePageThreeAdditionalSections(col, profile, fontSize);
         });
     }
 
@@ -428,7 +474,9 @@ public class MinimalistPdfTemplate : PdfTemplateBase
                         );
                     }
                     else
+                    {
                         letterCol.Item().Text("No content provided.").Italic();
+                    }
                 });
         });
     }

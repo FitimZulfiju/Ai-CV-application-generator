@@ -12,6 +12,10 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     protected string _textMedium = "#4b5563";
     protected string _backgroundLight = "#f9fafb";
     protected string _borderColor = "#e5e7eb";
+    protected virtual bool UseSectionSeparators => false;
+    protected virtual bool CenterLanguageContent => false;
+    protected virtual bool UseInterestChips => false;
+    protected virtual bool UseReferencesFooterPanel => false;
 
     protected const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
@@ -67,6 +71,361 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     .FontColor(_primaryDark)
                     .LetterSpacing(0.06f);
             });
+    }
+
+    protected virtual void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
+    {
+        SectionTitle(column, title);
+    }
+
+    protected void SectionSeparator(ColumnDescriptor column)
+    {
+        column
+            .Item()
+            .PaddingTop(0.4f, Unit.Centimetre)
+            .PaddingBottom(0.4f, Unit.Centimetre)
+            .LineHorizontal(1)
+            .LineColor(_borderColor);
+    }
+
+    protected void ComposePageThreeAdditionalSections(
+        ColumnDescriptor column,
+        CandidateProfile profile,
+        float fontSize
+    )
+    {
+        if (profile.Projects != null && profile.Projects.Count != 0)
+        {
+            if (UseSectionSeparators)
+                SectionSeparator(column);
+
+            if (UseSectionSeparators)
+                SectionTitleAfterSeparator(column, _localizer["PersonalProjectsCv"]);
+            else
+                SectionTitle(column, _localizer["PersonalProjectsCv"]);
+            var projectList = profile.Projects.OrderByDescending(p => p.StartDate).ToList();
+            for (int i = 0; i < projectList.Count; i++)
+            {
+                var project = projectList[i];
+                column
+                    .Item()
+                    .PaddingBottom(i < projectList.Count - 1 ? 0.3f : 0f, Unit.Centimetre)
+                    .Element(cell =>
+                    {
+                        cell.Background(_backgroundLight)
+                            .BorderLeft(1.5f)
+                            .BorderColor(_primaryColor)
+                            .CornerRadius(5)
+                            .Padding(10)
+                            .Column(c =>
+                            {
+                                c.Item()
+                                    .Row(r =>
+                                    {
+                                        r.RelativeItem()
+                                            .Text(t =>
+                                            {
+                                                t.DefaultTextStyle(x =>
+                                                    x.Bold()
+                                                        .FontSize(fontSize + 1)
+                                                        .FontColor(_textDark)
+                                                );
+                                                ComposeMarkdownText(t, project.Name ?? "");
+                                            });
+                                        r.ConstantItem(100)
+                                            .AlignRight()
+                                            .Text(
+                                                $"{project.StartDate:yyyy} - {(project.EndDate.HasValue ? project.EndDate.Value.ToString("yyyy") : _localizer["Present"])}"
+                                            )
+                                            .FontSize(fontSize - 2)
+                                            .FontColor(_textMedium);
+                                    });
+
+                                if (!string.IsNullOrWhiteSpace(project.Link))
+                                {
+                                    c.Item()
+                                        .PaddingTop(0.15f, Unit.Centimetre)
+                                        .Text(t =>
+                                        {
+                                            t.DefaultTextStyle(x =>
+                                                x.FontSize(fontSize - 1)
+                                                    .FontColor(_primaryColor)
+                                                    .SemiBold()
+                                            );
+                                            t.Span($"{_localizer["GitHubLabel"]} ");
+                                            ComposeMarkdownText(
+                                                t,
+                                                $"<a href='{project.Link}'>{project.Link}</a>",
+                                                _primaryColor
+                                            );
+                                        });
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(project.Technologies))
+                                {
+                                    c.Item()
+                                        .PaddingTop(0.1f, Unit.Centimetre)
+                                        .Text(t =>
+                                        {
+                                            t.DefaultTextStyle(x =>
+                                                x.FontSize(fontSize - 1)
+                                                    .FontColor(_textMedium)
+                                            );
+                                            t.Span($"{_localizer["TechnologiesLabel"]} ");
+                                            ComposeMarkdownText(t, project.Technologies);
+                                        });
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(project.Role))
+                                {
+                                    c.Item()
+                                        .PaddingTop(0.1f, Unit.Centimetre)
+                                        .Text(t =>
+                                        {
+                                            t.DefaultTextStyle(x =>
+                                                x.FontSize(fontSize - 1)
+                                                    .FontColor(_textMedium)
+                                                    .Italic()
+                                            );
+                                            ComposeMarkdownText(t, project.Role);
+                                        });
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(project.Description))
+                                {
+                                    c.Item()
+                                        .PaddingTop(0.15f, Unit.Centimetre)
+                                        .Column(c2 =>
+                                            ComposeHtmlContent(
+                                                c2,
+                                                project.Description,
+                                                fontSize - 1,
+                                                _textMedium
+                                            )
+                                        );
+                                }
+
+                                ComposeProjectSectionDetails(c, project, fontSize);
+                            });
+                    });
+            }
+
+        }
+
+        if (profile.Languages != null && profile.Languages.Count != 0)
+        {
+            if (UseSectionSeparators)
+                SectionSeparator(column);
+
+            if (UseSectionSeparators)
+                SectionTitleAfterSeparator(column, _localizer["LanguagesCv"]);
+            else
+                SectionTitle(column, _localizer["LanguagesCv"]);
+            var languageItem = column
+                .Item()
+                .Background(_backgroundLight)
+                .CornerRadius(5)
+                .Padding(10);
+
+            if (CenterLanguageContent)
+                languageItem = languageItem.AlignCenter();
+
+            languageItem.Text(t =>
+            {
+                if (CenterLanguageContent)
+                    t.AlignCenter();
+
+                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
+                for (int i = 0; i < profile.Languages.Count; i++)
+                {
+                    var language = profile.Languages[i];
+                    if (i > 0)
+                        t.Span(" | ").FontColor(_borderColor);
+
+                    ComposeMarkdownText(t, language.Name ?? "");
+
+                    if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                    {
+                        t.Span(" ");
+                        ComposeMarkdownText(t, language.Proficiency, _textDark);
+                    }
+                }
+            });
+
+        }
+
+        if (profile.Interests != null && profile.Interests.Count != 0)
+        {
+            if (UseSectionSeparators)
+                SectionSeparator(column);
+
+            if (UseSectionSeparators)
+                SectionTitleAfterSeparator(column, _localizer["InterestsCv"]);
+            else
+                SectionTitle(column, _localizer["InterestsCv"]);
+            if (UseInterestChips)
+            {
+                column
+                    .Item()
+                    .PaddingTop(0.1f, Unit.Centimetre)
+                    .Row(row =>
+                    {
+                        row.RelativeItem();
+                        row.AutoItem()
+                            .Row(chips =>
+                            {
+                                for (int i = 0; i < profile.Interests.Count; i++)
+                                {
+                                    var interest = profile.Interests[i];
+                                    chips.AutoItem()
+                                        .PaddingRight(i < profile.Interests.Count - 1 ? 6 : 0)
+                                        .Element(cell =>
+                                        {
+                                            cell.Background(_backgroundLight)
+                                                .Border(1)
+                                                .BorderColor(_borderColor)
+                                                .CornerRadius(12)
+                                                .PaddingVertical(4)
+                                                .PaddingHorizontal(8)
+                                                .Text(t =>
+                                                {
+                                                    t.DefaultTextStyle(x =>
+                                                        x.FontSize(fontSize - 2)
+                                                            .FontColor(_textMedium)
+                                                    );
+                                                    ComposeMarkdownText(t, interest.Name ?? "");
+                                                });
+                                        });
+                                }
+                            });
+                        row.RelativeItem();
+                    });
+            }
+            else
+            {
+                column
+                    .Item()
+                    .Background(_backgroundLight)
+                    .CornerRadius(5)
+                    .Padding(10)
+                    .Text(t =>
+                    {
+                        t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
+                        for (int i = 0; i < profile.Interests.Count; i++)
+                        {
+                            if (i > 0)
+                                t.Span(" | ").FontColor(_borderColor);
+
+                            ComposeMarkdownText(t, profile.Interests[i].Name ?? "");
+                        }
+                    });
+            }
+        }
+
+        var referencesItem = column.Item().PaddingTop(0.4f, Unit.Centimetre);
+
+        if (UseReferencesFooterPanel)
+        {
+            referencesItem
+                .Background(_backgroundLight)
+                .BorderTop(1)
+                .BorderColor(_borderColor)
+                .PaddingVertical(0.35f, Unit.Centimetre)
+                .PaddingHorizontal(0.4f, Unit.Centimetre)
+                .AlignCenter()
+                .Text(t =>
+                {
+                    t.AlignCenter();
+                    t.DefaultTextStyle(x =>
+                        x.FontSize(fontSize - 2).Italic().FontColor(_textMedium)
+                    );
+                    ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
+                });
+        }
+        else
+        {
+            referencesItem
+                .AlignCenter()
+                .Text(t =>
+                {
+                    t.AlignCenter();
+                    t.DefaultTextStyle(x =>
+                        x.FontSize(fontSize - 2).Italic().FontColor(_textMedium)
+                    );
+                    ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
+                });
+        }
+    }
+
+    private void ComposeProjectSectionDetails(
+        ColumnDescriptor column,
+        Project project,
+        float fontSize
+    )
+    {
+        if (
+            string.IsNullOrWhiteSpace(project.SectionTitle)
+            && string.IsNullOrWhiteSpace(project.SectionDescription)
+        )
+        {
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(project.SectionDescription))
+        {
+            if (!string.IsNullOrWhiteSpace(project.SectionTitle))
+            {
+                column
+                    .Item()
+                    .PaddingTop(0.15f, Unit.Centimetre)
+                    .Text(t =>
+                    {
+                        t.DefaultTextStyle(x =>
+                            x.FontSize(fontSize - 1).Bold().FontColor(_primaryColor)
+                        );
+                        ComposeMarkdownText(t, project.SectionTitle);
+                    });
+            }
+
+            column
+                .Item()
+                .PaddingTop(0.1f, Unit.Centimetre)
+                .Column(c =>
+                    ComposeHtmlContent(c, project.SectionDescription, fontSize - 1, _textMedium)
+                );
+            return;
+        }
+
+        var sectionLines = (project.SectionTitle ?? "")
+            .Replace("\r\n", "\n")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (sectionLines.Length == 0)
+            return;
+
+        column
+            .Item()
+            .PaddingTop(0.15f, Unit.Centimetre)
+            .Text(t =>
+            {
+                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).Bold().FontColor(_primaryColor));
+                ComposeMarkdownText(t, sectionLines[0]);
+            });
+
+        if (sectionLines.Length > 1)
+        {
+            column
+                .Item()
+                .PaddingTop(0.1f, Unit.Centimetre)
+                .Column(c =>
+                    ComposeHtmlContent(
+                        c,
+                        string.Join("\n", sectionLines.Skip(1)),
+                        fontSize - 1,
+                        _textMedium
+                    )
+                );
+        }
     }
 
     protected void ComposeContactRow(
@@ -600,6 +959,11 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     )]
     protected static partial Regex ParagraphBreakRegex();
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Performance",
+        "SYSLIB1045:Use GeneratedRegexAttribute to generate the regular expression implementation at compile-time",
+        Justification = "GeneratedRegex cannot fully generate this pattern because it uses a backreference in the closing tag."
+    )]
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
         @"<(strong|b|em|i|u|span|div|p|h1|h2|h3|h4|h5|h6|a|blockquote|code|pre)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline

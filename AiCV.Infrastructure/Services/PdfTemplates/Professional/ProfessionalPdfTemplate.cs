@@ -5,6 +5,50 @@ public class ProfessionalPdfTemplate(
     IStringLocalizer<AicvResources> localizer
     ) : PdfTemplateBase(env, localizer)
 {
+    protected override bool UseSectionSeparators => true;
+    protected override bool CenterLanguageContent => true;
+    protected override bool UseInterestChips => true;
+    protected override bool UseReferencesFooterPanel => true;
+
+    protected override void SectionTitle(ColumnDescriptor column, string title)
+    {
+        column
+            .Item()
+            .PaddingBottom(0.3f, Unit.Centimetre)
+            .PaddingTop(0.3f, Unit.Centimetre)
+            .Row(row =>
+            {
+                row.AutoItem()
+                    .BorderBottom(1.5f)
+                    .BorderColor(_primaryColor)
+                    .PaddingBottom(2)
+                    .Text(title.ToUpper())
+                    .FontSize(12)
+                    .Bold()
+                    .FontColor(_primaryDark)
+                    .LetterSpacing(0.06f);
+            });
+    }
+
+    protected override void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
+    {
+        column
+            .Item()
+            .PaddingBottom(0.3f, Unit.Centimetre)
+            .Row(row =>
+            {
+                row.AutoItem()
+                    .BorderBottom(1.5f)
+                    .BorderColor(_primaryColor)
+                    .PaddingBottom(2)
+                    .Text(title.ToUpper())
+                    .FontSize(12)
+                    .Bold()
+                    .FontColor(_primaryDark)
+                    .LetterSpacing(0.06f);
+            });
+    }
+
     public override void ComposeHeader(IContainer container, CandidateProfile profile)
     {
         bool showPhoto =
@@ -406,7 +450,10 @@ public class ProfessionalPdfTemplate(
                                 table.Cell().ColumnSpan(1).LineHorizontal(1).LineColor("#E0E0E0");
                         }
                     });
+
             }
+
+            ComposePageThreeAdditionalSections(col, profile, fontSize);
         });
     }
 
@@ -441,7 +488,9 @@ public class ProfessionalPdfTemplate(
                         );
                     }
                     else
+                    {
                         letterCol.Item().Text("No content provided.").Italic();
+                    }
                 });
         });
     }
