@@ -194,9 +194,89 @@
                             </MudText>
                         </div>
 
+                        @if (!string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume != null || !string.IsNullOrEmpty(_generatedEmail))
+                        {
+                            <div class="generate-content-toolbar">
+                                <div class="generate-toolbar-group" style="@GetDisplayStyle((_activeTabIndex == 0 && !string.IsNullOrEmpty(_generatedCoverLetter)) || (_activeTabIndex == 1 && _generatedResume != null))">
+                                    <MudSwitch @bind-Value="_previewCoverLetter" Color="Color.Primary"
+                                               Label="@Localizer["VisualPreview"]" Style="@GetDisplayStyle(_activeTabIndex == 0)" />
+                                    <MudSwitch T="bool" Value="_previewResume" ValueChanged="OnResumePreviewToggled"
+                                               Color="Color.Primary" Label="@Localizer["VisualPreview"]"
+                                               Style="@GetDisplayStyle(_activeTabIndex == 1)" />
+                                    <MudTooltip Text="@(HasProfilePicture() ? Localizer["IncludePhotoInCv"] : Localizer["NoProfilePictureUploadOne"])"
+                                                Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
+                                        <MudSwitch T="bool" Value="_includeProfilePicture" ValueChanged="OnIncludeProfilePictureToggled"
+                                                   Color="Color.Secondary" Label="@Localizer["IncludePhoto"]"
+                                                   Disabled="@(!HasProfilePicture())"
+                                                   Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)" />
+                                    </MudTooltip>
+                                </div>
+
+                                <div class="generate-toolbar-group" style="@GetDisplayStyle(_generatedResume != null && (_activeTabIndex == 0 || _activeTabIndex == 1))">
+                                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplateInPreview" Label="@Localizer["Template"]"
+                                               Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true"
+                                               Style="width: 180px;">
+                                        <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
+                                        <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
+                                        <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                                    </MudSelect>
+                                </div>
+
+                                <div class="generate-toolbar-group generate-toolbar-actions">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
+                                               StartIcon="@Icons.Material.Filled.ContentCopy"
+                                               OnClick="@(() => CopyToClipboard(_generatedCoverLetter))"
+                                               Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
+                                        @Localizer["Copy"]
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter"
+                                               Disabled="_isPrintingCoverLetter"
+                                               Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
+                                        @if (_isPrintingCoverLetter)
+                                        {
+                                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                            <span>...</span>
+                                        }
+                                        else
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                                            <span>@Localizer["Print"]</span>
+                                        }
+                                    </MudButton>
+
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
+                                               StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyResumeJson"
+                                               Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
+                                        @Localizer["CopyJson"]
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume"
+                                               Disabled="_isPrintingResume"
+                                               Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
+                                        @if (_isPrintingResume)
+                                        {
+                                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                            <span>...</span>
+                                        }
+                                        else
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                                            <span>@Localizer["Print"] CV</span>
+                                        }
+                                    </MudButton>
+
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
+                                               StartIcon="@Icons.Material.Filled.ContentCopy"
+                                               OnClick="@(() => CopyToClipboard(_generatedEmail))"
+                                               Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedEmail) && _activeTabIndex == 2)">
+                                        @Localizer["CopyEmail"]
+                                    </MudButton>
+                                </div>
+                            </div>
+                        }
+
                         @if (!string.IsNullOrEmpty(_generatedCoverLetter))
                         {
-                            <MudButton Variant="Variant.Filled" Color="@(_isAlreadySaved ? Color.Default : Color.Success)"
+                            <MudButton Variant="Variant.Filled" Color="@(_isAlreadySaved? Color.Default: Color.Success)"
                                        OnClick="SaveApplication" Disabled="@(_isSaving || _isAlreadySaved)"
                                        StartIcon="@(_isSaving ? null : (_isAlreadySaved ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Save))">
                                 @if (_isSaving)
@@ -215,92 +295,6 @@
                             </MudButton>
                         }
                     </div>
-
-                    @if (!string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume != null || !string.IsNullOrEmpty(_generatedEmail))
-                    {
-                        <div class="generate-content-toolbar">
-                            <div class="generate-toolbar-group" style="@GetDisplayStyle((_activeTabIndex == 0 && !string.IsNullOrEmpty(_generatedCoverLetter)) || (_activeTabIndex == 1 && _generatedResume != null))">
-                            <MudText Typo="Typo.overline" Class="generate-toolbar-label">@Localizer["Preview"]</MudText>
-
-                            <MudSwitch @bind-Value="_previewCoverLetter" Color="Color.Primary"
-                                       Label="@Localizer["VisualPreview"]" Style="@GetDisplayStyle(_activeTabIndex == 0)" />
-                            <MudSwitch T="bool" Value="_previewResume" ValueChanged="OnResumePreviewToggled"
-                                       Color="Color.Primary" Label="@Localizer["VisualPreview"]"
-                                       Style="@GetDisplayStyle(_activeTabIndex == 1)" />
-                            <MudTooltip Text="@(HasProfilePicture() ? Localizer["IncludePhotoInCv"] : Localizer["NoProfilePictureUploadOne"])"
-                                        Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
-                                <MudSwitch T="bool" Value="_includeProfilePicture" ValueChanged="OnIncludeProfilePictureToggled"
-                                           Color="Color.Secondary" Label="@Localizer["IncludePhoto"]"
-                                           Disabled="@(!HasProfilePicture())"
-                                           Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)" />
-                            </MudTooltip>
-                            </div>
-
-                            <div class="generate-toolbar-group" style="@GetDisplayStyle(_generatedResume != null && (_activeTabIndex == 0 || _activeTabIndex == 1))">
-                                <MudText Typo="Typo.overline" Class="generate-toolbar-label">@Localizer["Template"]</MudText>
-
-                                <MudSelect T="CvTemplate" @bind-Value="_selectedTemplateInPreview" Label="@Localizer["Template"]"
-                                           Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true"
-                                           Style="width: 180px;">
-                                    <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
-                                    <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
-                                    <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
-                                </MudSelect>
-                            </div>
-
-                            <div class="generate-toolbar-group generate-toolbar-actions">
-                                <MudText Typo="Typo.overline" Class="generate-toolbar-label">@Localizer["Actions"]</MudText>
-
-                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
-                                           StartIcon="@Icons.Material.Filled.ContentCopy"
-                                           OnClick="@(() => CopyToClipboard(_generatedCoverLetter))"
-                                           Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
-                                    @Localizer["Copy"]
-                                </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter"
-                                           Disabled="_isPrintingCoverLetter"
-                                           Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
-                                    @if (_isPrintingCoverLetter)
-                                    {
-                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                                        <span>...</span>
-                                    }
-                                    else
-                                    {
-                                        <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                                        <span>@Localizer["Print"]</span>
-                                    }
-                                </MudButton>
-
-                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
-                                           StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyResumeJson"
-                                           Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
-                                    @Localizer["CopyJson"]
-                                </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume"
-                                           Disabled="_isPrintingResume"
-                                           Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
-                                    @if (_isPrintingResume)
-                                    {
-                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                                        <span>...</span>
-                                    }
-                                    else
-                                    {
-                                        <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
-                                        <span>@Localizer["Print"] CV</span>
-                                    }
-                                </MudButton>
-
-                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
-                                           StartIcon="@Icons.Material.Filled.ContentCopy"
-                                           OnClick="@(() => CopyToClipboard(_generatedEmail))"
-                                           Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedEmail) && _activeTabIndex == 2)">
-                                    @Localizer["CopyEmail"]
-                                </MudButton>
-                            </div>
-                        </div>
-                    }
                 </div>
                 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pt-2"
                          KeepPanelsAlive="false" @bind-ActivePanelIndex="_activeTabIndex">
