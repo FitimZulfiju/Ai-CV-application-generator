@@ -157,3 +157,8 @@ body {
         overflow-y: auto;
     }
 }
+
+/* Tab background color */
+.mud-tabs .mud-tab.mud-tab-active {
+    background-color: #E3F2FD;
+}

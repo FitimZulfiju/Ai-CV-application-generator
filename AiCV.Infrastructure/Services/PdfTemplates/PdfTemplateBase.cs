@@ -224,6 +224,8 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             var languageItem = column
                 .Item()
                 .Background(_backgroundLight)
+                .BorderLeft(1.5f)
+                .BorderColor(_primaryColor)
                 .CornerRadius(5)
                 .Padding(10);
 
@@ -240,7 +242,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 {
                     var language = profile.Languages[i];
                     if (i > 0)
-                        t.Span(" | ").FontColor(_borderColor);
+                        t.Span(" • ").FontColor(_textDark);
 
                     ComposeMarkdownText(t, language.Name ?? "");
 
@@ -263,66 +265,35 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 SectionTitleAfterSeparator(column, _localizer["InterestsCv"]);
             else
                 SectionTitle(column, _localizer["InterestsCv"]);
-            if (UseInterestChips)
-            {
-                column
-                    .Item()
-                    .PaddingTop(0.1f, Unit.Centimetre)
-                    .Row(row =>
-                    {
-                        row.RelativeItem();
-                        row.AutoItem()
-                            .Row(chips =>
-                            {
-                                for (int i = 0; i < profile.Interests.Count; i++)
-                                {
-                                    var interest = profile.Interests[i];
-                                    chips.AutoItem()
-                                        .PaddingRight(i < profile.Interests.Count - 1 ? 6 : 0)
-                                        .Element(cell =>
-                                        {
-                                            cell.Background(_backgroundLight)
-                                                .Border(1)
-                                                .BorderColor(_borderColor)
-                                                .CornerRadius(12)
-                                                .PaddingVertical(4)
-                                                .PaddingHorizontal(8)
-                                                .Text(t =>
-                                                {
-                                                    t.DefaultTextStyle(x =>
-                                                        x.FontSize(fontSize - 2)
-                                                            .FontColor(_textMedium)
-                                                    );
-                                                    ComposeMarkdownText(t, interest.Name ?? "");
-                                                });
-                                        });
-                                }
-                            });
-                        row.RelativeItem();
-                    });
-            }
-            else
-            {
-                column
-                    .Item()
-                    .Background(_backgroundLight)
-                    .CornerRadius(5)
-                    .Padding(10)
-                    .Text(t =>
-                    {
-                        t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
-                        for (int i = 0; i < profile.Interests.Count; i++)
-                        {
-                            if (i > 0)
-                                t.Span(" | ").FontColor(_borderColor);
+            var interestItem = column
+                .Item()
+                .PaddingTop(0.1f, Unit.Centimetre)
+                .Background(_backgroundLight)
+                .BorderLeft(1.5f)
+                .BorderColor(_primaryColor)
+                .CornerRadius(5)
+                .Padding(10);
 
-                            ComposeMarkdownText(t, profile.Interests[i].Name ?? "");
-                        }
-                    });
-            }
+            if (UseInterestChips)
+                interestItem = interestItem.AlignCenter();
+
+            interestItem.Text(t =>
+            {
+                if (UseInterestChips)
+                    t.AlignCenter();
+
+                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
+                for (int i = 0; i < profile.Interests.Count; i++)
+                {
+                    if (i > 0)
+                        t.Span(" • ").FontColor(_textDark);
+
+                    ComposeMarkdownText(t, profile.Interests[i].Name ?? "");
+                }
+            });
         }
 
-        var referencesItem = column.Item().PaddingTop(0.4f, Unit.Centimetre);
+        var referencesItem = column.Item().ExtendVertical().AlignBottom();
 
         if (UseReferencesFooterPanel)
         {
@@ -330,7 +301,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 .Background(_backgroundLight)
                 .BorderTop(1)
                 .BorderColor(_borderColor)
-                .PaddingVertical(0.35f, Unit.Centimetre)
+                .PaddingVertical(0.18f, Unit.Centimetre)
                 .PaddingHorizontal(0.4f, Unit.Centimetre)
                 .AlignCenter()
                 .Text(t =>
