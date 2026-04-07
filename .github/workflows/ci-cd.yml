@@ -61,7 +61,16 @@ jobs:
           fi
 
           IFS='.' read -r MAJOR MINOR PATCH <<< "${BASE_VERSION}"
-          COMMITS=$(git log ${RANGE} --pretty=format:'%s%n%b' || true)
+          COMMITS=$(
+            git log ${RANGE} --pretty=format:'%s%x1f%b%x1e' | awk -v RS='\x1e' -v FS='\x1f' '
+              $1 !~ /^docs: update changelog for v/ &&
+              $1 !~ /^Merge / &&
+              $1 !~ /^chore: merge / &&
+              $1 !~ /^[[:space:]]*$/ {
+                print $1 "\n" $2
+              }
+            ' || true
+          )
 
           if [ -z "${COMMITS}" ]; then
             VERSION="${BASE_VERSION}"
@@ -90,23 +99,27 @@ jobs:
           RANGE="${PREV_TAG:+$PREV_TAG..HEAD}"
           RANGE="${RANGE:-HEAD}"
 
-          FEATS=$(git log $RANGE --pretty=format:"- %s" --grep="^feat" 2>/dev/null || true)
+          FILTERED_SUBJECTS=$(
+            git log $RANGE --pretty=format:'%s' | grep -Ev '^(docs: update changelog for v|Merge |chore: merge )' || true
+          )
+
+          FEATS=$(printf '%s\n' "$FILTERED_SUBJECTS" | grep -E '^feat(\([^)]+\))?:' | sed 's/^/- /' || true)
           if [ -n "$FEATS" ]; then
             echo "### Added" >> /tmp/new_entry.md
-            echo "$FEATS" | sed 's/^feat[:(]*//' >> /tmp/new_entry.md
+            echo "$FEATS" >> /tmp/new_entry.md
             echo "" >> /tmp/new_entry.md
           fi
 
-          FIXES=$(git log $RANGE --pretty=format:"- %s" --grep="^fix" 2>/dev/null || true)
+          FIXES=$(printf '%s\n' "$FILTERED_SUBJECTS" | grep -E '^fix(\([^)]+\))?:' | sed 's/^/- /' || true)
           if [ -n "$FIXES" ]; then
             echo "### Fixed" >> /tmp/new_entry.md
-            echo "$FIXES" | sed 's/^fix[:(]*//' >> /tmp/new_entry.md
+            echo "$FIXES" >> /tmp/new_entry.md
             echo "" >> /tmp/new_entry.md
           fi
 
           if [ -z "$FEATS" ] && [ -z "$FIXES" ]; then
             echo "### Changed" >> /tmp/new_entry.md
-            git log $RANGE --pretty=format:"- %s" -5 >> /tmp/new_entry.md
+            printf '%s\n' "$FILTERED_SUBJECTS" | sed '/^[[:space:]]*$/d' | head -n 5 | sed 's/^/- /' >> /tmp/new_entry.md
             echo "" >> /tmp/new_entry.md
           fi
 
@@ -198,7 +211,16 @@ jobs:
           fi
 
           IFS='.' read -r MAJOR MINOR PATCH <<< "${BASE_VERSION}"
-          COMMITS=$(git log ${RANGE} --pretty=format:'%s%n%b' || true)
+          COMMITS=$(
+            git log ${RANGE} --pretty=format:'%s%x1f%b%x1e' | awk -v RS='\x1e' -v FS='\x1f' '
+              $1 !~ /^docs: update changelog for v/ &&
+              $1 !~ /^Merge / &&
+              $1 !~ /^chore: merge / &&
+              $1 !~ /^[[:space:]]*$/ {
+                print $1 "\n" $2
+              }
+            ' || true
+          )
 
           if [ -z "${COMMITS}" ]; then
             VERSION="${BASE_VERSION}"

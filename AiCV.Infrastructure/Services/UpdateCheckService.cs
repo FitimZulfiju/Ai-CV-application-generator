@@ -14,6 +14,9 @@ public interface IUpdateCheckService
 
 public class UpdateCheckService : BackgroundService, IUpdateCheckService
 {
+    private const int RegistryCheckIntervalMinutes = 5;
+    private const int ScheduledUpdateDelaySeconds = 180;
+
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
     private readonly ILogger<UpdateCheckService> _logger;
@@ -172,8 +175,8 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         {
             try
             {
-                // Wait for interval (default 5 minutes)
-                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+                // Check Docker Hub every 5 minutes for a new image.
+                await Task.Delay(TimeSpan.FromMinutes(RegistryCheckIntervalMinutes), stoppingToken);
 
                 var latestDigest = await GetLatestDigestAsync();
 
@@ -200,10 +203,10 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                         _isUpdateAvailable = true;
                         _newVersionDigest = latestDigest;
 
-                        // Auto-schedule update (3 minutes) if not already scheduled
+                        // Give users 3 minutes to save work before the update is triggered.
                         if (!IsUpdateScheduled)
                         {
-                            ScheduleUpdate(180);
+                            ScheduleUpdate(ScheduledUpdateDelaySeconds);
                         }
                     }
                 }
