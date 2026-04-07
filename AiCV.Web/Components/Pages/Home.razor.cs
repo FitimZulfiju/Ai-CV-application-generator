@@ -32,10 +32,6 @@ public partial class Home
 
     protected override void OnInitialized()
     {
-        var version = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
-        if (version != null)
-        {
-            AppVersion = $"{version.Major}.{version.Minor}.{version.Build}";
-        }
+        AppVersion = AppVersionProvider.GetDisplayVersion();
     }
 }

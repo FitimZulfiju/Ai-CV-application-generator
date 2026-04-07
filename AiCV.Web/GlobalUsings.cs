@@ -35,3 +35,4 @@ global using MudBlazor.Services;
 global using AiCV.Infrastructure.Resources;
 global using System.Text.RegularExpressions;
 global using AiCV.Web.Components.Pages;
+global using System.Reflection;

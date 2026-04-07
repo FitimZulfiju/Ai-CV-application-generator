@@ -1,6 +1,7 @@
 # Use the official ASP.NET Core SDK image for building
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
+ARG BUILD_VERSION=1.0.0
 
 # Copy csproj files and restore dependencies
 COPY ["AiCV.Web/AiCV.Web.csproj", "AiCV.Web/"]
@@ -12,11 +13,11 @@ RUN dotnet restore "AiCV.Web/AiCV.Web.csproj"
 # Copy the rest of the source code
 COPY . .
 WORKDIR "/src/AiCV.Web"
-RUN dotnet build "AiCV.Web.csproj" -c Release -o /app/build
+RUN dotnet build "AiCV.Web.csproj" -c Release -o /app/build /p:Version=${BUILD_VERSION}
 
 FROM build AS publish
 ARG BUILD_VERSION=1.0.0
-RUN dotnet publish "AiCV.Web.csproj" -c Release -o /app/publish /p:Version=${BUILD_VERSION}
+RUN dotnet publish "AiCV.Web.csproj" -c Release -o /app/publish --no-build /p:Version=${BUILD_VERSION}
 
 # Use the official ASP.NET Core runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
