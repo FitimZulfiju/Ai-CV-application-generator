@@ -44,9 +44,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300 # Poll every 5 minutes
       - WATCHTOWER_INCLUDE_STOPPED=false
       - WATCHTOWER_REVIVE_STOPPED=false
+    # Poll Docker Hub every 5 minutes.
     command: --interval 300 --cleanup aicv-app
 
 volumes:
