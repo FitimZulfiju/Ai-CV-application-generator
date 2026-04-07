@@ -9,10 +9,10 @@
 
 <MudLayout
     Style="background-image: url('/mbg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh;">
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="3" Dense="true" Color="Color.Transparent" >
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
             OnClick="@((e) => DrawerToggle())" />
-        <MudImage Src="/logoWhiteSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
+        <MudImage Src="/logoSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
             @onclick="NavigateToHome" />
         <MudText Typo="Typo.h6" Class="responsive-app-title">@Localizer["AiCvApplications"]</MudText>
         <MudSpacer />
@@ -34,10 +34,10 @@
             </MudText>
         </AiCV.Web.Components.Shared.LoadingIndicator>
     }
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Class="responsive-drawer">
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="4" Class="responsive-drawer">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent Class="pt-16 pa-4">
+    <MudMainContent Class="pt-12 pa-4">
         @Body
     </MudMainContent>
     <AiCV.Web.Components.Shared.UpdateBanner />
