@@ -10,15 +10,17 @@
 else
 {
     <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
-        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
                   Class="pb-4 d-print-none stack-on-mobile" Style="gap: 16px;">
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
                 <MudIcon Icon="@Icons.Material.Filled.Badge" Color="Color.Primary" />
                 <MudText Typo="Typo.h5">@Localizer["MasterCvProfile"]</MudText>
-                <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Primary" Size="Size.Small"
-                               OnClick="@(() => _showFormattingHelp = true)" title="@Localizer["FormattingHelp"]" />
+                <MudTooltip Text="@Localizer["FormattingHelp"]">
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Primary" Size="Size.Small"
+                                   OnClick="@(() => _showFormattingHelp = true)" />
+                </MudTooltip>
             </MudStack>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
                 @if (_activeTabIndex != 7)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
@@ -61,7 +63,8 @@ else
             </MudStack>
         </MudStack>
         <MudTabs Elevation="1" Rounded="true" @bind-ActivePanelIndex="_activeTabIndex">
-            <MudDivider DividerType="DividerType.Middle" Class="my-2" />
+            
+            <MudDivider DividerType="DividerType.Middle" Class="my-3" />
 
             @* Tab Personal Details *@
             <MudTabPanel Text="@Localizer["PersonalDetails"]" Icon="@Icons.Material.Filled.Person">
@@ -111,7 +114,7 @@ else
 <MudDialog @bind-Visible="_showFormattingHelp"
            Options="@(new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true })">
     <TitleContent>
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
             <MudIcon Icon="@Icons.Material.Filled.FormatColorText" Color="Color.Primary" />
             <MudText Typo="Typo.h6">@Localizer["FormattingHelpTitle"]</MudText>
         </MudStack>

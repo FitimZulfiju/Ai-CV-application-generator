@@ -1,6 +1,6 @@
 @if (Profile != null)
 {
-    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-4"
                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
         <MudText Typo="Typo.body2" Class="mb-4">@Localizer["SkillsHelper"]</MudText>
@@ -10,7 +10,7 @@
         {
             <MudItem xs="12" md="6">
                 <MudCard Class="pa-3" Elevation="2">
-                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
                         <MudTextField @bind-Value="category.Name" Label="@Localizer["CategoryName"]"
                                       Variant="Variant.Text" />
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"

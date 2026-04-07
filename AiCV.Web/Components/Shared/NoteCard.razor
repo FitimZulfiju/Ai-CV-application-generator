@@ -9,7 +9,7 @@
     <MudCardContent Class="pa-3" @onclick="OnCardClick" Style="cursor: pointer;">
         @if (!string.IsNullOrWhiteSpace(NoteItem.Title))
         {
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
                 <MudIcon Icon="@Icons.Material.Outlined.Label" Size="Size.Small" Color="Color.Default"
                 Style="opacity: 0.7;" />
                 <MudText Typo="Typo.subtitle1" Style="font-weight: 600;">

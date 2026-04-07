@@ -1,23 +1,25 @@
 @if (Profile != null)
 {
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddInterest" Class="mb-4"
-               StartIcon="@Icons.Material.Filled.Add">@Localizer["AddInterest"]</MudButton>
+    <MudStack Spacing="3">
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudTextField @bind-Value="_newInterest"
+                          Class="flex-grow-1"
+                          Label="@Localizer["AddInterest"]"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.End"
+                          AdornmentColor="Color.Primary"
+                          AdornmentIcon="@Icons.Material.Outlined.Add"
+                          OnAdornmentClick="AddInterest"
+                          Immediate="true" />
+        </MudStack>
 
-    <MudGrid>
-        @foreach (var interest in Profile.Interests)
-        {
-            <MudItem xs="12" sm="6" md="3">
-                <MudCard Class="pa-3" Elevation="2">
-                    <MudStack Spacing="2">
-                        <MudTextField @bind-Value="interest.Name" Label="@Localizer["Interests"]"
-                                      Variant="Variant.Text" />
-                        <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                   OnClick="@(() => RemoveInterest(interest))" StartIcon="@Icons.Material.Filled.Delete">
-                            @Localizer["Remove"]
-                        </MudButton>
-                    </MudStack>
-                </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
+        <MudChipSet T="string">
+            @foreach (var interest in Profile.Interests.Where(i => !string.IsNullOrWhiteSpace(i.Name)).ToList())
+            {
+                var interestName = interest.Name?.Trim() ?? string.Empty;
+                <MudChip T="string" Value="@interestName" Text="@interestName" Color="Color.Primary"
+                         OnClose="@((MudChip<string> chip) => RemoveInterest(interest))" />
+            }
+        </MudChipSet>
+    </MudStack>
 }

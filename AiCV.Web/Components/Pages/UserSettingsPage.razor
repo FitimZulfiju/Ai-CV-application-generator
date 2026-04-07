@@ -214,7 +214,7 @@
                                 </PropertyColumn>
                                 <TemplateColumn Title="@Localizer["Actions"]">
                                     <CellTemplate>
-                                        <MudStack Row="true" Spacing="1">
+                                        <MudStack Row Spacing="1">
                                             @if (!context.Item.IsActive)
                                             {
                                                 <MudTooltip Text="@Localizer["SetAsActive"]">

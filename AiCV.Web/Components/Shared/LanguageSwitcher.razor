@@ -1,7 +1,7 @@
 <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
     <ActivatorContent>
         <MudButton Color="Color.Inherit" Variant="Variant.Text" OnClick="@context.ToggleAsync">
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                 <MudIcon Icon="@Icons.Material.Filled.Language" Size="Size.Small" />
                 <span>@CurrentLanguageCode</span>
             </MudStack>
@@ -9,7 +9,7 @@
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem OnClick='@(() => SwitchLanguage("en"))'>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                 <MudImage
                     Src="@($"data:image/svg+xml;base64,{Convert.ToBase64String(Encoding.UTF8.GetBytes(FlagIcons.US))}")"
                     Alt="USA" Width="24" Height="24" ObjectFit="ObjectFit.Contain" />
@@ -17,7 +17,7 @@
             </MudStack>
         </MudMenuItem>
         <MudMenuItem OnClick='@(() => SwitchLanguage("sq"))'>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                 <MudImage
                     Src="@($"data:image/svg+xml;base64,{Convert.ToBase64String(Encoding.UTF8.GetBytes(FlagIcons.AL))}")"
                     Alt="Albania" Width="24" Height="24" ObjectFit="ObjectFit.Contain" />
@@ -25,7 +25,7 @@
             </MudStack>
         </MudMenuItem>
         <MudMenuItem OnClick='@(() => SwitchLanguage("da"))'>
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                 <MudImage
                     Src="@($"data:image/svg+xml;base64,{Convert.ToBase64String(Encoding.UTF8.GetBytes(FlagIcons.DK))}")"
                     Alt="Denmark" Width="24" Height="24" ObjectFit="ObjectFit.Contain" />

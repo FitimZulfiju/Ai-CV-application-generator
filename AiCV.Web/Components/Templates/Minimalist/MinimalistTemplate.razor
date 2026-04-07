@@ -217,7 +217,14 @@ else
                         {
                             @foreach (var lang in Profile.Languages)
                             {
-                                <span class="language-item"><FormattedText Text="@lang.Name" /> <FormattedText Text="@lang.Proficiency" /></span>
+                                <span class="language-item">
+                                    <FormattedText Text="@lang.Name" />
+                                    @if (!string.IsNullOrWhiteSpace(lang.Proficiency))
+                                    {
+                                        <span>&nbsp;&bull;&nbsp;</span>
+                                        <FormattedText Text="@lang.Proficiency" />
+                                    }
+                                </span>
                             }
                         }
                         else
