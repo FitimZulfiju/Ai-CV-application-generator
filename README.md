@@ -151,6 +151,8 @@ Visit: [https://localhost:7153](https://localhost:7153)
 
 This project welcomes constructive feedback and incremental improvements.
 
+Small documentation improvements are welcome as well.
+
 If you're interested in:
 
 * Refactoring structure
