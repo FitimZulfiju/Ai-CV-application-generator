@@ -17,7 +17,7 @@
             <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-2" Color="Color.Secondary">
                 @Localizer["AiPoweredCareerAssistant"]
             </MudText>
-            <MudStack Row="true" Justify="Justify.Center" Class="mt-4">
+            <MudStack Row Justify="Justify.Center" Class="mt-4">
                 <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Help"
                     OnClick="OpenUserGuideDialog">
                     @Localizer["HowItWorks"]
@@ -98,7 +98,7 @@
         <MudText Typo="Typo.body2" Color="Color.Secondary" Style="opacity: 0.7;">
             @Localizer["DevelopedBy"] <b>Fitim Zulfiju</b>
         </MudText>
-        <MudStack Row="true" Spacing="4" Justify="Justify.Center">
+        <MudStack Row Spacing="4" Justify="Justify.Center">
             <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Size="Size.Small"
                 Href="https://github.com/fitimzulfiu" Target="_blank" title="GitHub" />
             <MudIconButton Icon="@DockerIcon" Color="Color.Info" Size="Size.Small"

@@ -174,10 +174,6 @@ body {
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid var(--mud-palette-lines-default);
-    border-radius: 12px;
 }
 
 .generate-toolbar-actions {

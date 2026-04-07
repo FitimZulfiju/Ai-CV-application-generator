@@ -16,7 +16,7 @@
     }
     else
     {
-        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
+        <MudStack Row AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
             <div class="d-flex align-center">
                 <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => Navigation.NavigateTo($"/{NavUri.MyApplicationsPage}"))" />
                 <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title @Localizer["at"] @_application.JobPosting?.CompanyName</MudText>
@@ -118,7 +118,7 @@
                 <MudPaper Elevation="1" Class="pa-4">
                     @if (!string.IsNullOrEmpty(_application.JobPosting?.Url))
                     {
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+                        <MudStack Row AlignItems="AlignItems.Center" Class="mb-4">
                             <MudIcon Icon="@Icons.Material.Filled.Link" Color="Color.Primary" />
                             <MudText Typo="Typo.subtitle2">@Localizer["Source"]</MudText>
                             <MudLink Href="@_application.JobPosting.Url" Target="_blank" Typo="Typo.body2" Color="Color.Primary">

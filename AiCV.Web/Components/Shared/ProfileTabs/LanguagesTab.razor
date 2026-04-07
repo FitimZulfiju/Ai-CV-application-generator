@@ -1,25 +1,45 @@
 @if (Profile != null)
 {
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddLanguage" Class="mb-4"
-               StartIcon="@Icons.Material.Filled.Add">@Localizer["AddLanguage"]</MudButton>
+    <MudStack Spacing="3">
+        <MudStack Row AlignItems="AlignItems.Center">
+            @{
+                var proficiencyLabel = $"{Localizer["Proficiency"]} ({Localizer["LanguageProficiencyHelper"]})";
+            }
+            <MudTextField @bind-Value="_newLanguageName"
+                          Class="flex-grow-1"
+                          Label="@Localizer["Language"]"
+                          Variant="Variant.Outlined"
+                          Immediate="true" />
+            <MudTextField @bind-Value="_newLanguageProficiency"
+                          Class="flex-grow-1"
+                          Label="@proficiencyLabel"
+                          Variant="Variant.Outlined"
+                          Immediate="true"
+                          Adornment="Adornment.End"
+                          AdornmentColor="Color.Primary"
+                          AdornmentIcon="@Icons.Material.Filled.Add"
+                          OnAdornmentClick="AddLanguage" />
+        </MudStack>
 
-    <MudGrid>
-        @foreach (var lang in Profile.Languages)
-        {
-            <MudItem xs="12" sm="6" md="3">
-                <MudCard Class="pa-3" Elevation="2">
-                    <MudStack Spacing="2">
-                        <MudTextField @bind-Value="lang.Name" Label="@Localizer["Language"]"
-                                      Variant="Variant.Text" />
-                        <MudTextField @bind-Value="lang.Proficiency" Label="@Localizer["Proficiency"]"
-                                      Variant="Variant.Text" HelperText="@Localizer["LanguageProficiencyHelper"]" />
-                        <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                   OnClick="@(() => RemoveLanguage(lang))" StartIcon="@Icons.Material.Filled.Delete">
-                            @Localizer["Remove"]
-                        </MudButton>
-                    </MudStack>
-                </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
+        <MudChipSet T="string">
+            @foreach (var lang in Profile.Languages.Where(l => !string.IsNullOrWhiteSpace(l.Name)).ToList())
+            {
+                var languageName = lang.Name?.Trim() ?? string.Empty;
+                var proficiency = lang.Proficiency?.Trim() ?? string.Empty;
+                var chipText = string.IsNullOrWhiteSpace(proficiency)
+                    ? languageName
+                    : $"{languageName} {proficiency}";
+
+                <MudChip T="string" Value="@chipText" Color="Color.Primary"
+                         OnClose="@((MudChip<string> chip) => RemoveLanguage(lang))">
+                    <FormattedText Text="@languageName" />
+                    @if (!string.IsNullOrWhiteSpace(proficiency))
+                    {
+                        <span>&nbsp;</span>
+                        <FormattedText Text="@proficiency" />
+                    }
+                </MudChip>
+            }
+        </MudChipSet>
+    </MudStack>
 }
