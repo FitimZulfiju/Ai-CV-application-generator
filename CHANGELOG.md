@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Merge branch 'dev' of https://github.com/FitimZulfiju/Web-CV-application-generator into dev
+- Fix Docker publish path and update layout changes
+- docs: update changelog for v1.8.6 [skip staging]
+- Merge branch 'dev' of https://github.com/FitimZulfiju/Web-CV-application-generator into dev
 - Fix release versioning and runtime version display
 ## [1.8.0] - 2026-04-07
 
