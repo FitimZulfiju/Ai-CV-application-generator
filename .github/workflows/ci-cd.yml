@@ -42,21 +42,46 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Calculate Version
         id: version
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix: "v"
-          major_pattern: "/!:|BREAKING CHANGE:/"
-          minor_pattern: "/feat:/"
-          version_format: "${major}.${minor}.${patch}"
-          enable_prerelease_mode: false
-          search_commit_body: true
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PREVIOUS_TAG=$(git tag --list 'v*' --sort=-version:refname | head -n 1 || true)
+          BASE_VERSION="${PREVIOUS_TAG#v}"
+
+          if [ -z "${BASE_VERSION}" ]; then
+            BASE_VERSION="1.0.0"
+            RANGE="HEAD"
+          else
+            RANGE="${PREVIOUS_TAG}..HEAD"
+          fi
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${BASE_VERSION}"
+          COMMITS=$(git log ${RANGE} --pretty=format:'%s%n%b' || true)
+
+          if [ -z "${COMMITS}" ]; then
+            VERSION="${BASE_VERSION}"
+          elif printf '%s\n' "${COMMITS}" | grep -Eqi 'BREAKING CHANGE:|^[^[:space:]]+(\([^)]+\))?!:'; then
+            VERSION="$((MAJOR + 1)).0.0"
+          elif printf '%s\n' "${COMMITS}" | grep -Eqi '^feat(\([^)]+\))?:'; then
+            VERSION="${MAJOR}.$((MINOR + 1)).0"
+          else
+            VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+
+          echo "previous_tag=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Generate Changelog Entry
+        shell: bash
         run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          set -euo pipefail
+
+          PREV_TAG="${{ steps.version.outputs.previous_tag }}"
           VERSION="${{ steps.version.outputs.version }}"
 
           echo "## [$VERSION] - $(date +%Y-%m-%d)" > /tmp/new_entry.md
@@ -85,8 +110,22 @@ jobs:
             echo "" >> /tmp/new_entry.md
           fi
 
-          sed -i '/^## \[Unreleased\]/,/^---/{/^---/r /tmp/new_entry.md
-          }' CHANGELOG.md
+          awk -v version="$VERSION" '
+            BEGIN { skip = 0 }
+            $0 ~ "^## \\[" version "\\] - " { skip = 1; next }
+            skip && $0 ~ "^## \\[" { skip = 0 }
+            !skip { print }
+          ' CHANGELOG.md > CHANGELOG.cleaned.md
+          mv CHANGELOG.cleaned.md CHANGELOG.md
+
+          awk '
+            { print }
+            !done && $0 == "---" {
+              system("cat /tmp/new_entry.md")
+              done = 1
+            }
+          ' CHANGELOG.md > CHANGELOG.updated.md
+          mv CHANGELOG.updated.md CHANGELOG.md
 
       - name: Sync Changelog to dev Branch
         run: |
@@ -140,17 +179,39 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Get Merged Version
         id: version
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix: "v"
-          major_pattern: "/!:|BREAKING CHANGE:/"
-          minor_pattern: "/feat:/"
-          version_format: "${major}.${minor}.${patch}"
-          enable_prerelease_mode: false
-          search_commit_body: true
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PREVIOUS_TAG=$(git tag --list 'v*' --sort=-version:refname | head -n 1 || true)
+          BASE_VERSION="${PREVIOUS_TAG#v}"
+
+          if [ -z "${BASE_VERSION}" ]; then
+            BASE_VERSION="1.0.0"
+            RANGE="HEAD"
+          else
+            RANGE="${PREVIOUS_TAG}..HEAD"
+          fi
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${BASE_VERSION}"
+          COMMITS=$(git log ${RANGE} --pretty=format:'%s%n%b' || true)
+
+          if [ -z "${COMMITS}" ]; then
+            VERSION="${BASE_VERSION}"
+          elif printf '%s\n' "${COMMITS}" | grep -Eqi 'BREAKING CHANGE:|^[^[:space:]]+(\([^)]+\))?!:'; then
+            VERSION="$((MAJOR + 1)).0.0"
+          elif printf '%s\n' "${COMMITS}" | grep -Eqi '^feat(\([^)]+\))?:'; then
+            VERSION="${MAJOR}.$((MINOR + 1)).0"
+          else
+            VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+
+          echo "previous_tag=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3

@@ -587,9 +587,7 @@ app.MapGet(
         "/api/version",
         (IUpdateCheckService updateCheckService) =>
         {
-            var version =
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-                ?? "1.0.0.0";
+            var version = AiCV.Web.AppVersionProvider.GetDisplayVersion();
             var isUpdateAvailable = updateCheckService.IsUpdateAvailable;
             var newVersionTag = updateCheckService.NewVersionTag;
             var isUpdateScheduled = updateCheckService.IsUpdateScheduled;
