@@ -38,6 +38,18 @@ body {
     min-height: var(--app-bar-height) !important;
 }
 
+    .mud-appbar .appbar-menu-button {
+        align-self: center !important;
+        height: var(--app-bar-height) !important;
+        width: var(--app-bar-height) !important;
+        min-height: var(--app-bar-height) !important;
+        min-width: var(--app-bar-height) !important;
+        margin-inline-start: 4px !important;
+        margin-inline-end: 4px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
     .mud-appbar .mud-toolbar {
         min-height: var(--app-bar-height) !important;
         height: var(--app-bar-height) !important;
@@ -52,6 +64,7 @@ body {
         .mud-appbar .mud-toolbar.mud-toolbar-gutters {
             height: var(--app-bar-height) !important;
             min-height: var(--app-bar-height) !important;
+            padding-inline-start: 0 !important;
             flex-wrap: nowrap !important;
             padding-top: 0 !important;
             padding-bottom: 0 !important;

@@ -10,7 +10,7 @@
 <MudLayout Class="main-layout-shell"
            Style="background-image: url('/mbg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh;">
     <MudAppBar Elevation="3" Dense="true" Color="Color.Transparent">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" Class="appbar-menu-button"
                        OnClick="@((e) => DrawerToggle())" />
         <MudImage Src="/logoSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
                   @onclick="NavigateToHome" />
