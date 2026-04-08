@@ -15,7 +15,11 @@
         <MudImage Src="/logoSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
                   @onclick="NavigateToHome" />
         <MudText Typo="Typo.h6" Class="responsive-app-title">@Localizer["AiCvApplications"]</MudText>
-        <MudSpacer />
+        <div class="appbar-breadcrumb-center">
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="appbar-breadcrumb-chip">
+                <MudBreadcrumbs Items="_breadcrumbs" />
+            </MudChip>
+        </div>
         <MudSpacer />
         <LanguageSwitcher />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"
