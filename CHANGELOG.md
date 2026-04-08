@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.8.10] - 2026-04-08
+
+### Changed
+- Ignore local dotnet CLI cache
+- Fix responsive app bar and drawer behavior
+
 ## [1.8.9] - 2026-04-08
 
 ### Changed

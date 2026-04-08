@@ -33,10 +33,21 @@
             </MudText>
         </AiCV.Web.Components.Shared.LoadingIndicator>
     }
-    <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Mini" Breakpoint="Breakpoint.Md"
-               ClipMode="DrawerClipMode.Always" Elevation="4" Class="responsive-drawer">
-        <NavMenu />
-    </MudDrawer>
+    @if (_isMobile)
+    {
+        <MudDrawer @key="@("mobile-drawer")" @bind-Open="_mobileDrawerOpen" Variant="DrawerVariant.Temporary"
+                   OverlayAutoClose="true" Elevation="4" Class="responsive-drawer">
+            <NavMenu />
+        </MudDrawer>
+    }
+    else
+    {
+        <MudDrawer @key="@("desktop-drawer")" @bind-Open="_desktopDrawerOpen" Variant="DrawerVariant.Mini"
+                   Breakpoint="Breakpoint.Always" ClipMode="DrawerClipMode.Always" Elevation="4"
+                   Class="responsive-drawer">
+            <NavMenu />
+        </MudDrawer>
+    }
     <MudMainContent Class="main-content">
         @Body
     </MudMainContent>

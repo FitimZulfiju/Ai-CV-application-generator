@@ -2,24 +2,64 @@ namespace AiCV.Web.Components.Layout;
 
 public partial class MainLayout : LayoutComponentBase, IDisposable
 {
-    private bool _drawerOpen = true;
+    private const int MobileDrawerBreakpoint = 960;
+    private bool _desktopDrawerOpen = true;
+    private bool _mobileDrawerOpen;
+    private bool _isMobile = true;
+    private DotNetObjectReference<MainLayout>? _dotNetReference;
     protected bool IsAuthenticated { get; set; }
-    //private bool _showBetaWarning = true;
 
     protected override void OnInitialized()
     {
         LoadingService.OnChange += StateHasChanged;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        _dotNetReference = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("aiCvLayoutViewport.register", _dotNetReference, MobileDrawerBreakpoint);
+    }
+
     public void Dispose()
     {
         LoadingService.OnChange -= StateHasChanged;
+        _dotNetReference?.Dispose();
         GC.SuppressFinalize(this);
     }
 
     private void DrawerToggle()
     {
-        _drawerOpen = !_drawerOpen;
+        if (_isMobile)
+        {
+            _mobileDrawerOpen = !_mobileDrawerOpen;
+        }
+        else
+        {
+            _desktopDrawerOpen = !_desktopDrawerOpen;
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnViewportChanged(bool isMobile)
+    {
+        var hasChanged = _isMobile != isMobile;
+
+        _isMobile = isMobile;
+
+        if (isMobile)
+        {
+            _mobileDrawerOpen = false;
+        }
+
+        if (hasChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     protected void NavigateToHome()
@@ -30,8 +70,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        // This manual check can cause infinite loops if not handled correctly.
-        // We rely on RevalidatingIdentityAuthenticationStateProvider to handle security stamp validation.
         await base.OnParametersSetAsync();
     }
 }
