@@ -3,7 +3,7 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<MudScrollToTop TopOffset="400">
+<MudScrollToTop Selector=".main-content" TopOffset="400" ScrollBehavior="ScrollBehavior.Smooth">
     <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Size="Size.Small" />
 </MudScrollToTop>
 
@@ -37,7 +37,7 @@
     {
         <MudDrawer @key="@("mobile-drawer")" @bind-Open="_mobileDrawerOpen" Variant="DrawerVariant.Temporary"
                    OverlayAutoClose="true" Elevation="4" Class="responsive-drawer">
-            <NavMenu />
+            <NavMenu ShowLoggedInAs="true" />
         </MudDrawer>
     }
     else
@@ -45,7 +45,7 @@
         <MudDrawer @key="@("desktop-drawer")" @bind-Open="_desktopDrawerOpen" Variant="DrawerVariant.Mini"
                    Breakpoint="Breakpoint.Always" ClipMode="DrawerClipMode.Always" Elevation="4"
                    Class="responsive-drawer">
-            <NavMenu />
+            <NavMenu ShowLoggedInAs="_desktopDrawerOpen" />
         </MudDrawer>
     }
     <MudMainContent Class="main-content">
