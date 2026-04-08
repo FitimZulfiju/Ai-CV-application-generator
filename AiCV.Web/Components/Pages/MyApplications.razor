@@ -17,8 +17,8 @@
 }
     else
 {
-    <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading"
-              LoadingProgressColor="Color.Info" Filter="new Func<GeneratedApplication, bool>(FilterFunc1)" Dense="true">
+    <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm"
+              Filter="new Func<GeneratedApplication, bool>(FilterFunc1)" Dense="true">
         <ToolBarContent>
             <MudText Typo="Typo.h5" Class="d-flex align-center">
                 <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="mr-2" />

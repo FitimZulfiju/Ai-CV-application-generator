@@ -249,3 +249,7 @@ body {
 .mud-tabs .mud-tab.mud-tab-active {
     background-color: #E3F2FD;
 }
+
+.admin-logs-table .mud-table-loading {
+    display: none !important;
+}

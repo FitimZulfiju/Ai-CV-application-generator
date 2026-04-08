@@ -24,7 +24,6 @@ public partial class AdminDashboard
     }
 
     private AdminStatisticsDto? _statistics;
-    private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,14 +32,18 @@ public partial class AdminDashboard
 
     private async Task LoadStatistics()
     {
-        _loading = true;
+        LoadingService.Show("Loading admin dashboard...", 0);
         try
         {
             _statistics = await StatisticsService.GetStatisticsAsync();
         }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading admin dashboard: {ex.Message}", Severity.Error);
+        }
         finally
         {
-            _loading = false;
+            LoadingService.Hide();
         }
     }
 
