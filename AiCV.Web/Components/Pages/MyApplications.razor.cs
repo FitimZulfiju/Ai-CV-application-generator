@@ -9,18 +9,27 @@ public partial class MyApplications
 
     protected override async Task OnInitializedAsync()
     {
+        _isLoading = true;
+        LoadingService.Show("Loading applications...", 0);
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity?.IsAuthenticated == true)
+        try
         {
-            _userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-            if (!string.IsNullOrEmpty(_userId))
+            if (user.Identity?.IsAuthenticated == true)
             {
-                await LoadApplications();
+                _userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+                if (!string.IsNullOrEmpty(_userId))
+                {
+                    await LoadApplications();
+                }
             }
         }
-        _isLoading = false;
+        finally
+        {
+            _isLoading = false;
+            LoadingService.Hide();
+        }
     }
 
     private async Task LoadApplications()

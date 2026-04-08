@@ -4,70 +4,68 @@
 <PageTitle>@Localizer["MyApplications"]</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
-
     @if (_isLoading)
     {
-        <AiCV.Web.Components.Shared.LoadingIndicator />
     }
     else if (_applications == null || !_applications.Any())
     {
         <MudAlert Severity="Severity.Info">
             @Localizer["NoApplicationsYet"] <MudLink Href="/generate">
-                @Localizer["Generate"]
-            </MudLink> @Localizer["ToCreateOne"]
-        </MudAlert>
-    }
+            @Localizer["Generate"]
+        </MudLink> @Localizer["ToCreateOne"]
+    </MudAlert>
+}
     else
-    {
-        <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading"
-                  LoadingProgressColor="Color.Info" Filter="new Func<GeneratedApplication, bool>(FilterFunc1)" Dense="true">
-            <ToolBarContent>
-                <MudText Typo="Typo.h5" Class="d-flex align-center">
-                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="mr-2" />
-                    @Localizer["MyApplications"]
-                </MudText>
-                <MudSpacer />
-                <MudTextField @bind-Value="searchString1" Placeholder="@Localizer["Search"]" Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Clearable="true"></MudTextField>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>#</MudTh>
-                <MudTh>@Localizer["Date"]</MudTh>
-                <MudTh>@Localizer["Company"]</MudTh>
-                <MudTh>@Localizer["JobTitle"]</MudTh>
-                <MudTh>@Localizer["Template"]</MudTh>
-                <MudTh>@Localizer["Actions"]</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="#">@(_applications.IndexOf(context) + 1)</MudTd>
-                <MudTd DataLabel="@Localizer["Date"]">@context.CreatedDate.ToLocalTime().ToString("g")</MudTd>
-                <MudTd DataLabel="@Localizer["Company"]">@context.JobPosting?.CompanyName</MudTd>
-                <MudTd DataLabel="@Localizer["JobTitle"]">@context.JobPosting?.Title</MudTd>
-                <MudTd DataLabel="@Localizer["Template"]">
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Info">
-                        @Localizer[context.Template.ToString()]
-                    </MudChip>
-                </MudTd>
-                <MudTd DataLabel="@Localizer["Actions"]">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
-                               OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" Disabled="@(_deletingId == context.Id)"
-                               StartIcon="@Icons.Material.Filled.Visibility">@Localizer["View"]</MudButton>
+{
+    <MudTable Items="@_applications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading"
+              LoadingProgressColor="Color.Info" Filter="new Func<GeneratedApplication, bool>(FilterFunc1)" Dense="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Class="d-flex align-center">
+                <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="mr-2" />
+                @Localizer["MyApplications"]
+            </MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="@Localizer["Search"]" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Clearable="true"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>#</MudTh>
+            <MudTh>@Localizer["Date"]</MudTh>
+            <MudTh>@Localizer["Company"]</MudTh>
+            <MudTh>@Localizer["JobTitle"]</MudTh>
+            <MudTh>@Localizer["Template"]</MudTh>
+            <MudTh>@Localizer["Actions"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="#">@(_applications.IndexOf(context) + 1)</MudTd>
+            <MudTd DataLabel="@Localizer["Date"]">@context.CreatedDate.ToLocalTime().ToString("g")</MudTd>
+            <MudTd DataLabel="@Localizer["Company"]">@context.JobPosting?.CompanyName</MudTd>
+            <MudTd DataLabel="@Localizer["JobTitle"]">@context.JobPosting?.Title</MudTd>
+            <MudTd DataLabel="@Localizer["Template"]">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Info">
+                    @Localizer[context.Template.ToString()]
+                </MudChip>
+            </MudTd>
+            <MudTd DataLabel="@Localizer["Actions"]">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                           OnClick="@(() => ViewApplication(context.Id))" Class="mr-10" Disabled="@(_deletingId == context.Id)"
+                           StartIcon="@Icons.Material.Filled.Visibility">@Localizer["View"]</MudButton>
 
-                    @if (_deletingId == context.Id)
-                    {
-                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Error" />
-                    }
-                    else
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                                       OnClick="@(() => DeleteApplication(context))" aria-label="delete" Disabled="@(_deletingId != null)">
-                        </MudIconButton>
-                    }
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
-    }
+                @if (_deletingId == context.Id)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Error" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                   OnClick="@(() => DeleteApplication(context))" aria-label="delete" Disabled="@(_deletingId != null)">
+                    </MudIconButton>
+                }
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
 </MudContainer>

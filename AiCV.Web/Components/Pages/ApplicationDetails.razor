@@ -4,10 +4,8 @@
 <PageTitle>@Localizer["AiCvApplications"]</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
-
     @if (_isLoading)
     {
-        <AiCV.Web.Components.Shared.LoadingIndicator />
     }
     else if (_application == null)
     {
