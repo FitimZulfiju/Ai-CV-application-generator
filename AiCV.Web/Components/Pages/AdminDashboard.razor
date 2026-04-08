@@ -14,11 +14,7 @@
                    OnClick="ExportCsv">@Localizer["ExportCsv"]</MudButton>
     </MudStack>
 
-    @if (_loading)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-    }
-    else if (_statistics != null)
+    @if (_statistics != null)
     {
         <MudGrid Spacing="3">
             <!-- Statistics Cards -->

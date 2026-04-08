@@ -20,7 +20,7 @@
 
     <MudCard Elevation="3">
         <MudTable ServerData="@ServerReload" Dense="true" Hover="true" Striped="true" @ref="_table" T="SystemLog"
-            Elevation="0">
+            Elevation="0" Class="admin-logs-table">
             <ToolBarContent>
                 <MudText Typo="Typo.h6">@Localizer["LogEntries"]</MudText>
                 <MudSpacer />
@@ -33,6 +33,9 @@
                     <MudSelectItem Value="@("Info")">@Localizer["Info"]</MudSelectItem>
                 </MudSelect>
             </ToolBarContent>
+            <LoadingContent>
+                <MudText Class="d-none" />
+            </LoadingContent>
             <HeaderContent>
                 <MudTh>@Localizer["Timestamp"]</MudTh>
                 <MudTh>@Localizer["Level"]</MudTh>

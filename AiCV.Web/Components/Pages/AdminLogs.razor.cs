@@ -7,12 +7,20 @@ public partial class AdminLogs
 
     private async Task<TableData<SystemLog>> ServerReload(TableState state, CancellationToken token)
     {
-        var logs = await LogService.GetLogsAsync(state.Page + 1, state.PageSize, _filterLevel);
-        var total = await LogService.GetTotalLogsCountAsync(_filterLevel);
-        return new TableData<SystemLog> { TotalItems = total, Items = logs };
+        LoadingService.Show("Loading system logs...", 0);
+        try
+        {
+            var logs = await LogService.GetLogsAsync(state.Page + 1, state.PageSize, _filterLevel);
+            var total = await LogService.GetTotalLogsCountAsync(_filterLevel);
+            return new TableData<SystemLog> { TotalItems = total, Items = logs };
+        }
+        finally
+        {
+            LoadingService.Hide();
+        }
     }
 
-    private void OnFilterChanged() => _table.ReloadServerData();
+    private Task OnFilterChanged() => _table.ReloadServerData();
 
     private async Task RefreshLogs() => await _table.ReloadServerData();
 
@@ -26,8 +34,16 @@ public partial class AdminLogs
         );
         if (confirmed == true)
         {
-            await LogService.ClearLogsAsync(30);
-            await RefreshLogs();
+            LoadingService.Show("Clearing system logs...", 0);
+            try
+            {
+                await LogService.ClearLogsAsync(30);
+                await RefreshLogs();
+            }
+            finally
+            {
+                LoadingService.Hide();
+            }
         }
     }
 

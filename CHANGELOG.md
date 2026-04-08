@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.8.11] - 2026-04-08
+
+### Changed
+- Use global loading on admin pages
+
 ## [1.8.10] - 2026-04-08
 
 ### Changed
