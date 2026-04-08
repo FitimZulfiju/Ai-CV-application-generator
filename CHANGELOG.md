@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.8.12] - 2026-04-08
+
+### Changed
+- Align app bar menu button spacing
+- Refine nav drawer label and scroll-to-top
+
 ## [1.8.11] - 2026-04-08
 
 ### Changed

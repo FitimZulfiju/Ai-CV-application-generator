@@ -3,14 +3,14 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<MudScrollToTop TopOffset="400">
+<MudScrollToTop Selector=".main-content" TopOffset="400" ScrollBehavior="ScrollBehavior.Smooth">
     <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Size="Size.Small" />
 </MudScrollToTop>
 
 <MudLayout Class="main-layout-shell"
            Style="background-image: url('/mbg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh;">
     <MudAppBar Elevation="3" Dense="true" Color="Color.Transparent">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" Class="appbar-menu-button"
                        OnClick="@((e) => DrawerToggle())" />
         <MudImage Src="/logoSvg.svg" Alt="AI Web CV Logo" Style="cursor: pointer;" Class="responsive-logo"
                   @onclick="NavigateToHome" />
@@ -37,7 +37,7 @@
     {
         <MudDrawer @key="@("mobile-drawer")" @bind-Open="_mobileDrawerOpen" Variant="DrawerVariant.Temporary"
                    OverlayAutoClose="true" Elevation="4" Class="responsive-drawer">
-            <NavMenu />
+            <NavMenu ShowLoggedInAs="true" />
         </MudDrawer>
     }
     else
@@ -45,7 +45,7 @@
         <MudDrawer @key="@("desktop-drawer")" @bind-Open="_desktopDrawerOpen" Variant="DrawerVariant.Mini"
                    Breakpoint="Breakpoint.Always" ClipMode="DrawerClipMode.Always" Elevation="4"
                    Class="responsive-drawer">
-            <NavMenu />
+            <NavMenu ShowLoggedInAs="_desktopDrawerOpen" />
         </MudDrawer>
     }
     <MudMainContent Class="main-content">
