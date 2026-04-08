@@ -30,6 +30,7 @@ public partial class Notes
             return;
 
         _isLoading = true;
+        LoadingService.Show("Loading notes...", 0);
         await InvokeAsync(StateHasChanged);
 
         try
@@ -52,6 +53,7 @@ public partial class Notes
         finally
         {
             _isLoading = false;
+            LoadingService.Hide();
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -111,7 +113,6 @@ public partial class Notes
         var note = dropInfo.Item;
         var targetZone = dropInfo.DropzoneIdentifier;
 
-        // Handle zone changes (pin/unpin)
         if (!_showArchived)
         {
             var wasPinned = note.IsPinned;
@@ -125,17 +126,13 @@ public partial class Notes
             }
         }
 
-        // Update display order based on new position
         var zonedNotes = _displayNotes.Where(n => GetNoteZone(n) == targetZone).ToList();
 
-        // Remove the dragged item from its current position
         zonedNotes.Remove(note);
 
-        // Insert at new position
         var newIndex = Math.Min(dropInfo.IndexInZone, zonedNotes.Count);
         zonedNotes.Insert(newIndex, note);
 
-        // Get all note IDs in order
         var orderedIds = zonedNotes.ConvertAll(n => n.Id);
         await NoteService.UpdateDisplayOrderAsync(_userId, orderedIds);
         await LoadNotes();

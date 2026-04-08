@@ -3,9 +3,11 @@
 
 <PageTitle>@Localizer["MasterCvProfile"]</PageTitle>
 
-@if (_profile == null)
+@if (_isLoading)
 {
-    <AiCV.Web.Components.Shared.LoadingIndicator />
+}
+else if (_profile == null)
+{
 }
 else
 {

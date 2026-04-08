@@ -64,6 +64,7 @@ public partial class UserSettingsPage
     private async Task LoadConfigurations()
     {
         _isLoading = true;
+        LoadingService.Show("Loading settings...", 0);
         try
         {
             _configurations = await ConfigurationService.GetConfigurationsAsync(_userId);
@@ -75,6 +76,7 @@ public partial class UserSettingsPage
         finally
         {
             _isLoading = false;
+            LoadingService.Hide();
         }
     }
 
@@ -148,7 +150,6 @@ public partial class UserSettingsPage
                     ? string.Join(", ", _selectedModelMetadata.Notes)
                     : null;
 
-            // Auto-generate name if empty or if it matches a model name (meaning it was likely auto-generated)
             if (
                 string.IsNullOrWhiteSpace(_newConfig.Name)
                 || _availableModels.Any(m => m.ModelId == _newConfig.Name)
@@ -172,13 +173,12 @@ public partial class UserSettingsPage
         _isTestingConnection = true;
         try
         {
-            // We use the factory to get a temporary service instance
             var aiService = AIServiceFactory.CreateService(
                 _newConfig.Provider,
                 _newConfig.ApiKey,
                 _newConfig.ModelId,
                 Localizer,
-                new HttpClient() // Temporary HttpClient
+                new HttpClient()
             );
 
             var result = await aiService.TestAccessAsync();
@@ -230,12 +230,10 @@ public partial class UserSettingsPage
         try
         {
             _newConfig.UserId = _userId;
-            // IsActive logic handled by service (first one matches)
 
             var saved = await ConfigurationService.SaveConfigurationAsync(_newConfig);
             if (saved != null)
             {
-                // Refresh list to get correct IDs and active status
                 await LoadConfigurations();
                 ResetNewConfig();
                 Snackbar.Add(Localizer["ConfigurationSaved"], Severity.Success);
@@ -254,8 +252,6 @@ public partial class UserSettingsPage
             var result = await ConfigurationService.ActivateConfigurationAsync(config.Id, _userId);
             if (result != null)
             {
-                // Update local state mechanism without full reload if possible?
-                // Accessing _configurations directly
                 foreach (var c in _configurations)
                 {
                     c.IsActive = (c.Id == config.Id);
@@ -275,7 +271,6 @@ public partial class UserSettingsPage
 
     private async Task EditConfiguration(UserAIConfiguration config)
     {
-        // Clone config for editing to prevent modifying the list directly before saving
         var configToEdit = new UserAIConfiguration
         {
             Id = config.Id,
@@ -290,13 +285,8 @@ public partial class UserSettingsPage
             CreatedAt = config.CreatedAt,
         };
 
-        // We need to fetch models for this config to populate dropdown in dialog
-        // Fallback first to avoid delay
         var models = DiscoveryService.GetFallbackModels(config.Provider);
 
-        // If we want real discovery on edit, we might need a "Refresh Models" button in dialog
-        // or try to discover immediately if we have the key (which we do, unprotectd).
-        // Let's try discovery if key is present.
         if (string.IsNullOrEmpty(config.ApiKey))
         {
             Snackbar.Add("Warning: API Key is missing. Please enter it.", Severity.Warning);
@@ -307,11 +297,10 @@ public partial class UserSettingsPage
                 "Error: API Key could not be decrypted. This usually happens after a system restart if keys weren't persisted, or if keys were rotated. Please re-enter it.",
                 Severity.Error
             );
-            configToEdit.ApiKey = string.Empty; // Clear the token so user doesn't save it
+            configToEdit.ApiKey = string.Empty;
         }
         else
         {
-            // Try discovery if we have a valid-looking key
             try
             {
                 var discoveryResult = await DiscoveryService.DiscoverModelsAsync(
@@ -360,11 +349,8 @@ public partial class UserSettingsPage
         {
             try
             {
-                // ensure UserID is set (should be)
                 updatedConfig.UserId = _userId;
                 await ConfigurationService.SaveConfigurationAsync(updatedConfig);
-
-                // Refresh list
                 await LoadConfigurations();
                 Snackbar.Add(Localizer["ConfigurationUpdated"], Severity.Success);
             }
@@ -395,7 +381,6 @@ public partial class UserSettingsPage
                 if (success)
                 {
                     _configurations.Remove(config);
-                    // If active was deleted, service might have activated another. Reload to be safe.
                     await LoadConfigurations();
                     Snackbar.Add(Localizer["ConfigurationDeleted"], Severity.Success);
                 }
@@ -409,7 +394,7 @@ public partial class UserSettingsPage
 
     private void ResetNewConfig()
     {
-        _newConfig = new UserAIConfiguration { Provider = AIProvider.OpenAI }; // Default provider
+        _newConfig = new UserAIConfiguration { Provider = AIProvider.OpenAI };
         _availableModels.Clear();
         _modelsLoaded = false;
         _showNewApiKey = false;
@@ -441,6 +426,7 @@ public partial class UserSettingsPage
         if (confirmed == true)
         {
             _isLoading = true;
+            LoadingService.Show("Deleting account...", 0);
             StateHasChanged();
 
             try
@@ -463,6 +449,7 @@ public partial class UserSettingsPage
             finally
             {
                 _isLoading = false;
+                LoadingService.Hide();
                 StateHasChanged();
             }
         }
@@ -470,7 +457,6 @@ public partial class UserSettingsPage
 
     private void HandleFinalLogout()
     {
-        // Use the direct GET logout endpoint to avoid "Headers are read-only" error in Blazor Server
         Navigation.NavigateTo("/logout-direct", forceLoad: true);
     }
 

@@ -6,6 +6,7 @@ public partial class Profile
 
     private int _activeTabIndex;
     private bool _showFormattingHelp;
+    private bool _isLoading = true;
     private bool _isSaving;
     private bool _isPrinting;
     private CvTemplate _selectedTemplate = CvTemplate.Professional;
@@ -27,58 +28,68 @@ public partial class Profile
 
     private async Task LoadProfileAsync()
     {
+        _isLoading = true;
+        LoadingService.Show("Loading profile...", 0);
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userId))
+        try
         {
-            Snackbar.Add("User not logged in.", Severity.Error);
-            return;
-        }
+            var user = authState.User;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        _profile = await CVService.GetProfileAsync(userId);
-
-        if (_profile == null)
-        {
-            Navigation.NavigateTo($"/{NavUri.LogoutPage}", true);
-            return;
-        }
-
-        if (_profile.Skills != null && _profile.Skills.Count != 0)
-        {
-            _skillCategories =
-            [
-                .. _profile
-                    .Skills.GroupBy(s => s.Category ?? "Uncategorized")
-                    .Select(g => new SkillCategoryViewModel
-                    {
-                        Name = g.Key,
-                        Skills = [.. g.Select(s => s.Name).Distinct()],
-                    }),
-            ];
-        }
-
-        if (_profile.Projects != null)
-        {
-            foreach (var proj in _profile.Projects)
+            if (string.IsNullOrEmpty(userId))
             {
-                if (
-                    string.IsNullOrEmpty(proj.SectionDescription)
-                    && !string.IsNullOrEmpty(proj.SectionTitle)
-                    && proj.SectionTitle.Contains('\n')
-                )
+                Snackbar.Add("User not logged in.", Severity.Error);
+                return;
+            }
+
+            _profile = await CVService.GetProfileAsync(userId);
+
+            if (_profile == null)
+            {
+                Navigation.NavigateTo($"/{NavUri.LogoutPage}", true);
+                return;
+            }
+
+            if (_profile.Skills != null && _profile.Skills.Count != 0)
+            {
+                _skillCategories =
+                [
+                    .. _profile
+                        .Skills.GroupBy(s => s.Category ?? "Uncategorized")
+                        .Select(g => new SkillCategoryViewModel
+                        {
+                            Name = g.Key,
+                            Skills = [.. g.Select(s => s.Name).Distinct()],
+                        }),
+                ];
+            }
+
+            if (_profile.Projects != null)
+            {
+                foreach (var proj in _profile.Projects)
                 {
-                    var lines = proj
-                        .SectionTitle.Replace("\r\n", "\n")
-                        .Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                    if (lines.Length > 1)
+                    if (
+                        string.IsNullOrEmpty(proj.SectionDescription)
+                        && !string.IsNullOrEmpty(proj.SectionTitle)
+                        && proj.SectionTitle.Contains('\n')
+                    )
                     {
-                        proj.SectionTitle = lines[0].Trim();
-                        proj.SectionDescription = string.Join("\n", lines.Skip(1));
+                        var lines = proj
+                            .SectionTitle.Replace("\r\n", "\n")
+                            .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                        if (lines.Length > 1)
+                        {
+                            proj.SectionTitle = lines[0].Trim();
+                            proj.SectionDescription = string.Join("\n", lines.Skip(1));
+                        }
                     }
                 }
             }
+        }
+        finally
+        {
+            _isLoading = false;
+            LoadingService.Hide();
         }
     }
 

@@ -1,6 +1,32 @@
 html,
 body {
     font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-layout-shell {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-content {
+    height: calc(100vh - 48px);
+    margin-top: 48px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 0 !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+.top-loading-indicator {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0 !important;
+    z-index: 1200;
 }
 
 .blazor-error-boundary {
@@ -9,9 +35,9 @@ body {
     color: white;
 }
 
-.blazor-error-boundary::after {
-    content: "An error has occurred."
-}
+    .blazor-error-boundary::after {
+        content: "An error has occurred."
+    }
 
 /* Drawer responsive background */
 /* On small screens (mobile), drawer overlays content - needs solid background */
@@ -29,9 +55,9 @@ body {
         background: transparent !important;
     }
 
-    .responsive-drawer .mud-drawer-content {
-        background-color: transparent !important;
-    }
+        .responsive-drawer .mud-drawer-content {
+            background-color: transparent !important;
+        }
 }
 
 /* Mobile Responsiveness Utility Classes */
@@ -58,17 +84,23 @@ body {
         height: 56px !important;
     }
 
-    .mud-appbar .mud-toolbar {
-        min-height: 56px !important;
-        height: 56px !important;
+        .mud-appbar .mud-toolbar {
+            min-height: 56px !important;
+            height: 56px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+    .main-content {
+        height: calc(100vh - 48px);
+        margin-top: 48px;
         padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        display: flex !important;
-        align-items: center !important;
     }
 
-    .mud-main-content {
-        padding-top: 56px !important;
+    .top-loading-indicator {
+        top: 48px;
     }
 
     .responsive-app-title {
@@ -180,16 +212,8 @@ body {
     justify-content: center;
 }
 
-@media (max-width: 959.98px) {
-    .cv-paper-container {
-        /*padding: 10px;*/
-    }
-}
-
 /* Fix for Generate page on mobile */
 @media (max-width: 599.98px) {
-
-
 
     /* Ensure the preview HTML stays contained */
     .markdown-body {
@@ -200,7 +224,7 @@ body {
     }
 
     /* Editor/Preview panels on mobile */
-    .stack-on-mobile>.mud-paper {
+    .stack-on-mobile > .mud-paper {
         max-height: 40vh;
         overflow-y: auto;
     }

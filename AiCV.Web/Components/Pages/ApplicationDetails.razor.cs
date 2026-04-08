@@ -39,6 +39,7 @@ public partial class ApplicationDetails
         _isLoading = true;
         _activeTabIndex = 0;
         StateHasChanged();
+        LoadingService.Show("Loading application...", 0);
 
         try
         {
@@ -94,6 +95,7 @@ public partial class ApplicationDetails
         finally
         {
             _isLoading = false;
+            LoadingService.Hide();
         }
     }
 
