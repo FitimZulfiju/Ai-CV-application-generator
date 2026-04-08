@@ -33,7 +33,8 @@
             </MudText>
         </AiCV.Web.Components.Shared.LoadingIndicator>
     }
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="4" Class="responsive-drawer">
+    <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Mini" Breakpoint="Breakpoint.Md"
+               ClipMode="DrawerClipMode.Always" Elevation="4" Class="responsive-drawer">
         <NavMenu />
     </MudDrawer>
     <MudMainContent Class="main-content">
