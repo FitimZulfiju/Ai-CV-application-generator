@@ -132,3 +132,4 @@ AiCV.Web/wwwroot/uploads/
 .dotnet/.dotnet/10.0.201.toolpath.sentinel
 .dotnet/.dotnet/10.0.201.dotnetFirstUseSentinel
 /.dotnet/.dotnet
+/.dotnet-cli/.dotnet
