@@ -50,6 +50,47 @@ body {
         margin-bottom: 0 !important;
     }
 
+    .mud-appbar .appbar-breadcrumb-chip {
+        max-width: min(38vw, 420px);
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .mud-appbar .appbar-breadcrumb-center {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        max-width: min(38vw, 420px);
+        width: 100%;
+    }
+
+        .mud-appbar .appbar-breadcrumb-chip .mud-chip-content {
+            overflow: hidden;
+        }
+
+        .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumbs {
+            overflow: hidden;
+        }
+
+        .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumbs-ol {
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+
+        .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumb-item,
+        .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumb-separator {
+            white-space: nowrap;
+        }
+
+    .mud-appbar .appbar-breadcrumb-center .appbar-breadcrumb-chip {
+        pointer-events: auto;
+    }
+
     .mud-appbar .mud-toolbar {
         min-height: var(--app-bar-height) !important;
         height: var(--app-bar-height) !important;
@@ -86,6 +127,11 @@ body {
         background-color: rgba(255, 255, 255, 0.95) !important;
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
+    }
+
+    .appbar-breadcrumb-center,
+    .appbar-breadcrumb-chip {
+        display: none !important;
     }
 }
 
