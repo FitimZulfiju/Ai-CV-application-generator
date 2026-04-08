@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.8.13] - 2026-04-08
+
+### Changed
+- Move routing namespace to global usings
+- Add centered desktop breadcrumb to app bar
+
 ## [1.8.12] - 2026-04-08
 
 ### Changed
