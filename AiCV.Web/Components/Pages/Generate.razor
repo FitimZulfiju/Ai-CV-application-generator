@@ -74,7 +74,7 @@
                                                StartIcon="@Icons.Material.Filled.CloudDownload" FullWidth="true" Class="mt-1">
                                         @if (_isFetching)
                                         {
-                                            <MudText>@Localizer["Fetch"]...</MudText>
+                                            <AiCV.Web.Components.Shared.LoadingIndicator />
                                         }
                                         else
                                         {
@@ -158,6 +158,7 @@
                                                StartIcon="@Icons.Material.Filled.AutoAwesome" FullWidth="true">
                                         @if (_isGenerating)
                                         {
+                                            <AiCV.Web.Components.Shared.LoadingIndicator />
                                             <MudText Class="ms-2">@Localizer["Generating"]</MudText>
                                         }
                                         else
