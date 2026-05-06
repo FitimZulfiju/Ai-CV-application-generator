@@ -11,6 +11,7 @@ public partial class UpdateBanner
     private System.Timers.Timer? _countdownTimer;
     private bool _disposed = false;
     private string? _baseUri;
+    private DateTime? _installingSinceUtc;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +51,28 @@ public partial class UpdateBanner
                 return;
             }
 
+            if (_isInstalling)
+            {
+                if (response.IsUpdateTriggering)
+                {
+                    await InvokeAsync(StateHasChanged);
+                    return;
+                }
+
+                var installElapsed = _installingSinceUtc.HasValue
+                    ? DateTime.UtcNow - _installingSinceUtc.Value
+                    : TimeSpan.Zero;
+
+                if (!response.IsUpdateScheduled && installElapsed >= TimeSpan.FromSeconds(15))
+                {
+                    _isInstalling = false;
+                    _showBanner = false;
+                    _installingSinceUtc = null;
+                    await InvokeAsync(StateHasChanged);
+                    return;
+                }
+            }
+
             // Check if update is scheduled
             if (response.IsUpdateScheduled && response.SecondsRemaining > 0)
             {
@@ -62,6 +85,14 @@ public partial class UpdateBanner
                     StartCountdown();
                 }
 
+                await InvokeAsync(StateHasChanged);
+            }
+            else if (response.IsUpdateTriggering)
+            {
+                _showBanner = true;
+                _isInstalling = true;
+                _installingSinceUtc ??= DateTime.UtcNow;
+                _countdownTimer?.Stop();
                 await InvokeAsync(StateHasChanged);
             }
             else if (response.IsUpdateAvailable && !_showBanner)
@@ -123,6 +154,7 @@ public partial class UpdateBanner
             if (_secondsRemaining <= 0)
             {
                 _isInstalling = true;
+                _installingSinceUtc ??= DateTime.UtcNow;
                 _countdownTimer?.Stop();
             }
 
@@ -157,6 +189,9 @@ public partial class UpdateBanner
         public bool IsUpdateAvailable { get; set; }
         public string? NewVersionTag { get; set; }
         public bool IsUpdateScheduled { get; set; }
+        public bool IsUpdateTriggering { get; set; }
+        public DateTime? LastUpdateTriggeredTime { get; set; }
+        public string? LastUpdateError { get; set; }
         public double? SecondsRemaining { get; set; }
     }
 
