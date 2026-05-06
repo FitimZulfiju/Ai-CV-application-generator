@@ -756,7 +756,7 @@
     <value>Result Preview</value>
   </data>
   <data name="InstallingUpdates" xml:space="preserve">
-    <value>Installing updates...</value>
+    <value>Applying updates...</value>
   </data>
   <data name="UpdateAvailable" xml:space="preserve">
     <value>Update Available</value>
