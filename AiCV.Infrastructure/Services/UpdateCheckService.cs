@@ -7,6 +7,9 @@ public interface IUpdateCheckService
     string? NewVersionTag { get; }
     DateTime? ScheduledUpdateTime { get; }
     bool IsUpdateScheduled { get; }
+    bool IsUpdateTriggering { get; }
+    DateTime? LastUpdateTriggeredTime { get; }
+    string? LastUpdateError { get; }
     void ScheduleUpdate(int delaySeconds = 300);
     void CancelScheduledUpdate();
     Task<bool> TriggerUpdateAsync();
@@ -28,6 +31,9 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     private string? _newVersionDigest;
     private string? _newVersionTag;
     private bool _isUpdateAvailable;
+    private bool _isUpdateTriggering;
+    private DateTime? _lastUpdateTriggeredTime;
+    private string? _lastUpdateError;
 
     // Server-side scheduling fields
     private DateTime? _scheduledUpdateTime;
@@ -40,6 +46,9 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     public DateTime? ScheduledUpdateTime => _scheduledUpdateTime;
     public bool IsUpdateScheduled =>
         _scheduledUpdateTime.HasValue && _scheduledUpdateTime > DateTime.UtcNow;
+    public bool IsUpdateTriggering => _isUpdateTriggering;
+    public DateTime? LastUpdateTriggeredTime => _lastUpdateTriggeredTime;
+    public string? LastUpdateError => _lastUpdateError;
 
     public UpdateCheckService(
         IHttpClientFactory httpClientFactory,
@@ -136,7 +145,11 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                 return;
 
             _logger.LogWarning("Scheduled update time reached. Triggering Watchtower now!");
-            await TriggerUpdateAsync();
+            var triggered = await TriggerUpdateAsync();
+            if (!triggered)
+            {
+                _logger.LogError("Scheduled Watchtower update trigger failed.");
+            }
         }
         catch (OperationCanceledException)
         {
@@ -318,30 +331,55 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     {
         if (string.IsNullOrEmpty(_watchtowerToken))
         {
-            _logger.LogError("Cannot trigger update: WATCHTOWER_HTTP_API_TOKEN is not configured.");
+            const string error = "WATCHTOWER_HTTP_API_TOKEN is not configured.";
+            _lastUpdateError = error;
+            _logger.LogError("Cannot trigger update: {Error}", error);
             return false;
         }
 
         try
         {
+            _isUpdateTriggering = true;
+            _lastUpdateError = null;
+            _lastUpdateTriggeredTime = DateTime.UtcNow;
+
+            lock (_scheduleLock)
+            {
+                _scheduledUpdateTime = null;
+                _scheduledUpdateCts?.Dispose();
+                _scheduledUpdateCts = null;
+            }
+
             using var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(20);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Bearer",
                 _watchtowerToken
             );
 
             // Watchtower API is typically at http://watchtower:8080/v1/update
-            // In our compose, the service name is 'watchtower'
-            var response = await client.GetAsync("http://aicv-watchtower:8080/v1/update");
+            // In our compose, the service name is 'aicv-watchtower'.
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                "http://aicv-watchtower:8080/v1/update"
+            );
+            var response = await client.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead
+            );
 
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Successfully signaled Watchtower to perform update.");
+                _isUpdateAvailable = false;
+                _newVersionDigest = null;
+                _newVersionTag = null;
                 return true;
             }
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
+                _lastUpdateError = $"Watchtower returned {(int)response.StatusCode} {response.StatusCode}.";
                 if (_logger.IsEnabled(LogLevel.Error))
                 {
                     _logger.LogError(
@@ -352,12 +390,28 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                 }
             }
         }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Timed out waiting for Watchtower response. The update may still be running."
+            );
+            _isUpdateAvailable = false;
+            _newVersionDigest = null;
+            _newVersionTag = null;
+            return true;
+        }
         catch (Exception ex)
         {
+            _lastUpdateError = ex.Message;
             if (_logger.IsEnabled(LogLevel.Error))
             {
                 _logger.LogError(ex, "Error sending signal to Watchtower");
             }
+        }
+        finally
+        {
+            _isUpdateTriggering = false;
         }
         return false;
     }

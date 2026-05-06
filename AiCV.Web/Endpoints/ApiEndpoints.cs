@@ -14,6 +14,9 @@ public static class ApiEndpoints
                     var newVersionTag = updateCheckService.NewVersionTag;
                     var isUpdateScheduled = updateCheckService.IsUpdateScheduled;
                     var scheduledUpdateTime = updateCheckService.ScheduledUpdateTime;
+                    var isUpdateTriggering = updateCheckService.IsUpdateTriggering;
+                    var lastUpdateTriggeredTime = updateCheckService.LastUpdateTriggeredTime;
+                    var lastUpdateError = updateCheckService.LastUpdateError;
                     double? secondsRemaining = scheduledUpdateTime.HasValue
                         ? (scheduledUpdateTime.Value - DateTime.UtcNow).TotalSeconds
                         : null;
@@ -25,6 +28,9 @@ public static class ApiEndpoints
                         newVersionTag,
                         isUpdateScheduled,
                         scheduledUpdateTime,
+                        isUpdateTriggering,
+                        lastUpdateTriggeredTime,
+                        lastUpdateError,
                         secondsRemaining,
                     });
                 }
