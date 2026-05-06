@@ -725,7 +725,7 @@
     <value>Forhåndsvisning af resultat</value>
   </data>
   <data name="InstallingUpdates" xml:space="preserve">
-    <value>Installerer opdateringer...</value>
+    <value>Anvender opdateringer...</value>
   </data>
   <data name="UpdateAvailable" xml:space="preserve">
     <value>Opdatering tilgængelig</value>
