@@ -30,6 +30,9 @@ public partial class UserSettingsPage
         && !string.IsNullOrWhiteSpace(_newConfig.ModelId)
         && !string.IsNullOrWhiteSpace(_newConfig.Name);
 
+    private void ConnectOpenRouter() =>
+        Navigation.NavigateTo("/connect/openrouter", forceLoad: true);
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -53,12 +56,54 @@ public partial class UserSettingsPage
             if (!string.IsNullOrEmpty(_userId))
             {
                 await LoadConfigurations();
+                HandleOAuthReturn();
             }
         }
         else
         {
             Navigation.NavigateTo($"/{NavUri.LoginPage}");
         }
+    }
+
+    private void HandleOAuthReturn()
+    {
+        var uri = new Uri(Navigation.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.TryGetValue("connected", out var connected))
+        {
+            var msg = connected.ToString() switch
+            {
+                "openrouter" => "OpenRouter account connected! You can now use it from the Generate page.",
+                "gemini"     => "Google Gemini account connected! Your existing plan will be used.",
+                _            => "Account connected successfully!",
+            };
+            Snackbar.Add(msg, Severity.Success);
+            Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
+        }
+        else if (query.TryGetValue("error", out var errorCode))
+        {
+            var msg = errorCode.ToString() switch
+            {
+                "openrouter_cancelled"       => "OpenRouter connection was cancelled.",
+                "openrouter_expired"         => "OpenRouter session expired. Please try again.",
+                "openrouter_exchange_failed" => "Could not retrieve OpenRouter API key.",
+                "gemini_cancelled"           => "Google Gemini connection was cancelled.",
+                "gemini_expired"             => "Session expired. Please try again.",
+                "gemini_exchange_failed"     => "Could not exchange code with Google. Please try again.",
+                "gemini_no_refresh_token"    => "Google did not return a refresh token. Please revoke the app access in your Google account and try again.",
+                "google_not_configured"      => "Google OAuth is not configured on this server.",
+                _                            => $"Connection failed ({errorCode}).",
+            };
+
+            // Append raw provider error detail if present
+            if (query.TryGetValue("detail", out var detail) && !string.IsNullOrWhiteSpace(detail))
+                msg += $" Details: {detail}";
+
+            Snackbar.Add(msg, Severity.Error);
+            Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
+        }
+
     }
 
     private async Task LoadConfigurations()
@@ -205,21 +250,12 @@ public partial class UserSettingsPage
         }
     }
 
-    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken _)
+    /// <summary>Adapter called by AiModelPicker after selection — syncs metadata to _newConfig.</summary>
+    private Task OnModelPickerChanged(string? modelId)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return Task.FromResult(_availableModels.Select(m => m.ModelId).AsEnumerable());
-        }
-
-        var filtered = _availableModels
-            .Where(m =>
-                m.ModelId.Contains(value, StringComparison.OrdinalIgnoreCase)
-                || (m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) == true)
-            )
-            .Select(m => m.ModelId);
-
-        return Task.FromResult(filtered);
+        _newConfig.ModelId = modelId ?? string.Empty;
+        OnModelSelected();
+        return Task.CompletedTask;
     }
 
     private async Task AddConfiguration()

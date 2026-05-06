@@ -4,14 +4,34 @@ public class GoogleGeminiService(
     HttpClient httpClient,
     string apiKey,
     string modelId,
-    IStringLocalizer<AicvResources> localizer
+    IStringLocalizer<AicvResources> localizer,
+    bool isOAuthToken = false
 ) : AiServiceBase(localizer)
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly string _apiKey = apiKey;
     private readonly string _modelId = modelId;
+    private readonly bool _isOAuthToken = isOAuthToken;
 
     protected override AIProvider Provider => AIProvider.GoogleGemini;
+
+    /// <summary>
+    /// Builds the Gemini API URL. Uses ?key= for API keys, or Authorization: Bearer for OAuth tokens.
+    /// </summary>
+    private string GetApiUrl(string action) =>
+        $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:{action}" +
+        (_isOAuthToken ? string.Empty : $"?key={_apiKey}");
+
+    private HttpRequestMessage BuildRequest(HttpMethod method, string action, object body)
+    {
+        var request = new HttpRequestMessage(method, GetApiUrl(action))
+        {
+            Content = JsonContent.Create(body),
+        };
+        if (_isOAuthToken)
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        return request;
+    }
 
     protected override async Task<HttpResponseMessage> SendProbeRequestAsync()
     {
@@ -21,13 +41,8 @@ public class GoogleGeminiService(
             generationConfig = new { maxOutputTokens = 1 },
         };
 
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        return await _httpClient.PostAsync(
-            $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
-            content
-        );
+        var request = BuildRequest(HttpMethod.Post, "generateContent", requestBody);
+        return await _httpClient.SendAsync(request);
     }
 
     public override async Task<string> GenerateCoverLetterAsync(
@@ -45,13 +60,7 @@ public class GoogleGeminiService(
             contents = new[] { new { parts = new[] { new { text = prompt } } } },
         };
 
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PostAsync(
-            $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
-            content
-        );
+        var response = await _httpClient.SendAsync(BuildRequest(HttpMethod.Post, "generateContent", requestBody));
 
         if (!response.IsSuccessStatusCode)
         {
@@ -88,13 +97,7 @@ public class GoogleGeminiService(
             contents = new[] { new { parts = new[] { new { text = prompt } } } },
         };
 
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PostAsync(
-            $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
-            content
-        );
+        var response = await _httpClient.SendAsync(BuildRequest(HttpMethod.Post, "generateContent", requestBody));
 
         if (!response.IsSuccessStatusCode)
         {
@@ -144,13 +147,7 @@ public class GoogleGeminiService(
             contents = new[] { new { parts = new[] { new { text = prompt } } } },
         };
 
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PostAsync(
-            $"https://generativelanguage.googleapis.com/v1beta/models/{_modelId}:generateContent?key={_apiKey}",
-            content
-        );
+        var response = await _httpClient.SendAsync(BuildRequest(HttpMethod.Post, "generateContent", requestBody));
 
         if (!response.IsSuccessStatusCode)
         {

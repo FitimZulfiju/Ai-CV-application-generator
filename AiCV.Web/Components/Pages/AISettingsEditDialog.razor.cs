@@ -1,4 +1,4 @@
-﻿namespace AiCV.Web.Components.Pages;
+namespace AiCV.Web.Components.Pages;
 
 public partial class AISettingsEditDialog
 {
@@ -14,14 +14,15 @@ public partial class AISettingsEditDialog
     private bool _showApiKey = false;
 
     private void Cancel() => MudDialog.Cancel();
-
     private void Submit() => MudDialog.Close(DialogResult.Ok(UserConfiguration));
 
-    private void OnModelSelected()
+    /// <summary>
+    /// Called by AiModelPicker after a model is selected — updates the
+    /// cost type and notes from the selected model's metadata.
+    /// </summary>
+    private Task OnModelSelectedCallback(string? modelId)
     {
-        var selectedModel = AvailableModels.FirstOrDefault(m =>
-            m.ModelId == UserConfiguration.ModelId
-        );
+        var selectedModel = AvailableModels.FirstOrDefault(m => m.ModelId == modelId);
         if (selectedModel != null)
         {
             UserConfiguration.CostType = selectedModel.CostType;
@@ -29,22 +30,6 @@ public partial class AISettingsEditDialog
                 ? string.Join(", ", selectedModel.Notes)
                 : null;
         }
-    }
-
-    private Task<IEnumerable<string>> SearchModels(string value, CancellationToken _)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return Task.FromResult(AvailableModels.Select(m => m.ModelId).AsEnumerable());
-        }
-
-        var filtered = AvailableModels
-            .Where(m =>
-                m.ModelId.Contains(value, StringComparison.OrdinalIgnoreCase)
-                || (m.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) == true)
-            )
-            .Select(m => m.ModelId);
-
-        return Task.FromResult(filtered);
+        return Task.CompletedTask;
     }
 }

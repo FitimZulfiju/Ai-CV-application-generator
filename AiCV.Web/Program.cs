@@ -27,6 +27,25 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 
+// ─── Serilog ────────────────────────────────────────────────────────────────
+builder.Host.UseSerilog((ctx, cfg) =>
+{
+    cfg.ReadFrom.Configuration(ctx.Configuration)
+       .Enrich.FromLogContext()
+       .WriteTo.Console(outputTemplate:
+           "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");
+
+    // File sink only in Development (not useful inside Docker containers)
+    if (ctx.HostingEnvironment.IsDevelopment())
+    {
+        cfg.WriteTo.File(
+            "logs/aicv-.log",
+            outputTemplate:
+                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}",
+            rollingInterval: RollingInterval.Day);
+    }
+});
+
 // Add services to the container.
 builder
     .Services.AddRazorComponents()
@@ -167,6 +186,9 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
         options.ClientSecret = googleClientSecret;
         options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+        // SaveTokens allows us to read the access/refresh tokens in the callback
+        // for the Gemini account-linking flow (separate from app login)
+        options.SaveTokens = true;
     });
 }
 
@@ -260,6 +282,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 builder.Services.AddScoped<IAIServiceFactory, AIServiceFactory>();
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<IOpenRouterOAuthService, OpenRouterOAuthService>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddScoped<IJobApplicationOrchestrator, JobApplicationOrchestrator>();
 builder.Services.AddScoped<IModelAvailabilityService, ModelAvailabilityService>();
@@ -327,7 +351,7 @@ builder.Services.AddSingleton<IBackupService, BackupService>();
 builder.Services.AddHostedService<BackupBackgroundService>();
 
 // Database Initialization
-builder.Services.AddScoped<IDbInitializer, AiCV.Infrastructure.Data.DbInitializer>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 var app = builder.Build();
 
@@ -360,338 +384,13 @@ app.UseRequestLocalization();
 app.UseStaticFiles();
 app.MapStaticAssets();
 
-// Add logout endpoint
-app.MapPost(
-    $"/{NavUri.LogoutPage}",
-    async (SignInManager<User> signInManager) =>
-    {
-        await signInManager.SignOutAsync();
-        return Results.Redirect($"/{NavUri.LoginPage}");
-    }
-);
-
-// Direct GET logout endpoint for Blazor components (avoids "Headers are read-only" error)
-app.MapGet(
-    "/logout-direct",
-    async (SignInManager<User> signInManager, ILogger<Program> logger) =>
-    {
-        logger.LogInformation("Direct logout requested.");
-        await signInManager.SignOutAsync();
-        return Results.Redirect("/");
-    }
-);
-
-// Add login endpoint
-app.MapPost(
-        "/perform-login",
-        async (
-            SignInManager<User> signInManager,
-            [FromForm] string email,
-            [FromForm] string password,
-            [FromForm] bool? rememberMe
-        ) =>
-        {
-            var result = await signInManager.PasswordSignInAsync(
-                email,
-                password,
-                rememberMe ?? false,
-                lockoutOnFailure: false
-            );
-            if (result.Succeeded)
-            {
-                return Results.Redirect("/");
-            }
-            if (result.IsLockedOut)
-            {
-                return Results.Redirect($"/{NavUri.LoginPage}?error=AccountLocked");
-            }
-            return Results.Redirect($"/{NavUri.LoginPage}?error=InvalidLoginAttempt");
-        }
-    )
-    .DisableAntiforgery(); // Disable antiforgery for simplicity in this demo, but recommended for production
-
-// Support GET login for auto-login after registration
-app.MapGet(
-    "/perform-login",
-    async (
-        SignInManager<User> signInManager,
-        [FromQuery] string email,
-        [FromQuery] string password
-    ) =>
-    {
-        var result = await signInManager.PasswordSignInAsync(
-            email,
-            password,
-            isPersistent: false,
-            lockoutOnFailure: false
-        );
-        if (result.Succeeded)
-        {
-            return Results.Redirect("/");
-        }
-        return Results.Redirect($"/{NavUri.LoginPage}?error=InvalidLoginAttempt");
-    }
-);
-
-// External login challenge endpoint
-app.MapGet(
-    "/external-login/{provider}",
-    async (string provider, SignInManager<User> signInManager, HttpContext httpContext) =>
-    {
-        // Sign out any existing user to ensure fresh OAuth flow
-        await signInManager.SignOutAsync();
-
-        // Clear any external authentication cookies to prevent caching
-        await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-        const string redirectUrl = "/external-login-callback";
-        var properties = signInManager.ConfigureExternalAuthenticationProperties(
-            provider,
-            redirectUrl
-        );
-
-        // Force fresh login prompt for the selected provider
-        properties.Items["prompt"] = "select_account";
-
-        return Results.Challenge(properties, [provider]);
-    }
-);
-
-// External login callback endpoint
-app.MapGet(
-    "/external-login-callback",
-    async (
-        SignInManager<User> signInManager,
-        UserManager<User> userManager,
-        ILogger<Program> logger,
-        HttpContext _,
-        IServiceProvider serviceProvider
-    ) =>
-    {
-        // Check for external login info
-        var info = await signInManager.GetExternalLoginInfoAsync();
-        if (info == null)
-        {
-            logger.LogWarning(
-                "External login info is null. This usually means the correlation cookie was lost or expired."
-            );
-            return Results.Redirect($"/{NavUri.LoginPage}?error=ExternalLoginFailed");
-        }
-
-        // Try to sign in with existing external login
-        var signInResult = await signInManager.ExternalLoginSignInAsync(
-            info.LoginProvider,
-            info.ProviderKey,
-            isPersistent: false,
-            bypassTwoFactor: true
-        );
-
-        if (signInResult.Succeeded)
-        {
-            return Results.Redirect("/");
-        }
-
-        // Create new user or merge with existing one by email
-        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-        if (string.IsNullOrEmpty(email))
-        {
-            return Results.Redirect($"/{NavUri.LoginPage}?error=ExternalEmailNotProvided");
-        }
-
-        var user = await userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            user = new User
-            {
-                UserName = email,
-                Email = email,
-                EmailConfirmed = true,
-            };
-
-            var createResult = await userManager.CreateAsync(user);
-            if (!createResult.Succeeded)
-            {
-                if (logger.IsEnabled(LogLevel.Error))
-                {
-                    logger.LogError(
-                        "Failed to create user during external login for provider {Provider}. ErrorCodes: {ErrorCodes}",
-                        info.LoginProvider,
-                        string.Join(", ", createResult.Errors.Select(e => e.Code))
-                    );
-                }
-
-                // Check for specific error like DuplicateEmail to give a better message without exposing the email
-                if (
-                    createResult.Errors.Any(e =>
-                        e.Code == "DuplicateEmail" || e.Code == "DuplicateUserName"
-                    )
-                )
-                {
-                    return Results.Redirect($"/{NavUri.LoginPage}?error=AccountAlreadyExists");
-                }
-
-                return Results.Redirect($"/{NavUri.LoginPage}?error=RegistrationFailed");
-            }
-
-            // Assign User role to new external registrations
-            await userManager.AddToRoleAsync(user, Roles.User);
-
-            // Create empty profile for new external user
-            using var scope = serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var profile = new CandidateProfile
-            {
-                UserId = user.Id,
-                FullName = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email.Split('@')[0],
-                Email = email,
-                Skills = [],
-                WorkExperience = [],
-                Educations = [],
-            };
-            dbContext.CandidateProfiles.Add(profile);
-            await dbContext.SaveChangesAsync();
-        }
-
-        // Merge account: Add the external login if it doesn't exist
-        var logins = await userManager.GetLoginsAsync(user);
-        if (
-            !logins.Any(l =>
-                l.LoginProvider == info.LoginProvider && l.ProviderKey == info.ProviderKey
-            )
-        )
-        {
-            var addLoginResult = await userManager.AddLoginAsync(user, info);
-            if (!addLoginResult.Succeeded)
-            {
-                if (logger.IsEnabled(LogLevel.Error))
-                {
-                    logger.LogError(
-                        "Failed to add external login for user from provider {Provider}. ErrorCodes: {ErrorCodes}",
-                        info.LoginProvider,
-                        string.Join(", ", addLoginResult.Errors.Select(e => e.Code))
-                    );
-                }
-            }
-        }
-
-        // Sign in the user
-        await signInManager.SignInAsync(user, isPersistent: false);
-        return Results.Redirect("/");
-    }
-);
+// ─── Endpoints ──────────────────────────────────────────────────────────────
+app.MapAuthEndpoints();
+app.MapOAuthEndpoints();
+app.MapApiEndpoints();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
-// Add version endpoint for auto-refresh
-app.MapGet(
-        "/api/version",
-        (IUpdateCheckService updateCheckService) =>
-        {
-            var version = AiCV.Web.AppVersionProvider.GetDisplayVersion();
-            var isUpdateAvailable = updateCheckService.IsUpdateAvailable;
-            var newVersionTag = updateCheckService.NewVersionTag;
-            var isUpdateScheduled = updateCheckService.IsUpdateScheduled;
-            var scheduledUpdateTime = updateCheckService.ScheduledUpdateTime;
-            double? secondsRemaining = null;
-            if (scheduledUpdateTime.HasValue)
-            {
-                secondsRemaining = (scheduledUpdateTime.Value - DateTime.UtcNow).TotalSeconds;
-            }
-
-            return Results.Ok(
-                new
-                {
-                    version,
-                    isUpdateAvailable,
-                    newVersionTag,
-                    isUpdateScheduled,
-                    scheduledUpdateTime,
-                    secondsRemaining, // Add relative time
-                }
-            );
-        }
-    )
-    .AllowAnonymous(); // Allow polling without auth
-
-// Add schedule-update endpoint (starts server-side countdown)
-app.MapPost(
-        "/api/schedule-update",
-        (
-            IUpdateCheckService updateCheckService,
-            IWebHostEnvironment _env,
-            ILogger<Program> logger
-        ) =>
-        {
-            if (_env.IsDevelopment())
-            {
-                return Results.BadRequest("Scheduled updates are disabled in Development.");
-            }
-            logger.LogWarning("Manual update schedule requested via API.");
-            updateCheckService.ScheduleUpdate(180); // 3 minutes
-
-            // Short wait to ensure time is set if lock contention (rare)
-            for (
-                var attempt = 0;
-                updateCheckService.ScheduledUpdateTime == null && attempt < 5;
-                attempt++
-            )
-            {
-                Thread.Sleep(50);
-            }
-
-            double? seconds = null;
-            if (updateCheckService.ScheduledUpdateTime.HasValue)
-            {
-                seconds = (
-                    updateCheckService.ScheduledUpdateTime.Value - DateTime.UtcNow
-                ).TotalSeconds;
-            }
-
-            return Results.Ok(
-                new
-                {
-                    scheduledUpdateTime = updateCheckService.ScheduledUpdateTime,
-                    secondsRemaining = seconds,
-                }
-            );
-        }
-    )
-    .RequireAuthorization();
-
-// Add update trigger endpoint (immediate, for emergencies or internal use)
-app.MapPost(
-        "/api/trigger-update",
-        async (IUpdateCheckService updateCheckService) =>
-        {
-            var success = await updateCheckService.TriggerUpdateAsync();
-            return success ? Results.Ok() : Results.Problem("Failed to trigger update");
-        }
-    )
-    .RequireAuthorization();
-
-// Add culture set endpoint
-app.MapGet(
-    "/culture/set",
-    (string culture, string redirectUri, HttpContext httpContext) =>
-    {
-        if (culture != null)
-        {
-            httpContext.Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddYears(1),
-                    Secure = true,
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.Lax,
-                }
-            );
-        }
-
-        return Results.Redirect(redirectUri);
-    }
-);
 
 // Initialize database and apply migrations
 using (var scope = app.Services.CreateScope())

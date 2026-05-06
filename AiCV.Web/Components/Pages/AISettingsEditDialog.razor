@@ -10,17 +10,18 @@
             <MudTextField Label="@Localizer["ConfigurationName"]" @bind-Value="UserConfiguration.Name"
                 Variant="Variant.Outlined" Margin="Margin.Dense" />
 
-            <MudAutocomplete T="string" Label="@Localizer["Model"]" @bind-Value="UserConfiguration.ModelId"
-                @bind-Value:after="OnModelSelected" Variant="Variant.Outlined" Margin="Margin.Dense"
-                SearchFunc="@SearchModels" Clearable="true" CoerceValue="false" />
+            <AiModelPicker AvailableModels="@AvailableModels"
+                @bind-Value="UserConfiguration.ModelId"
+                AfterValueChanged="@OnModelSelectedCallback" />
 
             @if (!string.IsNullOrEmpty(UserConfiguration.CostType))
             {
                 <div class="mt-n2 px-1">
                     <div class="d-flex align-center gap-2">
-                        <MudChip T="string" Color="@(UserConfiguration.CostType == "Paid" ? Color.Warning : Color.Success)"
-                        Size="Size.Small" Variant="Variant.Text" Class="ma-0">
-                            @(Localizer[UserConfiguration.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
+                        <MudChip T="string"
+                            Color="@AiModelPicker.GetCostTypeColor(UserConfiguration.CostType)"
+                            Size="Size.Small" Variant="Variant.Text" Class="ma-0">
+                            @UserConfiguration.CostType
                         </MudChip>
                         @if (!string.IsNullOrEmpty(UserConfiguration.Notes))
                         {
