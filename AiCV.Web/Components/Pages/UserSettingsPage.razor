@@ -43,7 +43,73 @@
             }
             else if (!_isLoading)
             {
+
+                @* Connect Account Panel (OAuth) *@
+                <MudPaper Elevation="4" Class="pa-4 mb-4">
+                    <MudText Typo="Typo.h6" Class="mb-1">
+                        <MudIcon Icon="@Icons.Material.Filled.Link" Class="mr-1" Style="vertical-align:middle;" />
+                        @Localizer["ConnectYourAccount"]
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
+                        @Localizer["ConnectAccountDescription"]
+                    </MudText>
+
+                    <MudGrid>
+                        @* OpenRouter — real OAuth *@
+                        <MudItem xs="12" sm="4" md="4">
+                            <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
+                                      Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
+                                <MudIcon Icon="@Icons.Material.Filled.Hub" Color="Color.Default" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1" Style="font-weight:600;">OpenRouter</MudText>
+                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
+                                    @Localizer["OpenRouterCardDescription"]
+                                </MudText>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.Login"
+                                           FullWidth="true" OnClick="ConnectOpenRouter">
+                                    @Localizer["ConnectOpenRouter"]
+                                </MudButton>
+                            </MudPaper>
+                        </MudItem>
+
+                        @* Google Gemini — API key via AI Studio *@
+                        <MudItem xs="12" sm="4" md="4">
+                            <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
+                                      Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
+                                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1" Style="font-weight:600;">Google Gemini</MudText>
+                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
+                                    @Localizer["GeminiAIStudioDescription"]
+                                </MudText>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.OpenInNew"
+                                           FullWidth="true"
+                                           Href="https://aistudio.google.com/apikey"
+                                           Target="_blank">
+                                    @Localizer["GetFreeApiKey"]
+                                </MudButton>
+                            </MudPaper>
+                        </MudItem>
+
+                        @* API Key-only notice *@
+                        <MudItem xs="12" sm="4" md="4">
+                            <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center justify-center gap-2"
+                                      Style="border:1px solid var(--mud-palette-divider); border-radius:8px; height:100%;">
+                                <MudIcon Icon="@Icons.Material.Filled.VpnKey" Color="Color.Info" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1" Style="font-weight:600;">@Localizer["ApiKeyProviders"]</MudText>
+                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Default">
+                                    OpenAI · Claude · Groq · DeepSeek
+                                </MudText>
+                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
+                                    @Localizer["ApiKeyProvidersHint"]
+                                </MudText>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+
                 @* Add New Configuration Panel *@
+
                 <MudPaper Elevation="4" Class="pa-4 mb-4">
                     <div class="d-flex align-center justify-space-between mb-4">
                         <MudText Typo="Typo.h6">@Localizer["AddConfiguration"]</MudText>
@@ -100,17 +166,10 @@
                         </MudItem>
 
                         <MudItem xs="12" md="3">
-                            <MudAutocomplete T="string"
-                                             Label="@(_availableModels.Count == 0 ? Localizer["Model"].Value : $"{Localizer["Models"]} ({_availableModels.Count})")"
-                                             @bind-Value="_newConfig.ModelId" @bind-Value:after="OnModelSelected" SearchFunc="@SearchModels"
-                                             Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="@(!_modelsLoaded)" CoerceValue="false"
-                                             ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary" Dense="true" MaxItems="null"
-                                             Clearable="true" ResetValueOnEmptyText="true">
-                                <ItemTemplate Context="modelId">
-                                    <MudText>@modelId</MudText>
-                                </ItemTemplate>
-                            </MudAutocomplete>
-
+                            <AiModelPicker AvailableModels="@_availableModels"
+                                @bind-Value="_newConfig.ModelId"
+                                AfterValueChanged="@OnModelPickerChanged"
+                                Disabled="@(!_modelsLoaded)" />
                         </MudItem>
 
                         <MudItem xs="12" md="2">
@@ -245,7 +304,7 @@
                         <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Class="mr-2" Size="Size.Large" />
                         @Localizer["DangerZone"]
                     </MudText>
-                    
+
                     @if (_isProtected)
                     {
                         <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-6" Style="max-width: 800px;">

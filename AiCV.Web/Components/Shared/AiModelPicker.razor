@@ -1,0 +1,54 @@
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+
+<div class="d-flex align-center gap-1">
+    <MudAutocomplete T="string" Label="@Label"
+        Value="@_internalValue" ValueChanged="@HandleValueChanged"
+        Variant="Variant.Outlined" Margin="Margin.Dense"
+        SearchFunc="@SearchModels" Clearable="@Clearable" CoerceValue="false"
+        ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary"
+        Dense="true" MaxItems="null" ResetValueOnEmptyText="true"
+        Disabled="@Disabled" Class="flex-grow-1">
+        <ItemTemplate Context="modelId">
+            @{ var m = AvailableModels.FirstOrDefault(x => x.ModelId == modelId); }
+            <div class="d-flex align-center justify-space-between w-100 py-1">
+                <MudText Typo="Typo.body2" Style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">@modelId</MudText>
+                @if (!string.IsNullOrEmpty(m?.CostType))
+                {
+                    <MudChip T="string"
+                        Color="@GetCostTypeColor(m.CostType)"
+                        Size="Size.Small" Variant="Variant.Text" Class="ma-0 ml-2 flex-shrink-0">
+                        @(m.CostType == "Free" ? Localizer["CostTypeFree"] : (m.CostType == "Paid" ? Localizer["CostTypePaid"] : m.CostType))
+                    </MudChip>
+                }
+            </div>
+        </ItemTemplate>
+    </MudAutocomplete>
+
+    <MudMenu Icon="@Icons.Material.Filled.FilterList"
+             Color="@(_costTypeFilter is null ? Color.Default : GetCostTypeColor(_costTypeFilter))"
+             Size="Size.Small" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight"
+             Dense="true" PopoverClass="pa-2"
+             Disabled="@Disabled"
+             Style="margin-top: 4px;">
+        <ChildContent>
+            <div class="d-flex flex-column gap-1" style="min-width: 200px;">
+                <MudText Typo="Typo.overline" Class="px-3 border-b mb-1" Color="Color.Primary">@Localizer["Models"]</MudText>
+                <MudMenuItem OnClick="@(() => SetFilter(null))">
+                    <div class="d-flex align-center justify-space-between w-100">
+                        <MudText Typo="Typo.body2">@Localizer["Models"]</MudText>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Default">@AvailableModels.Count</MudChip>
+                    </div>
+                </MudMenuItem>
+                @foreach (var group in ModelGroups)
+                {
+                    <MudMenuItem OnClick="@(() => SetFilter(group.Key))">
+                        <div class="d-flex align-center justify-space-between w-100">
+                            <MudText Typo="Typo.body2">@(group.Key == "Free" ? Localizer["CostTypeFree"] : (group.Key == "Paid" ? Localizer["CostTypePaid"] : group.Key))</MudText>
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="@GetCostTypeColor(group.Key)">@group.Count()</MudChip>
+                        </div>
+                    </MudMenuItem>
+                }
+            </div>
+        </ChildContent>
+    </MudMenu>
+</div>

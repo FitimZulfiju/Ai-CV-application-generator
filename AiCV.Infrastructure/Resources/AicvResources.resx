@@ -316,6 +316,30 @@
   <data name="AddConfiguration" xml:space="preserve">
     <value>Add Configuration</value>
   </data>
+  <data name="ConnectYourAccount" xml:space="preserve">
+    <value>Connect Your Account</value>
+  </data>
+  <data name="ConnectAccountDescription" xml:space="preserve">
+    <value>Log in with your existing AI provider account — no API key copying needed.</value>
+  </data>
+  <data name="OpenRouterCardDescription" xml:space="preserve">
+    <value>100+ models incl. free GPT-4o, Claude &amp; Gemini tiers</value>
+  </data>
+  <data name="ConnectOpenRouter" xml:space="preserve">
+    <value>Connect OpenRouter</value>
+  </data>
+  <data name="GeminiAIStudioDescription" xml:space="preserve">
+    <value>Free API key from AI Studio — linked to your Google account &amp; quota</value>
+  </data>
+  <data name="GetFreeApiKey" xml:space="preserve">
+    <value>Get Free API Key</value>
+  </data>
+  <data name="ApiKeyProviders" xml:space="preserve">
+    <value>API Key Providers</value>
+  </data>
+  <data name="ApiKeyProvidersHint" xml:space="preserve">
+    <value>Use the form below to add these manually.</value>
+  </data>
   <data name="Provider" xml:space="preserve">
     <value>Provider</value>
   </data>

@@ -38,3 +38,5 @@ global using AiCV.Infrastructure.Services.PdfTemplates;
 global using AiCV.Infrastructure.Services.PdfTemplates.Minimalist;
 global using AiCV.Infrastructure.Services.PdfTemplates.Modern;
 global using AiCV.Infrastructure.Services.PdfTemplates.Professional;
+global using System.Security.Cryptography;
+global using Microsoft.Extensions.Caching.Memory;

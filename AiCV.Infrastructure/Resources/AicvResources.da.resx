@@ -1148,4 +1148,28 @@
   <data name="ProtectedAccount" xml:space="preserve">
     <value>Beskyttet konto</value>
   </data>
+  <data name="ConnectYourAccount" xml:space="preserve">
+    <value>Tilslut din konto</value>
+  </data>
+  <data name="ConnectAccountDescription" xml:space="preserve">
+    <value>Log ind med din eksisterende AI-udbyders konto — ingen API-nøgle kopiering nødvendig.</value>
+  </data>
+  <data name="OpenRouterCardDescription" xml:space="preserve">
+    <value>100+ modeller inkl. gratis GPT-4o, Claude &amp; Gemini niveauer</value>
+  </data>
+  <data name="ConnectOpenRouter" xml:space="preserve">
+    <value>Tilslut OpenRouter</value>
+  </data>
+  <data name="GeminiAIStudioDescription" xml:space="preserve">
+    <value>Gratis API-nøgle fra AI Studio — knyttet til din Google-konto &amp; kvote</value>
+  </data>
+  <data name="GetFreeApiKey" xml:space="preserve">
+    <value>Få gratis API-nøgle</value>
+  </data>
+  <data name="ApiKeyProviders" xml:space="preserve">
+    <value>API-nøgle udbydere</value>
+  </data>
+  <data name="ApiKeyProvidersHint" xml:space="preserve">
+    <value>Brug formularen nedenfor til at tilføje disse manuelt.</value>
+  </data>
 </root>

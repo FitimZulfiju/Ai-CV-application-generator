@@ -1155,5 +1155,29 @@
   <data name="ProtectedAccount" xml:space="preserve">
     <value>Llogari e mbrojtur</value>
   </data>
+  <data name="ConnectYourAccount" xml:space="preserve">
+    <value>Lidhni Llogarinë Tuaj</value>
+  </data>
+  <data name="ConnectAccountDescription" xml:space="preserve">
+    <value>Kyçuni me llogarinë tuaj ekzistuese të ofruesit të AI — pa kopjuar çelësa API.</value>
+  </data>
+  <data name="OpenRouterCardDescription" xml:space="preserve">
+    <value>100+ modele incl. GPT-4o, Claude &amp; Gemini falas</value>
+  </data>
+  <data name="ConnectOpenRouter" xml:space="preserve">
+    <value>Lidhu me OpenRouter</value>
+  </data>
+  <data name="GeminiAIStudioDescription" xml:space="preserve">
+    <value>Çelës API falas nga AI Studio — i lidhur me llogarinë tuaj Google &amp; kuotën</value>
+  </data>
+  <data name="GetFreeApiKey" xml:space="preserve">
+    <value>Merr Çelës API Falas</value>
+  </data>
+  <data name="ApiKeyProviders" xml:space="preserve">
+    <value>Ofruesit me Çelës API</value>
+  </data>
+  <data name="ApiKeyProvidersHint" xml:space="preserve">
+    <value>Përdorni formularin më poshtë për t'i shtuar manualisht.</value>
+  </data>
 </root>
 
