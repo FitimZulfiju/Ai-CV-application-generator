@@ -1172,4 +1172,52 @@
   <data name="ApiKeyProvidersHint" xml:space="preserve">
     <value>Brug formularen nedenfor til at tilføje disse manuelt.</value>
   </data>
+  <data name="AISettingsTab" xml:space="preserve">
+    <value>AI-indstillinger</value>
+  </data>
+  <data name="AccountTab" xml:space="preserve">
+    <value>Konto</value>
+  </data>
+  <data name="AccountSecurity" xml:space="preserve">
+    <value>Kontosikkerhed</value>
+  </data>
+  <data name="EmailPasswordEnabled" xml:space="preserve">
+    <value>E-mailadgangskode aktiveret</value>
+  </data>
+  <data name="SetPassword" xml:space="preserve">
+    <value>Angiv adgangskode</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Skift adgangskode</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Nuværende adgangskode</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Ny adgangskode</value>
+  </data>
+  <data name="SavePassword" xml:space="preserve">
+    <value>Gem adgangskode</value>
+  </data>
+  <data name="ExternalOnlyPasswordDescription" xml:space="preserve">
+    <value>Din konto kan i øjeblikket logge ind med en ekstern udbyder. Tilføj en adgangskode for også at logge ind med e-mail og adgangskode.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Adgangskoderne matcher ikke.</value>
+  </data>
+  <data name="AccountNotFoundSignInAgain" xml:space="preserve">
+    <value>Kunne ikke finde din konto. Log ind igen.</value>
+  </data>
+  <data name="AccountAlreadyHasPassword" xml:space="preserve">
+    <value>Denne konto har allerede en adgangskode.</value>
+  </data>
+  <data name="PasswordAddedLocalLoginEnabled" xml:space="preserve">
+    <value>Adgangskode tilføjet. Du kan nu også logge ind med e-mail og adgangskode.</value>
+  </data>
+  <data name="AccountHasNoPasswordYet" xml:space="preserve">
+    <value>Denne konto har endnu ikke en adgangskode.</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Adgangskoden blev ændret.</value>
+  </data>
 </root>

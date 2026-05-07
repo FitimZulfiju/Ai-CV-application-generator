@@ -1179,5 +1179,53 @@
   <data name="ApiKeyProvidersHint" xml:space="preserve">
     <value>Përdorni formularin më poshtë për t'i shtuar manualisht.</value>
   </data>
+  <data name="AISettingsTab" xml:space="preserve">
+    <value>Cilësimet e AI</value>
+  </data>
+  <data name="AccountTab" xml:space="preserve">
+    <value>Llogaria</value>
+  </data>
+  <data name="AccountSecurity" xml:space="preserve">
+    <value>Siguria e llogarisë</value>
+  </data>
+  <data name="EmailPasswordEnabled" xml:space="preserve">
+    <value>Fjalëkalimi me email është aktiv</value>
+  </data>
+  <data name="SetPassword" xml:space="preserve">
+    <value>Vendos fjalëkalim</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Ndrysho fjalëkalimin</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Fjalëkalimi aktual</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Fjalëkalimi i ri</value>
+  </data>
+  <data name="SavePassword" xml:space="preserve">
+    <value>Ruaj fjalëkalimin</value>
+  </data>
+  <data name="ExternalOnlyPasswordDescription" xml:space="preserve">
+    <value>Llogaria juaj aktualisht mund të kyçet me një ofrues të jashtëm. Shtoni një fjalëkalim për t'u kyçur edhe me email dhe fjalëkalim.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Fjalëkalimet nuk përputhen.</value>
+  </data>
+  <data name="AccountNotFoundSignInAgain" xml:space="preserve">
+    <value>Nuk mundëm ta gjejmë llogarinë tuaj. Ju lutemi kyçuni përsëri.</value>
+  </data>
+  <data name="AccountAlreadyHasPassword" xml:space="preserve">
+    <value>Kjo llogari tashmë ka një fjalëkalim.</value>
+  </data>
+  <data name="PasswordAddedLocalLoginEnabled" xml:space="preserve">
+    <value>Fjalëkalimi u shtua. Tani mund të kyçeni edhe me email dhe fjalëkalim.</value>
+  </data>
+  <data name="AccountHasNoPasswordYet" xml:space="preserve">
+    <value>Kjo llogari ende nuk ka fjalëkalim.</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Fjalëkalimi u ndryshua me sukses.</value>
+  </data>
 </root>
 

@@ -6,6 +6,7 @@ public partial class UserSettingsPage
     private string _userEmail = string.Empty;
     private bool _isLoading = true;
     private bool _isProtected = false;
+    private int _activeSettingsTabIndex;
 
     // List of saved configurations
     private List<UserAIConfiguration> _configurations = [];
@@ -21,6 +22,14 @@ public partial class UserSettingsPage
     private bool _showNewApiKey;
     private bool _showCostAlert = true;
     private bool _isDeleted;
+    private bool _hasPassword;
+    private bool _isSettingPassword;
+    private bool _isChangingPassword;
+    private bool _showSetPassword;
+    private bool _showChangePassword;
+    private string _currentPassword = string.Empty;
+    private string _newPassword = string.Empty;
+    private string _confirmNewPassword = string.Empty;
 
     // Available providers for dropdown
     private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
@@ -55,6 +64,7 @@ public partial class UserSettingsPage
 
             if (!string.IsNullOrEmpty(_userId))
             {
+                await LoadAccountSecurity();
                 await LoadConfigurations();
                 HandleOAuthReturn();
             }
@@ -75,8 +85,8 @@ public partial class UserSettingsPage
             var msg = connected.ToString() switch
             {
                 "openrouter" => "OpenRouter account connected! You can now use it from the Generate page.",
-                "gemini"     => "Google Gemini account connected! Your existing plan will be used.",
-                _            => "Account connected successfully!",
+                "gemini" => "Google Gemini account connected! Your existing plan will be used.",
+                _ => "Account connected successfully!",
             };
             Snackbar.Add(msg, Severity.Success);
             Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
@@ -85,15 +95,15 @@ public partial class UserSettingsPage
         {
             var msg = errorCode.ToString() switch
             {
-                "openrouter_cancelled"       => "OpenRouter connection was cancelled.",
-                "openrouter_expired"         => "OpenRouter session expired. Please try again.",
+                "openrouter_cancelled" => "OpenRouter connection was cancelled.",
+                "openrouter_expired" => "OpenRouter session expired. Please try again.",
                 "openrouter_exchange_failed" => "Could not retrieve OpenRouter API key.",
-                "gemini_cancelled"           => "Google Gemini connection was cancelled.",
-                "gemini_expired"             => "Session expired. Please try again.",
-                "gemini_exchange_failed"     => "Could not exchange code with Google. Please try again.",
-                "gemini_no_refresh_token"    => "Google did not return a refresh token. Please revoke the app access in your Google account and try again.",
-                "google_not_configured"      => "Google OAuth is not configured on this server.",
-                _                            => $"Connection failed ({errorCode}).",
+                "gemini_cancelled" => "Google Gemini connection was cancelled.",
+                "gemini_expired" => "Session expired. Please try again.",
+                "gemini_exchange_failed" => "Could not exchange code with Google. Please try again.",
+                "gemini_no_refresh_token" => "Google did not return a refresh token. Please revoke the app access in your Google account and try again.",
+                "google_not_configured" => "Google OAuth is not configured on this server.",
+                _ => $"Connection failed ({errorCode}).",
             };
 
             // Append raw provider error detail if present
@@ -104,6 +114,125 @@ public partial class UserSettingsPage
             Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
         }
 
+    }
+
+    private async Task LoadAccountSecurity()
+    {
+        var user = await UserManager.FindByIdAsync(_userId);
+        if (user == null)
+            return;
+
+        _hasPassword = await UserManager.HasPasswordAsync(user);
+    }
+
+    private async Task SetLocalPassword()
+    {
+        if (_isSettingPassword)
+            return;
+
+        if (_newPassword != _confirmNewPassword)
+        {
+            Snackbar.Add(Localizer["PasswordsDoNotMatch"], Severity.Error);
+            return;
+        }
+
+        _isSettingPassword = true;
+        try
+        {
+            var user = await UserManager.FindByIdAsync(_userId);
+            if (user == null)
+            {
+                Snackbar.Add(Localizer["AccountNotFoundSignInAgain"], Severity.Error);
+                return;
+            }
+
+            if (await UserManager.HasPasswordAsync(user))
+            {
+                _hasPassword = true;
+                _showSetPassword = false;
+                Snackbar.Add(Localizer["AccountAlreadyHasPassword"], Severity.Info);
+                return;
+            }
+
+            var result = await UserManager.AddPasswordAsync(user, _newPassword);
+            if (result.Succeeded)
+            {
+                _hasPassword = true;
+                _showSetPassword = false;
+                ClearPasswordFields();
+                Snackbar.Add(Localizer["PasswordAddedLocalLoginEnabled"], Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(string.Join(" ", result.Errors.Select(e => e.Description)), Severity.Error);
+            }
+        }
+        finally
+        {
+            _isSettingPassword = false;
+        }
+    }
+
+    private async Task ChangeLocalPassword()
+    {
+        if (_isChangingPassword)
+            return;
+
+        if (_newPassword != _confirmNewPassword)
+        {
+            Snackbar.Add(Localizer["PasswordsDoNotMatch"], Severity.Error);
+            return;
+        }
+
+        _isChangingPassword = true;
+        try
+        {
+            var user = await UserManager.FindByIdAsync(_userId);
+            if (user == null)
+            {
+                Snackbar.Add(Localizer["AccountNotFoundSignInAgain"], Severity.Error);
+                return;
+            }
+
+            if (!await UserManager.HasPasswordAsync(user))
+            {
+                _hasPassword = false;
+                _showChangePassword = false;
+                Snackbar.Add(Localizer["AccountHasNoPasswordYet"], Severity.Info);
+                return;
+            }
+
+            var result = await UserManager.ChangePasswordAsync(user, _currentPassword, _newPassword);
+            if (result.Succeeded)
+            {
+                await SignInManager.RefreshSignInAsync(user);
+                _showChangePassword = false;
+                ClearPasswordFields();
+                Snackbar.Add(Localizer["PasswordChangedSuccessfully"], Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(string.Join(" ", result.Errors.Select(e => e.Description)), Severity.Error);
+            }
+        }
+        finally
+        {
+            _isChangingPassword = false;
+        }
+    }
+
+    private void HidePasswordForms()
+    {
+        _showSetPassword = false;
+        _showChangePassword = false;
+        ClearPasswordFields();
+    }
+
+    private void ClearPasswordFields()
+    {
+        _currentPassword = string.Empty;
+        _newPassword = string.Empty;
+        _confirmNewPassword = string.Empty;
     }
 
     private async Task LoadConfigurations()
