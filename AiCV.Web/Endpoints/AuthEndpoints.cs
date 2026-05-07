@@ -117,7 +117,7 @@ public static class AuthEndpoints
                 if (signInResult.Succeeded)
                     return Results.Redirect("/");
 
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                var email = GetExternalEmail(info);
                 if (string.IsNullOrEmpty(email))
                     return Results.Redirect($"/{NavUri.LoginPage}?error=ExternalEmailNotProvided");
 
@@ -179,17 +179,20 @@ public static class AuthEndpoints
 
                         using var scope = serviceProvider.CreateScope();
                         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                        var profile = new CandidateProfile
+                        if (!await dbContext.CandidateProfiles.AnyAsync(p => p.UserId == user.Id))
                         {
-                            UserId = user.Id,
-                            FullName = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email.Split('@')[0],
-                            Email = email,
-                            Skills = [],
-                            WorkExperience = [],
-                            Educations = [],
-                        };
-                        dbContext.CandidateProfiles.Add(profile);
-                        await dbContext.SaveChangesAsync();
+                            var profile = new CandidateProfile
+                            {
+                                UserId = user.Id,
+                                FullName = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email.Split('@')[0],
+                                Email = email,
+                                Skills = [],
+                                WorkExperience = [],
+                                Educations = [],
+                            };
+                            dbContext.CandidateProfiles.Add(profile);
+                            await dbContext.SaveChangesAsync();
+                        }
                     }
                 }
 
@@ -204,6 +207,21 @@ public static class AuthEndpoints
                             info.LoginProvider,
                             string.Join(", ", addLoginResult.Errors.Select(e => e.Code))
                         );
+
+                        if (addLoginResult.Errors.Any(e => e.Code == "LoginAlreadyAssociated"))
+                        {
+                            var retrySignInResult = await signInManager.ExternalLoginSignInAsync(
+                                info.LoginProvider,
+                                info.ProviderKey,
+                                isPersistent: false,
+                                bypassTwoFactor: true
+                            );
+
+                            if (retrySignInResult.Succeeded)
+                                return Results.Redirect("/");
+                        }
+
+                        return Results.Redirect($"/{NavUri.LoginPage}?error=ExternalLoginFailed");
                     }
                 }
 
@@ -213,5 +231,16 @@ public static class AuthEndpoints
         );
 
         return app;
+    }
+
+    private static string? GetExternalEmail(ExternalLoginInfo info)
+    {
+        var email =
+            info.Principal.FindFirstValue(ClaimTypes.Email)
+            ?? info.Principal.FindFirstValue("email");
+
+        return string.IsNullOrWhiteSpace(email)
+            ? null
+            : email.Trim().ToLowerInvariant();
     }
 }

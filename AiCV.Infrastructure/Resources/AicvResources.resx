@@ -1179,5 +1179,53 @@
   <data name="ProtectedAccount" xml:space="preserve">
     <value>Protected Account</value>
   </data>
+  <data name="AISettingsTab" xml:space="preserve">
+    <value>AI settings</value>
+  </data>
+  <data name="AccountTab" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="AccountSecurity" xml:space="preserve">
+    <value>Account security</value>
+  </data>
+  <data name="EmailPasswordEnabled" xml:space="preserve">
+    <value>Email password enabled</value>
+  </data>
+  <data name="SetPassword" xml:space="preserve">
+    <value>Set password</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="SavePassword" xml:space="preserve">
+    <value>Save password</value>
+  </data>
+  <data name="ExternalOnlyPasswordDescription" xml:space="preserve">
+    <value>Your account can currently sign in with an external provider. Add a password to also sign in with email and password.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="AccountNotFoundSignInAgain" xml:space="preserve">
+    <value>Could not find your account. Please sign in again.</value>
+  </data>
+  <data name="AccountAlreadyHasPassword" xml:space="preserve">
+    <value>This account already has a password.</value>
+  </data>
+  <data name="PasswordAddedLocalLoginEnabled" xml:space="preserve">
+    <value>Password added. You can now sign in with email and password too.</value>
+  </data>
+  <data name="AccountHasNoPasswordYet" xml:space="preserve">
+    <value>This account does not have a password yet.</value>
+  </data>
+  <data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Password changed successfully.</value>
+  </data>
 </root>
 

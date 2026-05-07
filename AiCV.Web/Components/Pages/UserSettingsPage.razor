@@ -43,291 +43,432 @@
             }
             else if (!_isLoading)
             {
+                <MudTabs Elevation="1" Rounded="true" @bind-ActivePanelIndex="_activeSettingsTabIndex">
+                    <MudDivider DividerType="DividerType.Middle" Class="my-3" />
 
-                @* Connect Account Panel (OAuth) *@
-                <MudPaper Elevation="4" Class="pa-4 mb-4">
-                    <MudText Typo="Typo.h6" Class="mb-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Link" Class="mr-1" Style="vertical-align:middle;" />
-                        @Localizer["ConnectYourAccount"]
-                    </MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-                        @Localizer["ConnectAccountDescription"]
-                    </MudText>
+                    <MudTabPanel Text="@Localizer["AISettingsTab"]" Icon="@Icons.Material.Filled.Tune">
 
-                    <MudGrid>
-                        @* OpenRouter — real OAuth *@
-                        <MudItem xs="12" sm="4" md="4">
-                            <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
-                                      Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
-                                <MudIcon Icon="@Icons.Material.Filled.Hub" Color="Color.Default" Size="Size.Large" />
-                                <MudText Typo="Typo.subtitle1" Style="font-weight:600;">OpenRouter</MudText>
-                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
-                                    @Localizer["OpenRouterCardDescription"]
-                                </MudText>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                           StartIcon="@Icons.Material.Filled.Login"
-                                           FullWidth="true" OnClick="ConnectOpenRouter">
-                                    @Localizer["ConnectOpenRouter"]
-                                </MudButton>
-                            </MudPaper>
-                        </MudItem>
+                        @* Connect Account Panel (OAuth) *@
+                        <MudPaper Elevation="4" Class="pa-4 mb-4">
+                            <MudText Typo="Typo.h6" Class="mb-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Link" Class="mr-1" Style="vertical-align:middle;" />
+                                @Localizer["ConnectYourAccount"]
+                            </MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
+                                @Localizer["ConnectAccountDescription"]
+                            </MudText>
 
-                        @* Google Gemini — API key via AI Studio *@
-                        <MudItem xs="12" sm="4" md="4">
-                            <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
-                                      Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
-                                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" Size="Size.Large" />
-                                <MudText Typo="Typo.subtitle1" Style="font-weight:600;">Google Gemini</MudText>
-                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
-                                    @Localizer["GeminiAIStudioDescription"]
-                                </MudText>
-                                <MudButton Variant="Variant.Outlined" Color="Color.Primary"
-                                           StartIcon="@Icons.Material.Filled.OpenInNew"
-                                           FullWidth="true"
-                                           Href="https://aistudio.google.com/apikey"
-                                           Target="_blank">
-                                    @Localizer["GetFreeApiKey"]
-                                </MudButton>
-                            </MudPaper>
-                        </MudItem>
+                            <MudGrid>
+                                @* OpenRouter — real OAuth *@
+                                <MudItem xs="12" sm="4" md="4">
+                                    <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
+                                              Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.Hub" Color="Color.Default" Size="Size.Large" />
+                                        <MudText Typo="Typo.subtitle1" Style="font-weight:600;">OpenRouter</MudText>
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
+                                            @Localizer["OpenRouterCardDescription"]
+                                        </MudText>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.Login"
+                                                   FullWidth="true" OnClick="ConnectOpenRouter">
+                                            @Localizer["ConnectOpenRouter"]
+                                        </MudButton>
+                                    </MudPaper>
+                                </MudItem>
 
-                        @* API Key-only notice *@
-                        <MudItem xs="12" sm="4" md="4">
-                            <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center justify-center gap-2"
-                                      Style="border:1px solid var(--mud-palette-divider); border-radius:8px; height:100%;">
-                                <MudIcon Icon="@Icons.Material.Filled.VpnKey" Color="Color.Info" Size="Size.Large" />
-                                <MudText Typo="Typo.subtitle1" Style="font-weight:600;">@Localizer["ApiKeyProviders"]</MudText>
-                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Default">
-                                    OpenAI · Claude · Groq · DeepSeek
-                                </MudText>
-                                <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
-                                    @Localizer["ApiKeyProvidersHint"]
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
+                                @* Google Gemini — API key via AI Studio *@
+                                <MudItem xs="12" sm="4" md="4">
+                                    <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
+                                              Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" Size="Size.Large" />
+                                        <MudText Typo="Typo.subtitle1" Style="font-weight:600;">Google Gemini</MudText>
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
+                                            @Localizer["GeminiAIStudioDescription"]
+                                        </MudText>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.OpenInNew"
+                                                   FullWidth="true"
+                                                   Href="https://aistudio.google.com/apikey"
+                                                   Target="_blank">
+                                            @Localizer["GetFreeApiKey"]
+                                        </MudButton>
+                                    </MudPaper>
+                                </MudItem>
 
-                @* Add New Configuration Panel *@
+                                @* API Key-only notice *@
+                                <MudItem xs="12" sm="4" md="4">
+                                    <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center justify-center gap-2"
+                                              Style="border:1px solid var(--mud-palette-divider); border-radius:8px; height:100%;">
+                                        <MudIcon Icon="@Icons.Material.Filled.VpnKey" Color="Color.Info" Size="Size.Large" />
+                                        <MudText Typo="Typo.subtitle1" Style="font-weight:600;">@Localizer["ApiKeyProviders"]</MudText>
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Default">
+                                            OpenAI · Claude · Groq · DeepSeek
+                                        </MudText>
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
+                                            @Localizer["ApiKeyProvidersHint"]
+                                        </MudText>
+                                    </MudPaper>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
 
-                <MudPaper Elevation="4" Class="pa-4 mb-4">
-                    <div class="d-flex align-center justify-space-between mb-4">
-                        <MudText Typo="Typo.h6">@Localizer["AddConfiguration"]</MudText>
-                        @if (_modelsLoaded)
-                        {
-                            <MudAlert Severity="Severity.Warning" Variant="Variant.Text" Dense="true"
-                                      Icon="@Icons.Material.Filled.ReportProblem" Class="pa-0" ShowCloseIcon="true"
-                                      CloseIconClicked="() => _modelsLoaded = false">
-                                @Localizer["ModelAvailabilityDisclaimer"]
-                            </MudAlert>
-                        }
-                    </div>
-                    <MudGrid>
-                        <MudItem xs="12" md="2">
-                            <MudSelect T="AIProvider" Label="@Localizer["Provider"]" @bind-Value="_newConfig.Provider"
-                                       Variant="Variant.Outlined" Margin="Margin.Dense">
-                                @foreach (var provider in _availableProviders)
+                        @* Add New Configuration Panel *@
+
+                        <MudPaper Elevation="4" Class="pa-4 mb-4">
+                            <div class="d-flex align-center justify-space-between mb-4">
+                                <MudText Typo="Typo.h6">@Localizer["AddConfiguration"]</MudText>
+                                @if (_modelsLoaded)
                                 {
-                                    <MudSelectItem Value="@provider">
-                                        <div class="d-flex align-center gap-2">
-                                            <MudIcon Icon="@GetProviderIcon(provider)" Size="Size.Small"
-                                                     Color="@GetProviderColor(provider)" />
-                                            @provider.ToString()
-                                        </div>
-                                    </MudSelectItem>
+                                    <MudAlert Severity="Severity.Warning" Variant="Variant.Text" Dense="true"
+                                              Icon="@Icons.Material.Filled.ReportProblem" Class="pa-0" ShowCloseIcon="true"
+                                              CloseIconClicked="() => _modelsLoaded = false">
+                                        @Localizer["ModelAvailabilityDisclaimer"]
+                                    </MudAlert>
                                 }
-                            </MudSelect>
-                        </MudItem>
+                            </div>
+                            <MudGrid>
+                                <MudItem xs="12" md="2">
+                                    <MudSelect T="AIProvider" Label="@Localizer["Provider"]" @bind-Value="_newConfig.Provider"
+                                               Variant="Variant.Outlined" Margin="Margin.Dense">
+                                        @foreach (var provider in _availableProviders)
+                                        {
+                                            <MudSelectItem Value="@provider">
+                                                <div class="d-flex align-center gap-2">
+                                                    <MudIcon Icon="@GetProviderIcon(provider)" Size="Size.Small"
+                                                             Color="@GetProviderColor(provider)" />
+                                                    @provider.ToString()
+                                                </div>
+                                            </MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
 
-                        <MudItem xs="12" md="3">
-                            <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="_newConfig.ApiKey" Variant="Variant.Outlined"
-                                          Clearable="true" Margin="Margin.Dense"
-                                          InputType="@(_showNewApiKey? InputType.Text: InputType.Password)" Adornment="Adornment.End"
-                                          AdornmentIcon="@(_showNewApiKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
-                                          OnAdornmentClick="() => _showNewApiKey = !_showNewApiKey" Immediate="true" />
-                        </MudItem>
+                                <MudItem xs="12" md="3">
+                                    <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="_newConfig.ApiKey" Variant="Variant.Outlined"
+                                                  Clearable="true" Margin="Margin.Dense"
+                                                  InputType="@(_showNewApiKey? InputType.Text: InputType.Password)" Adornment="Adornment.End"
+                                                  AdornmentIcon="@(_showNewApiKey? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                                  OnAdornmentClick="() => _showNewApiKey = !_showNewApiKey" Immediate="true" />
+                                </MudItem>
 
-                        <MudItem xs="12" md="2" Class="d-flex align-end pb-1">
-                            <MudButton Variant="Variant.Outlined" Color="Color.Primary"
-                                       StartIcon="@(_isValidating ? null : Icons.Material.Filled.CloudSync)"
-                                       OnClick="ValidateAndLoadModels"
-                                       Disabled="@(_isValidating || string.IsNullOrEmpty(_newConfig.ApiKey))" FullWidth="true"
-                                       Style="height: 40px;">
-                                @if (_isValidating)
+                                <MudItem xs="12" md="2" Class="d-flex align-end pb-1">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                               StartIcon="@(_isValidating ? null : Icons.Material.Filled.CloudSync)"
+                                               OnClick="ValidateAndLoadModels"
+                                               Disabled="@(_isValidating || string.IsNullOrEmpty(_newConfig.ApiKey))" FullWidth="true"
+                                               Style="height: 40px;">
+                                        @if (_isValidating)
+                                        {
+                                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                            <MudText>Checking...</MudText>
+                                        }
+                                        else
+                                        {
+                                            @Localizer["Validate"]
+                                        }
+                                    </MudButton>
+                                </MudItem>
+
+                                <MudItem xs="12" md="3">
+                                    <AiModelPicker AvailableModels="@_availableModels"
+                                                   @bind-Value="_newConfig.ModelId"
+                                                   AfterValueChanged="@OnModelPickerChanged"
+                                                   Disabled="@(!_modelsLoaded)" />
+                                </MudItem>
+
+                                <MudItem xs="12" md="2">
+                                    <MudTextField T="string" Label="@Localizer["ConfigurationName"]" @bind-Value="_newConfig.Name"
+                                                  Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense" Placeholder="e.g. My GPT-4 Key" />
+                                </MudItem>
+                            </MudGrid>
+
+                            <div class="d-flex align-center justify-end mt-3 gap-3">
+                                @if (_modelsLoaded && !string.IsNullOrEmpty(_newConfig.ModelId) && _selectedModelMetadata != null)
                                 {
-                                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                                    <MudText>Checking...</MudText>
+                                    <div class="d-flex align-center gap-2">
+                                        <MudChip T="string" Color="@(_selectedModelMetadata.CostType == "Paid" ? Color.Warning : Color.Success)"
+                                                 Size="Size.Small" Variant="Variant.Text" Class="ma-0">
+                                            @(Localizer[_selectedModelMetadata.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
+                                        </MudChip>
+                                        @if (_selectedModelMetadata.Notes.Any())
+                                        {
+                                            <MudText Typo="Typo.caption" Color="Color.Info" Style="font-style: italic">
+                                                @string.Join(", ", _selectedModelMetadata.Notes)
+                                            </MudText>
+                                        }
+                                    </div>
+                                }
+                                @if (_modelsLoaded && !string.IsNullOrEmpty(_newConfig.ModelId))
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Info" StartIcon="@Icons.Material.Filled.Power"
+                                               OnClick="TestConnection" Disabled="@_isTestingConnection">
+                                        @if (_isTestingConnection)
+                                        {
+                                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                        }
+                                        @Localizer["TestConnection"]
+                                    </MudButton>
+                                }
+
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                                           OnClick="AddConfiguration" Disabled="@(!CanAddConfiguration)">
+                                    @Localizer["Save"]
+                                </MudButton>
+                            </div>
+                        </MudPaper>
+
+                        @* Grid of Configured Models *@
+                        <MudPaper Elevation="4" Class="pa-4">
+                            <MudText Typo="Typo.h6" GutterBottom="true">@Localizer["ConfiguredModels"]</MudText>
+
+                            @if (_configurations.Count == 0)
+                            {
+                                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                                    @Localizer["NoConfigurationsYet"]
+                                </MudAlert>
+                            }
+                            else
+                            {
+                                <MudDataGrid T="UserAIConfiguration" Items="_configurations" Dense="true" Hover="true" Striped="true">
+                                    <Columns>
+                                        <PropertyColumn Property="x => x.Provider" Title="@Localizer["Provider"]">
+                                            <CellTemplate>
+                                                <div class="d-flex align-center gap-2">
+                                                    <MudAvatar Color="@GetProviderColor(context.Item.Provider)" Size="Size.Small">
+                                                        <MudIcon Icon="@GetProviderIcon(context.Item.Provider)" Size="Size.Small" />
+                                                    </MudAvatar>
+                                                    @context.Item.Provider.ToString()
+                                                </div>
+                                            </CellTemplate>
+                                        </PropertyColumn>
+                                        <PropertyColumn Property="x => x.ModelId" Title="@Localizer["Model"]" />
+                                        <TemplateColumn Title="@Localizer["Info"]">
+                                            <CellTemplate>
+                                                <div class="d-flex align-center gap-1">
+                                                    @if (!string.IsNullOrEmpty(context.Item.CostType))
+                                                    {
+                                                        <MudTooltip Text="@context.Item.Notes" Placement="Placement.Top"
+                                                                    Disabled="@string.IsNullOrEmpty(context.Item.Notes)">
+                                                            <MudChip T="string"
+                                                                     Color="@(context.Item.CostType == "Paid" ? Color.Warning : Color.Success)"
+                                                                     Size="Size.Small" Variant="Variant.Text" Class="ma-0"
+                                                                     Icon="@Icons.Material.Outlined.Info">
+                                                                @(Localizer[context.Item.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
+                                                            </MudChip>
+                                                        </MudTooltip>
+                                                    }
+                                                </div>
+                                            </CellTemplate>
+                                        </TemplateColumn>
+                                        <PropertyColumn Property="x => x.Name" Title="@Localizer["Name"]" />
+                                        <PropertyColumn Property="x => x.IsActive" Title="@Localizer["Active"]">
+                                            <CellTemplate>
+                                                @if (context.Item.IsActive)
+                                                {
+                                                    <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.Star">
+                                                        @Localizer["Active"]
+                                                    </MudChip>
+                                                }
+                                            </CellTemplate>
+                                        </PropertyColumn>
+                                        <TemplateColumn Title="@Localizer["Actions"]">
+                                            <CellTemplate>
+                                                <MudStack Row Spacing="1">
+                                                    @if (!context.Item.IsActive)
+                                                    {
+                                                        <MudTooltip Text="@Localizer["SetAsActive"]">
+                                                            <MudIconButton Icon="@Icons.Material.Filled.Star" Size="Size.Small"
+                                                                           Color="Color.Warning" OnClick="() => ActivateConfiguration(context.Item)" />
+                                                        </MudTooltip>
+                                                    }
+                                                    <MudTooltip Text="@Localizer["EditConfiguration"]">
+                                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
+                                                                       Color="Color.Primary" OnClick="() => EditConfiguration(context.Item)" />
+                                                    </MudTooltip>
+                                                    <MudTooltip Text="@Localizer["Delete"]">
+                                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
+                                                                       Color="Color.Error" OnClick="() => DeleteConfiguration(context.Item)" />
+                                                    </MudTooltip>
+                                                </MudStack>
+                                            </CellTemplate>
+                                        </TemplateColumn>
+                                    </Columns>
+                                </MudDataGrid>
+                            }
+                        </MudPaper>
+                    </MudTabPanel>
+
+                    <MudTabPanel Text="@Localizer["AccountTab"]" Icon="@Icons.Material.Filled.ManageAccounts">
+                        <MudPaper Elevation="4" Class="pa-4 mb-4">
+                            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="3" Class="flex-wrap">
+                                <MudStack Spacing="0">
+                                    <MudText Typo="Typo.h6" Class="mb-1 d-flex align-center gap-2"><MudIcon Icon="@Icons.Material.Filled.Security" /> @Localizer["AccountSecurity"]</MudText>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                        @_userEmail
+                                    </MudText>
+                                </MudStack>
+
+                                @if (_hasPassword)
+                                {
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="flex-wrap">
+                                        <MudChip T="string" Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" Variant="Variant.Outlined">
+                                            @Localizer["EmailPasswordEnabled"]
+                                        </MudChip>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.Password"
+                                                   OnClick="@(() => { _showChangePassword = !_showChangePassword; _showSetPassword = false; ClearPasswordFields(); })">
+                                            @Localizer["ChangePassword"]
+                                        </MudButton>
+                                    </MudStack>
                                 }
                                 else
                                 {
-                                    @Localizer["Validate"]
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                               StartIcon="@Icons.Material.Filled.Password"
+                                               OnClick="@(() => { _showSetPassword = !_showSetPassword; _showChangePassword = false; ClearPasswordFields(); })">
+                                        @Localizer["SetPassword"]
+                                    </MudButton>
                                 }
-                            </MudButton>
-                        </MudItem>
+                            </MudStack>
 
-                        <MudItem xs="12" md="3">
-                            <AiModelPicker AvailableModels="@_availableModels"
-                                @bind-Value="_newConfig.ModelId"
-                                AfterValueChanged="@OnModelPickerChanged"
-                                Disabled="@(!_modelsLoaded)" />
-                        </MudItem>
+                            @if (_hasPassword && _showChangePassword)
+                            {
+                                <MudGrid Class="mt-1">
+                                    <MudItem xs="12" md="3">
+                                        <MudTextField @bind-Value="_currentPassword"
+                                                      Label="@Localizer["CurrentPassword"]"
+                                                      Variant="Variant.Outlined"
+                                                      InputType="MudBlazor.InputType.Password"
+                                                      Margin="Margin.Dense" />
+                                    </MudItem>
+                                    <MudItem xs="12" md="3">
+                                        <MudTextField @bind-Value="_newPassword"
+                                                      Label="@Localizer["NewPassword"]"
+                                                      Variant="Variant.Outlined"
+                                                      InputType="MudBlazor.InputType.Password"
+                                                      Margin="Margin.Dense" />
+                                    </MudItem>
+                                    <MudItem xs="12" md="3">
+                                        <MudTextField @bind-Value="_confirmNewPassword"
+                                                      Label="@Localizer["ConfirmPassword"]"
+                                                      Variant="Variant.Outlined"
+                                                      InputType="MudBlazor.InputType.Password"
+                                                      Margin="Margin.Dense" />
+                                    </MudItem>
+                                    <MudItem xs="12" md="3">
+                                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2" Style="height: 100%;">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                                       StartIcon="@(_isChangingPassword ? null : Icons.Material.Filled.Save)"
+                                                       Disabled="@(_isChangingPassword || string.IsNullOrWhiteSpace(_currentPassword) || string.IsNullOrWhiteSpace(_newPassword) || string.IsNullOrWhiteSpace(_confirmNewPassword))"
+                                                       OnClick="ChangeLocalPassword">
+                                                @if (_isChangingPassword)
+                                                {
+                                                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                                }
+                                                @Localizer["SavePassword"]
+                                            </MudButton>
+                                            <MudButton Variant="Variant.Text" Color="Color.Default"
+                                                       Disabled="@_isChangingPassword"
+                                                       OnClick="HidePasswordForms">
+                                                @Localizer["Cancel"]
+                                            </MudButton>
+                                        </MudStack>
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                            @Localizer["PasswordRequirementHelper"]
+                                        </MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            }
+                            else if (!_hasPassword)
+                            {
+                                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mt-4">
+                                    @Localizer["ExternalOnlyPasswordDescription"]
+                                </MudAlert>
 
-                        <MudItem xs="12" md="2">
-                            <MudTextField T="string" Label="@Localizer["ConfigurationName"]" @bind-Value="_newConfig.Name"
-                                          Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense" Placeholder="e.g. My GPT-4 Key" />
-                        </MudItem>
-                    </MudGrid>
-
-                    <div class="d-flex align-center justify-end mt-3 gap-3">
-                        @if (_modelsLoaded && !string.IsNullOrEmpty(_newConfig.ModelId) && _selectedModelMetadata != null)
-                        {
-                            <div class="d-flex align-center gap-2">
-                                <MudChip T="string" Color="@(_selectedModelMetadata.CostType == "Paid" ? Color.Warning : Color.Success)"
-                                         Size="Size.Small" Variant="Variant.Text" Class="ma-0">
-                                    @(Localizer[_selectedModelMetadata.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
-                                </MudChip>
-                                @if (_selectedModelMetadata.Notes.Any())
+                                @if (_showSetPassword)
                                 {
-                                    <MudText Typo="Typo.caption" Color="Color.Info" Style="font-style: italic">
-                                        @string.Join(", ", _selectedModelMetadata.Notes)
-                                    </MudText>
+                                    <MudGrid Class="mt-1">
+                                        <MudItem xs="12" md="4">
+                                            <MudTextField @bind-Value="_newPassword"
+                                                          Label="@Localizer["Password"]"
+                                                          Variant="Variant.Outlined"
+                                                          InputType="MudBlazor.InputType.Password"
+                                                          Margin="Margin.Dense" />
+                                        </MudItem>
+                                        <MudItem xs="12" md="4">
+                                            <MudTextField @bind-Value="_confirmNewPassword"
+                                                          Label="@Localizer["ConfirmPassword"]"
+                                                          Variant="Variant.Outlined"
+                                                          InputType="MudBlazor.InputType.Password"
+                                                          Margin="Margin.Dense" />
+                                        </MudItem>
+                                        <MudItem xs="12" md="4">
+                                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2" Style="height: 100%;">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                                           StartIcon="@(_isSettingPassword ? null : Icons.Material.Filled.Save)"
+                                                           Disabled="@(_isSettingPassword || string.IsNullOrWhiteSpace(_newPassword) || string.IsNullOrWhiteSpace(_confirmNewPassword))"
+                                                           OnClick="SetLocalPassword">
+                                                    @if (_isSettingPassword)
+                                                    {
+                                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                                    }
+                                                    @Localizer["SavePassword"]
+                                                </MudButton>
+                                                <MudButton Variant="Variant.Text" Color="Color.Default"
+                                                           Disabled="@_isSettingPassword"
+                                                           OnClick="HidePasswordForms">
+                                                    @Localizer["Cancel"]
+                                                </MudButton>
+                                            </MudStack>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                                @Localizer["PasswordRequirementHelper"]
+                                            </MudText>
+                                        </MudItem>
+                                    </MudGrid>
                                 }
+                            }
+                        </MudPaper>
+
+                        @if (!string.IsNullOrEmpty(_userId))
+                        {
+                            <div class="mt-8 pt-8" style="border-top: 1px solid var(--mud-palette-divider);">
+                                <MudPaper Elevation="2" Class="pa-4" Style="background-color: var(--mud-palette-surface);">
+                                    <MudText Typo="Typo.h5" Color="Color.Error" GutterBottom="true" Style="font-weight: 700;" Class="d-flex align-center">
+                                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Class="mr-2" Size="Size.Large" />
+                                        @Localizer["DangerZone"]
+                                    </MudText>
+
+                                    @if (_isProtected)
+                                    {
+                                        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-6" Style="max-width: 800px;">
+                                            <MudText Typo="Typo.body1" Style="font-weight: 600">@Localizer["ProtectedAccount"]</MudText>
+                                            <MudText Typo="Typo.body2">@Localizer["DemoAccountProtected"]</MudText>
+                                        </MudAlert>
+                                    }
+                                    else
+                                    {
+                                        <MudText Typo="Typo.body1" Class="mb-6" Style="max-width: 800px;">
+                                            @Localizer["DeleteAccountExplainer"]
+                                        </MudText>
+                                    }
+
+                                    <MudButton Variant="Variant.Filled" Color="Color.Error"
+                                               StartIcon="@Icons.Material.Filled.DeleteForever"
+                                               Size="Size.Large"
+                                               OnClick="HandleDeleteAccount"
+                                               Disabled="@(_isProtected || _isLoading)">
+                                        @Localizer["DeleteMyAccount"]
+                                    </MudButton>
+                                </MudPaper>
                             </div>
                         }
-                        @if (_modelsLoaded && !string.IsNullOrEmpty(_newConfig.ModelId))
-                        {
-                            <MudButton Variant="Variant.Outlined" Color="Color.Info" StartIcon="@Icons.Material.Filled.Power"
-                                       OnClick="TestConnection" Disabled="@_isTestingConnection">
-                                @if (_isTestingConnection)
-                                {
-                                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                                }
-                                @Localizer["TestConnection"]
-                            </MudButton>
-                        }
-
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
-                                   OnClick="AddConfiguration" Disabled="@(!CanAddConfiguration)">
-                            @Localizer["Save"]
-                        </MudButton>
-                    </div>
-                </MudPaper>
-
-                @* Grid of Configured Models *@
-                <MudPaper Elevation="4" Class="pa-4">
-                    <MudText Typo="Typo.h6" GutterBottom="true">@Localizer["ConfiguredModels"]</MudText>
-
-                    @if (_configurations.Count == 0)
-                    {
-                        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
-                            @Localizer["NoConfigurationsYet"]
-                        </MudAlert>
-                    }
-                    else
-                    {
-                        <MudDataGrid T="UserAIConfiguration" Items="_configurations" Dense="true" Hover="true" Striped="true">
-                            <Columns>
-                                <PropertyColumn Property="x => x.Provider" Title="@Localizer["Provider"]">
-                                    <CellTemplate>
-                                        <div class="d-flex align-center gap-2">
-                                            <MudAvatar Color="@GetProviderColor(context.Item.Provider)" Size="Size.Small">
-                                                <MudIcon Icon="@GetProviderIcon(context.Item.Provider)" Size="Size.Small" />
-                                            </MudAvatar>
-                                            @context.Item.Provider.ToString()
-                                        </div>
-                                    </CellTemplate>
-                                </PropertyColumn>
-                                <PropertyColumn Property="x => x.ModelId" Title="@Localizer["Model"]" />
-                                <TemplateColumn Title="@Localizer["Info"]">
-                                    <CellTemplate>
-                                        <div class="d-flex align-center gap-1">
-                                            @if (!string.IsNullOrEmpty(context.Item.CostType))
-                                            {
-                                                <MudTooltip Text="@context.Item.Notes" Placement="Placement.Top"
-                                                            Disabled="@string.IsNullOrEmpty(context.Item.Notes)">
-                                                    <MudChip T="string"
-                                                             Color="@(context.Item.CostType == "Paid" ? Color.Warning : Color.Success)"
-                                                             Size="Size.Small" Variant="Variant.Text" Class="ma-0"
-                                                             Icon="@Icons.Material.Outlined.Info">
-                                                        @(Localizer[context.Item.CostType == "Paid" ? "CostTypePaid" : "CostTypeFree"])
-                                                    </MudChip>
-                                                </MudTooltip>
-                                            }
-                                        </div>
-                                    </CellTemplate>
-                                </TemplateColumn>
-                                <PropertyColumn Property="x => x.Name" Title="@Localizer["Name"]" />
-                                <PropertyColumn Property="x => x.IsActive" Title="@Localizer["Active"]">
-                                    <CellTemplate>
-                                        @if (context.Item.IsActive)
-                                        {
-                                            <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.Star">
-                                                @Localizer["Active"]
-                                            </MudChip>
-                                        }
-                                    </CellTemplate>
-                                </PropertyColumn>
-                                <TemplateColumn Title="@Localizer["Actions"]">
-                                    <CellTemplate>
-                                        <MudStack Row Spacing="1">
-                                            @if (!context.Item.IsActive)
-                                            {
-                                                <MudTooltip Text="@Localizer["SetAsActive"]">
-                                                    <MudIconButton Icon="@Icons.Material.Filled.Star" Size="Size.Small"
-                                                                   Color="Color.Warning" OnClick="() => ActivateConfiguration(context.Item)" />
-                                                </MudTooltip>
-                                            }
-                                            <MudTooltip Text="@Localizer["EditConfiguration"]">
-                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small"
-                                                               Color="Color.Primary" OnClick="() => EditConfiguration(context.Item)" />
-                                            </MudTooltip>
-                                            <MudTooltip Text="@Localizer["Delete"]">
-                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small"
-                                                               Color="Color.Error" OnClick="() => DeleteConfiguration(context.Item)" />
-                                            </MudTooltip>
-                                        </MudStack>
-                                    </CellTemplate>
-                                </TemplateColumn>
-                            </Columns>
-                        </MudDataGrid>
-                    }
-                </MudPaper>
+                    </MudTabPanel>
+                </MudTabs>
             }
         </div>
-
-        @if (!_isLoading && !string.IsNullOrEmpty(_userId))
-        {
-            @* Danger Zone area pinned to the bottom of the page body *@
-            <div class="mt-auto pt-8" style="border-top: 1px solid var(--mud-palette-divider);">
-                <MudPaper Elevation="2" Class="pa-4" Style="background-color: var(--mud-palette-surface);">
-                    <MudText Typo="Typo.h5" Color="Color.Error" GutterBottom="true" Style="font-weight: 700;" Class="d-flex align-center">
-                        <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Class="mr-2" Size="Size.Large" />
-                        @Localizer["DangerZone"]
-                    </MudText>
-
-                    @if (_isProtected)
-                    {
-                        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-6" Style="max-width: 800px;">
-                            <MudText Typo="Typo.body1" Style="font-weight: 600">@Localizer["ProtectedAccount"]</MudText>
-                            <MudText Typo="Typo.body2">@Localizer["DemoAccountProtected"]</MudText>
-                        </MudAlert>
-                    }
-                    else
-                    {
-                        <MudText Typo="Typo.body1" Class="mb-6" Style="max-width: 800px;">
-                            @Localizer["DeleteAccountExplainer"]
-                        </MudText>
-                    }
-
-                    <MudButton Variant="Variant.Filled" Color="Color.Error"
-                               StartIcon="@Icons.Material.Filled.DeleteForever"
-                               Size="Size.Large"
-                               OnClick="HandleDeleteAccount"
-                               Disabled="@(_isProtected || _isLoading)">
-                        @Localizer["DeleteMyAccount"]
-                    </MudButton>
-                </MudPaper>
-            </div>
-        }
     </MudContainer>
 </div>
