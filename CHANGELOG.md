@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.9.4] - 2026-05-28
+
+### Changed
+- fix cover letter pdf and html links
+
 ## [1.9.3] - 2026-05-07
 
 ### Changed
