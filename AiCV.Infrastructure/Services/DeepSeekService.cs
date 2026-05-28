@@ -42,7 +42,7 @@ public class DeepSeekService(
         if (!string.IsNullOrWhiteSpace(customPrompt))
             systemPrompt += $"\n\nAdditional Instructions: {customPrompt}";
         var prompt = $"{systemPrompt}\n\n{BuildPrompt(profile, job)}";
-        return await CallDeepSeekApiAsync(prompt);
+        return AIResponseParser.ParseCoverLetter(await CallDeepSeekApiAsync(prompt));
     }
 
     public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(

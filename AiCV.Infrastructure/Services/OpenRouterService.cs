@@ -59,7 +59,7 @@ public class OpenRouterService(
             },
         };
 
-        return await CallOpenRouterApiAsync(requestBody);
+        return AIResponseParser.ParseCoverLetter(await CallOpenRouterApiAsync(requestBody));
     }
 
     public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(

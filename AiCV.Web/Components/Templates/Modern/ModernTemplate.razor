@@ -22,9 +22,9 @@ else
                         <h1 class="name"><FormattedText Text="@Profile.FullName" /></h1>
                         <h2 class="title"><FormattedText Text="@Profile.Title" /></h2>
                         <div class="contact-info-wrapper">
-                            @Localizer["EmailLabel"] <FormattedText Text="@Profile.Email" /> | @Localizer["PhoneLabel"] <FormattedText Text="@Profile.PhoneNumber" />
+                            @Localizer["EmailLabel"] <a href="mailto:@Profile.Email">@Profile.Email</a> | @Localizer["PhoneLabel"] <FormattedText Text="@Profile.PhoneNumber" />
                             | @Localizer["LocationLabel"] <FormattedText Text="@Profile.Location" /><br>
-                            @Localizer["LinkedInLabel"] <FormattedText Text="@Profile.LinkedInUrl" /> | @Localizer["GitHubLabel"] <FormattedText Text="@Profile.PortfolioUrl" />
+                            @Localizer["LinkedInLabel"] <a href="@Profile.LinkedInUrl" target="_blank">@Profile.LinkedInUrl</a> | @Localizer["GitHubLabel"] <a href="@Profile.PortfolioUrl" target="_blank">@Profile.PortfolioUrl</a>
                         </div>
                         @if (!string.IsNullOrEmpty(Profile.Tagline))
                         {
@@ -146,7 +146,7 @@ else
                                         @if (!string.IsNullOrEmpty(proj.Link))
                                         {
                                             <strong>@Localizer["GitHubLabel"]</strong>
-                                            <a href="@proj.Link" target="_blank"><FormattedText Text="@proj.Link" /></a>
+                                            <a href="@proj.Link" target="_blank">@proj.Link</a>
 
                                             @if (!string.IsNullOrEmpty(proj.Technologies))
                                             {

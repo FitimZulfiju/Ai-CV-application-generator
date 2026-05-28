@@ -181,6 +181,7 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
     )
     {
         var builder = GetTemplateBuilder(template);
+        var headerProfile = CreateCoverLetterHeaderProfile(profile);
         float[] fontSizes = [12f, 11.5f, 11f, 10.5f, 10f, 9.5f, 9f, 8.5f, 8f];
         byte[] pdfBytes = [];
 
@@ -192,7 +193,7 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(0.75f, Unit.Centimetre);
-                    page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, profile));
+                    page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, headerProfile));
                     page.Content()
                         .Element(c => builder.ComposeCoverLetter(c, letterContent, profile, size));
                 });
@@ -204,5 +205,22 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
         }
 
         return Task.FromResult(pdfBytes);
+    }
+
+    private static CandidateProfile CreateCoverLetterHeaderProfile(CandidateProfile profile)
+    {
+        return new CandidateProfile
+        {
+            FullName = profile.FullName,
+            Title = profile.Title,
+            Email = profile.Email,
+            PhoneNumber = profile.PhoneNumber,
+            Location = profile.Location,
+            LinkedInUrl = profile.LinkedInUrl,
+            ShowProfilePicture = false,
+            ProfilePictureUrl = string.Empty,
+            PortfolioUrl = string.Empty,
+            Tagline = string.Empty,
+        };
     }
 }

@@ -35,7 +35,7 @@ public class OpenAIService(string apiKey, string modelId, IStringLocalizer<AicvR
             new UserChatMessage(userPrompt)
         );
 
-        return completion.Content[0].Text;
+        return AIResponseParser.ParseCoverLetter(completion.Content[0].Text);
     }
 
     public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(
