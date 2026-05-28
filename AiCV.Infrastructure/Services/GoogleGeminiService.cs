@@ -78,8 +78,11 @@ public class GoogleGeminiService(
         var responseJson = await response.Content.ReadAsStringAsync();
         var geminiResponse = JsonSerializer.Deserialize<GeminiResponse>(responseJson);
 
-        return geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text
-            ?? "Error: No content generated.";
+        var textResponse = geminiResponse?.Candidates?[0]?.Content?.Parts?[0]?.Text;
+
+        return string.IsNullOrWhiteSpace(textResponse)
+            ? "Error: No content generated."
+            : AIResponseParser.ParseCoverLetter(textResponse);
     }
 
     public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(

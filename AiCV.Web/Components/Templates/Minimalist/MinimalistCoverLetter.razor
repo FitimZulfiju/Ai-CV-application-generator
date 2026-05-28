@@ -19,12 +19,12 @@ else
                             <FormattedText Text="@Profile.Title" />
                         </h2>
                         <div class="contact-info-wrapper">
-                            @Localizer["EmailLabel"] <a href="mailto:@Profile.Email"><FormattedText Text="@Profile.Email" /></a> |
+                            @Localizer["EmailLabel"] <a href="mailto:@Profile.Email">@Profile.Email</a> |
                             @Localizer["PhoneLabel"] <FormattedText Text="@Profile.PhoneNumber" />
                             | @Localizer["LocationLabel"]
                             <FormattedText Text="@Profile.Location" /><br>
                             @Localizer["LinkedInLabel"] <a href="@Profile.LinkedInUrl"
-                                                           target="_blank"><FormattedText Text="@Profile.LinkedInUrl" /></a>
+                                                           target="_blank">@Profile.LinkedInUrl</a>
                         </div>
                     </div>
                 </header>

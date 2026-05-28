@@ -78,7 +78,11 @@ public class GroqService(
         var responseJson = await response.Content.ReadAsStringAsync();
         var groqResponse = JsonSerializer.Deserialize<GroqResponse>(responseJson);
 
-        return groqResponse?.Choices?[0]?.Message?.Content ?? "Error: No content generated.";
+        var textResponse = groqResponse?.Choices?[0]?.Message?.Content;
+
+        return string.IsNullOrWhiteSpace(textResponse)
+            ? "Error: No content generated."
+            : AIResponseParser.ParseCoverLetter(textResponse);
     }
 
     public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(

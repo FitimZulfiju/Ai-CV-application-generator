@@ -120,6 +120,9 @@ public static class AIPromptBuilder
             sb.AppendLine(
                 "IMPORTANT: Return the result as PLAIN TEXT. Do NOT use JSON or Markdown code blocks."
             );
+            sb.AppendLine(
+                "Return ONLY the cover letter content. Do NOT include introductory phrases like 'Here is a professional cover letter'."
+            );
             sb.AppendLine("Write a professional cover letter.");
             sb.AppendLine(
                 "TONE: Adopt a professional tone suitable for the specified language and business culture: Direct, concise, humble but confident, and focused on the value the candidate brings to the company."

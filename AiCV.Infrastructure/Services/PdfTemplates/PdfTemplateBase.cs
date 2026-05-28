@@ -628,7 +628,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (match.Index > lastIndex)
             {
                 var beforeText = input[lastIndex..match.Index];
-                var cleanBefore = HtmlTagRegex().Replace(beforeText, string.Empty);
+                var cleanBefore = WebUtility.HtmlDecode(
+                    HtmlTagRegex().Replace(beforeText, string.Empty)
+                );
                 if (
                     !string.IsNullOrWhiteSpace(cleanBefore)
                     || (isBlock && !string.IsNullOrEmpty(cleanBefore))
@@ -717,7 +719,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         if (lastIndex < input.Length)
         {
             var remainingText = input[lastIndex..];
-            var cleanRemaining = HtmlTagRegex().Replace(remainingText, string.Empty);
+            var cleanRemaining = WebUtility.HtmlDecode(
+                HtmlTagRegex().Replace(remainingText, string.Empty)
+            );
             if (
                 !string.IsNullOrWhiteSpace(cleanRemaining)
                 || (isBlock && !string.IsNullOrEmpty(cleanRemaining))

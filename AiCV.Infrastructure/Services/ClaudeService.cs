@@ -70,7 +70,11 @@ public class ClaudeService(
         var responseJson = await response.Content.ReadAsStringAsync();
         var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseJson);
 
-        return claudeResponse?.Content?[0]?.Text ?? "Error: No content generated.";
+        var textResponse = claudeResponse?.Content?[0]?.Text;
+
+        return string.IsNullOrWhiteSpace(textResponse)
+            ? "Error: No content generated."
+            : AIResponseParser.ParseCoverLetter(textResponse);
     }
 
     public override async Task<TailoredResumeResult> GenerateTailoredResumeAsync(

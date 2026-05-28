@@ -1,11 +1,27 @@
 namespace AiCV.Infrastructure.Services;
 
-public static class AIResponseParser
+public static partial class AIResponseParser
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
     };
+
+    public static string ParseCoverLetter(string? response)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return string.Empty;
+
+        var cleanResponse = response
+            .Replace("```text", "", StringComparison.OrdinalIgnoreCase)
+            .Replace("```markdown", "", StringComparison.OrdinalIgnoreCase)
+            .Replace("```", "")
+            .Trim();
+
+        cleanResponse = CoverLetterPreambleRegex().Replace(cleanResponse, string.Empty);
+
+        return cleanResponse.Trim();
+    }
 
     public static TailoredResumeResult ParseTailoredResume(
         string jsonResponse,
@@ -170,4 +186,10 @@ public static class AIResponseParser
         public string StartDate { get; set; } = string.Empty;
         public string EndDate { get; set; } = string.Empty;
     }
+
+    [GeneratedRegex(
+        @"\A\s*(?:(?:certainly|sure)[,.]?\s*)?(?:(?:here(?:'s| is)|below is|please find)\s+(?:a|the|your)?\s*[^\r\n]*\bcover\s+letter\b[^\r\n]*:?\s*)(?:\r?\n)+",
+        RegexOptions.IgnoreCase
+    )]
+    private static partial Regex CoverLetterPreambleRegex();
 }
