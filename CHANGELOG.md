@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.11.0] - 2026-06-04
+
+### Added
+- feat: show version in sidebar footer
+
 ## [1.10.1] - 2026-06-04
 
 ### Fixed
