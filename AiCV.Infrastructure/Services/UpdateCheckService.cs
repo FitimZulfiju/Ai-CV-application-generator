@@ -357,11 +357,10 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                 _watchtowerToken
             );
 
-            // Watchtower API is typically at http://watchtower:8080/v1/update
-            // In our compose, the service name is 'aicv-watchtower'.
+            // Use the Compose service name so Docker DNS resolves it consistently.
             using var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                "http://aicv-watchtower:8080/v1/update"
+                "http://watchtower:8080/v1/update"
             );
             var response = await client.SendAsync(
                 request,
@@ -371,9 +370,6 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             if (response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Successfully signaled Watchtower to perform update.");
-                _isUpdateAvailable = false;
-                _newVersionDigest = null;
-                _newVersionTag = null;
                 return true;
             }
             else
@@ -396,9 +392,6 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                 ex,
                 "Timed out waiting for Watchtower response. The update may still be running."
             );
-            _isUpdateAvailable = false;
-            _newVersionDigest = null;
-            _newVersionTag = null;
             return true;
         }
         catch (Exception ex)
