@@ -25,6 +25,24 @@ else
             <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
                 @if (_activeTabIndex != 7)
                 {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Medium" OnClick="ExportProfile"
+                               Style="white-space: nowrap;"
+                               StartIcon="@Icons.Material.Filled.Download">
+                        @Localizer["ExportProfile"]
+                    </MudButton>
+
+                    <MudFileUpload T="IBrowserFile" OnFilesChanged="ImportProfile">
+                        <CustomContent>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Warning" Size="Size.Medium"
+                                       Style="white-space: nowrap;"
+                                       StartIcon="@Icons.Material.Filled.UploadFile"
+                                       OnClick="@context.OpenFilePickerAsync">
+                                @Localizer["ImportProfile"]
+                            </MudButton>
+                        </CustomContent>
+                        <SelectedTemplate />
+                    </MudFileUpload>
+
                     <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
                                Disabled="_isSaving" Style="white-space: nowrap;"
                                StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">

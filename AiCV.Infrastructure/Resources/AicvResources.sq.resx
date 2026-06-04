@@ -169,6 +169,12 @@
   <data name="Save" xml:space="preserve">
     <value>Ruaj</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Përditëso</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Ndrysho</value>
+  </data>
   <data name="Saved" xml:space="preserve">
     <value>U Ruajt</value>
   </data>
@@ -276,6 +282,33 @@
   </data>
   <data name="AddInterest" xml:space="preserve">
     <value>Shto Interes</value>
+  </data>
+  <data name="ProfileChipHelp" xml:space="preserve">
+    <value>Tërhiqni çipat për të ndryshuar renditjen. Kaloni mbi një çip për ta ndryshuar ose hequr. Ruani profilin për t'i mbajtur ndryshimet.</value>
+  </data>
+  <data name="ExportProfile" xml:space="preserve">
+    <value>Eksporto Profilin</value>
+  </data>
+  <data name="ImportProfile" xml:space="preserve">
+    <value>Importo Profilin</value>
+  </data>
+  <data name="ImportProfileWarningTitle" xml:space="preserve">
+    <value>Të zëvendësohet profili aktual?</value>
+  </data>
+  <data name="ImportProfileWarningContent" xml:space="preserve">
+    <value>Importimi i këtij skedari të vlefshëm JSON të profilit do të zëvendësojë të gjitha të dhënat aktuale të profilit, duke përfshirë të dhënat personale, përvojën, edukimin, aftësitë, projektet, gjuhët dhe interesat. Kjo nuk mund të zhbëhet nëse nuk keni eksportuar një kopje rezervë.</value>
+  </data>
+  <data name="ProfileExported" xml:space="preserve">
+    <value>Profili u eksportua me sukses.</value>
+  </data>
+  <data name="ProfileImported" xml:space="preserve">
+    <value>Profili u importua me sukses.</value>
+  </data>
+  <data name="InvalidProfileJson" xml:space="preserve">
+    <value>Skedar JSON profili i pavlefshëm.</value>
+  </data>
+  <data name="ImportProfileFailed" xml:space="preserve">
+    <value>Importimi i profilit dështoi</value>
   </data>
   <data name="CvPreview" xml:space="preserve">
     <value>Parashikimi i CV-së</value>

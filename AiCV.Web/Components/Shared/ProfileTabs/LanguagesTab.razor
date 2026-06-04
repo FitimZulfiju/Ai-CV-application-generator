@@ -1,45 +1,93 @@
 @if (Profile != null)
 {
     <MudStack Spacing="3">
-        <MudStack Row AlignItems="AlignItems.Center">
-            @{
-                var proficiencyLabel = $"{Localizer["Proficiency"]} ({Localizer["LanguageProficiencyHelper"]})";
-            }
-            <MudTextField @bind-Value="_newLanguageName"
-                          Class="flex-grow-1"
-                          Label="@Localizer["Language"]"
-                          Variant="Variant.Outlined"
-                          Immediate="true" />
-            <MudTextField @bind-Value="_newLanguageProficiency"
-                          Class="flex-grow-1"
-                          Label="@proficiencyLabel"
-                          Variant="Variant.Outlined"
-                          Immediate="true"
-                          Adornment="Adornment.End"
-                          AdornmentColor="Color.Primary"
-                          AdornmentIcon="@Icons.Material.Filled.Add"
-                          OnAdornmentClick="AddLanguage" />
-        </MudStack>
+        @{
+            var proficiencyLabel = $"{Localizer["Proficiency"]} ({Localizer["LanguageProficiencyHelper"]})";
+            var isEditing = _editingLanguage != null;
+        }
 
-        <MudChipSet T="string">
-            @foreach (var lang in Profile.Languages.Where(l => !string.IsNullOrWhiteSpace(l.Name)).ToList())
-            {
-                var languageName = lang.Name?.Trim() ?? string.Empty;
-                var proficiency = lang.Proficiency?.Trim() ?? string.Empty;
-                var chipText = string.IsNullOrWhiteSpace(proficiency)
-                    ? languageName
-                    : $"{languageName} {proficiency}";
+        <MudGrid Spacing="2">
+            <MudItem xs="12" sm="5">
+                <MudTextField @bind-Value="_newLanguageName"
+                              Label="@Localizer["Language"]"
+                              Variant="Variant.Outlined"
+                              Immediate="true" />
+            </MudItem>
+            <MudItem xs="12" sm="5">
+                <MudTextField @bind-Value="_newLanguageProficiency"
+                              Label="@proficiencyLabel"
+                              Variant="Variant.Outlined"
+                              Immediate="true" />
+            </MudItem>
+            <MudItem xs="12" sm="2" Class="d-flex align-center gap-1">
+                <MudButton StartIcon="@(isEditing ? Icons.Material.Filled.Check : Icons.Material.Filled.Add)"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           OnClick="SaveLanguage">
+                    @(isEditing ? Localizer["Update"] : Localizer["AddLanguage"])
+                </MudButton>
+                @if (isEditing)
+                {
+                    <MudTooltip Text="@Localizer["Cancel"]">
+                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                       Color="Color.Default"
+                                       Variant="Variant.Outlined"
+                                       OnClick="CancelLanguageEdit" />
+                    </MudTooltip>
+                }
+            </MudItem>
+        </MudGrid>
 
-                <MudChip T="string" Value="@chipText" Color="Color.Primary"
-                         OnClose="@((MudChip<string> chip) => RemoveLanguage(lang))">
-                    <FormattedText Text="@languageName" />
-                    @if (!string.IsNullOrWhiteSpace(proficiency))
-                    {
-                        <span>&nbsp;</span>
-                        <FormattedText Text="@proficiency" />
-                    }
+        <MudDropContainer @ref="_dropContainer"
+                          T="Language"
+                          Items="Profile.Languages"
+                          ItemsSelector="@((Language item, string zone) => zone == LanguagesDropZone)"
+                          ItemDropped="OnLanguageDropped"
+                          Class="profile-chip-drop-container">
+            <ChildContent>
+                <MudDropZone T="Language"
+                             Identifier="@LanguagesDropZone"
+                             AllowReorder="true"
+                             Class="profile-chip-drop-zone" />
+            </ChildContent>
+            <ItemRenderer>
+                @{
+                    var chipText = GetLanguageChipText(context);
+                }
+
+                <MudChip T="Language"
+                         Value="context"
+                         Color="@GetLanguageChipColor(context)"
+                         Variant="@GetLanguageChipVariant(context)"
+                         OnClose="@((MudChip<Language> chip) => RemoveLanguage(context))"
+                         Class="profile-draggable-chip">
+                    <span class="profile-chip-content">
+                        <FormattedText Text="@chipText" />
+                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                            <MudTooltip Text="@Localizer["Edit"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => BeginLanguageEdit(context))" />
+                            </MudTooltip>
+                        </span>
+                    </span>
                 </MudChip>
-            }
-        </MudChipSet>
+            </ItemRenderer>
+        </MudDropContainer>
+
+        @if (_showChipHelp)
+        {
+            <MudAlert Severity="Severity.Info"
+                      Variant="Variant.Text"
+                      Dense="true"
+                      Icon="@Icons.Material.Filled.Info"
+                      ShowCloseIcon="true"
+                      CloseIconClicked="() => _showChipHelp = false"
+                      Class="profile-chip-help-row">
+                @Localizer["ProfileChipHelp"]
+            </MudAlert>
+        }
     </MudStack>
 }

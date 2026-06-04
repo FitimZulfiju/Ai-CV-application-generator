@@ -169,6 +169,12 @@
   <data name="Save" xml:space="preserve">
     <value>Gem</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Opdater</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Rediger</value>
+  </data>
   <data name="Saved" xml:space="preserve">
     <value>Gemt</value>
   </data>
@@ -276,6 +282,33 @@
   </data>
   <data name="AddInterest" xml:space="preserve">
     <value>Tilføj interesse</value>
+  </data>
+  <data name="ProfileChipHelp" xml:space="preserve">
+    <value>Træk chips for at ændre rækkefølgen. Hold musen over en chip for at redigere eller fjerne den. Gem profilen for at beholde ændringerne.</value>
+  </data>
+  <data name="ExportProfile" xml:space="preserve">
+    <value>Eksporter profil</value>
+  </data>
+  <data name="ImportProfile" xml:space="preserve">
+    <value>Importer profil</value>
+  </data>
+  <data name="ImportProfileWarningTitle" xml:space="preserve">
+    <value>Erstat nuværende profil?</value>
+  </data>
+  <data name="ImportProfileWarningContent" xml:space="preserve">
+    <value>Import af denne gyldige profil-JSON-fil erstatter alle nuværende profildata, inklusive personlige oplysninger, erfaring, uddannelse, kompetencer, projekter, sprog og interesser. Dette kan ikke fortrydes, medmindre du har eksporteret en backup.</value>
+  </data>
+  <data name="ProfileExported" xml:space="preserve">
+    <value>Profilen blev eksporteret.</value>
+  </data>
+  <data name="ProfileImported" xml:space="preserve">
+    <value>Profilen blev importeret.</value>
+  </data>
+  <data name="InvalidProfileJson" xml:space="preserve">
+    <value>Ugyldig profil-JSON-fil.</value>
+  </data>
+  <data name="ImportProfileFailed" xml:space="preserve">
+    <value>Import af profil mislykkedes</value>
   </data>
   <data name="CvPreview" xml:space="preserve">
     <value>CV-forhåndsvisning</value>

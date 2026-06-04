@@ -169,6 +169,12 @@
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="Saved" xml:space="preserve">
     <value>Saved</value>
   </data>
@@ -276,6 +282,33 @@
   </data>
   <data name="AddInterest" xml:space="preserve">
     <value>Add Interest</value>
+  </data>
+  <data name="ProfileChipHelp" xml:space="preserve">
+    <value>Drag chips to reorder. Hover a chip to edit or remove it. Save the profile to keep your changes.</value>
+  </data>
+  <data name="ExportProfile" xml:space="preserve">
+    <value>Export Profile</value>
+  </data>
+  <data name="ImportProfile" xml:space="preserve">
+    <value>Import Profile</value>
+  </data>
+  <data name="ImportProfileWarningTitle" xml:space="preserve">
+    <value>Replace current profile?</value>
+  </data>
+  <data name="ImportProfileWarningContent" xml:space="preserve">
+    <value>Importing this valid profile JSON file will replace all current profile data, including personal details, experience, education, skills, projects, languages, and interests. This cannot be undone unless you have exported a backup.</value>
+  </data>
+  <data name="ProfileExported" xml:space="preserve">
+    <value>Profile exported successfully.</value>
+  </data>
+  <data name="ProfileImported" xml:space="preserve">
+    <value>Profile imported successfully.</value>
+  </data>
+  <data name="InvalidProfileJson" xml:space="preserve">
+    <value>Invalid profile JSON file.</value>
+  </data>
+  <data name="ImportProfileFailed" xml:space="preserve">
+    <value>Profile import failed</value>
   </data>
   <data name="CvPreview" xml:space="preserve">
     <value>CV Preview</value>
