@@ -1,57 +1,66 @@
 @rendermode InteractiveServer
 
-<MudNavMenu>
-    <MudDivider Class="mb-2" />
+<div class="@NavMenuShellClass">
+    <MudNavMenu Class="nav-menu-content">
+        <MudDivider Class="mb-2" />
 
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">@Localizer["Home"]</MudNavLink>
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">@Localizer["Home"]</MudNavLink>
 
-    <AuthorizeView>
-        <Authorized>
-            <MudNavLink Href=@($"/{NavUri.ProfilePage}") Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]
-            </MudNavLink>
-            <MudNavLink Href=@($"/{NavUri.GeneratePage}") Icon="@Icons.Material.Filled.AutoAwesome">
-                @Localizer["Generate"]</MudNavLink>
-            <MudNavLink Href=@($"/{NavUri.MyApplicationsPage}") Icon="@Icons.Material.Filled.List">
-                @Localizer["MyApplications"]
-            </MudNavLink>
-            <MudNavLink Href=@($"/{NavUri.SettingsPage}") Icon="@Icons.Material.Filled.Settings">@Localizer["Settings"]
-            </MudNavLink>
-            <MudNavLink Href=@($"/{NavUri.NotesPage}") Icon="@Icons.Material.Filled.StickyNote2">@Localizer["Notes"]
-            </MudNavLink>
+        <AuthorizeView>
+            <Authorized>
+                <MudNavLink Href=@($"/{NavUri.ProfilePage}") Icon="@Icons.Material.Filled.Person">@Localizer["Profile"]
+                </MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.GeneratePage}") Icon="@Icons.Material.Filled.AutoAwesome">
+                    @Localizer["Generate"]</MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.MyApplicationsPage}") Icon="@Icons.Material.Filled.List">
+                    @Localizer["MyApplications"]
+                </MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.SettingsPage}") Icon="@Icons.Material.Filled.Settings">@Localizer["Settings"]
+                </MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.NotesPage}") Icon="@Icons.Material.Filled.StickyNote2">@Localizer["Notes"]
+                </MudNavLink>
 
-            <AuthorizeView Roles="Admin">
-                <Authorized Context="adminContext">
-                    <MudDivider Class="my-2" />
-                    <MudNavLink Href=@($"/{NavUri.AdminDashboardPage}") Match="NavLinkMatch.All"
-                        Icon="@Icons.Material.Filled.AdminPanelSettings" Style="color: var(--mud-palette-warning);">
-                        @Localizer["AdminDashboard"]
-                    </MudNavLink>
-                    <MudNavLink Href=@($"/{NavUri.AdminLogsPage}") Icon="@Icons.Material.Filled.BugReport"
-                        Style="color: var(--mud-palette-error);">
-                        @Localizer["SystemLogs"]
-                    </MudNavLink>
-                </Authorized>
-            </AuthorizeView>
+                <AuthorizeView Roles="Admin">
+                    <Authorized Context="adminContext">
+                        <MudDivider Class="my-2" />
+                        <MudNavLink Href=@($"/{NavUri.AdminDashboardPage}") Match="NavLinkMatch.All"
+                            Icon="@Icons.Material.Filled.AdminPanelSettings" Style="color: var(--mud-palette-warning);">
+                            @Localizer["AdminDashboard"]
+                        </MudNavLink>
+                        <MudNavLink Href=@($"/{NavUri.AdminLogsPage}") Icon="@Icons.Material.Filled.BugReport"
+                            Style="color: var(--mud-palette-error);">
+                            @Localizer["SystemLogs"]
+                        </MudNavLink>
+                    </Authorized>
+                </AuthorizeView>
 
-            <MudDivider Class="my-2" />
+                <MudDivider Class="my-2" />
 
-            @if (ShowLoggedInAs)
-            {
-                <MudText Typo="Typo.body2" Class="px-4 py-2">@Localizer["LoggedInAs"]: @context.User.Identity?.Name
-                </MudText>
-            }
+                @if (ShowLoggedInAs)
+                {
+                    <MudText Typo="Typo.body2" Class="px-4 py-2">@Localizer["LoggedInAs"]: @context.User.Identity?.Name
+                    </MudText>
+                }
 
-            <MudNavLink OnClick="Logout" Icon="@Icons.Material.Filled.Logout">@Localizer["Logout"]</MudNavLink>
+                <MudNavLink OnClick="Logout" Icon="@Icons.Material.Filled.Logout">@Localizer["Logout"]</MudNavLink>
 
-            <form action=@($"/{NavUri.LogoutPage}") method="post" id="logout-form" style="display:none;">
-            </form>
-        </Authorized>
-        <NotAuthorized>
-            <MudDivider Class="my-2" />
-            <MudNavLink Href=@($"/{NavUri.LoginPage}") Icon="@Icons.Material.Filled.Login">@Localizer["Login"]
-            </MudNavLink>
-            <MudNavLink Href=@($"/{NavUri.RegisterPage}") Icon="@Icons.Material.Filled.PersonAdd">@Localizer["Register"]
-            </MudNavLink>
-        </NotAuthorized>
-    </AuthorizeView>
-</MudNavMenu>
+                <form action=@($"/{NavUri.LogoutPage}") method="post" id="logout-form" style="display:none;">
+                </form>
+            </Authorized>
+            <NotAuthorized>
+                <MudDivider Class="my-2" />
+                <MudNavLink Href=@($"/{NavUri.LoginPage}") Icon="@Icons.Material.Filled.Login">@Localizer["Login"]
+                </MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.RegisterPage}") Icon="@Icons.Material.Filled.PersonAdd">@Localizer["Register"]
+                </MudNavLink>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudNavMenu>
+
+    @if (IsExpanded)
+    {
+        <div class="nav-menu-footer" aria-label="Application version">
+            <MudText Typo="Typo.caption" Color="Color.Secondary">v @AppVersion</MudText>
+        </div>
+    }
+</div>

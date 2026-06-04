@@ -41,7 +41,7 @@
     {
         <MudDrawer @key="@("mobile-drawer")" @bind-Open="_mobileDrawerOpen" Variant="DrawerVariant.Temporary"
                    OverlayAutoClose="true" Elevation="4" Class="responsive-drawer">
-            <NavMenu ShowLoggedInAs="true" />
+            <NavMenu ShowLoggedInAs="true" IsExpanded="true" />
         </MudDrawer>
     }
     else
@@ -49,7 +49,7 @@
         <MudDrawer @key="@("desktop-drawer")" @bind-Open="_desktopDrawerOpen" Variant="DrawerVariant.Mini"
                    Breakpoint="Breakpoint.Always" ClipMode="DrawerClipMode.Always" Elevation="4"
                    Class="responsive-drawer">
-            <NavMenu ShowLoggedInAs="_desktopDrawerOpen" />
+            <NavMenu ShowLoggedInAs="_desktopDrawerOpen" IsExpanded="_desktopDrawerOpen" />
         </MudDrawer>
     }
     <MudMainContent Class="main-content">

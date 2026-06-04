@@ -1,3 +1,47 @@
+.nav-menu-shell {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - var(--app-bar-height));
+    min-height: 100%;
+    overflow: hidden;
+    padding-bottom: 2.75rem;
+}
+
+.nav-menu-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.nav-menu-footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0.75rem 1rem 1rem;
+    text-align: center;
+    opacity: 0.7;
+    background: inherit;
+}
+
+.nav-menu-shell-collapsed {
+    width: 56px;
+    max-width: 56px;
+}
+
+.nav-menu-shell-collapsed ::deep .mud-nav-link-text {
+    display: none;
+}
+
+.nav-menu-shell-collapsed ::deep .mud-nav-link {
+    min-width: 0;
+    overflow: hidden;
+}
+
 .navbar-toggler {
     appearance: none;
     cursor: pointer;
