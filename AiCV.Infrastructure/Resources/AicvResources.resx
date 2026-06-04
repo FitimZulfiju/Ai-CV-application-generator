@@ -1260,5 +1260,68 @@
   <data name="PasswordChangedSuccessfully" xml:space="preserve">
     <value>Password changed successfully.</value>
   </data>
+  <data name="DataBackupTab" xml:space="preserve">
+    <value>Data backup</value>
+  </data>
+  <data name="DataBackup" xml:space="preserve">
+    <value>Data backup</value>
+  </data>
+  <data name="DataBackupDescription" xml:space="preserve">
+    <value>Export or import a JSON backup for selected parts of your account.</value>
+  </data>
+  <data name="ExportBackup" xml:space="preserve">
+    <value>Export backup</value>
+  </data>
+  <data name="ImportBackup" xml:space="preserve">
+    <value>Import backup</value>
+  </data>
+  <data name="BackupAllData" xml:space="preserve">
+    <value>All data</value>
+  </data>
+  <data name="BackupProfile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="BackupApplications" xml:space="preserve">
+    <value>Applications</value>
+  </data>
+  <data name="BackupSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="BackupNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="SelectAtLeastOneBackupSection" xml:space="preserve">
+    <value>Select at least one data section.</value>
+  </data>
+  <data name="BackupSettingsSensitiveWarning" xml:space="preserve">
+    <value>Settings backups include API keys. Keep exported JSON files private.</value>
+  </data>
+  <data name="BackupImportReplaceWarning" xml:space="preserve">
+    <value>Import replaces the selected sections with the data from the JSON file.</value>
+  </data>
+  <data name="ImportBackupWarningTitle" xml:space="preserve">
+    <value>Replace selected data?</value>
+  </data>
+  <data name="ImportBackupWarningContent" xml:space="preserve">
+    <value>Importing this valid backup JSON file will replace every selected data section in your account. This cannot be undone unless you have exported a backup first.</value>
+  </data>
+  <data name="BackupExported" xml:space="preserve">
+    <value>Backup exported successfully.</value>
+  </data>
+  <data name="BackupImported" xml:space="preserve">
+    <value>Backup imported successfully.</value>
+  </data>
+  <data name="InvalidBackupJson" xml:space="preserve">
+    <value>Invalid backup JSON file.</value>
+  </data>
+  <data name="BackupImportFailed" xml:space="preserve">
+    <value>Backup import failed</value>
+  </data>
+  <data name="BackupExportFailed" xml:space="preserve">
+    <value>Backup export failed</value>
+  </data>
+  <data name="BackupMissingSelectedSections" xml:space="preserve">
+    <value>The backup file does not contain every selected section.</value>
+  </data>
 </root>
 

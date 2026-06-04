@@ -298,6 +298,74 @@
                         </MudPaper>
                     </MudTabPanel>
 
+                    <MudTabPanel Text="@Localizer["DataBackupTab"]" Icon="@Icons.Material.Filled.Backup">
+                        <MudPaper Elevation="4" Class="pa-4 mb-4">
+                            <MudStack Spacing="3">
+                                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="flex-wrap" Spacing="2">
+                                    <MudStack Spacing="0">
+                                        <MudText Typo="Typo.h6" Class="d-flex align-center gap-2">
+                                            <MudIcon Icon="@Icons.Material.Filled.Inventory" />
+                                            @Localizer["DataBackup"]
+                                        </MudText>
+                                        <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                            @Localizer["DataBackupDescription"]
+                                        </MudText>
+                                    </MudStack>
+
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="flex-wrap">
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.Download"
+                                                   Disabled="@(_isBackupBusy || !HasSelectedBackupSections)"
+                                                   OnClick="ExportSelectedBackup">
+                                            @Localizer["ExportBackup"]
+                                        </MudButton>
+
+                                        <MudFileUpload T="IBrowserFile" OnFilesChanged="ImportSelectedBackup" Disabled="@(_isBackupBusy || !HasSelectedBackupSections)">
+                                            <CustomContent>
+                                                <MudButton Variant="Variant.Outlined" Color="Color.Warning"
+                                                           StartIcon="@Icons.Material.Filled.UploadFile"
+                                                           Disabled="@(_isBackupBusy || !HasSelectedBackupSections)"
+                                                           OnClick="@context.OpenFilePickerAsync">
+                                                    @Localizer["ImportBackup"]
+                                                </MudButton>
+                                            </CustomContent>
+                                            <SelectedTemplate />
+                                        </MudFileUpload>
+                                    </MudStack>
+                                </MudStack>
+
+                                <MudDivider />
+
+                                <MudStack Row AlignItems="AlignItems.Center" Spacing="4" Class="flex-wrap">
+                                    <MudCheckBox T="bool" @bind-Value="AllBackupSectionsSelected" Label="@Localizer["BackupAllData"]" Color="Color.Primary" />
+                                    <MudDivider Vertical="true" FlexItem="true" Class="d-none d-md-flex" />
+                                    <MudCheckBox T="bool" @bind-Value="_backupProfile" Label="@Localizer["BackupProfile"]" Color="Color.Primary" />
+                                    <MudCheckBox T="bool" @bind-Value="_backupApplications" Label="@Localizer["BackupApplications"]" Color="Color.Primary" />
+                                    <MudCheckBox T="bool" @bind-Value="_backupSettings" Label="@Localizer["BackupSettings"]" Color="Color.Primary" />
+                                    <MudCheckBox T="bool" @bind-Value="_backupNotes" Label="@Localizer["BackupNotes"]" Color="Color.Primary" />
+                                </MudStack>
+
+                                @if (!HasSelectedBackupSections)
+                                {
+                                    <MudAlert Severity="Severity.Info" Dense="true" Variant="Variant.Outlined">
+                                        @Localizer["SelectAtLeastOneBackupSection"]
+                                    </MudAlert>
+                                }
+
+                                @if (_backupSettings)
+                                {
+                                    <MudAlert Severity="Severity.Warning" Dense="true" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.VpnKey">
+                                        @Localizer["BackupSettingsSensitiveWarning"]
+                                    </MudAlert>
+                                }
+
+                                <MudAlert Severity="Severity.Warning" Dense="true" Variant="Variant.Text" Icon="@Icons.Material.Filled.ReportProblem">
+                                    @Localizer["BackupImportReplaceWarning"]
+                                </MudAlert>
+                            </MudStack>
+                        </MudPaper>
+                    </MudTabPanel>
+
                     <MudTabPanel Text="@Localizer["AccountTab"]" Icon="@Icons.Material.Filled.ManageAccounts">
                         <MudPaper Elevation="4" Class="pa-4 mb-4">
                             <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="3" Class="flex-wrap">
