@@ -169,6 +169,12 @@
   <data name="Save" xml:space="preserve">
     <value>Gem</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Opdater</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Rediger</value>
+  </data>
   <data name="Saved" xml:space="preserve">
     <value>Gemt</value>
   </data>
@@ -276,6 +282,33 @@
   </data>
   <data name="AddInterest" xml:space="preserve">
     <value>Tilføj interesse</value>
+  </data>
+  <data name="ProfileChipHelp" xml:space="preserve">
+    <value>Træk chips for at ændre rækkefølgen. Hold musen over en chip for at redigere eller fjerne den. Gem profilen for at beholde ændringerne.</value>
+  </data>
+  <data name="ExportProfile" xml:space="preserve">
+    <value>Eksporter profil</value>
+  </data>
+  <data name="ImportProfile" xml:space="preserve">
+    <value>Importer profil</value>
+  </data>
+  <data name="ImportProfileWarningTitle" xml:space="preserve">
+    <value>Erstat nuværende profil?</value>
+  </data>
+  <data name="ImportProfileWarningContent" xml:space="preserve">
+    <value>Import af denne gyldige profil-JSON-fil erstatter alle nuværende profildata, inklusive personlige oplysninger, erfaring, uddannelse, kompetencer, projekter, sprog og interesser. Dette kan ikke fortrydes, medmindre du har eksporteret en backup.</value>
+  </data>
+  <data name="ProfileExported" xml:space="preserve">
+    <value>Profilen blev eksporteret.</value>
+  </data>
+  <data name="ProfileImported" xml:space="preserve">
+    <value>Profilen blev importeret.</value>
+  </data>
+  <data name="InvalidProfileJson" xml:space="preserve">
+    <value>Ugyldig profil-JSON-fil.</value>
+  </data>
+  <data name="ImportProfileFailed" xml:space="preserve">
+    <value>Import af profil mislykkedes</value>
   </data>
   <data name="CvPreview" xml:space="preserve">
     <value>CV-forhåndsvisning</value>
@@ -1219,5 +1252,68 @@
   </data>
   <data name="PasswordChangedSuccessfully" xml:space="preserve">
     <value>Adgangskoden blev ændret.</value>
+  </data>
+  <data name="DataBackupTab" xml:space="preserve">
+    <value>Data backup</value>
+  </data>
+  <data name="DataBackup" xml:space="preserve">
+    <value>Data backup</value>
+  </data>
+  <data name="DataBackupDescription" xml:space="preserve">
+    <value>Eksporter eller importer en JSON-backup for valgte dele af din konto.</value>
+  </data>
+  <data name="ExportBackup" xml:space="preserve">
+    <value>Eksporter backup</value>
+  </data>
+  <data name="ImportBackup" xml:space="preserve">
+    <value>Importer backup</value>
+  </data>
+  <data name="BackupAllData" xml:space="preserve">
+    <value>Alle data</value>
+  </data>
+  <data name="BackupProfile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="BackupApplications" xml:space="preserve">
+    <value>Ansøgninger</value>
+  </data>
+  <data name="BackupSettings" xml:space="preserve">
+    <value>Indstillinger</value>
+  </data>
+  <data name="BackupNotes" xml:space="preserve">
+    <value>Noter</value>
+  </data>
+  <data name="SelectAtLeastOneBackupSection" xml:space="preserve">
+    <value>Vælg mindst én datasektion.</value>
+  </data>
+  <data name="BackupSettingsSensitiveWarning" xml:space="preserve">
+    <value>Backup af indstillinger inkluderer API-nøgler. Hold eksporterede JSON-filer private.</value>
+  </data>
+  <data name="BackupImportReplaceWarning" xml:space="preserve">
+    <value>Import erstatter de valgte sektioner med data fra JSON-filen.</value>
+  </data>
+  <data name="ImportBackupWarningTitle" xml:space="preserve">
+    <value>Erstat valgte data?</value>
+  </data>
+  <data name="ImportBackupWarningContent" xml:space="preserve">
+    <value>Import af denne gyldige backup-JSON-fil erstatter alle valgte datasektioner på din konto. Dette kan ikke fortrydes, medmindre du først har eksporteret en backup.</value>
+  </data>
+  <data name="BackupExported" xml:space="preserve">
+    <value>Backup blev eksporteret.</value>
+  </data>
+  <data name="BackupImported" xml:space="preserve">
+    <value>Backup blev importeret.</value>
+  </data>
+  <data name="InvalidBackupJson" xml:space="preserve">
+    <value>Ugyldig backup-JSON-fil.</value>
+  </data>
+  <data name="BackupImportFailed" xml:space="preserve">
+    <value>Import af backup mislykkedes</value>
+  </data>
+  <data name="BackupExportFailed" xml:space="preserve">
+    <value>Eksport af backup mislykkedes</value>
+  </data>
+  <data name="BackupMissingSelectedSections" xml:space="preserve">
+    <value>Backupfilen indeholder ikke alle valgte sektioner.</value>
   </data>
 </root>

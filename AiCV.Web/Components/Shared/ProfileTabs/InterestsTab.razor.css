@@ -1,0 +1,56 @@
+.profile-chip-drop-container ::deep .profile-chip-drop-zone {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px !important;
+    width: 100% !important;
+}
+
+.profile-chip-drop-container ::deep .mud-drop-item {
+    display: inline-flex !important;
+    width: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.profile-chip-drop-container ::deep .profile-draggable-chip {
+    cursor: grab;
+}
+
+.profile-chip-drop-container ::deep .profile-draggable-chip:active {
+    cursor: grabbing;
+}
+
+.profile-chip-drop-container ::deep .profile-chip-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.profile-chip-drop-container ::deep .profile-chip-edit-action {
+    display: inline-flex;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 120ms ease, opacity 120ms ease;
+}
+
+.profile-chip-drop-container ::deep .profile-draggable-chip:hover .profile-chip-edit-action,
+.profile-chip-drop-container ::deep .profile-draggable-chip:focus-within .profile-chip-edit-action {
+    max-width: 28px;
+    opacity: 1;
+}
+
+.profile-chip-drop-container ::deep .profile-chip-edit-action .mud-icon-button {
+    height: 22px;
+    min-width: 22px;
+    padding: 2px;
+    width: 22px;
+}
+
+.profile-chip-help-row {
+    margin-top: -8px;
+    padding-bottom: 0;
+    padding-top: 0;
+}

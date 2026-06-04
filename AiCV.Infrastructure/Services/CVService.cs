@@ -31,6 +31,11 @@ public class CVService : ICVService
             context.CandidateProfiles.Add(profile);
             await context.SaveChangesAsync();
         }
+        else
+        {
+            profile.Languages = [.. profile.Languages.OrderBy(l => l.Id)];
+            profile.Interests = [.. profile.Interests.OrderBy(i => i.Id)];
+        }
 
         return profile;
     }

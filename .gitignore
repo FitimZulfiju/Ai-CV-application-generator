@@ -113,6 +113,9 @@ appsettings.Development.json
 **/deploy/shared-sql/
 **/deploy/reset-database.sh
 **/private/
+*.local.sql
+*.local.*.sql
+*.local.sh
 
 # OS Generated
 .DS_Store

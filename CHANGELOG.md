@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.10.0] - 2026-06-04
+
+### Added
+- feat: add selectable data backup import export
+- feat: add profile json backup controls
+
 ## [1.9.4] - 2026-05-28
 
 ### Changed

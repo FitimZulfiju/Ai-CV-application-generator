@@ -1,7 +1,22 @@
+using System.Text;
+using System.Text.Json;
+
 namespace AiCV.Web.Components.Pages;
 
 public partial class UserSettingsPage
 {
+    private const long MaxBackupImportFileBytes = 1024 * 1024 * 15;
+    private const int MaxBackupTextLength = 100_000;
+    private const int MaxBackupCollectionItems = 2_000;
+    private const int MaxProfileTextLength = 20_000;
+    private const int MaxProfileCollectionItems = 500;
+
+    private static readonly JsonSerializerOptions BackupJsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true,
+    };
+
     private string _userId = string.Empty;
     private string _userEmail = string.Empty;
     private bool _isLoading = true;
@@ -30,9 +45,29 @@ public partial class UserSettingsPage
     private string _currentPassword = string.Empty;
     private string _newPassword = string.Empty;
     private string _confirmNewPassword = string.Empty;
+    private bool _isBackupBusy;
+    private bool _backupProfile = true;
+    private bool _backupApplications = true;
+    private bool _backupSettings = true;
+    private bool _backupNotes = true;
 
     // Available providers for dropdown
     private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
+
+    private bool HasSelectedBackupSections =>
+        _backupProfile || _backupApplications || _backupSettings || _backupNotes;
+
+    private bool AllBackupSectionsSelected
+    {
+        get => _backupProfile && _backupApplications && _backupSettings && _backupNotes;
+        set
+        {
+            _backupProfile = value;
+            _backupApplications = value;
+            _backupSettings = value;
+            _backupNotes = value;
+        }
+    }
 
     private bool CanAddConfiguration =>
         !string.IsNullOrWhiteSpace(_newConfig.ApiKey)
@@ -557,6 +592,408 @@ public partial class UserSettingsPage
         }
     }
 
+    private async Task ExportSelectedBackup()
+    {
+        if (!HasSelectedBackupSections || string.IsNullOrEmpty(_userId))
+        {
+            Snackbar.Add(Localizer["SelectAtLeastOneBackupSection"], Severity.Warning);
+            return;
+        }
+
+        _isBackupBusy = true;
+        try
+        {
+            var backup = new UserDataBackup
+            {
+                ExportedAtUtc = DateTime.UtcNow,
+                Sections = new BackupSections
+                {
+                    Profile = _backupProfile,
+                    Applications = _backupApplications,
+                    Settings = _backupSettings,
+                    Notes = _backupNotes,
+                },
+            };
+
+            if (_backupProfile)
+            {
+                var profile = await CVService.GetProfileAsync(_userId);
+                backup.Profile = profile is null ? null : CloneProfileForExport(profile);
+            }
+
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+
+            if (_backupApplications)
+            {
+                var applications = await context
+                    .GeneratedApplications.AsNoTracking()
+                    .Include(a => a.JobPosting)
+                    .Where(a => a.UserId == _userId)
+                    .OrderByDescending(a => a.CreatedDate)
+                    .ToListAsync();
+
+                backup.Applications =
+                [
+                    .. applications.Select(a => new ApplicationBackup
+                    {
+                        JobPosting = a.JobPosting is null
+                            ? new JobPostingBackup()
+                            : new JobPostingBackup
+                            {
+                                Title = a.JobPosting.Title,
+                                CompanyName = a.JobPosting.CompanyName,
+                                Description = a.JobPosting.Description,
+                                Url = a.JobPosting.Url,
+                                DatePosted = a.JobPosting.DatePosted,
+                            },
+                        CoverLetterContent = a.CoverLetterContent,
+                        TailoredResumeJson = a.TailoredResumeJson,
+                        ApplicationEmailContent = a.ApplicationEmailContent,
+                        Template = a.Template,
+                        CreatedDate = a.CreatedDate,
+                    }),
+                ];
+            }
+
+            if (_backupSettings)
+            {
+                var settings = await UserSettingsService.GetUserSettingsAsync(_userId);
+                if (settings is not null)
+                {
+                    backup.Settings = new UserSettingsBackup
+                    {
+                        OpenAIApiKey = settings.OpenAIApiKey,
+                        GoogleGeminiApiKey = settings.GoogleGeminiApiKey,
+                        ClaudeApiKey = settings.ClaudeApiKey,
+                        GroqApiKey = settings.GroqApiKey,
+                        DeepSeekApiKey = settings.DeepSeekApiKey,
+                        OpenRouterApiKey = settings.OpenRouterApiKey,
+                        DefaultProvider = settings.DefaultProvider,
+                        DefaultModelId = settings.DefaultModelId,
+                    };
+                }
+
+                var configurations = await ConfigurationService.GetConfigurationsAsync(_userId);
+                backup.AIConfigurations =
+                [
+                    .. configurations.Select(c => new UserAIConfigurationBackup
+                    {
+                        Provider = c.Provider,
+                        Name = c.Name,
+                        ApiKey = c.ApiKey,
+                        ModelId = c.ModelId,
+                        CostType = c.CostType,
+                        Notes = c.Notes,
+                        IsActive = c.IsActive,
+                        CreatedAt = c.CreatedAt,
+                    }),
+                ];
+            }
+
+            if (_backupNotes)
+            {
+                var notes = await context
+                    .Notes.AsNoTracking()
+                    .Where(n => n.UserId == _userId)
+                    .OrderByDescending(n => n.IsPinned)
+                    .ThenBy(n => n.DisplayOrder)
+                    .ThenByDescending(n => n.UpdatedAt)
+                    .ToListAsync();
+
+                backup.Notes =
+                [
+                    .. notes.Select(n => new NoteBackup
+                    {
+                        Title = n.Title,
+                        Content = n.Content,
+                        Color = n.Color,
+                        IsPinned = n.IsPinned,
+                        IsArchived = n.IsArchived,
+                        DisplayOrder = n.DisplayOrder,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                    }),
+                ];
+            }
+
+            var json = JsonSerializer.Serialize(backup, BackupJsonOptions);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            var fileName = $"aicv-backup-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json";
+
+            await using var stream = new MemoryStream(bytes);
+            using var streamReference = new DotNetStreamReference(stream);
+            await JSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamReference);
+
+            Snackbar.Add(Localizer["BackupExported"], Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"{Localizer["BackupExportFailed"]}: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isBackupBusy = false;
+        }
+    }
+
+    private async Task ImportSelectedBackup(InputFileChangeEventArgs fileChange)
+    {
+        if (!HasSelectedBackupSections || string.IsNullOrEmpty(_userId) || fileChange.File is null)
+        {
+            Snackbar.Add(Localizer["SelectAtLeastOneBackupSection"], Severity.Warning);
+            return;
+        }
+
+        var confirmed = await DialogService.ShowMessageBoxAsync(
+            Localizer["ImportBackupWarningTitle"],
+            Localizer["ImportBackupWarningContent"],
+            yesText: Localizer["ImportBackup"],
+            cancelText: Localizer["Cancel"]
+        );
+
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _isBackupBusy = true;
+        try
+        {
+            var file = fileChange.File;
+            if (!IsBackupJsonFile(file))
+            {
+                Snackbar.Add(Localizer["InvalidBackupJson"], Severity.Error);
+                return;
+            }
+
+            await using var stream = file.OpenReadStream(maxAllowedSize: MaxBackupImportFileBytes);
+            var backup = await JsonSerializer.DeserializeAsync<UserDataBackup>(
+                stream,
+                BackupJsonOptions
+            );
+
+            if (backup is null || !IsValidBackup(backup))
+            {
+                Snackbar.Add(Localizer["InvalidBackupJson"], Severity.Error);
+                return;
+            }
+
+            if (!BackupContainsSelectedSections(backup))
+            {
+                Snackbar.Add(Localizer["BackupMissingSelectedSections"], Severity.Error);
+                return;
+            }
+
+            if (_backupProfile && backup.Profile is not null)
+            {
+                await ImportProfileBackup(backup.Profile);
+            }
+
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
+            if (_backupApplications)
+            {
+                await ReplaceApplications(context, backup.Applications);
+            }
+
+            if (_backupNotes)
+            {
+                await ReplaceNotes(context, backup.Notes);
+            }
+
+            await transaction.CommitAsync();
+
+            if (_backupSettings)
+            {
+                await ReplaceSettings(backup);
+                await LoadConfigurations();
+            }
+
+            Snackbar.Add(Localizer["BackupImported"], Severity.Success);
+        }
+        catch (JsonException)
+        {
+            Snackbar.Add(Localizer["InvalidBackupJson"], Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"{Localizer["BackupImportFailed"]}: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isBackupBusy = false;
+        }
+    }
+
+    private static bool IsBackupJsonFile(IBrowserFile file)
+    {
+        return file.Size is > 0 and <= MaxBackupImportFileBytes
+            && (
+                file.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(file.ContentType, "application/json", StringComparison.OrdinalIgnoreCase)
+            );
+    }
+
+    private bool BackupContainsSelectedSections(UserDataBackup backup)
+    {
+        return (!_backupProfile || (backup.Sections.Profile && backup.Profile is not null))
+            && (!_backupApplications || backup.Sections.Applications)
+            && (!_backupSettings || backup.Sections.Settings)
+            && (!_backupNotes || backup.Sections.Notes);
+    }
+
+    private static bool IsValidBackup(UserDataBackup backup)
+    {
+        return backup.Version == 1
+            && backup.Applications.Count <= MaxBackupCollectionItems
+            && backup.AIConfigurations.Count <= MaxBackupCollectionItems
+            && backup.Notes.Count <= MaxBackupCollectionItems
+            && (backup.Profile is null || IsValidImportedProfile(backup.Profile))
+            && backup.Applications.All(IsValidApplicationBackup)
+            && (backup.Settings is null || IsValidSettingsBackup(backup.Settings))
+            && backup.AIConfigurations.All(IsValidAIConfigurationBackup)
+            && backup.Notes.All(IsValidNoteBackup);
+    }
+
+    private async Task ImportProfileBackup(CandidateProfile importedProfile)
+    {
+        var currentProfile = await CVService.GetProfileAsync(_userId);
+        if (currentProfile is null)
+        {
+            throw new InvalidOperationException("Current profile not found.");
+        }
+
+        NormalizeImportedProfile(importedProfile, currentProfile);
+        await CVService.SaveProfileAsync(importedProfile);
+    }
+
+    private async Task ReplaceApplications(ApplicationDbContext context, List<ApplicationBackup> applications)
+    {
+        var profile = await context.CandidateProfiles.AsNoTracking().FirstOrDefaultAsync(p =>
+            p.UserId == _userId
+        );
+
+        if (profile is null)
+        {
+            throw new InvalidOperationException("Current profile not found.");
+        }
+
+        var existingApplications = await context
+            .GeneratedApplications.Where(a => a.UserId == _userId)
+            .ToListAsync();
+        var oldJobPostingIds = existingApplications.Select(a => a.JobPostingId).Distinct().ToList();
+
+        context.GeneratedApplications.RemoveRange(existingApplications);
+        await context.SaveChangesAsync();
+
+        var orphanedJobPostings = await context
+            .JobPostings.Where(j =>
+                oldJobPostingIds.Contains(j.Id)
+                && !context.GeneratedApplications.Any(a => a.JobPostingId == j.Id)
+            )
+            .ToListAsync();
+        context.JobPostings.RemoveRange(orphanedJobPostings);
+
+        foreach (var application in applications)
+        {
+            var jobPosting = new JobPosting
+            {
+                Title = application.JobPosting.Title ?? string.Empty,
+                CompanyName = application.JobPosting.CompanyName ?? string.Empty,
+                Description = application.JobPosting.Description ?? string.Empty,
+                Url = application.JobPosting.Url ?? string.Empty,
+                DatePosted = application.JobPosting.DatePosted,
+            };
+
+            context.JobPostings.Add(jobPosting);
+            context.GeneratedApplications.Add(
+                new GeneratedApplication
+                {
+                    UserId = _userId,
+                    JobPosting = jobPosting,
+                    CandidateProfileId = profile.Id,
+                    CoverLetterContent = application.CoverLetterContent ?? string.Empty,
+                    TailoredResumeJson = application.TailoredResumeJson ?? string.Empty,
+                    ApplicationEmailContent = application.ApplicationEmailContent ?? string.Empty,
+                    Template = application.Template,
+                    CreatedDate = application.CreatedDate,
+                }
+            );
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task ReplaceNotes(ApplicationDbContext context, List<NoteBackup> notes)
+    {
+        var existingNotes = await context.Notes.Where(n => n.UserId == _userId).ToListAsync();
+        context.Notes.RemoveRange(existingNotes);
+
+        foreach (var note in notes)
+        {
+            context.Notes.Add(
+                new Note
+                {
+                    UserId = _userId,
+                    Title = note.Title,
+                    Content = note.Content,
+                    Color = string.IsNullOrWhiteSpace(note.Color) ? "default" : note.Color,
+                    IsPinned = note.IsPinned,
+                    IsArchived = note.IsArchived,
+                    DisplayOrder = note.DisplayOrder,
+                    CreatedAt = note.CreatedAt,
+                    UpdatedAt = note.UpdatedAt,
+                }
+            );
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task ReplaceSettings(UserDataBackup backup)
+    {
+        if (backup.Settings is not null)
+        {
+            await UserSettingsService.SaveUserSettingsAsync(
+                _userId,
+                backup.Settings.OpenAIApiKey,
+                backup.Settings.GoogleGeminiApiKey,
+                backup.Settings.ClaudeApiKey,
+                backup.Settings.GroqApiKey,
+                backup.Settings.DeepSeekApiKey,
+                backup.Settings.OpenRouterApiKey,
+                backup.Settings.DefaultProvider,
+                backup.Settings.DefaultModelId
+            );
+        }
+
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+        var existingConfigurations = await context
+            .UserAIConfigurations.Where(c => c.UserId == _userId)
+            .ToListAsync();
+        context.UserAIConfigurations.RemoveRange(existingConfigurations);
+        await context.SaveChangesAsync();
+
+        foreach (var configuration in backup.AIConfigurations)
+        {
+            await ConfigurationService.SaveConfigurationAsync(
+                new UserAIConfiguration
+                {
+                    UserId = _userId,
+                    Provider = configuration.Provider,
+                    Name = configuration.Name ?? string.Empty,
+                    ApiKey = configuration.ApiKey,
+                    ModelId = configuration.ModelId,
+                    CostType = configuration.CostType,
+                    Notes = configuration.Notes,
+                    IsActive = configuration.IsActive,
+                    CreatedAt = configuration.CreatedAt,
+                }
+            );
+        }
+    }
+
     private void ResetNewConfig()
     {
         _newConfig = new UserAIConfiguration { Provider = AIProvider.OpenAI };
@@ -635,4 +1072,330 @@ public partial class UserSettingsPage
             AIProvider.DeepSeek => Icons.Material.Filled.Explore,
             _ => Icons.Material.Filled.Memory,
         };
+
+    private static bool IsValidApplicationBackup(ApplicationBackup application)
+    {
+        return application.JobPosting is not null
+            && IsValidBackupText(application.JobPosting.Title)
+            && IsValidBackupText(application.JobPosting.CompanyName)
+            && IsValidBackupText(application.JobPosting.Description)
+            && IsValidBackupText(application.JobPosting.Url)
+            && IsValidBackupText(application.CoverLetterContent)
+            && IsValidBackupText(application.TailoredResumeJson)
+            && IsValidBackupText(application.ApplicationEmailContent);
+    }
+
+    private static bool IsValidSettingsBackup(UserSettingsBackup settings)
+    {
+        return IsValidBackupText(settings.OpenAIApiKey)
+            && IsValidBackupText(settings.GoogleGeminiApiKey)
+            && IsValidBackupText(settings.ClaudeApiKey)
+            && IsValidBackupText(settings.GroqApiKey)
+            && IsValidBackupText(settings.DeepSeekApiKey)
+            && IsValidBackupText(settings.OpenRouterApiKey)
+            && IsValidBackupText(settings.DefaultModelId);
+    }
+
+    private static bool IsValidAIConfigurationBackup(UserAIConfigurationBackup configuration)
+    {
+        return IsValidBackupText(configuration.Name)
+            && IsValidBackupText(configuration.ApiKey)
+            && IsValidBackupText(configuration.ModelId)
+            && IsValidBackupText(configuration.CostType)
+            && IsValidBackupText(configuration.Notes);
+    }
+
+    private static bool IsValidNoteBackup(NoteBackup note)
+    {
+        return IsValidBackupText(note.Title)
+            && IsValidBackupText(note.Content)
+            && IsValidBackupText(note.Color);
+    }
+
+    private static bool IsValidBackupText(string? value)
+    {
+        return value == null || value.Length <= MaxBackupTextLength;
+    }
+
+    private static bool IsValidImportedProfile(CandidateProfile profile)
+    {
+        EnsureProfileCollections(profile);
+
+        return HasValidProfileTextLengths(profile)
+            && profile.WorkExperience.Count <= MaxProfileCollectionItems
+            && profile.Educations.Count <= MaxProfileCollectionItems
+            && profile.Skills.Count <= MaxProfileCollectionItems
+            && profile.Projects.Count <= MaxProfileCollectionItems
+            && profile.Languages.Count <= MaxProfileCollectionItems
+            && profile.Interests.Count <= MaxProfileCollectionItems
+            && profile.WorkExperience.All(HasValidExperienceTextLengths)
+            && profile.Educations.All(HasValidEducationTextLengths)
+            && profile.Skills.All(HasValidSkillTextLengths)
+            && profile.Projects.All(HasValidProjectTextLengths)
+            && profile.Languages.All(HasValidLanguageTextLengths)
+            && profile.Interests.All(HasValidInterestTextLengths);
+    }
+
+    private static bool HasValidProfileTextLengths(CandidateProfile profile)
+    {
+        return IsValidProfileText(profile.UserId)
+            && IsValidProfileText(profile.FullName)
+            && IsValidProfileText(profile.Title)
+            && IsValidProfileText(profile.Email)
+            && IsValidProfileText(profile.PhoneNumber)
+            && IsValidProfileText(profile.LinkedInUrl)
+            && IsValidProfileText(profile.PortfolioUrl)
+            && IsValidProfileText(profile.Location)
+            && IsValidProfileText(profile.ProfessionalSummary)
+            && IsValidProfileText(profile.ProfilePictureUrl)
+            && IsValidProfileText(profile.Tagline);
+    }
+
+    private static bool HasValidExperienceTextLengths(Experience experience)
+    {
+        return IsValidProfileText(experience.CompanyName)
+            && IsValidProfileText(experience.JobTitle)
+            && IsValidProfileText(experience.Description)
+            && IsValidProfileText(experience.Location);
+    }
+
+    private static bool HasValidEducationTextLengths(Education education)
+    {
+        return IsValidProfileText(education.InstitutionName)
+            && IsValidProfileText(education.Degree)
+            && IsValidProfileText(education.Description);
+    }
+
+    private static bool HasValidSkillTextLengths(Skill skill)
+    {
+        return IsValidProfileText(skill.Name) && IsValidProfileText(skill.Category);
+    }
+
+    private static bool HasValidProjectTextLengths(Project project)
+    {
+        return IsValidProfileText(project.Name)
+            && IsValidProfileText(project.Role)
+            && IsValidProfileText(project.Description)
+            && IsValidProfileText(project.SectionTitle)
+            && IsValidProfileText(project.SectionDescription)
+            && IsValidProfileText(project.Technologies)
+            && IsValidProfileText(project.Link);
+    }
+
+    private static bool HasValidLanguageTextLengths(Language language)
+    {
+        return IsValidProfileText(language.Name) && IsValidProfileText(language.Proficiency);
+    }
+
+    private static bool HasValidInterestTextLengths(Interest interest)
+    {
+        return IsValidProfileText(interest.Name);
+    }
+
+    private static bool IsValidProfileText(string? value)
+    {
+        return value == null || value.Length <= MaxProfileTextLength;
+    }
+
+    private static CandidateProfile CloneProfileForExport(CandidateProfile profile)
+    {
+        var json = JsonSerializer.Serialize(profile, BackupJsonOptions);
+        var exportProfile = JsonSerializer.Deserialize<CandidateProfile>(json, BackupJsonOptions)
+            ?? new CandidateProfile();
+
+        exportProfile.Id = 0;
+        exportProfile.UserId = string.Empty;
+        exportProfile.User = null;
+
+        foreach (var skill in exportProfile.Skills)
+        {
+            skill.Id = 0;
+            skill.CandidateProfileId = 0;
+            skill.CandidateProfile = null;
+        }
+
+        foreach (var experience in exportProfile.WorkExperience)
+        {
+            experience.Id = 0;
+            experience.CandidateProfileId = 0;
+            experience.CandidateProfile = null;
+        }
+
+        foreach (var education in exportProfile.Educations)
+        {
+            education.Id = 0;
+            education.CandidateProfileId = 0;
+            education.CandidateProfile = null;
+        }
+
+        foreach (var project in exportProfile.Projects)
+        {
+            project.Id = 0;
+            project.CandidateProfileId = 0;
+            project.CandidateProfile = null;
+        }
+
+        foreach (var language in exportProfile.Languages)
+        {
+            language.Id = 0;
+            language.CandidateProfileId = 0;
+            language.CandidateProfile = null;
+        }
+
+        foreach (var interest in exportProfile.Interests)
+        {
+            interest.Id = 0;
+            interest.CandidateProfileId = 0;
+            interest.CandidateProfile = null;
+        }
+
+        return exportProfile;
+    }
+
+    private static void NormalizeImportedProfile(CandidateProfile importedProfile, CandidateProfile currentProfile)
+    {
+        EnsureProfileCollections(importedProfile);
+
+        importedProfile.Id = currentProfile.Id;
+        importedProfile.UserId = currentProfile.UserId;
+        importedProfile.User = null;
+        importedProfile.FullName ??= string.Empty;
+        importedProfile.Title ??= string.Empty;
+        importedProfile.Email ??= string.Empty;
+        importedProfile.PhoneNumber ??= string.Empty;
+        importedProfile.LinkedInUrl ??= string.Empty;
+        importedProfile.PortfolioUrl ??= string.Empty;
+        importedProfile.Location ??= string.Empty;
+        importedProfile.ProfessionalSummary ??= string.Empty;
+        importedProfile.ProfilePictureUrl ??= string.Empty;
+        importedProfile.Tagline ??= string.Empty;
+
+        foreach (var skill in importedProfile.Skills)
+        {
+            skill.Id = 0;
+            skill.CandidateProfileId = currentProfile.Id;
+            skill.CandidateProfile = null;
+        }
+
+        foreach (var experience in importedProfile.WorkExperience)
+        {
+            experience.Id = 0;
+            experience.CandidateProfileId = currentProfile.Id;
+            experience.CandidateProfile = null;
+        }
+
+        foreach (var education in importedProfile.Educations)
+        {
+            education.Id = 0;
+            education.CandidateProfileId = currentProfile.Id;
+            education.CandidateProfile = null;
+        }
+
+        foreach (var project in importedProfile.Projects)
+        {
+            project.Id = 0;
+            project.CandidateProfileId = currentProfile.Id;
+            project.CandidateProfile = null;
+        }
+
+        foreach (var language in importedProfile.Languages)
+        {
+            language.Id = 0;
+            language.CandidateProfileId = currentProfile.Id;
+            language.CandidateProfile = null;
+        }
+
+        foreach (var interest in importedProfile.Interests)
+        {
+            interest.Id = 0;
+            interest.CandidateProfileId = currentProfile.Id;
+            interest.CandidateProfile = null;
+        }
+    }
+
+    private static void EnsureProfileCollections(CandidateProfile profile)
+    {
+        profile.WorkExperience ??= [];
+        profile.Educations ??= [];
+        profile.Skills ??= [];
+        profile.Projects ??= [];
+        profile.Languages ??= [];
+        profile.Interests ??= [];
+    }
+
+    private sealed class UserDataBackup
+    {
+        public int Version { get; set; } = 1;
+        public DateTime ExportedAtUtc { get; set; }
+        public BackupSections Sections { get; set; } = new();
+        public CandidateProfile? Profile { get; set; }
+        public List<ApplicationBackup> Applications { get; set; } = [];
+        public UserSettingsBackup? Settings { get; set; }
+        public List<UserAIConfigurationBackup> AIConfigurations { get; set; } = [];
+        public List<NoteBackup> Notes { get; set; } = [];
+    }
+
+    private sealed class BackupSections
+    {
+        public bool Profile { get; set; }
+        public bool Applications { get; set; }
+        public bool Settings { get; set; }
+        public bool Notes { get; set; }
+    }
+
+    private sealed class ApplicationBackup
+    {
+        public JobPostingBackup JobPosting { get; set; } = new();
+        public string? CoverLetterContent { get; set; }
+        public string? TailoredResumeJson { get; set; }
+        public string? ApplicationEmailContent { get; set; }
+        public CvTemplate Template { get; set; } = CvTemplate.Professional;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    }
+
+    private sealed class JobPostingBackup
+    {
+        public string? Title { get; set; }
+        public string? CompanyName { get; set; }
+        public string? Description { get; set; }
+        public string? Url { get; set; }
+        public DateTime DatePosted { get; set; } = DateTime.Now;
+    }
+
+    private sealed class UserSettingsBackup
+    {
+        public string? OpenAIApiKey { get; set; }
+        public string? GoogleGeminiApiKey { get; set; }
+        public string? ClaudeApiKey { get; set; }
+        public string? GroqApiKey { get; set; }
+        public string? DeepSeekApiKey { get; set; }
+        public string? OpenRouterApiKey { get; set; }
+        public AIProvider DefaultProvider { get; set; } = AIProvider.OpenAI;
+        public string? DefaultModelId { get; set; }
+    }
+
+    private sealed class UserAIConfigurationBackup
+    {
+        public AIProvider Provider { get; set; }
+        public string? Name { get; set; }
+        public string? ApiKey { get; set; }
+        public string? ModelId { get; set; }
+        public string? CostType { get; set; }
+        public string? Notes { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    private sealed class NoteBackup
+    {
+        public string? Title { get; set; }
+        public string? Content { get; set; }
+        public string? Color { get; set; } = "default";
+        public bool IsPinned { get; set; }
+        public bool IsArchived { get; set; }
+        public int DisplayOrder { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    }
+
 }

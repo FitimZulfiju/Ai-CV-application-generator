@@ -169,6 +169,12 @@
   <data name="Save" xml:space="preserve">
     <value>Ruaj</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Përditëso</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Ndrysho</value>
+  </data>
   <data name="Saved" xml:space="preserve">
     <value>U Ruajt</value>
   </data>
@@ -276,6 +282,33 @@
   </data>
   <data name="AddInterest" xml:space="preserve">
     <value>Shto Interes</value>
+  </data>
+  <data name="ProfileChipHelp" xml:space="preserve">
+    <value>Tërhiqni çipat për të ndryshuar renditjen. Kaloni mbi një çip për ta ndryshuar ose hequr. Ruani profilin për t'i mbajtur ndryshimet.</value>
+  </data>
+  <data name="ExportProfile" xml:space="preserve">
+    <value>Eksporto Profilin</value>
+  </data>
+  <data name="ImportProfile" xml:space="preserve">
+    <value>Importo Profilin</value>
+  </data>
+  <data name="ImportProfileWarningTitle" xml:space="preserve">
+    <value>Të zëvendësohet profili aktual?</value>
+  </data>
+  <data name="ImportProfileWarningContent" xml:space="preserve">
+    <value>Importimi i këtij skedari të vlefshëm JSON të profilit do të zëvendësojë të gjitha të dhënat aktuale të profilit, duke përfshirë të dhënat personale, përvojën, edukimin, aftësitë, projektet, gjuhët dhe interesat. Kjo nuk mund të zhbëhet nëse nuk keni eksportuar një kopje rezervë.</value>
+  </data>
+  <data name="ProfileExported" xml:space="preserve">
+    <value>Profili u eksportua me sukses.</value>
+  </data>
+  <data name="ProfileImported" xml:space="preserve">
+    <value>Profili u importua me sukses.</value>
+  </data>
+  <data name="InvalidProfileJson" xml:space="preserve">
+    <value>Skedar JSON profili i pavlefshëm.</value>
+  </data>
+  <data name="ImportProfileFailed" xml:space="preserve">
+    <value>Importimi i profilit dështoi</value>
   </data>
   <data name="CvPreview" xml:space="preserve">
     <value>Parashikimi i CV-së</value>
@@ -1226,6 +1259,69 @@
   </data>
   <data name="PasswordChangedSuccessfully" xml:space="preserve">
     <value>Fjalëkalimi u ndryshua me sukses.</value>
+  </data>
+  <data name="DataBackupTab" xml:space="preserve">
+    <value>Kopje rezervë</value>
+  </data>
+  <data name="DataBackup" xml:space="preserve">
+    <value>Kopje rezervë e të dhënave</value>
+  </data>
+  <data name="DataBackupDescription" xml:space="preserve">
+    <value>Eksportoni ose importoni një kopje rezervë JSON për pjesët e zgjedhura të llogarisë.</value>
+  </data>
+  <data name="ExportBackup" xml:space="preserve">
+    <value>Eksporto kopjen</value>
+  </data>
+  <data name="ImportBackup" xml:space="preserve">
+    <value>Importo kopjen</value>
+  </data>
+  <data name="BackupAllData" xml:space="preserve">
+    <value>Të gjitha të dhënat</value>
+  </data>
+  <data name="BackupProfile" xml:space="preserve">
+    <value>Profili</value>
+  </data>
+  <data name="BackupApplications" xml:space="preserve">
+    <value>Aplikimet</value>
+  </data>
+  <data name="BackupSettings" xml:space="preserve">
+    <value>Cilësimet</value>
+  </data>
+  <data name="BackupNotes" xml:space="preserve">
+    <value>Shënimet</value>
+  </data>
+  <data name="SelectAtLeastOneBackupSection" xml:space="preserve">
+    <value>Zgjidhni të paktën një seksion të dhënash.</value>
+  </data>
+  <data name="BackupSettingsSensitiveWarning" xml:space="preserve">
+    <value>Kopjet e cilësimeve përfshijnë çelësa API. Mbajini private skedarët JSON të eksportuar.</value>
+  </data>
+  <data name="BackupImportReplaceWarning" xml:space="preserve">
+    <value>Importimi zëvendëson seksionet e zgjedhura me të dhënat nga skedari JSON.</value>
+  </data>
+  <data name="ImportBackupWarningTitle" xml:space="preserve">
+    <value>Të zëvendësohen të dhënat e zgjedhura?</value>
+  </data>
+  <data name="ImportBackupWarningContent" xml:space="preserve">
+    <value>Importimi i këtij skedari të vlefshëm JSON do të zëvendësojë çdo seksion të zgjedhur të të dhënave në llogarinë tuaj. Kjo nuk mund të zhbëhet nëse nuk keni eksportuar më parë një kopje rezervë.</value>
+  </data>
+  <data name="BackupExported" xml:space="preserve">
+    <value>Kopja rezervë u eksportua me sukses.</value>
+  </data>
+  <data name="BackupImported" xml:space="preserve">
+    <value>Kopja rezervë u importua me sukses.</value>
+  </data>
+  <data name="InvalidBackupJson" xml:space="preserve">
+    <value>Skedar JSON i kopjes rezervë është i pavlefshëm.</value>
+  </data>
+  <data name="BackupImportFailed" xml:space="preserve">
+    <value>Importimi i kopjes rezervë dështoi</value>
+  </data>
+  <data name="BackupExportFailed" xml:space="preserve">
+    <value>Eksportimi i kopjes rezervë dështoi</value>
+  </data>
+  <data name="BackupMissingSelectedSections" xml:space="preserve">
+    <value>Skedari i kopjes rezervë nuk përmban çdo seksion të zgjedhur.</value>
   </data>
 </root>
 
