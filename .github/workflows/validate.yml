@@ -1,0 +1,18 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Lint shell scripts
+        run: shellcheck -x deploy/deploy.sh deploy/TunnelSetup.sh deploy/dos2unix.sh

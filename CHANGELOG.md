@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ---
+## [1.11.1] - 2026-06-06
+
+### Fixed
+- fix: resolve ShellCheck CI failures in deploy scripts
+
 ## [1.11.0] - 2026-06-04
 
 ### Added

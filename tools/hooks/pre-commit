@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v shellcheck >/dev/null 2>&1; then
+  printf 'pre-commit: shellcheck not found — skipping lint (install: sudo apt-get install shellcheck)\n' >&2
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+printf 'pre-commit: shellcheck deploy scripts\n'
+shellcheck -x deploy/deploy.sh deploy/TunnelSetup.sh deploy/dos2unix.sh

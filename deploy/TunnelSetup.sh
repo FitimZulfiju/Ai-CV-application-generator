@@ -8,6 +8,7 @@ log() { level="$1"; shift; printf "[%s] %s\n" "$level" "$*"; }
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -f "$SCRIPT_DIR/.env" ]; then
     set -o allexport
+    # shellcheck source=/dev/null
     source "$SCRIPT_DIR/.env"
     set +o allexport
 fi
