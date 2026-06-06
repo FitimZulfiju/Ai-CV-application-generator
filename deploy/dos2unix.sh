@@ -106,4 +106,4 @@ echo "  chmod OK  : $chmod_ok"
 echo "  chmod Skip: $chmod_skip"
 echo "  chmod Fail: $chmod_fail"
 
-(( failed > 0 )) && exit 1 || exit 0
+if (( failed > 0 )); then exit 1; fi
