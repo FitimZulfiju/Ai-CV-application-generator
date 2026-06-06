@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 ## [1.11.1] - 2026-06-06
 
-### Changed
-- ci: add ShellCheck validate workflow and pre-commit hook
+### Fixed
+- fix: resolve ShellCheck CI failures in deploy scripts
 
 ## [1.11.0] - 2026-06-04
 
