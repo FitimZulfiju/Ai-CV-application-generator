@@ -4,6 +4,7 @@ set -euo pipefail
 # Load variables from .env first (before any other operations)
 if [ -f .env ]; then
     set -o allexport
+    # shellcheck source=/dev/null
     source .env
     set +o allexport
 else
@@ -16,7 +17,6 @@ log() {
 }
 
 FULL_SUBDOMAIN="$SUBDOMAIN.$DOMAIN"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -32,15 +32,15 @@ get_compose_file() {
 }
 
 # Ensure docker group exists
-if ! getent group ${DOCKER_GROUP} > /dev/null; then
+if ! getent group "${DOCKER_GROUP}" > /dev/null; then
     echo "[INFO] Docker group does not exist. Creating group '${DOCKER_GROUP}'..."
-    sudo groupadd ${DOCKER_GROUP}
+    sudo groupadd "${DOCKER_GROUP}"
 fi
 
 # Add user to docker group if not already a member
 if ! groups "$USER" | grep -q "\\b${DOCKER_GROUP}\\b"; then
     echo "[INFO] Adding user $USER to ${DOCKER_GROUP} group..."
-    sudo usermod -aG ${DOCKER_GROUP} "$USER"
+    sudo usermod -aG "${DOCKER_GROUP}" "$USER"
     echo "[INFO] User $USER added to ${DOCKER_GROUP} group. Please log out and log back in."
     exit 1
 fi
@@ -80,7 +80,7 @@ install_dependencies() {
     # Add Docker repository
     log "INFO" "Installing Docker..."
     sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/${OS_DISTRO}/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+    curl -fsSL "https://download.docker.com/linux/${OS_DISTRO}/gpg" | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
 
     DISTRO=$(lsb_release -cs)
 
@@ -115,7 +115,7 @@ fix_env_file() {
 
 ensure_docker_permissions() {
     log "INFO" "Ensuring user has Docker permissions..."
-    sudo usermod -aG ${DOCKER_GROUP} "$USER"
+    sudo usermod -aG "${DOCKER_GROUP}" "$USER"
     log "INFO" "User $USER added to the ${DOCKER_GROUP} group. Please log out and back in."
 }
 
@@ -185,7 +185,6 @@ set_permissions() {
 
     # Use environment variables instead of hardcoded paths
     BASE_DIR="${APP_BASE_DIR}"
-    DEPLOY_USER="${DEPLOY_USER}"
 
     log "INFO" "Using base directory: $BASE_DIR for user: $DEPLOY_USER"
 
@@ -232,7 +231,6 @@ fix_backup_permissions() {
     log "INFO" "Fixing backup directory permissions for SQL Server access..."
 
     BACKUPS_HOST_DIR="${HOST_BACKUPS_DIR}"
-    DEPLOY_USER="${DEPLOY_USER}"
 
     # Ensure the backup directory has the right permissions for both containers
     if [ -d "$BACKUPS_HOST_DIR" ]; then
@@ -253,7 +251,6 @@ initialize_static_images() {
 
     CONTAINER_NAME="${APP_CONTAINER_NAME:-aicv-app}"
     STATIC_IMAGES_HOST_DIR="${HOST_STATIC_IMAGES_DIR}"
-    DEPLOY_USER="${DEPLOY_USER}"
 
     # Wait for container to be ready
     log "INFO" "Waiting for container $CONTAINER_NAME to be ready..."
@@ -262,7 +259,7 @@ initialize_static_images() {
             log "INFO" "Container $CONTAINER_NAME is running"
             break
         fi
-        if [ $i -eq 30 ]; then
+        if [ "$i" -eq 30 ]; then
             log "WARN" "Container $CONTAINER_NAME not found after 30 seconds, skipping static images initialization"
             return
         fi
@@ -319,7 +316,9 @@ start_services() {
 
     # Stop and remove all containers, including those not in docker-compose
     log "INFO" "Stopping all running containers..."
+    # shellcheck disable=SC2046
     docker stop $(docker ps -aq --filter "name=aicv-") 2>/dev/null || true
+    # shellcheck disable=SC2046
     docker rm $(docker ps -aq --filter "name=aicv-") 2>/dev/null || true
 
     # Remove all unused networks
@@ -333,9 +332,9 @@ start_services() {
     # Check if ports are in use and kill processes if needed
     log "INFO" "Checking for processes using required ports..."
     for port in ${PORT_CLEANUP_LIST}; do
-        if lsof -i :$port >/dev/null 2>&1; then
+        if lsof -i :"$port" >/dev/null 2>&1; then
             log "WARN" "Port $port is in use. Attempting to free it..."
-            sudo fuser -k $port/tcp 2>/dev/null || true
+            sudo fuser -k "$port"/tcp 2>/dev/null || true
             sleep 2
         fi
     done
@@ -361,6 +360,7 @@ start_services() {
 
 ensure_shared_sql() {
     # Use environment variables from .env (loaded at script start)
+    # shellcheck disable=SC2153
     SA_PASSWORD="${DB_PASSWORD}"
     DB_NAME="${DB_NAME:-aicv_db}"
     

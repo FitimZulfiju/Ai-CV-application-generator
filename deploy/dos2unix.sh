@@ -22,7 +22,7 @@ fail(){ echo "${C_FAIL}[FAIL]${C_RESET} $*"; }
 
 # Go to repo root if this is a git repo
 if command -v git >/dev/null 2>&1 && git rev-parse --show-toplevel >/dev/null 2>&1; then
-  cd "$(git rev-parse --show-toplevel)"
+  cd "$(git rev-parse --show-toplevel)" || exit
 fi
 
 # Gather files (.sh, .env, .env.*) — globs are quoted so find gets them literally
