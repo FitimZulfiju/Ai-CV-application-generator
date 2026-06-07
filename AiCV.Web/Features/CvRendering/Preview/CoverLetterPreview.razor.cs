@@ -9,5 +9,5 @@ public partial class CoverLetterPreview
     public string LetterContent { get; set; } = string.Empty;
 
     [Parameter]
-    public CvTemplate Template { get; set; } = CvTemplate.Professional;
+    public string Template { get; set; } = AiCV.Domain.Constants.CvTemplates.Professional;
 }

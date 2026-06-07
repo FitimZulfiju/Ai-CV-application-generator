@@ -6,12 +6,12 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
     private readonly IWebHostEnvironment _env = env;
     private readonly IStringLocalizer<AicvResources> _localizer = localizer;
 
-    private IPdfTemplateBuilder GetTemplateBuilder(CvTemplate template)
+    private IPdfTemplateBuilder GetTemplateBuilder(string template)
     {
         return template switch
         {
-            CvTemplate.Modern => new ModernPdfTemplate(_env, _localizer),
-            CvTemplate.Minimalist => new MinimalistPdfTemplate(_env, _localizer),
+            AiCV.Domain.Constants.CvTemplates.Modern => new ModernPdfTemplate(_env, _localizer),
+            AiCV.Domain.Constants.CvTemplates.Minimalist => new MinimalistPdfTemplate(_env, _localizer),
             _ => new ProfessionalPdfTemplate(_env, _localizer),
         };
     }
@@ -39,7 +39,7 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
         return optimalSize;
     }
 
-    public Task<byte[]> GenerateCvAsync(CandidateProfile profile, CvTemplate template)
+    public Task<byte[]> GenerateCvAsync(CandidateProfile profile, string template)
     {
         var builder = GetTemplateBuilder(template);
 
@@ -93,7 +93,7 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
         CandidateProfile profile,
         string jobTitle,
         string companyName,
-        CvTemplate template
+        string template
     )
     {
         var builder = GetTemplateBuilder(template);

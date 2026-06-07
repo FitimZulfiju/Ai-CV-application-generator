@@ -1323,5 +1323,14 @@
   <data name="BackupMissingSelectedSections" xml:space="preserve">
     <value>The backup file does not contain every selected section.</value>
   </data>
+  <data name="CustomFooter" xml:space="preserve">
+    <value>Custom Footer</value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value>Footer Text</value>
+  </data>
+  <data name="SupportsMarkdown" xml:space="preserve">
+    <value>Supports Markdown</value>
+  </data>
 </root>
 

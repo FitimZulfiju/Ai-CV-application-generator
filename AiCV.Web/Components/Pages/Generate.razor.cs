@@ -35,7 +35,7 @@ public partial class Generate
     private bool _showAdvancedEditor;
     private int _splitterSize = 30;
     private int _activeTabIndex;
-    private CvTemplate _selectedTemplateInPreview = CvTemplate.Professional;
+    private string _selectedTemplateInPreview = AiCV.Domain.Constants.CvTemplates.Professional;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
     private string _userId = string.Empty;

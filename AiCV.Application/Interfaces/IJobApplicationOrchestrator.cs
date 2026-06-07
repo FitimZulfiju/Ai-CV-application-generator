@@ -22,6 +22,6 @@ public interface IJobApplicationOrchestrator
         string coverLetter,
         CandidateProfile tailoredResume,
         string applicationEmail,
-        CvTemplate template
+        string template
     );
 }

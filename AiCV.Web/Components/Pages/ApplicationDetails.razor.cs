@@ -149,7 +149,7 @@ public partial class ApplicationDetails
         {
             var pdfBytes = await PdfService.GenerateCvAsync(
                 _tailoredResume,
-                _application?.Template ?? CvTemplate.Professional
+                _application?.Template ?? AiCV.Domain.Constants.CvTemplates.Professional
             );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,

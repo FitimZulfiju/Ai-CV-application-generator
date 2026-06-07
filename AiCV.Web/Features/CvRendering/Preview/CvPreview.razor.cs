@@ -6,5 +6,5 @@ public partial class CvPreview
     public CandidateProfile? Profile { get; set; }
 
     [Parameter]
-    public CvTemplate Template { get; set; } = CvTemplate.Professional;
+    public string Template { get; set; } = AiCV.Domain.Constants.CvTemplates.Professional;
 }

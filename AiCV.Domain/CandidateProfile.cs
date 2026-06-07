@@ -1,11 +1,6 @@
 namespace AiCV.Domain;
 
-public enum CvTemplate
-{
-    Professional = 0,
-    Modern = 1,
-    Minimalist = 2,
-}
+
 
 public class CandidateProfile
 {
@@ -23,6 +18,7 @@ public class CandidateProfile
     public string ProfilePictureUrl { get; set; } = string.Empty;
     public bool ShowProfilePicture { get; set; } = false;
     public string Tagline { get; set; } = string.Empty;
+    public string FooterText { get; set; } = string.Empty;
     public List<Experience> WorkExperience { get; set; } = [];
     public List<Education> Educations { get; set; } = [];
     public List<Skill> Skills { get; set; } = [];

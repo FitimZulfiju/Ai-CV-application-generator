@@ -64,7 +64,7 @@ public class JobApplicationOrchestrator(
         string coverLetter,
         CandidateProfile tailoredResume,
         string applicationEmail,
-        CvTemplate template
+        string template
     )
     {
         // Create a fresh JobPosting entity to avoid EF Core tracking issues

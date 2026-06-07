@@ -1,12 +1,12 @@
-@if (Template == CvTemplate.Professional)
+@if (Template == AiCV.Domain.Constants.CvTemplates.Professional)
 {
-    <ProfessionalCoverLetter Profile="Profile" LetterContent="@LetterContent" />
+    <AiCV.Web.Features.CvRendering.Templates.Professional.ProfessionalCoverLetter Profile="Profile" LetterContent="@LetterContent" />
 }
-else if (Template == CvTemplate.Modern)
+else if (Template == AiCV.Domain.Constants.CvTemplates.Modern)
 {
-    <ModernCoverLetter Profile="Profile" LetterContent="@LetterContent" />
+    <AiCV.Web.Features.CvRendering.Templates.Modern.ModernCoverLetter Profile="Profile" LetterContent="@LetterContent" />
 }
-else if (Template == CvTemplate.Minimalist)
+else if (Template == AiCV.Domain.Constants.CvTemplates.Minimalist)
 {
-    <MinimalistCoverLetter Profile="Profile" LetterContent="@LetterContent" />
+    <AiCV.Web.Features.CvRendering.Templates.Minimalist.MinimalistCoverLetter Profile="Profile" LetterContent="@LetterContent" />
 }

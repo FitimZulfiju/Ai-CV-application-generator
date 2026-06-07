@@ -18,7 +18,7 @@ public partial class Profile
     private bool _isLoading = true;
     private bool _isSaving;
     private bool _isPrinting;
-    private CvTemplate _selectedTemplate = CvTemplate.Professional;
+    private string _selectedTemplate = AiCV.Domain.Constants.CvTemplates.Professional;
     private CandidateProfile? _profile;
 
     public class SkillCategoryViewModel

@@ -1,10 +1,5 @@
 @inherits AiCV.Web.Features.CvRendering.Templates.CvTemplateBase
 
-@code {
-    [Parameter]
-    public CvThemeConfig ThemeConfig { get; set; } = ThemeRegistry.Professional;
-}
-
 @if (Profile == null)
 {
     <MudAlert Severity="Severity.Warning">@Localizer["NoProfileDataToPreview"]</MudAlert>
@@ -253,7 +248,7 @@ else
 
                 <!-- Footer -->
                 <footer class="footer">
-                    <p>@Localizer["ReferencesAvailableUponRequest"]</p>
+                    <p>@(string.IsNullOrWhiteSpace(Profile.FooterText) ? Localizer["ReferencesAvailableUponRequest"] : Profile.FooterText)</p>
                 </footer>
             </div>
         </div>

@@ -321,7 +321,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     t.DefaultTextStyle(x =>
                         x.FontSize(fontSize - 2).Italic().FontColor(Style.TextMedium)
                     );
-                    ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
+                    ComposeMarkdownText(t, string.IsNullOrWhiteSpace(profile.FooterText) ? _localizer["ReferencesAvailableUponRequest"] : profile.FooterText);
                 });
         }
         else
@@ -334,7 +334,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     t.DefaultTextStyle(x =>
                         x.FontSize(fontSize - 2).Italic().FontColor(Style.TextMedium)
                     );
-                    ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
+                    ComposeMarkdownText(t, string.IsNullOrWhiteSpace(profile.FooterText) ? _localizer["ReferencesAvailableUponRequest"] : profile.FooterText);
                 });
         }
     }

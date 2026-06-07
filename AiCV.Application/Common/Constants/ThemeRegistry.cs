@@ -52,13 +52,13 @@ public static class ThemeRegistry
         EducationBorderColor: "#e67e22"
     );
 
-    public static CvThemeConfig GetConfig(CvTemplate template)
+    public static CvThemeConfig GetConfig(string template)
     {
         return template switch
         {
-            CvTemplate.Modern => Modern,
-            CvTemplate.Minimalist => Minimalist,
-            _ => Professional
+            AiCV.Domain.Constants.CvTemplates.Modern => Modern,
+            AiCV.Domain.Constants.CvTemplates.Minimalist => Minimalist,
+            _ => Professional,
         };
     }
 }

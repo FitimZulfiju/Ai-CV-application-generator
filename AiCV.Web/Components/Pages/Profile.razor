@@ -23,7 +23,7 @@ else
                 </MudTooltip>
             </MudStack>
             <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
-                @if (_activeTabIndex != 7)
+                @if (_activeTabIndex != 8)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
                                Disabled="_isSaving" Style="white-space: nowrap;"
@@ -39,13 +39,13 @@ else
                         }
                     </MudButton>
                 }
-                @if (_activeTabIndex == 7)
+                @if (_activeTabIndex == 8)
                 {
-                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:9.375rem;"
+                    <MudSelect T="string" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:9.375rem;"
                                Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
-                        <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
-                        <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
-                        <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
+                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
+                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
                     </MudSelect>
 
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
@@ -101,6 +101,11 @@ else
             @* Tab Interests *@
             <MudTabPanel Text="@Localizer["Interests"]" Icon="@Icons.Material.Filled.Interests">
                 <InterestsTab Profile="_profile" />
+            </MudTabPanel>
+
+            @* Tab Footer *@
+            <MudTabPanel Text="@Localizer["Footer"]" Icon="@Icons.Material.Filled.ShortText">
+                <AiCV.Web.Components.Shared.ProfileTabs.FooterTab Profile="_profile" />
             </MudTabPanel>
 
             @* Tab CV Preview *@

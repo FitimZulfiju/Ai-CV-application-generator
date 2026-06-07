@@ -1346,7 +1346,7 @@ public partial class UserSettingsPage
         public string? CoverLetterContent { get; set; }
         public string? TailoredResumeJson { get; set; }
         public string? ApplicationEmailContent { get; set; }
-        public CvTemplate Template { get; set; } = CvTemplate.Professional;
+        public string Template { get; set; } = AiCV.Domain.Constants.CvTemplates.Professional;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 
