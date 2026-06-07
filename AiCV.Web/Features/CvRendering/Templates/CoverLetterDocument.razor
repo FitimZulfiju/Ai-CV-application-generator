@@ -6,7 +6,7 @@
 }
 else
 {
-    <div class="cv-container cover-letter @ThemeClass">
+    <div class="cv-container cover-letter @ThemeConfig.ThemeClass" style="--primary-color: @ThemeConfig.PrimaryColor; --primary-dark: @ThemeConfig.PrimaryDark; --accent-color: @ThemeConfig.AccentColor; --text-dark: @ThemeConfig.TextDark; --text-medium: @ThemeConfig.TextMedium; --bg-light: @ThemeConfig.BackgroundLight; --border-color: @ThemeConfig.BorderColor;">
         <div class="container">
             <div class="page">
                 <!-- Header Section -->
@@ -45,5 +45,6 @@ else
     public string LetterContent { get; set; } = string.Empty;
 
     [Parameter]
-    public string ThemeClass { get; set; } = string.Empty;
+    public CvThemeConfig ThemeConfig { get; set; } = ThemeRegistry.Professional;
 }
+

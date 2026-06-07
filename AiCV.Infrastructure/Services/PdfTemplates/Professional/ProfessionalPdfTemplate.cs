@@ -12,15 +12,7 @@ public class ProfessionalPdfTemplate(
     IStringLocalizer<AicvResources> localizer
     ) : PdfTemplateBase(env, localizer)
 {
-    private static readonly PdfTemplateStyle _professionalStyle = new(
-        UseSectionSeparators: true,
-        CenterLanguageContent: true,
-        UseInterestChips: true,
-        UseReferencesFooterPanel: true,
-        SuppressWorkDescriptionBullet: true
-    );
-
-    protected override PdfTemplateStyle Style => _professionalStyle;
+    protected override AiCV.Application.Common.Models.CvThemeConfig Style => AiCV.Application.Common.Constants.ThemeRegistry.Professional;
 
     public override void ComposeHeader(IContainer container, CandidateProfile profile)
     {

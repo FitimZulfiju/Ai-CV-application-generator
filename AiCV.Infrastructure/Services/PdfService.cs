@@ -16,135 +16,51 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
         };
     }
 
+    private float FindOptimalFontSize(IPdfTemplateBuilder builder, float[] fontSizes, Action<QuestPDF.Fluent.PageDescriptor, float> composePage)
+    {
+        float optimalSize = fontSizes.LastOrDefault() == 0 ? 8f : fontSizes.Last();
+        foreach (var size in fontSizes.Distinct())
+        {
+            var testDoc = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(0.75f, Unit.Centimetre);
+                    composePage(page, size);
+                });
+            });
+
+            if (builder.GetPageCount(testDoc.GeneratePdf()) <= 1)
+            {
+                return size;
+            }
+        }
+        return optimalSize;
+    }
+
     public Task<byte[]> GenerateCvAsync(CandidateProfile profile, CvTemplate template)
     {
         var builder = GetTemplateBuilder(template);
 
-        float[] fontSizes =
-        [
-            14f,
-            13.75f,
-            13.5f,
-            13.25f,
-            13f,
-            12.75f,
-            12.5f,
-            12.25f,
-            12f,
-            11.75f,
-            11.5f,
-            11.25f,
-            11f,
-            10.75f,
-            10.5f,
-            10.25f,
-            10f,
-            9.5f,
-            9f,
-            8.5f,
-            8f,
-        ];
-
-        float page1Size = 8f;
-        foreach (var size in fontSizes)
+        float[] fontSizes = [14f, 13.75f, 13.5f, 13.25f, 13f, 12.75f, 12.5f, 12.25f, 12f, 11.75f, 11.5f, 11.25f, 11f, 10.75f, 10.5f, 10.25f, 10f, 9.5f, 9f, 8.5f, 8f];
+        float page1Size = FindOptimalFontSize(builder, fontSizes, (page, size) => 
         {
-            var p1Doc = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(0.75f, Unit.Centimetre);
-                    page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, profile));
-                    page.Content().Element(c => builder.ComposePageOne(c, profile, size));
-                });
-            });
-            if (builder.GetPageCount(p1Doc.GeneratePdf()) <= 1)
-            {
-                page1Size = size;
-                break;
-            }
-        }
+            page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, profile));
+            page.Content().Element(c => builder.ComposePageOne(c, profile, size));
+        });
 
-        float[] page2FontSizes =
-        [
-            16f,
-            15.75f,
-            15.5f,
-            15.25f,
-            15f,
-            14.75f,
-            14.5f,
-            14.25f,
-            14f,
-            13.75f,
-            13.5f,
-            13.25f,
-            13f,
-            12.75f,
-            12.5f,
-            12.25f,
-            12f,
-            11.75f,
-            11.5f,
-            11.25f,
-            11f,
-            10.75f,
-            10.5f,
-            10.25f,
-            10f,
-            9.5f,
-            9f,
-            8.5f,
-            8f,
-        ];
-        float page2Size = 8f;
-        foreach (var size in page2FontSizes)
+        float[] page2FontSizes = [16f, 15.75f, 15.5f, 15.25f, 15f, 14.75f, 14.5f, 14.25f, 14f, 13.75f, 13.5f, 13.25f, 13f, 12.75f, 12.5f, 12.25f, 12f, 11.75f, 11.5f, 11.25f, 11f, 10.75f, 10.5f, 10.25f, 10f, 9.5f, 9f, 8.5f, 8f];
+        float page2Size = FindOptimalFontSize(builder, page2FontSizes, (page, size) => 
         {
-            var p2Doc = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(0.75f, Unit.Centimetre);
-                    page.Content().Element(c => builder.ComposePageTwo(c, profile, size));
-                });
-            });
-            if (builder.GetPageCount(p2Doc.GeneratePdf()) <= 1)
-            {
-                page2Size = size;
-                break;
-            }
-        }
+            page.Content().Element(c => builder.ComposePageTwo(c, profile, size));
+        });
 
-        float[] page3FontSizes =
-        [
-            page2Size,
-            10f,
-            9.5f,
-            9f,
-            8.5f,
-            8f,
-            7.5f,
-            7f,
-        ];
-        float page3Size = page3FontSizes[0];
-        foreach (var size in page3FontSizes.Distinct())
+        float[] page3FontSizes = [page2Size, 10f, 9.5f, 9f, 8.5f, 8f, 7.5f, 7f];
+        float page3Size = FindOptimalFontSize(builder, page3FontSizes, (page, size) => 
         {
-            var p3Doc = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(0.75f, Unit.Centimetre);
-                    page.Content().Element(c => builder.ComposePageThree(c, profile, size));
-                });
-            });
-            if (builder.GetPageCount(p3Doc.GeneratePdf()) <= 1)
-            {
-                page3Size = size;
-                break;
-            }
-        }
+            page.Content().Element(c => builder.ComposePageThree(c, profile, size));
+        });
 
         var document = Document.Create(container =>
         {
@@ -183,28 +99,25 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
         var builder = GetTemplateBuilder(template);
         var headerProfile = CreateCoverLetterHeaderProfile(profile);
         float[] fontSizes = [12f, 11.5f, 11f, 10.5f, 10f, 9.5f, 9f, 8.5f, 8f];
-        byte[] pdfBytes = [];
-
-        foreach (var size in fontSizes)
+        
+        float finalSize = FindOptimalFontSize(builder, fontSizes, (page, size) => 
         {
-            var document = Document.Create(container =>
+            page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, headerProfile));
+            page.Content().Element(c => builder.ComposeCoverLetter(c, letterContent, profile, size));
+        });
+
+        var document = Document.Create(container =>
+        {
+            container.Page(page =>
             {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(0.75f, Unit.Centimetre);
-                    page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, headerProfile));
-                    page.Content()
-                        .Element(c => builder.ComposeCoverLetter(c, letterContent, profile, size));
-                });
+                page.Size(PageSizes.A4);
+                page.Margin(0.75f, Unit.Centimetre);
+                page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, headerProfile));
+                page.Content().Element(c => builder.ComposeCoverLetter(c, letterContent, profile, finalSize));
             });
+        });
 
-            pdfBytes = document.GeneratePdf();
-            if (builder.GetPageCount(pdfBytes) <= 1)
-                return Task.FromResult(pdfBytes);
-        }
-
-        return Task.FromResult(pdfBytes);
+        return Task.FromResult(document.GeneratePdf());
     }
 
     private static CandidateProfile CreateCoverLetterHeaderProfile(CandidateProfile profile)

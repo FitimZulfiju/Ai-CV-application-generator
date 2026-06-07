@@ -43,7 +43,8 @@
 ### Output Renderer
 
 * Formats CV and cover letter in multiple formats
-* Applies predefined templates
+* Applies predefined templates with centralized styles ensuring visual parity between HTML preview and PDF output
+* Utilizes a unified rendering pipeline with shared base configurations (`PdfTemplateBase`, `CvTemplateBase`)
 * Supports preview and download
 
 ### Deployment / DevOps Components
@@ -109,3 +110,51 @@ graph TD
         WebUI -->|Auth| OAuth
     end
 ```
+
+## 8. Codebase Structure
+
+The project is built with .NET 10.0 and Blazor Server, following a clean architecture-inspired structure.
+
+### `AiCV.Domain`
+- Contains core entities and domain logic.
+- No dependencies on other projects.
+- Entities: `User`, `CandidateProfile`, `WorkExperience`, `Education`, `Skill`, `Project`, etc.
+
+### `AiCV.Application`
+- Contains business logic, interfaces, and DTOs.
+- `Interfaces`: Define service contracts (`ICVService`, `IPdfService`, etc.).
+- `Common`: Shared utilities like `CvUtils`.
+
+### `AiCV.Infrastructure`
+- Implementation of external services and data access.
+- `Data`: `ApplicationDbContext` and Migrations (via separate migration projects).
+- `Services`: Orchestrates external dependencies like `PdfService`.
+- `Extensions`: Modular service registrations.
+
+### `AiCV.Web`
+- The Blazor Server application (UI).
+- `Components`:
+    - `Pages`: Routed pages (`Home.razor`, `Profile.razor`).
+    - `Shared`: Reusable UI components.
+    - `Shared/ProfileSections`: Extracted sections from the large Profile page.
+- `Features`: Contains vertical slices of functionality, such as `CvRendering` (which includes unified components like `CvDocument.razor` and `CoverLetterDocument.razor`).
+- `Extensions`: Web-specific configurations.
+
+## 9. Key Design Patterns
+
+### Modular Startup
+The `Program.cs` is kept lean by delegating configuration to extension methods in the `AiCV.Web.Extensions` and `AiCV.Infrastructure.Extensions` namespaces.
+
+### Template Method / Strategy for PDF and HTML Generation
+Visual tokens (colors, borders, feature flags) are strictly centralized in a `CvThemeConfig` record in the Application layer, mapped via a `ThemeRegistry`. 
+- **PDF Generation**: Encapsulated in separate template classes inheriting from `PdfTemplateBase`. `PdfService` orchestrates the font-scaling and delegates to the appropriate builder, which automatically applies the `CvThemeConfig`.
+- **HTML Rendering**: Consolidated via shared components like `CvDocument.razor` and `CoverLetterDocument.razor`. These components inject the `CvThemeConfig` colors as root CSS variables (e.g., `var(--primary-color)`). This architecture completely eliminates color duplication between C# and CSS, guaranteeing high fidelity and parity between the Web UI and PDF outputs.
+
+### Componentized UI
+Large Razor pages are broken down into smaller, focused components (e.g., `WorkExperienceSection.razor`) to improve readability.
+
+## 10. Database Strategy
+The application supports both **PostgreSQL** and **SQL Server**.
+- Provider is selected via the `DB_PROVIDER` environment variable.
+- Connection strings can be provided via standard `DefaultConnection` or specific env vars.
+- Migrations are isolated into `AiCV.Migrations.PostgreSQL` and `AiCV.Migrations.SqlServer` projects.

@@ -9,26 +9,7 @@ namespace AiCV.Infrastructure.Services.PdfTemplates.Minimalist;
 
 public class MinimalistPdfTemplate : PdfTemplateBase
 {
-    private static readonly PdfTemplateStyle _minimalistStyle = new(
-        PrimaryColor: "#333333",
-        PrimaryDark: "#111111",
-        AccentColor: "#777777",
-        TextDark: "#111111",
-        TextMedium: "#444444",
-        BackgroundLight: "#ffffff",
-        BorderColor: "#eeeeee",
-        UseSectionSeparators: true,
-        CenterLanguageContent: true,
-        UseInterestChips: true,
-        UseReferencesFooterPanel: true,
-        AdditionalSectionBorderColor: "#eeeeee",
-        SummaryBorderColor: "#eeeeee",
-        SkillsBorderColor: "#eeeeee",
-        EducationBorderColor: "#eeeeee",
-        CoverLetterBorderColor: "#eeeeee"
-    );
-
-    protected override PdfTemplateStyle Style => _minimalistStyle;
+    protected override AiCV.Application.Common.Models.CvThemeConfig Style => AiCV.Application.Common.Constants.ThemeRegistry.Minimalist;
 
     public MinimalistPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)

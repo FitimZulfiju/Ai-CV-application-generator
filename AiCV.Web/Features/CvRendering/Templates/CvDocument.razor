@@ -2,7 +2,7 @@
 
 @code {
     [Parameter]
-    public string ThemeClass { get; set; } = string.Empty;
+    public CvThemeConfig ThemeConfig { get; set; } = ThemeRegistry.Professional;
 }
 
 @if (Profile == null)
@@ -11,7 +11,7 @@
 }
 else
 {
-    <div class="cv-container @ThemeClass @(Profile.ShowProfilePicture && !string.IsNullOrEmpty(Profile.ProfilePictureUrl) ? "show-photo" : "")">
+    <div class="cv-container @ThemeConfig.ThemeClass @(Profile.ShowProfilePicture && !string.IsNullOrEmpty(Profile.ProfilePictureUrl) ? "show-photo" : "")" style="--primary-color: @ThemeConfig.PrimaryColor; --primary-dark: @ThemeConfig.PrimaryDark; --accent-color: @ThemeConfig.AccentColor; --text-dark: @ThemeConfig.TextDark; --text-medium: @ThemeConfig.TextMedium; --bg-light: @ThemeConfig.BackgroundLight; --border-color: @ThemeConfig.BorderColor;">
         <div class="container">
             <div class="first-page page">
                 <!-- Header Section -->
@@ -259,3 +259,4 @@ else
         </div>
     </div>
 }
+

@@ -1,6 +1,3 @@
-using System.Text;
-using System.Text.Json;
-
 namespace AiCV.Web.Components.Pages;
 
 public partial class UserSettingsPage

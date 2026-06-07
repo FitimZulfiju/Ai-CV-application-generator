@@ -9,24 +9,7 @@ namespace AiCV.Infrastructure.Services.PdfTemplates.Modern;
 
 public class ModernPdfTemplate : PdfTemplateBase
 {
-    private static readonly PdfTemplateStyle _modernStyle = new(
-        PrimaryColor: "#2c3e50",
-        PrimaryDark: "#1a252f",
-        AccentColor: "#e67e22",
-        TextDark: "#2c3e50",
-        TextMedium: "#4b5563",
-        BackgroundLight: "#f8f9fa",
-        BorderColor: "#dee2e6",
-        UseSectionSeparators: true,
-        CenterLanguageContent: true,
-        UseInterestChips: true,
-        UseReferencesFooterPanel: true,
-        SkillsBorderColor: "#e67e22",
-        WorkCompanyColor: "#e67e22",
-        EducationBorderColor: "#e67e22"
-    );
-
-    protected override PdfTemplateStyle Style => _modernStyle;
+    protected override AiCV.Application.Common.Models.CvThemeConfig Style => AiCV.Application.Common.Constants.ThemeRegistry.Modern;
 
     public ModernPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)

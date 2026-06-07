@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="AiCV.Domain\AiCV.Domain.csproj" />
+  <Project Path="AiCV.Application\AiCV.Application.csproj" />
+  <Project Path="AiCV.Infrastructure\AiCV.Infrastructure.csproj" />
+  <Project Path="AiCV.Web\AiCV.Web.csproj" />
+  <Project Path="AiCV.Tests\AiCV.Tests.csproj" />
+  <Project Path="AiCV.Migrations.SqlServer\AiCV.Migrations.SqlServer.csproj" />
+  <Project Path="AiCV.Migrations.PostgreSQL\AiCV.Migrations.PostgreSQL.csproj" />
+</Solution>

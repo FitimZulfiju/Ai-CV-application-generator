@@ -248,17 +248,9 @@
 
 /* --- MODERN TEMPLATE --- */
 
-.cv-container.cv-modern {
-    --modern-primary: #2c3e50;
-    --modern-primary-dark: #1a252f;
-    --modern-accent: #e67e22;
-    --modern-bg: #f8f9fa;
-    --modern-text: #2c3e50;
-    --modern-text-light: #7f8c8d;
-}
 
 .cv-container.cv-modern .header {
-    background: var(--modern-primary);
+    background: var(--primary-color);
     color: white;
     padding: var(--cv-padding-y) var(--cv-padding-x);
     display: flex;
@@ -269,7 +261,7 @@
     overflow: hidden;
     min-height: 10em;
     border-radius: 0.5em;
-    border-bottom: 0.08cm solid var(--modern-accent);
+    border-bottom: 0.08cm solid var(--accent-color);
 }
 
 .cv-container.cv-modern .header::before {
@@ -298,7 +290,7 @@
 
 .cv-container.cv-modern .title {
     font-size: var(--font-size-title);
-    color: var(--modern-accent);
+    color: var(--accent-color);
     font-weight: 600;
     margin-bottom: 0.8rem;
     text-transform: uppercase;
@@ -329,11 +321,11 @@
 .cv-container.cv-modern .section-title {
     font-size: var(--font-size-section-title) !important;
     font-weight: 700;
-    color: var(--modern-primary);
-    border-left: 4pt solid var(--modern-accent);
+    color: var(--primary-color);
+    border-left: 4pt solid var(--accent-color);
     padding-left: 1rem;
-    padding-bottom: 2px;
-    border-bottom: 1.5pt solid var(--modern-primary);
+    padding-bottom: 2pt;
+    border-bottom: 1.5pt solid var(--primary-color);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-bottom: 1.5rem;
@@ -347,7 +339,7 @@
 
 .cv-container.cv-modern .summary {
     background: white;
-    border-left: var(--card-border-width) solid var(--modern-primary);
+    border-left: var(--card-border-width) solid var(--primary-color);
     box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
     padding: var(--card-padding);
     margin: 0;
@@ -362,14 +354,14 @@
     box-shadow: none;
     padding: var(--cv-padding-y) var(--cv-padding-x);
     font-size: var(--font-size-body);
-    color: var(--modern-text);
+    color: var(--text-dark);
 }
 
 .cv-container.cv-modern .skill-category {
     background: white;
     box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.05);
     border-radius: var(--card-border-radius);
-    border-left: var(--card-border-width) solid var(--modern-accent);
+    border-left: var(--card-border-width) solid var(--accent-color);
     border-top: none;
     padding: var(--card-padding);
     margin-bottom: var(--cv-item-spacing);
@@ -378,7 +370,7 @@
 .cv-container.cv-modern .skill-title {
     font-size: var(--font-size-body);
     font-weight: 700;
-    color: var(--modern-primary);
+    color: var(--primary-color);
     margin-bottom: 0.25em;
 }
 
@@ -404,7 +396,7 @@
 }
 
 .cv-container.cv-modern .company {
-    color: var(--modern-accent);
+    color: var(--accent-color);
     font-weight: 700;
     text-transform: uppercase;
     font-size: var(--font-size-meta);
@@ -414,7 +406,7 @@
 .cv-container.cv-modern .education {
     background: white;
     box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
-    border-left: var(--card-border-width) solid var(--modern-accent);
+    border-left: var(--card-border-width) solid var(--accent-color);
     border-radius: var(--card-border-radius);
     padding: var(--card-padding);
 }
@@ -422,20 +414,20 @@
 .cv-container.cv-modern .degree {
     font-size: var(--font-size-item-title);
     font-weight: 700;
-    color: var(--modern-text);
+    color: var(--text-dark);
 }
 
 .cv-container.cv-modern .school,
 .cv-container.cv-modern .education-institution {
     font-size: var(--font-size-body);
     font-weight: 700;
-    color: var(--modern-primary);
+    color: var(--primary-color);
 }
 
 .cv-container.cv-modern .project {
     background: white;
     box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.05);
-    border-left: var(--card-border-width) solid var(--modern-primary);
+    border-left: var(--card-border-width) solid var(--primary-color);
     border-radius: var(--card-border-radius);
     padding: var(--card-padding);
 }
@@ -443,14 +435,14 @@
 .cv-container.cv-modern .project-title {
     font-size: var(--font-size-item-title);
     font-weight: 700;
-    color: var(--modern-text);
+    color: var(--text-dark);
     line-height: 1.3;
 }
 
 .cv-container.cv-modern .project-links {
     margin-top: 0.15cm;
     font-size: var(--font-size-meta);
-    color: var(--modern-primary);
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -458,7 +450,7 @@
 .cv-container.cv-modern .project-role {
     margin-top: 0.1cm;
     font-size: var(--font-size-meta);
-    color: var(--modern-text-light);
+    color: var(--text-medium);
 }
 
 .cv-container.cv-modern .project-role {
@@ -467,26 +459,26 @@
 
 .cv-container.cv-modern .language-list,
 .cv-container.cv-modern .interests {
-    border-left-color: var(--modern-primary);
+    border-left-color: var(--primary-color);
 }
 
 /* --- MINIMALIST TEMPLATE --- */
 
 .cv-container.cv-minimalist {
     background: white;
-    color: #333;
+    color: var(--primary-color);
 }
 
 .cv-container.cv-minimalist .header {
     background: white;
-    color: #111;
+    color: var(--text-dark);
     padding: 4rem var(--cv-padding-x) var(--cv-padding-y);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
-    border-bottom: 0.08cm solid #f0f0f0;
+    border-bottom: 0.08cm solid var(--border-color);
 }
 
 .cv-container.cv-minimalist .section {
@@ -505,7 +497,7 @@
 .cv-container.cv-minimalist .title {
     font-size: var(--font-size-title);
     font-weight: 400;
-    color: #666;
+    color: var(--text-medium);
     letter-spacing: 0.2em;
     text-transform: uppercase;
     margin-bottom: 1.5rem;
@@ -513,28 +505,28 @@
 
 .cv-container.cv-minimalist .contact-info-wrapper {
     font-size: var(--font-size-meta);
-    color: #888;
+    color: var(--text-medium);
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 .cv-container.cv-minimalist .contact-info-wrapper a {
-    color: #111;
+    color: var(--text-dark);
     text-decoration: none;
-    border-bottom: 0.0625em solid #ccc;
+    border-bottom: 0.0625em solid var(--border-color);
     transition: all 0.2s ease;
 }
 
 .cv-container.cv-minimalist .contact-info-wrapper a:hover {
-    border-bottom: 0.0625em solid #111;
+    border-bottom: 0.0625em solid var(--text-dark);
     opacity: 0.8;
 }
 
 .cv-container.cv-minimalist .section-title {
     font-size: 1.05rem !important;
     font-weight: 700;
-    color: #111;
-    border-bottom: 1.5pt solid #111;
+    color: var(--text-dark);
+    border-bottom: 1.5pt solid var(--text-dark);
     width: 100%;
     padding-bottom: 0.5rem;
     margin-top: 1rem;
@@ -547,11 +539,11 @@
 .cv-container.cv-minimalist .summary {
     padding: var(--card-padding);
     background: #ffffff;
-    border-left: var(--card-border-width) solid #eeeeee;
+    border-left: var(--card-border-width) solid var(--border-color);
     border-radius: var(--card-border-radius);
     font-size: var(--font-size-body);
     line-height: 1.8;
-    color: #444;
+    color: var(--text-medium);
     text-align: left;
 }
 
@@ -565,7 +557,7 @@
 .cv-container.cv-minimalist .skill-category {
     background: #ffffff;
     border: none;
-    border-left: var(--card-border-width) solid #eeeeee;
+    border-left: var(--card-border-width) solid var(--border-color);
     border-radius: var(--card-border-radius);
     padding: var(--card-padding);
 }
@@ -573,7 +565,7 @@
 .cv-container.cv-minimalist .skill-title {
     font-size: var(--font-size-item-title);
     font-weight: 600;
-    color: #111;
+    color: var(--text-dark);
     letter-spacing: 0.05em;
     margin-bottom: 0.25em;
 }
@@ -581,7 +573,7 @@
 .cv-container.cv-minimalist .skill-list {
     font-size: var(--font-size-body);
     line-height: 1.6;
-    color: #444;
+    color: var(--text-medium);
 }
 
 .cv-container.cv-minimalist .job {
@@ -593,7 +585,7 @@
 
 .cv-container.cv-minimalist .company {
     font-size: var(--font-size-meta);
-    color: #666;
+    color: var(--text-medium);
     font-weight: 400;
     font-style: italic;
 }
@@ -607,43 +599,43 @@
 }
 
 .cv-container.cv-minimalist .education {
-    border-left: var(--card-border-width) solid #eeeeee;
+    border-left: var(--card-border-width) solid var(--border-color);
     margin-bottom: var(--cv-item-spacing);
 }
 
 .cv-container.cv-minimalist .project {
-    border-left: var(--card-border-width) solid #eeeeee;
+    border-left: var(--card-border-width) solid var(--border-color);
 }
 
 .cv-container.cv-minimalist .degree {
     font-size: var(--font-size-item-title);
     font-weight: 700;
-    color: #111111;
+    color: var(--primary-dark);
 }
 
 .cv-container.cv-minimalist .school,
 .cv-container.cv-minimalist .education-institution {
     font-size: var(--font-size-body);
     font-weight: 700;
-    color: #333333;
+    color: var(--primary-color);
 }
 
 .cv-container.cv-minimalist .project-title {
     font-size: var(--font-size-item-title);
     font-weight: 700;
-    color: #111111;
+    color: var(--primary-dark);
     line-height: 1.3;
 }
 
 .cv-container.cv-minimalist .language-list,
 .cv-container.cv-minimalist .interests {
-    border-left-color: #eeeeee;
+    border-left-color: var(--border-color);
 }
 
 .cv-container.cv-minimalist .project-links {
     margin-top: 0.15cm;
     font-size: var(--font-size-meta);
-    color: #333333;
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -651,7 +643,7 @@
 .cv-container.cv-minimalist .project-role {
     margin-top: 0.1cm;
     font-size: var(--font-size-meta);
-    color: #444444;
+    color: var(--text-medium);
 }
 
 .cv-container.cv-minimalist .project-role {
