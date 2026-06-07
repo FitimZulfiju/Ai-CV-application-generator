@@ -1,4 +1,4 @@
-﻿namespace AiCV.Web.Components.Templates.Minimalist;
+namespace AiCV.Web.Features.CvRendering.Templates.Minimalist;
 public partial class MinimalistCoverLetter
 {
     [Parameter]

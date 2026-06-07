@@ -1,4 +1,9 @@
-@inherits AiCV.Web.Components.Templates.CvTemplateBase
+@inherits AiCV.Web.Features.CvRendering.Templates.CvTemplateBase
+
+@code {
+    [Parameter]
+    public string ThemeClass { get; set; } = string.Empty;
+}
 
 @if (Profile == null)
 {
@@ -6,7 +11,7 @@
 }
 else
 {
-    <div class="cv-container cv-modern @(Profile.ShowProfilePicture && !string.IsNullOrEmpty(Profile.ProfilePictureUrl) ? "show-photo" : "")">
+    <div class="cv-container @ThemeClass @(Profile.ShowProfilePicture && !string.IsNullOrEmpty(Profile.ProfilePictureUrl) ? "show-photo" : "")">
         <div class="container">
             <div class="first-page page">
                 <!-- Header Section -->
@@ -48,13 +53,13 @@ else
                 <section class="section">
                     <h3 class="section-title">@Localizer["CoreCompetencies"]</h3>
                     <div class="skills-grid">
-                        @if (Profile.Skills != null && Profile.Skills.Any())
+                        @if (SkillGroups.Any())
                         {
-                            @foreach (var group in Profile.Skills.GroupBy(s => s.Category))
+                            @foreach (var group in SkillGroups)
                             {
                                 <div class="skill-category">
-                                    <h4 class="skill-title"><FormattedText Text="@group.Key" /></h4>
-                                    <p class="skill-list"><FormattedText Text="@string.Join(", ", group.Select(s => s.Name).Distinct())" /></p>
+                                    <h4 class="skill-title"><FormattedText Text="@group.Category" /></h4>
+                                    <p class="skill-list"><FormattedText Text="@group.SkillNames" /></p>
                                 </div>
                             }
                         }
@@ -69,9 +74,9 @@ else
                 <!-- Work Experience -->
                 <section class="section work-experience-section">
                     <h3 class="section-title">@Localizer["WorkExperienceCv"]</h3>
-                    @if (Profile.WorkExperience != null && Profile.WorkExperience.Any())
+                    @if (WorkExperiences.Any())
                     {
-                        @foreach (var job in Profile.WorkExperience)
+                        @foreach (var job in WorkExperiences)
                         {
                             <div class="job">
                                 <div class="job-header">
@@ -85,9 +90,9 @@ else
                                         </p>
                                     </div>
                                     <div class="job-dates">
-                                        @{ var jobDuration = CalculateDuration(job.StartDate, job.EndDate, job.IsCurrentRole); }
+                                        @{ var jobDuration = job.Duration; }
                                         <span class="date">
-                                            @job.StartDate?.ToString("MM/yyyy") – @(job.IsCurrentRole? Localizer["Present"] : (job.EndDate.HasValue ? job.EndDate.Value.ToString("MM/yyyy") : Localizer["Present"]))
+                                            @job.DateRange
                                             @if (!string.IsNullOrEmpty(jobDuration))
                                             {
                                                 <span class="duration">(@jobDuration)</span>
@@ -111,16 +116,16 @@ else
                 <!-- Education -->
                 <section class="section education-section">
                     <h3 class="section-title">@Localizer["EducationCv"]</h3>
-                    @if (Profile.Educations != null && Profile.Educations.Any())
+                    @if (OrderedEducations.Any())
                     {
-                        @foreach (var edu in Profile.Educations.OrderByDescending(e => e.StartDate))
+                        @foreach (var edu in OrderedEducations)
                         {
                             <div class="education">
                                 <div class="education-header">
                                     <h4 class="degree"><FormattedText Text="@edu.Degree" /></h4>
-                                    <span class="education-date">@edu.StartDate?.ToString("yyyy") - @(edu.EndDate.HasValue? edu.EndDate.Value.ToString("yyyy") : Localizer["Present"])</span>
+                                    <span class="education-date">@edu.DateRange</span>
                                 </div>
-                                <p class="school education-institution" style="font-size: var(--font-size-body); font-weight: 700; color: #2c3e50;"><FormattedText Text="@edu.InstitutionName" /></p>
+                                <p class="school education-institution"><FormattedText Text="@edu.InstitutionName" /></p>
                                 @if (!string.IsNullOrEmpty(edu.Description))
                                 {
                                     <div class="recognition"><FormattedText Text="@edu.Description" IsDescription="true" /></div>
@@ -137,9 +142,9 @@ else
                 <!-- Personal Projects -->
                 <section class="section">
                     <h3 class="section-title">@Localizer["PersonalProjectsCv"]</h3>
-                    @if (Profile.Projects != null && Profile.Projects.Any())
+                    @if (OrderedProjects.Any())
                     {
-                        var projectList = Profile.Projects.OrderByDescending(p => p.StartDate).ToList();
+                        var projectList = OrderedProjects;
                         for (int i = 0; i < projectList.Count; i++)
                         {
                             var proj = projectList[i];
@@ -147,7 +152,7 @@ else
                             <div class="project" style="@(!isLast ? "margin-bottom: 1.5em;" : "")">
                                 <div class="project-header">
                                     <h4 class="project-title"><FormattedText Text="@proj.Name" /></h4>
-                                    <span class="project-date">@proj.StartDate?.ToString("yyyy") - @(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : Localizer["Present"])</span>
+                                    <span class="project-date">@proj.DateRange</span>
                                 </div>
                                 @if (!string.IsNullOrEmpty(proj.Link))
                                 {
@@ -173,35 +178,18 @@ else
                                     </div>
                                 }
 
-                                @if (!string.IsNullOrEmpty(proj.SectionTitle) || !string.IsNullOrEmpty(proj.SectionDescription))
+                                @{
+                                    var projectSection = proj.Section;
+                                }
+                                @if (!string.IsNullOrEmpty(projectSection.Header))
                                 {
-                                    if (!string.IsNullOrEmpty(proj.SectionDescription))
-                                    {
-                                        if (!string.IsNullOrEmpty(proj.SectionTitle))
-                                        {
-                                            <h5 class="project-section-title" style="margin-top: 0.5em;"><FormattedText Text="@proj.SectionTitle" /></h5>
-                                        }
-                                        <div class="project-features">
-                                            <FormattedText Text="@proj.SectionDescription" IsDescription="true" />
-                                        </div>
-                                    }
-                                    else if (!string.IsNullOrEmpty(proj.SectionTitle))
-                                    {
-                                        var sectionLines = proj.SectionTitle.Replace("\r\n", "\n").Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                                        var sectionHeader = sectionLines.FirstOrDefault()?.Trim();
-                                        var sectionDetails = sectionLines.Skip(1).ToArray();
-
-                                        if (!string.IsNullOrEmpty(sectionHeader))
-                                        {
-                                            <h5 class="project-section-title" style="margin-top: 0.5em;"><FormattedText Text="@sectionHeader" /></h5>
-                                        }
-                                        if (sectionDetails.Any())
-                                        {
-                                            <div class="project-features">
-                                                <FormattedText Text="@string.Join("\n", sectionDetails)" IsDescription="true" />
-                                            </div>
-                                        }
-                                    }
+                                    <h5 class="project-section-title" style="margin-top: 0.5em;"><FormattedText Text="@projectSection.Header" /></h5>
+                                }
+                                @if (!string.IsNullOrEmpty(projectSection.Details))
+                                {
+                                    <div class="project-features">
+                                        <FormattedText Text="@projectSection.Details" IsDescription="true" />
+                                    </div>
                                 }
                             </div>
                         }
@@ -216,11 +204,11 @@ else
                 <section class="section">
                     <h3 class="section-title">@Localizer["LanguagesCv"]</h3>
                     <div class="language-list">
-                        @if (Profile.Languages != null && Profile.Languages.Any())
+                        @if (Languages.Any())
                         {
-                            @for (int i = 0; i < Profile.Languages.Count; i++)
+                            @for (int i = 0; i < Languages.Count; i++)
                             {
-                                var lang = Profile.Languages[i];
+                                var lang = Languages[i];
                                 @if (i > 0)
                                 {
                                     <span class="item-separator">&nbsp;&bull;&nbsp;</span>
@@ -245,15 +233,15 @@ else
                 <section class="section interests-section">
                     <h3 class="section-title">@Localizer["InterestsCv"]</h3>
                     <div class="interests">
-                        @if (Profile.Interests != null && Profile.Interests.Any())
+                        @if (Interests.Any())
                         {
-                            @for (int i = 0; i < Profile.Interests.Count; i++)
+                            @for (int i = 0; i < Interests.Count; i++)
                             {
                                 @if (i > 0)
                                 {
                                     <span class="item-separator">&nbsp;&bull;&nbsp;</span>
                                 }
-                                <FormattedText Text="@Profile.Interests[i].Name" />
+                                <FormattedText Text="@Interests[i].Name" />
                             }
                         }
                         else

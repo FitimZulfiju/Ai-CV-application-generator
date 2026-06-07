@@ -105,7 +105,7 @@ else
 
             @* Tab CV Preview *@
             <MudTabPanel Text="@Localizer["CvPreview"]" Icon="@Icons.Material.Filled.Preview" Style="background-color:cornflowerblue;color:whitesmoke; border-radius:0.5rem;">
-                <AiCV.Web.Components.Shared.CvPreview Profile="@_profile" Template="@_selectedTemplate" />
+                <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="@_profile" Template="@_selectedTemplate" />
             </MudTabPanel>
         </MudTabs>
     </MudContainer>

@@ -1,4 +1,4 @@
-﻿namespace AiCV.Web.Components.Templates.Modern;
+namespace AiCV.Web.Features.CvRendering.Templates.Modern;
 
 public partial class ModernCoverLetter
 {

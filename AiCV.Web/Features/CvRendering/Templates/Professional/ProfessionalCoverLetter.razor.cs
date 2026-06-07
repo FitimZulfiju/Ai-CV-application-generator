@@ -1,4 +1,4 @@
-﻿namespace AiCV.Web.Components.Templates.Professional;
+namespace AiCV.Web.Features.CvRendering.Templates.Professional;
 
 public partial class ProfessionalCoverLetter
 {

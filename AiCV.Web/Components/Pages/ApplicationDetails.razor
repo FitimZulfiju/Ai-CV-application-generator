@@ -77,7 +77,7 @@
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
                     <MudPaper Elevation="0" Class="cv-paper-container">
-                        <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" Template="_application.Template" />
+                        <AiCV.Web.Features.CvRendering.Preview.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" Template="_application.Template" />
                     </MudPaper>
                 }
                 else
@@ -89,7 +89,7 @@
                 @if (_tailoredResume != null)
                 {
                     <MudPaper Elevation="1" Class="cv-paper-container">
-                        <AiCV.Web.Components.Shared.CvPreview Profile="_tailoredResume" Template="_application.Template" />
+                        <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="_tailoredResume" Template="_application.Template" />
                     </MudPaper>
                 }
                 else

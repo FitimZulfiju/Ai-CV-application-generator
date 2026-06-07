@@ -310,7 +310,7 @@
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
                                           Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
-                                    <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile"
+                                    <AiCV.Web.Features.CvRendering.Preview.CoverLetterPreview Profile="_cachedProfile"
                                                                                    LetterContent="@_generatedCoverLetter"
                                                                                    Template="_selectedTemplateInPreview" />
                                 </MudPaper>
@@ -333,7 +333,7 @@
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
                                           Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
-                                    <AiCV.Web.Components.Shared.CvPreview Profile="_generatedResume" Template="_selectedTemplateInPreview" />
+                                    <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="_generatedResume" Template="_selectedTemplateInPreview" />
                                 </MudPaper>
                             }
                             else
