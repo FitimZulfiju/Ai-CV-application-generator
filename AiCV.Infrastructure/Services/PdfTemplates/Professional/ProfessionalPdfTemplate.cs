@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Localization;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using AiCV.Domain.Entities;
+using System.IO;
+
 namespace AiCV.Infrastructure.Services.PdfTemplates.Professional;
 
 public class ProfessionalPdfTemplate(
@@ -5,58 +12,22 @@ public class ProfessionalPdfTemplate(
     IStringLocalizer<AicvResources> localizer
     ) : PdfTemplateBase(env, localizer)
 {
-    protected override bool UseSectionSeparators => true;
-    protected override bool CenterLanguageContent => true;
-    protected override bool UseInterestChips => true;
-    protected override bool UseReferencesFooterPanel => true;
-    protected override bool SuppressWorkDescriptionBullet => true;
+    private static readonly PdfTemplateStyle _professionalStyle = new(
+        UseSectionSeparators: true,
+        CenterLanguageContent: true,
+        UseInterestChips: true,
+        UseReferencesFooterPanel: true,
+        SuppressWorkDescriptionBullet: true
+    );
 
-    protected override void SectionTitle(ColumnDescriptor column, string title)
-    {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .PaddingTop(0.3f, Unit.Centimetre)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .BorderBottom(1.5f)
-                    .BorderColor(_primaryColor)
-                    .PaddingBottom(2)
-                    .Text(title.ToUpper())
-                    .FontSize(12)
-                    .Bold()
-                    .FontColor(_primaryDark)
-                    .LetterSpacing(0.06f);
-            });
-    }
-
-    protected override void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
-    {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .BorderBottom(1.5f)
-                    .BorderColor(_primaryColor)
-                    .PaddingBottom(2)
-                    .Text(title.ToUpper())
-                    .FontSize(12)
-                    .Bold()
-                    .FontColor(_primaryDark)
-                    .LetterSpacing(0.06f);
-            });
-    }
+    protected override PdfTemplateStyle Style => _professionalStyle;
 
     public override void ComposeHeader(IContainer container, CandidateProfile profile)
     {
-        bool showPhoto =
-            profile.ShowProfilePicture && !string.IsNullOrEmpty(profile.ProfilePictureUrl);
-        var headerBg = _primaryColor;
+        bool showPhoto = HasProfilePhoto(profile, out var photoPath);
+        var headerBg = Style.PrimaryColor;
         const string headerTextCol = "#ffffff";
-        var accentCol = _accentColor;
+        var accentCol = Style.AccentColor;
         const string titleTextCol = "#F5F5F5";
 
         container.Column(c =>
@@ -78,30 +49,11 @@ public class ProfessionalPdfTemplate(
                         row.ConstantItem(sideWidth, Unit.Centimetre)
                             .Element(e =>
                             {
-                                var webRootPath =
-                                    _env.WebRootPath
-                                    ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                                var path = Path.Combine(
-                                    webRootPath,
-                                    profile.ProfilePictureUrl!.TrimStart('/', '\\')
-                                );
-                                if (File.Exists(path))
-                                {
-                                    e.AlignMiddle()
-                                        .AlignLeft()
-                                        .Width(photoSize, Unit.Centimetre)
-                                        .Height(photoSize, Unit.Centimetre)
-                                        .Element(inner =>
-                                        {
-                                            inner
-                                                .Background("#ffffff")
-                                                .CornerRadius(photoSize / 2, Unit.Centimetre)
-                                                .Border(2)
-                                                .BorderColor("#ffffff")
-                                                .Image(path)
-                                                .FitArea();
-                                        });
-                                }
+                                e.AlignMiddle()
+                                    .AlignLeft()
+                                    .Width(photoSize, Unit.Centimetre)
+                                    .Height(photoSize, Unit.Centimetre)
+                                    .Element(inner => ComposeProfilePhoto(inner, photoPath, photoSize, "#ffffff", 2));
                             });
                     }
 
@@ -109,77 +61,11 @@ public class ProfessionalPdfTemplate(
                         .AlignCenter()
                         .Column(col =>
                         {
-                            col.Item()
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(showPhoto ? 24 : 26)
-                                            .Bold()
-                                            .FontColor(headerTextCol)
-                                            .LetterSpacing(-0.02f)
-                                    );
-                                    ComposeMarkdownText(t, profile.FullName ?? "", headerTextCol);
-                                });
-
-                            col.Item()
-                                .PaddingTop(0.1f, Unit.Centimetre)
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(showPhoto ? 10f : 11f)
-                                            .FontColor(titleTextCol)
-                                            .LetterSpacing(0.02f)
-                                    );
-                                    ComposeMarkdownText(t, profile.Title ?? "", titleTextCol);
-                                });
-
-                            col.Item()
-                                .PaddingTop(0.3f, Unit.Centimetre)
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
-                                    );
-                                    ComposeContactRow(t, profile, false, headerTextCol);
-                                });
-
-                            col.Item()
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
-                                    );
-                                    ComposeLinkRow(t, profile, false, headerTextCol);
-                                });
-
-                            if (!string.IsNullOrWhiteSpace(profile.Tagline))
-                            {
-                                col.Item()
-                                    .PaddingTop(0.2f, Unit.Centimetre)
-                                    .PaddingBottom(0.2f, Unit.Centimetre)
-                                    .LineHorizontal(0.5f)
-                                    .LineColor(titleTextCol);
-                                col.Item()
-                                    .AlignCenter()
-                                    .Text(t =>
-                                    {
-                                        t.AlignCenter();
-                                        t.DefaultTextStyle(x =>
-                                            x.FontColor(headerTextCol)
-                                                .FontSize(showPhoto ? 8.5f : 9.5f)
-                                                .LineHeight(1.2f)
-                                        );
-                                        ComposeMarkdownText(t, profile.Tagline, headerTextCol);
-                                    });
-                            }
+                            ComposeHeaderName(col, profile.FullName ?? "", showPhoto ? 24 : 26, headerTextCol, letterSpacing: -0.02f);
+                            ComposeHeaderTitle(col, profile.Title ?? "", showPhoto ? 10f : 11f, titleTextCol, letterSpacing: 0.02f);
+                            ComposeHeaderContactRow(col, profile, showPhoto ? 8f : 9f, headerTextCol);
+                            ComposeHeaderLinkRow(col, profile, showPhoto ? 8f : 9f, headerTextCol);
+                            ComposeHeaderTagline(col, profile.Tagline ?? "", showPhoto ? 8.5f : 9.5f, headerTextCol, titleTextCol);
                         });
 
                     if (showPhoto)
@@ -188,4 +74,24 @@ public class ProfessionalPdfTemplate(
         });
     }
 
+    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
+    {
+        var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
+        if (hasTopPadding)
+        {
+            item = item.PaddingTop(0.3f, Unit.Centimetre);
+        }
+        item.Row(row =>
+        {
+            row.AutoItem()
+                .BorderBottom(1.5f)
+                .BorderColor(Style.PrimaryColor)
+                .PaddingBottom(2)
+                .Text(title.ToUpper())
+                .FontSize(12)
+                .Bold()
+                .FontColor(Style.PrimaryDark)
+                .LetterSpacing(0.06f);
+        });
+    }
 }

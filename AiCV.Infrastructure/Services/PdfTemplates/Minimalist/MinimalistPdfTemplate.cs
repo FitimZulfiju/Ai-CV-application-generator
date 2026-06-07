@@ -1,37 +1,46 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Localization;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using AiCV.Domain.Entities;
+using System.IO;
+
 namespace AiCV.Infrastructure.Services.PdfTemplates.Minimalist;
 
 public class MinimalistPdfTemplate : PdfTemplateBase
 {
-    protected override bool UseSectionSeparators => true;
-    protected override bool CenterLanguageContent => true;
-    protected override bool UseInterestChips => true;
-    protected override bool UseReferencesFooterPanel => true;
-    protected override string AdditionalSectionBorderColor => _borderColor;
-    protected override string SummaryBorderColor => _borderColor;
-    protected override string SkillsBorderColor => _borderColor;
-    protected override string EducationBorderColor => _borderColor;
-    protected override string CoverLetterBorderColor => _borderColor;
+    private static readonly PdfTemplateStyle _minimalistStyle = new(
+        PrimaryColor: "#333333",
+        PrimaryDark: "#111111",
+        AccentColor: "#777777",
+        TextDark: "#111111",
+        TextMedium: "#444444",
+        BackgroundLight: "#ffffff",
+        BorderColor: "#eeeeee",
+        UseSectionSeparators: true,
+        CenterLanguageContent: true,
+        UseInterestChips: true,
+        UseReferencesFooterPanel: true,
+        AdditionalSectionBorderColor: "#eeeeee",
+        SummaryBorderColor: "#eeeeee",
+        SkillsBorderColor: "#eeeeee",
+        EducationBorderColor: "#eeeeee",
+        CoverLetterBorderColor: "#eeeeee"
+    );
+
+    protected override PdfTemplateStyle Style => _minimalistStyle;
 
     public MinimalistPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)
     {
-        _primaryColor = "#333333";
-        _primaryDark = "#111111";
-        _accentColor = "#777777";
-        _textDark = "#111111";
-        _textMedium = "#444444";
-        _backgroundLight = "#ffffff";
-        _borderColor = "#eeeeee";
     }
 
     public override void ComposeHeader(IContainer container, CandidateProfile profile)
     {
-        bool showPhoto =
-            profile.ShowProfilePicture && !string.IsNullOrEmpty(profile.ProfilePictureUrl);
         const string headerBg = "#ffffff";
-        var headerTextCol = _textDark;
-        var accentCol = _borderColor;
-        var titleTextCol = _textMedium;
+        var headerTextCol = Style.TextDark;
+        var accentCol = Style.BorderColor;
+        var titleTextCol = Style.TextMedium;
 
         container.Column(c =>
         {
@@ -43,141 +52,44 @@ public class MinimalistPdfTemplate : PdfTemplateBase
                 .PaddingHorizontal(0.75f, Unit.Centimetre)
                 .Column(col =>
                 {
-                    if (showPhoto)
+                    if (HasProfilePhoto(profile, out var photoPath))
                     {
-                        var webRootPath =
-                            _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                        var path = Path.Combine(
-                            webRootPath,
-                            profile.ProfilePictureUrl!.TrimStart('/', '\\')
-                        );
-                        if (File.Exists(path))
-                        {
-                            col.Item()
-                                .AlignCenter()
-                                .PaddingBottom(0.5f, Unit.Centimetre)
-                                .Width(3, Unit.Centimetre)
-                                .Height(3, Unit.Centimetre)
-                                .Element(e =>
-                                    e.Background("#ffffff")
-                                        .CornerRadius(1.5f, Unit.Centimetre)
-                                        .Border(2)
-                                        .BorderColor("#eeeeee")
-                                        .Image(path)
-                                        .FitArea()
-                                );
-                        }
-                    }
-
-                    col.Item()
-                        .AlignCenter()
-                        .Text(t =>
-                        {
-                            t.AlignCenter();
-                            t.DefaultTextStyle(x =>
-                                x.FontSize(28).Bold().FontColor(headerTextCol).LetterSpacing(0.2f)
-                            );
-                            ComposeMarkdownText(
-                                t,
-                                (profile.FullName ?? "").ToUpper(),
-                                headerTextCol
-                            );
-                        });
-
-                    col.Item()
-                        .PaddingTop(0.1f, Unit.Centimetre)
-                        .AlignCenter()
-                        .Text(t =>
-                        {
-                            t.AlignCenter();
-                            t.DefaultTextStyle(x =>
-                                x.FontSize(10.5f).FontColor(titleTextCol).LetterSpacing(0.02f)
-                            );
-                            ComposeMarkdownText(t, (profile.Title ?? "").ToUpper(), titleTextCol);
-                        });
-
-                    col.Item()
-                        .PaddingTop(0.3f, Unit.Centimetre)
-                        .AlignCenter()
-                        .Text(t =>
-                        {
-                            t.AlignCenter();
-                            t.DefaultTextStyle(x =>
-                                x.FontColor(headerTextCol).FontSize(9).LetterSpacing(0.05f)
-                            );
-                            ComposeContactRow(t, profile, true, headerTextCol);
-                        });
-
-                    col.Item()
-                        .AlignCenter()
-                        .Text(t =>
-                        {
-                            t.AlignCenter();
-                            t.DefaultTextStyle(x =>
-                                x.FontColor(headerTextCol).FontSize(9).LetterSpacing(0.05f)
-                            );
-                            ComposeLinkRow(t, profile, true, headerTextCol);
-                        });
-
-                    if (!string.IsNullOrWhiteSpace(profile.Tagline))
-                    {
-                        col.Item()
-                            .PaddingTop(0.2f, Unit.Centimetre)
-                            .PaddingBottom(0.2f, Unit.Centimetre)
-                            .LineHorizontal(0.5f)
-                            .LineColor(titleTextCol);
                         col.Item()
                             .AlignCenter()
-                            .Text(t =>
-                            {
-                                t.AlignCenter();
-                                t.DefaultTextStyle(x => x.FontColor(headerTextCol).FontSize(9.5f));
-                                ComposeMarkdownText(t, profile.Tagline, headerTextCol);
-                            });
+                            .PaddingBottom(0.5f, Unit.Centimetre)
+                            .Width(3, Unit.Centimetre)
+                            .Height(3, Unit.Centimetre)
+                            .Element(e => ComposeProfilePhoto(e, photoPath, 3f, "#eeeeee", 2));
                     }
+
+                    ComposeHeaderName(col, profile.FullName ?? "", 28, headerTextCol, letterSpacing: 0.2f, makeUppercase: true);
+                    ComposeHeaderTitle(col, profile.Title ?? "", 10.5f, titleTextCol, letterSpacing: 0.02f, makeUppercase: true);
+                    ComposeHeaderContactRow(col, profile, 9, headerTextCol, makeUppercase: true, letterSpacing: 0.05f);
+                    ComposeHeaderLinkRow(col, profile, 9, headerTextCol, makeUppercase: true, letterSpacing: 0.05f);
+                    ComposeHeaderTagline(col, profile.Tagline ?? "", 9.5f, headerTextCol, titleTextCol);
                 });
         });
     }
 
-    protected override void SectionTitle(ColumnDescriptor column, string title)
+    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
     {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .PaddingTop(0.3f, Unit.Centimetre)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .Width(17, Unit.Centimetre)
-                    .BorderBottom(1.5f)
-                    .BorderColor(_primaryDark)
-                    .PaddingBottom(2)
-                    .Text(title.ToUpper())
-                    .FontSize(11)
-                    .Bold()
-                    .FontColor(_primaryDark)
-                    .LetterSpacing(0.15f);
-            });
+        var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
+        if (hasTopPadding)
+        {
+            item = item.PaddingTop(0.3f, Unit.Centimetre);
+        }
+        item.Row(row =>
+        {
+            row.AutoItem()
+                .Width(17, Unit.Centimetre)
+                .BorderBottom(1.5f)
+                .BorderColor(Style.PrimaryDark)
+                .PaddingBottom(2)
+                .Text(title.ToUpper())
+                .FontSize(11)
+                .Bold()
+                .FontColor(Style.PrimaryDark)
+                .LetterSpacing(0.15f);
+        });
     }
-
-    protected override void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
-    {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .Width(17, Unit.Centimetre)
-                    .BorderBottom(1.5f)
-                    .BorderColor(_primaryDark)
-                    .PaddingBottom(2)
-                    .Text(title.ToUpper())
-                    .FontSize(11)
-                    .Bold()
-                    .FontColor(_primaryDark)
-                    .LetterSpacing(0.15f);
-            });
-    }
-
 }

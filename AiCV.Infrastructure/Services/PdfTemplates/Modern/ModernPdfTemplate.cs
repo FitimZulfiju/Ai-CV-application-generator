@@ -1,35 +1,45 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Localization;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using AiCV.Domain.Entities;
+using System.IO;
+
 namespace AiCV.Infrastructure.Services.PdfTemplates.Modern;
 
 public class ModernPdfTemplate : PdfTemplateBase
 {
-    protected override bool UseSectionSeparators => true;
-    protected override bool CenterLanguageContent => true;
-    protected override bool UseInterestChips => true;
-    protected override bool UseReferencesFooterPanel => true;
-    protected override string SkillsBorderColor => _accentColor;
-    protected override string WorkCompanyColor => _accentColor;
-    protected override string EducationBorderColor => _accentColor;
+    private static readonly PdfTemplateStyle _modernStyle = new(
+        PrimaryColor: "#2c3e50",
+        PrimaryDark: "#1a252f",
+        AccentColor: "#e67e22",
+        TextDark: "#2c3e50",
+        TextMedium: "#4b5563",
+        BackgroundLight: "#f8f9fa",
+        BorderColor: "#dee2e6",
+        UseSectionSeparators: true,
+        CenterLanguageContent: true,
+        UseInterestChips: true,
+        UseReferencesFooterPanel: true,
+        SkillsBorderColor: "#e67e22",
+        WorkCompanyColor: "#e67e22",
+        EducationBorderColor: "#e67e22"
+    );
+
+    protected override PdfTemplateStyle Style => _modernStyle;
 
     public ModernPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)
     {
-        _primaryColor = "#2c3e50";
-        _primaryDark = "#1a252f";
-        _accentColor = "#e67e22";
-        _textDark = "#2c3e50";
-        _textMedium = "#4b5563";
-        _backgroundLight = "#f8f9fa";
-        _borderColor = "#dee2e6";
     }
 
     public override void ComposeHeader(IContainer container, CandidateProfile profile)
     {
-        bool showPhoto =
-            profile.ShowProfilePicture && !string.IsNullOrEmpty(profile.ProfilePictureUrl);
-        var headerBg = _primaryColor;
+        bool showPhoto = HasProfilePhoto(profile, out var photoPath);
+        var headerBg = Style.PrimaryColor;
         const string headerTextCol = "#ffffff";
-        var accentCol = _accentColor;
-        var titleTextCol = _accentColor;
+        var accentCol = Style.AccentColor;
+        var titleTextCol = Style.AccentColor;
 
         container.Column(c =>
         {
@@ -50,30 +60,11 @@ public class ModernPdfTemplate : PdfTemplateBase
                         row.ConstantItem(sideWidth, Unit.Centimetre)
                             .Element(e =>
                             {
-                                var webRootPath =
-                                    _env.WebRootPath
-                                    ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                                var path = Path.Combine(
-                                    webRootPath,
-                                    profile.ProfilePictureUrl!.TrimStart('/', '\\')
-                                );
-                                if (File.Exists(path))
-                                {
-                                    e.AlignMiddle()
-                                        .AlignLeft()
-                                        .Width(photoSize, Unit.Centimetre)
-                                        .Height(photoSize, Unit.Centimetre)
-                                        .Element(inner =>
-                                        {
-                                            inner
-                                                .Background("#ffffff")
-                                                .CornerRadius(photoSize / 2, Unit.Centimetre)
-                                                .Border(2)
-                                                .BorderColor("#ffffff")
-                                                .Image(path)
-                                                .FitArea();
-                                        });
-                                }
+                                e.AlignMiddle()
+                                    .AlignLeft()
+                                    .Width(photoSize, Unit.Centimetre)
+                                    .Height(photoSize, Unit.Centimetre)
+                                    .Element(inner => ComposeProfilePhoto(inner, photoPath, photoSize, "#ffffff", 2));
                             });
                     }
 
@@ -81,82 +72,11 @@ public class ModernPdfTemplate : PdfTemplateBase
                         .AlignCenter()
                         .Column(col =>
                         {
-                            col.Item()
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(showPhoto ? 28 : 32)
-                                            .Bold()
-                                            .FontColor(headerTextCol)
-                                            .LetterSpacing(-0.02f)
-                                    );
-                                    ComposeMarkdownText(t, profile.FullName ?? "", headerTextCol);
-                                });
-
-                            col.Item()
-                                .PaddingTop(0.1f, Unit.Centimetre)
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(showPhoto ? 8.5f : 9.5f)
-                                            .Bold()
-                                            .FontColor(titleTextCol)
-                                            .LetterSpacing(0.02f)
-                                    );
-                                    ComposeMarkdownText(
-                                        t,
-                                        (profile.Title ?? "").ToUpper(),
-                                        titleTextCol
-                                    );
-                                });
-
-                            col.Item()
-                                .PaddingTop(0.3f, Unit.Centimetre)
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
-                                    );
-                                    ComposeContactRow(t, profile, false, headerTextCol);
-                                });
-
-                            col.Item()
-                                .AlignCenter()
-                                .Text(t =>
-                                {
-                                    t.AlignCenter();
-                                    t.DefaultTextStyle(x =>
-                                        x.FontColor(headerTextCol).FontSize(showPhoto ? 8f : 9f)
-                                    );
-                                    ComposeLinkRow(t, profile, false, headerTextCol);
-                                });
-
-                            if (!string.IsNullOrWhiteSpace(profile.Tagline))
-                            {
-                                col.Item()
-                                    .PaddingTop(0.2f, Unit.Centimetre)
-                                    .PaddingBottom(0.2f, Unit.Centimetre)
-                                    .LineHorizontal(0.5f)
-                                    .LineColor(titleTextCol);
-                                col.Item()
-                                    .AlignCenter()
-                                    .Text(t =>
-                                    {
-                                        t.AlignCenter();
-                                        t.DefaultTextStyle(x =>
-                                            x.FontColor(headerTextCol)
-                                                .FontSize(showPhoto ? 8.5f : 9.5f)
-                                                .LineHeight(1.2f)
-                                        );
-                                        ComposeMarkdownText(t, profile.Tagline, headerTextCol);
-                                    });
-                            }
+                            ComposeHeaderName(col, profile.FullName ?? "", showPhoto ? 28 : 32, headerTextCol, letterSpacing: -0.02f);
+                            ComposeHeaderTitle(col, profile.Title ?? "", showPhoto ? 8.5f : 9.5f, titleTextCol, letterSpacing: 0.02f, makeUppercase: true, isBold: true);
+                            ComposeHeaderContactRow(col, profile, showPhoto ? 8f : 9f, headerTextCol);
+                            ComposeHeaderLinkRow(col, profile, showPhoto ? 8f : 9f, headerTextCol);
+                            ComposeHeaderTagline(col, profile.Tagline ?? "", showPhoto ? 8.5f : 9.5f, headerTextCol, titleTextCol);
                         });
 
                     if (showPhoto)
@@ -165,49 +85,27 @@ public class ModernPdfTemplate : PdfTemplateBase
         });
     }
 
-    protected override void SectionTitle(ColumnDescriptor column, string title)
+    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
     {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .PaddingTop(0.3f, Unit.Centimetre)
-            .BorderLeft(4f)
-            .BorderColor(_accentColor)
+        var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
+        if (hasTopPadding)
+        {
+            item = item.PaddingTop(0.3f, Unit.Centimetre);
+        }
+        item.BorderLeft(4f)
+            .BorderColor(Style.AccentColor)
             .PaddingLeft(10)
             .Row(row =>
             {
                 row.AutoItem()
                     .BorderBottom(1.5f)
-                    .BorderColor(_primaryColor)
+                    .BorderColor(Style.PrimaryColor)
                     .PaddingBottom(2)
                     .Text(title.ToUpper())
                     .FontSize(12)
                     .Bold()
-                    .FontColor(_primaryColor)
+                    .FontColor(Style.PrimaryColor)
                     .LetterSpacing(0.06f);
             });
     }
-
-    protected override void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
-    {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .BorderLeft(4f)
-            .BorderColor(_accentColor)
-            .PaddingLeft(10)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .BorderBottom(1.5f)
-                    .BorderColor(_primaryColor)
-                    .PaddingBottom(2)
-                    .Text(title.ToUpper())
-                    .FontSize(12)
-                    .Bold()
-                    .FontColor(_primaryColor)
-                    .LetterSpacing(0.06f);
-            });
-    }
-
 }

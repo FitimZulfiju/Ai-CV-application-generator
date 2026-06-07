@@ -5,24 +5,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     protected readonly IWebHostEnvironment _env = env;
     protected readonly IStringLocalizer<AicvResources> _localizer = localizer;
 
-    protected string _primaryColor = "#2c7be5";
-    protected string _primaryDark = "#1e5fae";
-    protected string _accentColor = "#10b981";
-    protected string _textDark = "#1f2937";
-    protected string _textMedium = "#4b5563";
-    protected string _backgroundLight = "#f9fafb";
-    protected string _borderColor = "#e5e7eb";
-    protected virtual bool UseSectionSeparators => false;
-    protected virtual bool CenterLanguageContent => false;
-    protected virtual bool UseInterestChips => false;
-    protected virtual bool UseReferencesFooterPanel => false;
-    protected virtual string AdditionalSectionBorderColor => _primaryColor;
-    protected virtual string SummaryBorderColor => _primaryColor;
-    protected virtual string SkillsBorderColor => _primaryColor;
-    protected virtual string WorkCompanyColor => _primaryColor;
-    protected virtual bool SuppressWorkDescriptionBullet => false;
-    protected virtual string EducationBorderColor => _accentColor;
-    protected virtual string CoverLetterBorderColor => _primaryColor;
+    protected virtual PdfTemplateStyle Style { get; } = new();
 
     protected const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
@@ -80,24 +63,30 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
     protected virtual void SectionTitle(ColumnDescriptor column, string title)
     {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .PaddingTop(0.3f, Unit.Centimetre)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .Text(title.ToUpper())
-                    .FontSize(12)
-                    .Bold()
-                    .FontColor(_primaryDark)
-                    .LetterSpacing(0.06f);
-            });
+        ComposeSectionTitle(column, title, hasTopPadding: true);
     }
 
     protected virtual void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
     {
-        SectionTitle(column, title);
+        ComposeSectionTitle(column, title, hasTopPadding: false);
+    }
+
+    protected virtual void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
+    {
+        var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
+        if (hasTopPadding)
+        {
+            item = item.PaddingTop(0.3f, Unit.Centimetre);
+        }
+        item.Row(row =>
+        {
+            row.AutoItem()
+                .Text(title.ToUpper())
+                .FontSize(12)
+                .Bold()
+                .FontColor(Style.PrimaryDark)
+                .LetterSpacing(0.06f);
+        });
     }
 
     protected void SectionSeparator(ColumnDescriptor column)
@@ -107,7 +96,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             .PaddingTop(0.4f, Unit.Centimetre)
             .PaddingBottom(0.4f, Unit.Centimetre)
             .LineHorizontal(1)
-            .LineColor(_borderColor);
+            .LineColor(Style.BorderColor);
     }
 
     protected void ComposePageThreeAdditionalSections(
@@ -120,10 +109,10 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
         if (renderModel.Projects.Count != 0)
         {
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionSeparator(column);
 
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionTitleAfterSeparator(column, _localizer["PersonalProjectsCv"]);
             else
                 SectionTitle(column, _localizer["PersonalProjectsCv"]);
@@ -136,9 +125,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     .PaddingBottom(i < projectList.Count - 1 ? 0.3f : 0f, Unit.Centimetre)
                     .Element(cell =>
                     {
-                        cell.Background(_backgroundLight)
+                        cell.Background(Style.BackgroundLight)
                             .BorderLeft(1.5f)
-                            .BorderColor(AdditionalSectionBorderColor)
+                            .BorderColor(Style.EffectiveAdditionalSectionBorderColor)
                             .CornerRadius(5)
                             .Padding(10)
                             .Column(c =>
@@ -152,7 +141,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                 t.DefaultTextStyle(x =>
                                                     x.Bold()
                                                         .FontSize(fontSize + 1)
-                                                        .FontColor(_textDark)
+                                                        .FontColor(Style.TextDark)
                                                 );
                                                 ComposeMarkdownText(t, project.Name ?? "");
                                             });
@@ -160,7 +149,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                             .AlignRight()
                                             .Text(project.DateRange)
                                             .FontSize(fontSize - 2)
-                                            .FontColor(_textMedium);
+                                            .FontColor(Style.TextMedium);
                                     });
 
                                 if (!string.IsNullOrWhiteSpace(project.Link))
@@ -171,14 +160,14 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                         {
                                             t.DefaultTextStyle(x =>
                                                 x.FontSize(fontSize - 1)
-                                                    .FontColor(_primaryColor)
+                                                    .FontColor(Style.PrimaryColor)
                                                     .SemiBold()
                                             );
                                             t.Span($"{_localizer["GitHubLabel"]} ");
                                             ComposeMarkdownText(
                                                 t,
                                                 $"<a href='{project.Link}'>{project.Link}</a>",
-                                                _primaryColor
+                                                Style.PrimaryColor
                                             );
                                         });
                                 }
@@ -191,7 +180,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                         {
                                             t.DefaultTextStyle(x =>
                                                 x.FontSize(fontSize - 1)
-                                                    .FontColor(_textMedium)
+                                                    .FontColor(Style.TextMedium)
                                             );
                                             t.Span($"{_localizer["TechnologiesLabel"]} ");
                                             ComposeMarkdownText(t, project.Technologies);
@@ -206,7 +195,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                         {
                                             t.DefaultTextStyle(x =>
                                                 x.FontSize(fontSize - 1)
-                                                    .FontColor(_textMedium)
+                                                    .FontColor(Style.TextMedium)
                                                     .Italic()
                                             );
                                             ComposeMarkdownText(t, project.Role);
@@ -222,7 +211,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                 c2,
                                                 project.Description,
                                                 fontSize - 1,
-                                                _textMedium
+                                                Style.TextMedium
                                             )
                                         );
                                 }
@@ -236,42 +225,42 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
         if (renderModel.Languages.Count != 0)
         {
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionSeparator(column);
 
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionTitleAfterSeparator(column, _localizer["LanguagesCv"]);
             else
                 SectionTitle(column, _localizer["LanguagesCv"]);
             var languageItem = column
                 .Item()
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(AdditionalSectionBorderColor)
+                .BorderColor(Style.EffectiveAdditionalSectionBorderColor)
                 .CornerRadius(5)
                 .Padding(10);
 
-            if (CenterLanguageContent)
+            if (Style.CenterLanguageContent)
                 languageItem = languageItem.AlignCenter();
 
             languageItem.Text(t =>
             {
-                if (CenterLanguageContent)
+                if (Style.CenterLanguageContent)
                     t.AlignCenter();
 
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
+                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
                 for (int i = 0; i < renderModel.Languages.Count; i++)
                 {
                     var language = renderModel.Languages[i];
                     if (i > 0)
-                        t.Span(" • ").FontColor(_textDark);
+                        t.Span(" • ").FontColor(Style.TextDark);
 
                     ComposeMarkdownText(t, language.Name ?? "");
 
                     if (!string.IsNullOrWhiteSpace(language.Proficiency))
                     {
                         t.Span(" ");
-                        ComposeMarkdownText(t, language.Proficiency, _textDark);
+                        ComposeMarkdownText(t, language.Proficiency, Style.TextDark);
                     }
                 }
             });
@@ -280,35 +269,35 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
         if (renderModel.Interests.Count != 0)
         {
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionSeparator(column);
 
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionTitleAfterSeparator(column, _localizer["InterestsCv"]);
             else
                 SectionTitle(column, _localizer["InterestsCv"]);
             var interestItem = column
                 .Item()
                 .PaddingTop(0.1f, Unit.Centimetre)
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(AdditionalSectionBorderColor)
+                .BorderColor(Style.EffectiveAdditionalSectionBorderColor)
                 .CornerRadius(5)
                 .Padding(10);
 
-            if (UseInterestChips)
+            if (Style.UseInterestChips)
                 interestItem = interestItem.AlignCenter();
 
             interestItem.Text(t =>
             {
-                if (UseInterestChips)
+                if (Style.UseInterestChips)
                     t.AlignCenter();
 
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
+                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
                 for (int i = 0; i < renderModel.Interests.Count; i++)
                 {
                     if (i > 0)
-                        t.Span(" • ").FontColor(_textDark);
+                        t.Span(" • ").FontColor(Style.TextDark);
 
                     ComposeMarkdownText(t, renderModel.Interests[i].Name ?? "");
                 }
@@ -317,12 +306,12 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
         var referencesItem = column.Item().ExtendVertical().AlignBottom();
 
-        if (UseReferencesFooterPanel)
+        if (Style.UseReferencesFooterPanel)
         {
             referencesItem
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderTop(1)
-                .BorderColor(_borderColor)
+                .BorderColor(Style.BorderColor)
                 .PaddingVertical(0.18f, Unit.Centimetre)
                 .PaddingHorizontal(0.4f, Unit.Centimetre)
                 .AlignCenter()
@@ -330,7 +319,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 {
                     t.AlignCenter();
                     t.DefaultTextStyle(x =>
-                        x.FontSize(fontSize - 2).Italic().FontColor(_textMedium)
+                        x.FontSize(fontSize - 2).Italic().FontColor(Style.TextMedium)
                     );
                     ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
                 });
@@ -343,7 +332,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 {
                     t.AlignCenter();
                     t.DefaultTextStyle(x =>
-                        x.FontSize(fontSize - 2).Italic().FontColor(_textMedium)
+                        x.FontSize(fontSize - 2).Italic().FontColor(Style.TextMedium)
                     );
                     ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
                 });
@@ -364,13 +353,13 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (!string.IsNullOrWhiteSpace(profile.ProfessionalSummary))
             {
                 col.Item()
-                    .Background(_backgroundLight)
+                    .Background(Style.BackgroundLight)
                     .BorderLeft(1.5f)
-                    .BorderColor(SummaryBorderColor)
+                    .BorderColor(Style.EffectiveSummaryBorderColor)
                     .CornerRadius(5)
                     .Padding(10)
                     .Column(c =>
-                        ComposeHtmlContent(c, profile.ProfessionalSummary, fontSize, _textMedium)
+                        ComposeHtmlContent(c, profile.ProfessionalSummary, fontSize, Style.TextMedium)
                     );
                 col.Item().PaddingBottom(1, Unit.Centimetre);
             }
@@ -382,9 +371,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 {
                     col.Item()
                         .PaddingBottom(0.3f, Unit.Centimetre)
-                        .Background(_backgroundLight)
+                        .Background(Style.BackgroundLight)
                         .BorderLeft(1.5f)
-                        .BorderColor(SkillsBorderColor)
+                        .BorderColor(Style.EffectiveSkillsBorderColor)
                         .CornerRadius(5)
                         .Padding(10)
                         .Column(c =>
@@ -393,7 +382,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.Bold().FontSize(fontSize).FontColor(_primaryDark)
+                                        x.Bold().FontSize(fontSize).FontColor(Style.PrimaryDark)
                                     );
                                     ComposeMarkdownText(t, skillGroup.Category);
                                 });
@@ -401,7 +390,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.FontSize(fontSize - 1).FontColor(_textMedium)
+                                        x.FontSize(fontSize - 1).FontColor(Style.TextMedium)
                                     );
                                     ComposeMarkdownText(t, skillGroup.SkillNames);
                                 });
@@ -443,7 +432,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(s =>
-                                        s.FontSize(fontSize + 1).FontColor(_textDark).Bold()
+                                        s.FontSize(fontSize + 1).FontColor(Style.TextDark).Bold()
                                     );
                                     ComposeMarkdownText(t, exp.JobTitle);
                                 });
@@ -453,7 +442,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(s =>
-                                        s.FontSize(fontSize - 2).FontColor(_textMedium)
+                                        s.FontSize(fontSize - 2).FontColor(Style.TextMedium)
                                     );
                                     t.Span(exp.DateRange);
                                     if (!string.IsNullOrEmpty(exp.Duration))
@@ -465,7 +454,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                 .Text(t =>
                                 {
                                     t.DefaultTextStyle(x =>
-                                        x.FontSize(fontSize).FontColor(WorkCompanyColor).SemiBold()
+                                        x.FontSize(fontSize).FontColor(Style.EffectiveWorkCompanyColor).SemiBold()
                                     );
                                     ComposeMarkdownText(t, exp.CompanyLine);
                                 });
@@ -480,8 +469,8 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                             c,
                                             exp.Description,
                                             fontSize - 1,
-                                            _textMedium,
-                                            bullet: SuppressWorkDescriptionBullet ? null : "•"
+                                            Style.TextMedium,
+                                            bullet: Style.SuppressWorkDescriptionBullet ? null : "•"
                                         )
                                     );
                             }
@@ -494,7 +483,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                     .PaddingTop(0.4f, Unit.Centimetre)
                                     .PaddingBottom(0.4f, Unit.Centimetre)
                                     .LineHorizontal(1)
-                                    .LineColor(_borderColor);
+                                    .LineColor(Style.BorderColor);
                             }
                         }
                     });
@@ -529,9 +518,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                 .Cell()
                                 .Element(cell =>
                                 {
-                                    cell.Background(_backgroundLight)
+                                    cell.Background(Style.BackgroundLight)
                                         .BorderLeft(1.5f)
-                                        .BorderColor(EducationBorderColor)
+                                        .BorderColor(Style.EffectiveEducationBorderColor)
                                         .CornerRadius(5)
                                         .Padding(10)
                                         .Column(c =>
@@ -545,7 +534,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                             t.DefaultTextStyle(x =>
                                                                 x.Bold()
                                                                     .FontSize(fontSize + 1)
-                                                                    .FontColor(_textDark)
+                                                                    .FontColor(Style.TextDark)
                                                             );
                                                             ComposeMarkdownText(
                                                                 t,
@@ -556,14 +545,14 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                         .AlignRight()
                                                         .Text(edu.DateRange)
                                                         .FontSize(fontSize - 2)
-                                                        .FontColor(_textMedium);
+                                                        .FontColor(Style.TextMedium);
                                                 });
                                             c.Item()
                                                 .Text(t =>
                                                 {
                                                     t.DefaultTextStyle(x =>
                                                         x.FontSize(fontSize)
-                                                            .FontColor(_primaryColor)
+                                                            .FontColor(Style.PrimaryColor)
                                                             .SemiBold()
                                                             .Bold()
                                                     );
@@ -578,14 +567,14 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                     .PaddingTop(0.25f, Unit.Centimetre)
                                                     .PaddingBottom(0.25f, Unit.Centimetre)
                                                     .LineHorizontal(1)
-                                                    .LineColor(_borderColor);
+                                                    .LineColor(Style.BorderColor);
                                                 c.Item()
                                                     .Column(cc =>
                                                         ComposeHtmlContent(
                                                             cc,
                                                             edu.Description,
                                                             fontSize - 1,
-                                                            _textMedium
+                                                            Style.TextMedium
                                                         )
                                                     );
                                             }
@@ -611,9 +600,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         {
             col.Item().PaddingTop(0.8f, Unit.Centimetre);
             col.Item()
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(CoverLetterBorderColor)
+                .BorderColor(Style.EffectiveCoverLetterBorderColor)
                 .CornerRadius(5)
                 .Padding(10)
                 .Column(letterCol =>
@@ -624,7 +613,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                             letterCol,
                             letterContent,
                             fontSize,
-                            _textDark,
+                            Style.TextDark,
                             lineHeight: 1.35f,
                             paragraphSpacing: 8f,
                             preserveParagraphBreaks: true
@@ -656,7 +645,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 .PaddingTop(0.15f, Unit.Centimetre)
                 .Text(t =>
                 {
-                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).Bold().FontColor(_primaryColor));
+                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).Bold().FontColor(Style.PrimaryColor));
                     ComposeMarkdownText(t, project.Section.Header);
                 });
         }
@@ -667,7 +656,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 .Item()
                 .PaddingTop(0.1f, Unit.Centimetre)
                 .Column(c =>
-                    ComposeHtmlContent(c, project.Section.Details, fontSize - 1, _textMedium)
+                    ComposeHtmlContent(c, project.Section.Details, fontSize - 1, Style.TextMedium)
                 );
         }
     }
@@ -742,6 +731,154 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         AddLink("GitHubLabel", profile.PortfolioUrl);
     }
 
+    protected bool HasProfilePhoto(CandidateProfile profile, out string photoPath)
+    {
+        photoPath = string.Empty;
+        if (!profile.ShowProfilePicture || string.IsNullOrEmpty(profile.ProfilePictureUrl))
+            return false;
+
+        var webRootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+        photoPath = Path.Combine(webRootPath, profile.ProfilePictureUrl.TrimStart('/', '\\'));
+        return File.Exists(photoPath);
+    }
+
+    protected void ComposeProfilePhoto(
+        IContainer container,
+        string photoPath,
+        float sizeCm,
+        string borderColor = "#ffffff",
+        float borderThickness = 2
+    )
+    {
+        container
+            .Background("#ffffff")
+            .CornerRadius(sizeCm / 2, Unit.Centimetre)
+            .Border(borderThickness)
+            .BorderColor(borderColor)
+            .Image(photoPath)
+            .FitArea();
+    }
+
+    protected void ComposeHeaderName(
+        ColumnDescriptor col,
+        string name,
+        float fontSize,
+        string fontColor,
+        float letterSpacing = 0f,
+        bool makeUppercase = false
+    )
+    {
+        col.Item()
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontSize(fontSize).Bold().FontColor(fontColor).LetterSpacing(letterSpacing)
+                );
+                ComposeMarkdownText(t, makeUppercase ? name.ToUpper() : name, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderTitle(
+        ColumnDescriptor col,
+        string title,
+        float fontSize,
+        string fontColor,
+        float letterSpacing = 0f,
+        bool makeUppercase = false,
+        bool isBold = false
+    )
+    {
+        col.Item()
+            .PaddingTop(0.1f, Unit.Centimetre)
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                {
+                    var s = x.FontSize(fontSize).FontColor(fontColor).LetterSpacing(letterSpacing);
+                    if (isBold)
+                        s.Bold();
+                    return s;
+                });
+                ComposeMarkdownText(t, makeUppercase ? title.ToUpper() : title, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderContactRow(
+        ColumnDescriptor col,
+        CandidateProfile profile,
+        float fontSize,
+        string fontColor,
+        bool makeUppercase = false,
+        float letterSpacing = 0f
+    )
+    {
+        col.Item()
+            .PaddingTop(0.3f, Unit.Centimetre)
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontColor(fontColor).FontSize(fontSize).LetterSpacing(letterSpacing)
+                );
+                ComposeContactRow(t, profile, makeUppercase, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderLinkRow(
+        ColumnDescriptor col,
+        CandidateProfile profile,
+        float fontSize,
+        string fontColor,
+        bool makeUppercase = false,
+        float letterSpacing = 0f
+    )
+    {
+        col.Item()
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontColor(fontColor).FontSize(fontSize).LetterSpacing(letterSpacing)
+                );
+                ComposeLinkRow(t, profile, makeUppercase, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderTagline(
+        ColumnDescriptor col,
+        string tagline,
+        float fontSize,
+        string fontColor,
+        string lineColor,
+        float lineHeight = 1.2f
+    )
+    {
+        if (string.IsNullOrWhiteSpace(tagline))
+            return;
+
+        col.Item()
+            .PaddingTop(0.2f, Unit.Centimetre)
+            .PaddingBottom(0.2f, Unit.Centimetre)
+            .LineHorizontal(0.5f)
+            .LineColor(lineColor);
+        col.Item()
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontColor(fontColor).FontSize(fontSize).LineHeight(lineHeight)
+                );
+                ComposeMarkdownText(t, tagline, fontColor);
+            });
+    }
+
     protected void ComposeMarkdownText(TextDescriptor t, string? content, string? color = null)
     {
         if (string.IsNullOrWhiteSpace(content))
@@ -802,7 +939,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                             .Row(row =>
                             {
                                 var svgXml =
-                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{_accentColor}\"/></svg>";
+                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{Style.AccentColor}\"/></svg>";
                                 row.ConstantItem(fontSize + 5)
                                     .PaddingRight(5)
                                     .PaddingTop(2)
@@ -834,7 +971,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     .Item()
                     .PaddingVertical(0.1f, Unit.Centimetre)
                     .LineHorizontal(1)
-                    .LineColor(_borderColor);
+                    .LineColor(Style.BorderColor);
             }
         }
     }
@@ -1052,7 +1189,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (!string.IsNullOrEmpty(bullet))
             {
                 if (bullet.Contains('\u25B8'))
-                    bRep = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
+                    bRep = $"<span style='color:{Style.PrimaryColor}'>\u25B8</span> ";
                 else if (bullet.Contains('\u2713'))
                     bRep = checkmarkPlaceholder;
             }
@@ -1071,7 +1208,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             ? MultipleParagraphBreakRegex().Replace(pText, "[[PARAGRAPH]]")
             : MultipleNewlineRegex().Replace(pText, "\n");
         pText = pText.Replace("\u2713", checkmarkPlaceholder);
-        pText = pText.Replace("\u25B8", $"<span style='color:{_primaryColor}'>\u25B8</span>");
+        pText = pText.Replace("\u25B8", $"<span style='color:{Style.PrimaryColor}'>\u25B8</span>");
 
         return pText.Trim();
     }
