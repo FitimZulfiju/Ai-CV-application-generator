@@ -26,7 +26,7 @@
                 <MudSpacer />
                 <MudSelect T="string" Label="@Localizer["Level"]" @bind-Value="_filterLevel"
                     AdornmentIcon="@Icons.Material.Filled.FilterList" SelectedValuesChanged="OnFilterChanged"
-                    Class="d-flex" Style="min-width: 150px;">
+                    Class="d-flex" Style="min-width: 9.375rem;">
                     <MudSelectItem Value="@((string?)null)">@Localizer["AllLevels"]</MudSelectItem>
                     <MudSelectItem Value="@("Error")">@Localizer["Error"]</MudSelectItem>
                     <MudSelectItem Value="@("Warning")">@Localizer["Warning"]</MudSelectItem>
@@ -53,7 +53,7 @@
                 </MudTd>
                 <MudTd DataLabel="@Localizer["Message"]">
                     <MudText Typo="Typo.body2"
-                        Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">
+                        Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 18.75rem;">
                         @context.Message
                     </MudText>
                 </MudTd>

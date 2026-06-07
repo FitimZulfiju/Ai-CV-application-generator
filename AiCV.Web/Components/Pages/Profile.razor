@@ -13,7 +13,7 @@ else
 {
     <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
         <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
-                  Class="pb-4 d-print-none stack-on-mobile" Style="gap: 16px;">
+                  Class="pb-4 d-print-none stack-on-mobile" Style="gap: 1rem;">
             <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
                 <MudIcon Icon="@Icons.Material.Filled.Badge" Color="Color.Primary" />
                 <MudText Typo="Typo.h5">@Localizer["MasterCvProfile"]</MudText>
@@ -41,7 +41,7 @@ else
                 }
                 @if (_activeTabIndex == 7)
                 {
-                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:150px;"
+                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:9.375rem;"
                                Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
                         <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
                         <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>

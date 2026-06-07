@@ -2,8 +2,8 @@
     display: flex !important;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    min-height: 36px !important;
+    gap: 0.5rem;
+    min-height: 2.25rem !important;
     width: 100% !important;
 }
 
@@ -25,7 +25,7 @@
 .profile-chip-drop-container ::deep .profile-chip-content {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
 }
 
 .profile-chip-drop-container ::deep .profile-chip-edit-action {
@@ -38,19 +38,19 @@
 
 .profile-chip-drop-container ::deep .profile-draggable-chip:hover .profile-chip-edit-action,
 .profile-chip-drop-container ::deep .profile-draggable-chip:focus-within .profile-chip-edit-action {
-    max-width: 28px;
+    max-width: 1.75rem;
     opacity: 1;
 }
 
 .profile-chip-drop-container ::deep .profile-chip-edit-action .mud-icon-button {
-    height: 22px;
-    min-width: 22px;
-    padding: 2px;
-    width: 22px;
+    height: 1.375rem;
+    min-width: 1.375rem;
+    padding: 0.125rem;
+    width: 1.375rem;
 }
 
 .profile-chip-help-row {
-    margin-top: -8px;
+    margin-top: -0.5rem;
     padding-bottom: 0;
     padding-top: 0;
 }

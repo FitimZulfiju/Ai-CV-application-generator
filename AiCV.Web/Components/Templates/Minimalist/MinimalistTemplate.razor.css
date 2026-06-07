@@ -14,7 +14,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
-    border-bottom: 0.25em solid #f0f0f0;
+    border-bottom: 0.08cm solid #f0f0f0;
 }
 
 .cv-container.cv-minimalist .section {
@@ -59,23 +59,24 @@
 }
 
 .cv-container.cv-minimalist .section-title {
-    font-size: var(--font-size-section-title) !important;
-    font-weight: 600;
+    font-size: 1.05rem !important;
+    font-weight: 700;
     color: #111;
-    border-bottom: 0.15rem solid #111;
+    border-bottom: 1.5pt solid #111;
     width: 100%;
     padding-bottom: 0.5rem;
     margin-top: 1rem;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     display: block;
 }
 
 .cv-container.cv-minimalist .summary {
-    padding: 0;
-    background: transparent;
-    border-left: none;
+    padding: var(--card-padding);
+    background: #ffffff;
+    border-left: var(--card-border-width) solid #eeeeee;
+    border-radius: var(--card-border-radius);
     font-size: var(--font-size-body);
     line-height: 1.8;
     color: #444;
@@ -90,11 +91,11 @@
 }
 
 .cv-container.cv-minimalist .skill-category {
-    background: transparent;
+    background: #ffffff;
     border: none;
-    border-bottom: 0.0625em solid #f0f0f0;
-    border-radius: 0;
-    padding: 1rem 0;
+    border-left: var(--card-border-width) solid #eeeeee;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
 }
 
 .cv-container.cv-minimalist .skill-title {
@@ -127,11 +128,62 @@
 
 .cv-container.cv-minimalist .education,
 .cv-container.cv-minimalist .project {
-    background: transparent;
+    background: #ffffff;
     border: none;
-    border-bottom: 0.0625em solid #f0f0f0;
-    border-radius: 0;
-    padding: 1.5rem 0;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+}
+
+.cv-container.cv-minimalist .education {
+    border-left: var(--card-border-width) solid #eeeeee;
+    margin-bottom: var(--cv-item-spacing);
+}
+
+.cv-container.cv-minimalist .project {
+    border-left: var(--card-border-width) solid #333333;
+}
+
+.cv-container.cv-minimalist .degree {
+    font-size: var(--font-size-item-title);
+    font-weight: 700;
+    color: #111111;
+}
+
+.cv-container.cv-minimalist .school,
+.cv-container.cv-minimalist .education-institution {
+    font-size: var(--font-size-body);
+    font-weight: 700;
+    color: #333333;
+}
+
+.cv-container.cv-minimalist .project-title {
+    font-size: var(--font-size-item-title);
+    font-weight: 700;
+    color: #111111;
+    line-height: 1.3;
+}
+
+.cv-container.cv-minimalist .language-list,
+.cv-container.cv-minimalist .interests {
+    border-left-color: #333333;
+}
+
+.cv-container.cv-minimalist .project-links {
+    margin-top: 0.15cm;
+    font-size: var(--font-size-meta);
+    color: #333333;
+    font-weight: 600;
+}
+
+.cv-container.cv-minimalist .project-technologies,
+.cv-container.cv-minimalist .project-role {
+    margin-top: 0.1cm;
+    font-size: var(--font-size-meta);
+    color: #444444;
+}
+
+.cv-container.cv-minimalist .project-role {
+    font-style: italic;
 }
 
 /* Responsive Overrides */

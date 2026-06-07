@@ -42,6 +42,11 @@
     --cv-padding-y: 2.5rem;
     --cv-item-spacing: 1.25rem;
     --cv-item-title-margin-bottom: 0.2rem;
+
+    /* Panel-card tokens - matched to PDF's uniform BorderLeft(1.5)/CornerRadius(5)/Padding(10) (in points) */
+    --card-border-width: 1.5pt;
+    --card-border-radius: 0.4em;
+    --card-padding: 0.83em;
 }
 
 .cv-container {
@@ -142,8 +147,8 @@
     font-size: var(--font-size-meta);
     color: var(--text-light);
     font-style: italic;
-    display: block;
-    margin-top: 0.125em;
+    display: inline;
+    margin-left: 0.25em;
 }
 
 .cv-container .achievements,
@@ -152,6 +157,7 @@
     list-style: none;
     padding-left: 0;
     font-size: var(--font-size-body);
+    color: var(--text-medium);
 }
 
 .cv-container .achievements li,
@@ -175,11 +181,12 @@
 /* Education divider matches PdfService */
 .cv-container .recognition {
     border-top: 0.0625em solid var(--border-color);
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
     font-size: var(--font-size-body);
     line-height: 1.2;
+    color: var(--text-medium);
 }
 
 /* Ensure Markdig's raw <ul> tags don't add own padding/margin */
@@ -238,44 +245,42 @@
 
 
 .cv-container .language-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5em;
-    justify-content: center;
+    text-align: center;
     margin-top: 0.5em;
+    padding: var(--card-padding);
+    background: var(--bg-light);
+    border-left: var(--card-border-width) solid var(--primary-color);
+    border-radius: var(--card-border-radius);
+    font-size: var(--font-size-meta);
+    color: var(--text-medium);
 }
 
 .cv-container .language-item {
-    font-size: var(--font-size-meta);
     color: var(--text-dark);
     font-weight: 500;
 }
 
-.cv-container .interests {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625em;
-    margin-top: 0.938em;
-    justify-content: center;
+.cv-container .item-separator {
+    color: var(--text-dark);
 }
 
-.cv-container .interest-tag {
-    display: inline-block;
-    padding: 0.5em 1em;
+.cv-container .interests {
+    text-align: center;
+    margin-top: 0.5em;
+    padding: var(--card-padding);
     background: var(--bg-light);
-    border: 0.062em solid var(--border-color);
-    border-radius: 1.25em;
+    border-left: var(--card-border-width) solid var(--primary-color);
+    border-radius: var(--card-border-radius);
     font-size: var(--font-size-meta);
     color: var(--text-medium);
-    font-weight: 500;
-    transition: all 0.2s;
 }
 
 .cv-container .footer {
     text-align: center;
-    padding: 1.562em;
+    padding: 0.4em 0.9em;
     background: var(--bg-light);
-    color: var(--text-light);
+    border-top: 0.062em solid var(--border-color);
+    color: var(--text-medium);
     font-size: var(--font-size-meta);
     font-style: italic;
 }

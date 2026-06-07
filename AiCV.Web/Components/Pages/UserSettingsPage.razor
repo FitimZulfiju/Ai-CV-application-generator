@@ -26,12 +26,12 @@
             @if (_isDeleted)
             {
                 <div class="d-flex flex-column align-center justify-center flex-grow-1 py-12 px-4 text-center">
-                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Large" Style="width: 120px; height: 120px;" Class="mb-6" />
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Large" Style="width: 7.5rem; height: 7.5rem;" Class="mb-6" />
                     <MudText Typo="Typo.h4" GutterBottom="true" Style="font-weight: 700;">@Localizer["AccountDeleted"]</MudText>
-                    <MudText Typo="Typo.h6" Class="mb-8" Style="max-width: 600px; opacity: 0.8;">
+                    <MudText Typo="Typo.h6" Class="mb-8" Style="max-width: 37.5rem; opacity: 0.8;">
                         @Localizer["AccountDeletedExplainer"]
                     </MudText>
-                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-8 pa-4" Style="max-width: 500px; text-align: left;">
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-8 pa-4" Style="max-width: 31.25rem; text-align: left;">
                         @Localizer["DeletionWipeConfirm"]
                     </MudAlert>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
@@ -62,7 +62,7 @@
                                 @* OpenRouter — real OAuth *@
                                 <MudItem xs="12" sm="4" md="4">
                                     <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
-                                              Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
+                                              Style="border:0.0625rem solid var(--mud-palette-divider); border-radius:0.5rem;">
                                         <MudIcon Icon="@Icons.Material.Filled.Hub" Color="Color.Default" Size="Size.Large" />
                                         <MudText Typo="Typo.subtitle1" Style="font-weight:600;">OpenRouter</MudText>
                                         <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
@@ -79,7 +79,7 @@
                                 @* Google Gemini — API key via AI Studio *@
                                 <MudItem xs="12" sm="4" md="4">
                                     <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center gap-2"
-                                              Style="border:1px solid var(--mud-palette-divider); border-radius:8px;">
+                                              Style="border:0.0625rem solid var(--mud-palette-divider); border-radius:0.5rem;">
                                         <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" Size="Size.Large" />
                                         <MudText Typo="Typo.subtitle1" Style="font-weight:600;">Google Gemini</MudText>
                                         <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary">
@@ -98,7 +98,7 @@
                                 @* API Key-only notice *@
                                 <MudItem xs="12" sm="4" md="4">
                                     <MudPaper Elevation="1" Class="pa-3 d-flex flex-column align-center justify-center gap-2"
-                                              Style="border:1px solid var(--mud-palette-divider); border-radius:8px; height:100%;">
+                                              Style="border:0.0625rem solid var(--mud-palette-divider); border-radius:0.5rem; height:100%;">
                                         <MudIcon Icon="@Icons.Material.Filled.VpnKey" Color="Color.Info" Size="Size.Large" />
                                         <MudText Typo="Typo.subtitle1" Style="font-weight:600;">@Localizer["ApiKeyProviders"]</MudText>
                                         <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Default">
@@ -156,7 +156,7 @@
                                                StartIcon="@(_isValidating ? null : Icons.Material.Filled.CloudSync)"
                                                OnClick="ValidateAndLoadModels"
                                                Disabled="@(_isValidating || string.IsNullOrEmpty(_newConfig.ApiKey))" FullWidth="true"
-                                               Style="height: 40px;">
+                                               Style="height: 2.5rem;">
                                         @if (_isValidating)
                                         {
                                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -503,7 +503,7 @@
 
                         @if (!string.IsNullOrEmpty(_userId))
                         {
-                            <div class="mt-8 pt-8" style="border-top: 1px solid var(--mud-palette-divider);">
+                            <div class="mt-8 pt-8" style="border-top: 0.0625rem solid var(--mud-palette-divider);">
                                 <MudPaper Elevation="2" Class="pa-4" Style="background-color: var(--mud-palette-surface);">
                                     <MudText Typo="Typo.h5" Color="Color.Error" GutterBottom="true" Style="font-weight: 700;" Class="d-flex align-center">
                                         <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Class="mr-2" Size="Size.Large" />
@@ -512,14 +512,14 @@
 
                                     @if (_isProtected)
                                     {
-                                        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-6" Style="max-width: 800px;">
+                                        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-6" Style="max-width: 50rem;">
                                             <MudText Typo="Typo.body1" Style="font-weight: 600">@Localizer["ProtectedAccount"]</MudText>
                                             <MudText Typo="Typo.body2">@Localizer["DemoAccountProtected"]</MudText>
                                         </MudAlert>
                                     }
                                     else
                                     {
-                                        <MudText Typo="Typo.body1" Class="mb-6" Style="max-width: 800px;">
+                                        <MudText Typo="Typo.body1" Class="mb-6" Style="max-width: 50rem;">
                                             @Localizer["DeleteAccountExplainer"]
                                         </MudText>
                                     }

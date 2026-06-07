@@ -56,7 +56,7 @@
             </MudText>
             @foreach (var exp in _profile.WorkExperience)
             {
-                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
+                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 0.0625rem solid var(--mud-palette-lines-default);">
                     <MudText Typo="Typo.subtitle1"><strong><FormattedText Text="@exp.JobTitle" /></strong></MudText>
                     <MudText Typo="Typo.body2" Color="Color.Primary"><FormattedText Text="@exp.CompanyName" /></MudText>
                     <MudText Typo="Typo.caption" Color="Color.Secondary">
@@ -74,7 +74,7 @@
             </MudText>
             @foreach (var edu in _profile.Educations)
             {
-                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
+                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 0.0625rem solid var(--mud-palette-lines-default);">
                     <MudText Typo="Typo.subtitle1"><strong><FormattedText Text="@edu.Degree" /></strong></MudText>
                     <MudText Typo="Typo.body2" Color="Color.Primary"><FormattedText Text="@edu.InstitutionName" /></MudText>
                     <MudText Typo="Typo.caption" Color="Color.Secondary">@edu.EndDate?.ToString("yyyy")</MudText>
@@ -89,7 +89,7 @@
             </MudText>
             @foreach (var project in _profile.Projects)
             {
-                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 1px solid var(--mud-palette-lines-default);">
+                <MudCard Elevation="0" Class="mb-2 pa-2" Style="border: 0.0625rem solid var(--mud-palette-lines-default);">
                     <MudText Typo="Typo.subtitle1"><strong><FormattedText Text="@project.Name" /></strong></MudText>
                     <MudText Typo="Typo.body2"><FormattedText Text="@project.Description" IsDescription="true" /></MudText>
                     <MudChip T="string" Size="Size.Small" Color="Color.Info">@project.Technologies</MudChip>

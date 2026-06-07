@@ -6,7 +6,7 @@ body {
 }
 
 :root {
-    --app-bar-height: 48px;
+    --app-bar-height: 3rem;
 }
 
 .main-layout-shell {
@@ -44,14 +44,14 @@ body {
         width: var(--app-bar-height) !important;
         min-height: var(--app-bar-height) !important;
         min-width: var(--app-bar-height) !important;
-        margin-inline-start: 4px !important;
-        margin-inline-end: 4px !important;
+        margin-inline-start: 0.25rem !important;
+        margin-inline-end: 0.25rem !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
     }
 
     .mud-appbar .appbar-breadcrumb-chip {
-        max-width: min(38vw, 420px);
+        max-width: min(38vw, 26.25rem);
         background-color: transparent !important;
         box-shadow: none !important;
     }
@@ -65,7 +65,7 @@ body {
         align-items: center;
         justify-content: center;
         pointer-events: none;
-        max-width: min(38vw, 420px);
+        max-width: min(38vw, 26.25rem);
         width: 100%;
     }
 
@@ -122,11 +122,11 @@ body {
         content: "An error has occurred."
     }
 
-@media (max-width: 959.98px) {
+@media (max-width: 59.99875em) {
     .responsive-drawer {
         background-color: rgba(255, 255, 255, 0.95) !important;
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(0.625rem);
+        backdrop-filter: blur(0.625rem);
     }
 
     .appbar-breadcrumb-center,
@@ -135,7 +135,7 @@ body {
     }
 }
 
-@media (min-width: 960px) {
+@media (min-width: 60em) {
     .responsive-drawer {
         background: transparent !important;
     }
@@ -145,7 +145,7 @@ body {
         }
 }
 
-@media (max-width: 599.98px) {
+@media (max-width: 37.49875em) {
     .hide-on-mobile {
         display: none !important;
     }
@@ -160,7 +160,7 @@ body {
     }
 
     .pa-mobile-2 {
-        padding: 8px !important;
+        padding: 0.5rem !important;
     }
 
     .main-content {
@@ -174,7 +174,7 @@ body {
     }
 
     .responsive-app-title {
-        margin-left: 8px !important;
+        margin-left: 0.5rem !important;
         font-size: 1rem !important;
         font-weight: 500;
         margin-top: 0 !important;
@@ -186,7 +186,7 @@ body {
     }
 
     .responsive-logo {
-        height: 24px !important;
+        height: 1.5rem !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
         display: block !important;
@@ -195,7 +195,7 @@ body {
 }
 
 .responsive-logo {
-    height: 32px;
+    height: 2rem;
     transition: height 0.2s ease;
     display: block;
     margin-top: 0;
@@ -203,7 +203,7 @@ body {
 }
 
 .responsive-app-title {
-    margin-left: 12px;
+    margin-left: 0.75rem;
     font-size: 1.5rem;
     font-weight: 500;
     margin-top: 0 !important;
@@ -225,11 +225,11 @@ body {
 }
 
 .generate-content-header {
-    padding: 10px 12px 12px;
-    margin-bottom: 6px;
-    border-bottom: 1px solid var(--mud-palette-lines-default);
+    padding: 0.625rem 0.75rem 0.75rem;
+    margin-bottom: 0.375rem;
+    border-bottom: 0.0625rem solid var(--mud-palette-lines-default);
     background: linear-gradient(180deg, rgba(227, 242, 253, 0.7) 0%, rgba(255, 255, 255, 0.96) 100%);
-    border-radius: 10px 10px 0 0;
+    border-radius: 0.625rem 0.625rem 0 0;
 }
 
 .generate-content-title-row {
@@ -237,13 +237,13 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 0.75rem;
 }
 
 .generate-content-title-block {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
     flex: 0 1 auto;
     min-width: 0;
 }
@@ -255,9 +255,9 @@ body {
 .generate-content-toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.5rem;
     align-items: center;
-    flex: 1 1 520px;
+    flex: 1 1 32.5rem;
     justify-content: center;
 }
 
@@ -265,14 +265,14 @@ body {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .generate-toolbar-actions {
     justify-content: center;
 }
 
-@media (max-width: 599.98px) {
+@media (max-width: 37.49875em) {
 
     .markdown-body {
         overflow-x: auto;

@@ -91,10 +91,10 @@
                             int _max = 90;
 
                             <div class="d-flex flex-grow-1 stack-on-mobile"
-                                 style="min-height: 400px; height: 60vh; width: 100%;">
+                                 style="min-height: 25rem; height: 60vh; width: 100%;">
                                 <MudPaper Width="@($"{_splitterSize}%")" Class="d-flex flex-column width-100-mobile"
                                           Style="height: 100%;" Elevation="0">
-                                    <div class="d-flex justify-space-between align-center" style="min-height: 40px;">
+                                    <div class="d-flex justify-space-between align-center" style="min-height: 2.5rem;">
                                         <MudText Typo="Typo.caption">
                                             @Localizer["MarkdownEditor"] |
                                             @Localizer["JobDescription"]
@@ -114,7 +114,7 @@
 
                                 <MudPaper Width="@($"{100 - _splitterSize}%")"
                                           Class="d-flex flex-column pl-1 width-100-mobile" Style="height: 100%;" Elevation="0">
-                                    <div class="d-flex align-center px-1" style="min-height: 40px;">
+                                    <div class="d-flex align-center px-1" style="min-height: 2.5rem;">
                                         <MudText Typo="Typo.caption">@Localizer["PreviewHtml"]</MudText>
                                     </div>
                                     <MudPaper Elevation="0" Outlined="true" Class="pa-4 flex-grow-1"
@@ -142,8 +142,8 @@
                                           HelperText="@Localizer["JobDescriptionInstructions"]" Class="mb-1 mt-4" Lines="3" Sizing="InputSizing.Auto" />
 
                             <div class="d-flex flex-wrap align-center justify-space-around gap-4 mt-2 py-3 px-2"
-                                 style="border:1px solid lightgrey; border-radius:4px;">
-                                <div class="d-flex align-center justify-center" style="flex: 1 1 250px; max-width: 350px;">
+                                 style="border:0.0625rem solid lightgrey; border-radius:0.25rem;">
+                                <div class="d-flex align-center justify-center" style="flex: 1 1 15.625rem; max-width: 21.875rem;">
                                     <MudText Typo="Typo.caption" Class="mr-2" Style="white-space: nowrap;">
                                         @Localizer["Split"]:
                                         <strong>@_splitterSize%</strong>
@@ -152,7 +152,7 @@
                                                Variant="Variant.Filled" Color="Color.Primary" ValueLabel="true"
                                                Style="width: 100%;" />
                                 </div>
-                                <div class="d-flex align-center justify-center" style="flex: 1 1 250px; max-width: 350px;">
+                                <div class="d-flex align-center justify-center" style="flex: 1 1 15.625rem; max-width: 21.875rem;">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium"
                                                OnClick="GenerateContent" Disabled="_isGenerating"
                                                StartIcon="@Icons.Material.Filled.AutoAwesome" FullWidth="true">
@@ -215,7 +215,7 @@
                                 <div class="generate-toolbar-group" style="@GetDisplayStyle(_generatedResume != null && (_activeTabIndex == 0 || _activeTabIndex == 1))">
                                     <MudSelect T="CvTemplate" @bind-Value="_selectedTemplateInPreview" Label="@Localizer["Template"]"
                                                Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true"
-                                               Style="width: 180px;">
+                                               Style="width: 11.25rem;">
                                         <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
                                         <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
                                         <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
@@ -309,7 +309,7 @@
                             @if (_previewCoverLetter)
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
-                                          Style="overflow-y: auto; max-height: calc(100vh - 250px);">
+                                          Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
                                     <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile"
                                                                                    LetterContent="@_generatedCoverLetter"
                                                                                    Template="_selectedTemplateInPreview" />
@@ -332,7 +332,7 @@
                             @if (_previewResume)
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
-                                          Style="overflow-y: auto; max-height: calc(100vh - 250px);">
+                                          Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
                                     <AiCV.Web.Components.Shared.CvPreview Profile="_generatedResume" Template="_selectedTemplateInPreview" />
                                 </MudPaper>
                             }

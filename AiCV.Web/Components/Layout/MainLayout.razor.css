@@ -14,7 +14,7 @@ main {
 
 .top-row {
     background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
+    border-bottom: 0.0625rem solid #d6d5d5;
     justify-content: flex-end;
     height: 3.5rem;
     display: flex;
@@ -38,7 +38,7 @@ main {
     text-overflow: ellipsis;
 }
 
-@media (max-width: 640.98px) {
+@media (max-width: 40.06125em) {
     .top-row {
         justify-content: space-between;
     }
@@ -49,13 +49,13 @@ main {
     }
 }
 
-@media (min-width: 641px) {
+@media (min-width: 40.0625em) {
     .page {
         flex-direction: row;
     }
 
     .sidebar {
-        width: 250px;
+        width: 15.625rem;
         height: 100vh;
         position: sticky;
         top: 0;
@@ -84,7 +84,7 @@ main {
     color-scheme: light only;
     background: lightyellow;
     bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     display: none;
     left: 0;

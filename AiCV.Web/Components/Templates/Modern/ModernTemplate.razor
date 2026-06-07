@@ -36,11 +36,14 @@ else
                     </div>
                 </header>
                 <!-- Professional Summary -->
-                <section class="section">
-                    <div class="summary">
-                        <FormattedText Text="@Profile.ProfessionalSummary" />
-                    </div>
-                </section>
+                @if (!string.IsNullOrWhiteSpace(Profile.ProfessionalSummary))
+                {
+                    <section class="section">
+                        <div class="summary">
+                            <FormattedText Text="@Profile.ProfessionalSummary" />
+                        </div>
+                    </section>
+                }
                 <!-- Core Competencies -->
                 <section class="section">
                     <h3 class="section-title">@Localizer["CoreCompetencies"]</h3>
@@ -82,8 +85,14 @@ else
                                         </p>
                                     </div>
                                     <div class="job-dates">
-                                        <span class="date">@job.StartDate?.ToString("MM/yyyy") – @(job.IsCurrentRole? Localizer["Present"] : (job.EndDate.HasValue ? job.EndDate.Value.ToString("MM/yyyy") : Localizer["Present"]))</span>
-                                        <span class="duration">@CalculateDuration(job.StartDate, job.EndDate, job.IsCurrentRole)</span>
+                                        @{ var jobDuration = CalculateDuration(job.StartDate, job.EndDate, job.IsCurrentRole); }
+                                        <span class="date">
+                                            @job.StartDate?.ToString("MM/yyyy") – @(job.IsCurrentRole? Localizer["Present"] : (job.EndDate.HasValue ? job.EndDate.Value.ToString("MM/yyyy") : Localizer["Present"]))
+                                            @if (!string.IsNullOrEmpty(jobDuration))
+                                            {
+                                                <span class="duration">(@jobDuration)</span>
+                                            }
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="achievements">
@@ -104,17 +113,17 @@ else
                     <h3 class="section-title">@Localizer["EducationCv"]</h3>
                     @if (Profile.Educations != null && Profile.Educations.Any())
                     {
-                        @foreach (var edu in Profile.Educations)
+                        @foreach (var edu in Profile.Educations.OrderByDescending(e => e.StartDate))
                         {
                             <div class="education">
                                 <div class="education-header">
                                     <h4 class="degree"><FormattedText Text="@edu.Degree" /></h4>
                                     <span class="education-date">@edu.StartDate?.ToString("yyyy") - @(edu.EndDate.HasValue? edu.EndDate.Value.ToString("yyyy") : Localizer["Present"])</span>
                                 </div>
-                                <p class="school"><FormattedText Text="@edu.InstitutionName" /></p>
+                                <p class="school education-institution" style="font-size: var(--font-size-body); font-weight: 700; color: #2c3e50;"><FormattedText Text="@edu.InstitutionName" /></p>
                                 @if (!string.IsNullOrEmpty(edu.Description))
                                 {
-                                    <div class="recognition"><FormattedText Text="@edu.Description" /></div>
+                                    <div class="recognition"><FormattedText Text="@edu.Description" IsDescription="true" /></div>
                                 }
                             </div>
                         }
@@ -140,23 +149,17 @@ else
                                     <h4 class="project-title"><FormattedText Text="@proj.Name" /></h4>
                                     <span class="project-date">@proj.StartDate?.ToString("yyyy") - @(proj.EndDate.HasValue ? proj.EndDate.Value.ToString("yyyy") : Localizer["Present"])</span>
                                 </div>
-                                @if (!string.IsNullOrEmpty(proj.Link) || !string.IsNullOrEmpty(proj.Technologies))
+                                @if (!string.IsNullOrEmpty(proj.Link))
                                 {
                                     <p class="project-links">
-                                        @if (!string.IsNullOrEmpty(proj.Link))
-                                        {
-                                            <strong>@Localizer["GitHubLabel"]</strong>
-                                            <a href="@proj.Link" target="_blank">@proj.Link</a>
-
-                                            @if (!string.IsNullOrEmpty(proj.Technologies))
-                                            {
-                                                <span> | </span>
-                                            }
-                                        }
-                                        @if (!string.IsNullOrEmpty(proj.Technologies))
-                                        {
-                                            <strong>@Localizer["TechnologiesLabel"]</strong> <FormattedText Text="@proj.Technologies" />
-                                        }
+                                        <strong>@Localizer["GitHubLabel"]</strong>
+                                        <a href="@proj.Link" target="_blank">@proj.Link</a>
+                                    </p>
+                                }
+                                @if (!string.IsNullOrEmpty(proj.Technologies))
+                                {
+                                    <p class="project-technologies">
+                                        <strong>@Localizer["TechnologiesLabel"]</strong> <FormattedText Text="@proj.Technologies" />
                                     </p>
                                 }
                                 @if (!string.IsNullOrEmpty(proj.Role))
@@ -215,14 +218,18 @@ else
                     <div class="language-list">
                         @if (Profile.Languages != null && Profile.Languages.Any())
                         {
-                            @foreach (var lang in Profile.Languages)
+                            @for (int i = 0; i < Profile.Languages.Count; i++)
                             {
+                                var lang = Profile.Languages[i];
+                                @if (i > 0)
+                                {
+                                    <span class="item-separator">&nbsp;&bull;&nbsp;</span>
+                                }
                                 <span class="language-item">
                                     <FormattedText Text="@lang.Name" />
                                     @if (!string.IsNullOrWhiteSpace(lang.Proficiency))
                                     {
-                                        <span>&nbsp;&bull;&nbsp;</span>
-                                        <FormattedText Text="@lang.Proficiency" />
+                                        <text>&nbsp;</text><FormattedText Text="@lang.Proficiency" />
                                     }
                                 </span>
                             }
@@ -240,9 +247,13 @@ else
                     <div class="interests">
                         @if (Profile.Interests != null && Profile.Interests.Any())
                         {
-                            @foreach (var interest in Profile.Interests)
+                            @for (int i = 0; i < Profile.Interests.Count; i++)
                             {
-                                <span class="interest-tag"><FormattedText Text="@interest.Name" /></span>
+                                @if (i > 0)
+                                {
+                                    <span class="item-separator">&nbsp;&bull;&nbsp;</span>
+                                }
+                                <FormattedText Text="@Profile.Interests[i].Name" />
                             }
                         }
                         else

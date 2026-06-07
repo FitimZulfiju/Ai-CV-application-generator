@@ -2,13 +2,13 @@
 
 /* Header Section */
 .cv-container.cv-professional .header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: var(--primary-color);
     color: white;
     padding: var(--cv-padding-y) var(--cv-padding-x);
     text-align: center;
     position: relative;
     border-radius: 0.5em;
-    border-bottom: 0.35em solid var(--accent-color);
+    border-bottom: 0.08cm solid var(--accent-color);
 }
 
 .cv-container.cv-professional .name {
@@ -88,9 +88,10 @@
     line-height: 1.8;
     color: var(--text-medium);
     text-align: justify;
-    padding: var(--cv-padding-y) var(--cv-padding-x);
+    padding: var(--card-padding);
     background: var(--bg-light);
-    border-left: 0.3rem solid var(--primary-color);
+    border-left: var(--card-border-width) solid var(--primary-color);
+    border-radius: var(--card-border-radius);
     margin: 0;
 }
 
@@ -119,7 +120,7 @@
     color: var(--primary-dark);
     margin-bottom: 1.5rem;
     padding-bottom: 0.4rem;
-    border-bottom: 0.2rem solid var(--primary-color);
+    border-bottom: 1.5pt solid var(--primary-color);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     display: inline-block;
@@ -134,13 +135,11 @@
 /* Skills Grid */
 .cv-container.cv-professional .skill-category {
     background: var(--bg-light);
-    padding: 1.125rem var(--cv-padding-x);
-    /* Changed to rem and added horizontal padding */
-    border-radius: 0.5em;
-    border-left: 0.25em solid var(--primary-color);
+    padding: var(--card-padding);
+    border-radius: var(--card-border-radius);
+    border-left: var(--card-border-width) solid var(--primary-color);
     transition: transform 0.2s, box-shadow 0.2s;
     margin-bottom: 1.25rem;
-    /* Changed to rem */
 }
 
 .cv-container.cv-professional .skill-category:last-child {
@@ -190,13 +189,12 @@
 }
 
 /* Education */
-.cv-container.cv-professional .education-item {
+.cv-container.cv-professional .education {
     margin-bottom: var(--cv-item-spacing);
-    padding: 1.25rem var(--cv-padding-x);
-    /* Changed to rem and added horizontal padding */
+    padding: var(--card-padding);
     background: var(--bg-light);
-    border-radius: 0.5em;
-    border-left: 0.25em solid var(--accent-color);
+    border-radius: var(--card-border-radius);
+    border-left: var(--card-border-width) solid var(--accent-color);
 }
 
 .cv-container.cv-professional .degree {
@@ -205,20 +203,43 @@
     color: var(--text-dark);
 }
 
+.cv-container.cv-professional .school {
+    font-size: var(--font-size-body);
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
 /* Personal Projects */
-.cv-container.cv-professional .project-item {
+.cv-container.cv-professional .project {
     margin-bottom: var(--cv-item-spacing);
-    padding: 1.25rem var(--cv-padding-x);
-    /* Changed to rem and added horizontal padding */
+    padding: var(--card-padding);
     background: var(--bg-light);
-    border-radius: 0.5em;
-    border-left: 0.25em solid var(--primary-color);
+    border-radius: var(--card-border-radius);
+    border-left: var(--card-border-width) solid var(--primary-color);
 }
 
 .cv-container.cv-professional .project-title {
     font-size: var(--font-size-item-title);
     font-weight: 700;
     color: var(--text-dark);
+}
+
+.cv-container.cv-professional .project-links {
+    margin-top: 0.15cm;
+    font-size: var(--font-size-meta);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.cv-container.cv-professional .project-technologies,
+.cv-container.cv-professional .project-role {
+    margin-top: 0.1cm;
+    font-size: var(--font-size-meta);
+    color: var(--text-medium);
+}
+
+.cv-container.cv-professional .project-role {
+    font-style: italic;
 }
 
 .cv-container.cv-professional .project-features li::before {

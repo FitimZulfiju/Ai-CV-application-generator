@@ -25,9 +25,9 @@ public partial class NoteDialog
         var bgColor = NoteColors.GetValueOrDefault(colorKey, "transparent");
         if (colorKey == "default")
         {
-            return "border: 2px solid var(--mud-palette-lines-default);";
+            return "border: 0.125rem solid var(--mud-palette-lines-default);";
         }
-        return $"background-color: {bgColor}; border: 2px solid {bgColor};";
+        return $"background-color: {bgColor}; border: 0.125rem solid {bgColor};";
     }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(NoteModel));
