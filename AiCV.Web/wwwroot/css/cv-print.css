@@ -348,6 +348,12 @@ body.show-photo .header {
   color: #333333 !important;
 }
 
+.cv-container.cv-minimalist .project,
+.cv-container.cv-minimalist .language-list,
+.cv-container.cv-minimalist .interests {
+  border-left-color: #eeeeee !important;
+}
+
 .recognition {
   font-size: 0.688em;
   /* Increased from 0.625em */

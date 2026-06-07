@@ -6,6 +6,7 @@ public class MinimalistPdfTemplate : PdfTemplateBase
     protected override bool CenterLanguageContent => true;
     protected override bool UseInterestChips => true;
     protected override bool UseReferencesFooterPanel => true;
+    protected override string AdditionalSectionBorderColor => _borderColor;
 
     public MinimalistPdfTemplate(IWebHostEnvironment env, IStringLocalizer<AicvResources> localizer)
         : base(env, localizer)

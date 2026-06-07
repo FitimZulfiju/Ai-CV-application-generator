@@ -16,6 +16,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     protected virtual bool CenterLanguageContent => false;
     protected virtual bool UseInterestChips => false;
     protected virtual bool UseReferencesFooterPanel => false;
+    protected virtual string AdditionalSectionBorderColor => _primaryColor;
 
     protected const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
@@ -114,7 +115,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     {
                         cell.Background(_backgroundLight)
                             .BorderLeft(1.5f)
-                            .BorderColor(_primaryColor)
+                            .BorderColor(AdditionalSectionBorderColor)
                             .CornerRadius(5)
                             .Padding(10)
                             .Column(c =>
@@ -225,7 +226,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 .Item()
                 .Background(_backgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(_primaryColor)
+                .BorderColor(AdditionalSectionBorderColor)
                 .CornerRadius(5)
                 .Padding(10);
 
@@ -270,7 +271,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 .PaddingTop(0.1f, Unit.Centimetre)
                 .Background(_backgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(_primaryColor)
+                .BorderColor(AdditionalSectionBorderColor)
                 .CornerRadius(5)
                 .Padding(10);
 

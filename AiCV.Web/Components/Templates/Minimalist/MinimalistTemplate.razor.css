@@ -140,7 +140,7 @@
 }
 
 .cv-container.cv-minimalist .project {
-    border-left: var(--card-border-width) solid #333333;
+    border-left: var(--card-border-width) solid #eeeeee;
 }
 
 .cv-container.cv-minimalist .degree {
@@ -165,7 +165,7 @@
 
 .cv-container.cv-minimalist .language-list,
 .cv-container.cv-minimalist .interests {
-    border-left-color: #333333;
+    border-left-color: #eeeeee;
 }
 
 .cv-container.cv-minimalist .project-links {
