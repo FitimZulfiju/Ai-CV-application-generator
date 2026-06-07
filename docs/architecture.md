@@ -146,7 +146,7 @@ The project is built with .NET 10.0 and Blazor Server, following a clean archite
 The `Program.cs` is kept lean by delegating configuration to extension methods in the `AiCV.Web.Extensions` and `AiCV.Infrastructure.Extensions` namespaces.
 
 ### Template Method / Strategy for PDF and HTML Generation
-Visual tokens (colors, borders, feature flags) are strictly centralized in a `CvThemeConfig` record in the Application layer, mapped via a `ThemeRegistry`. 
+Visual tokens (colors, borders, feature flags) are strictly centralized in a `CvThemeConfig` record in the Application layer. Templates are mapped dynamically via string identifiers using a `ThemeRegistry`, which eliminates rigid enums and allows for highly extensible template structures.
 - **PDF Generation**: Encapsulated in separate template classes inheriting from `PdfTemplateBase`. `PdfService` orchestrates the font-scaling and delegates to the appropriate builder, which automatically applies the `CvThemeConfig`.
 - **HTML Rendering**: Consolidated via shared components like `CvDocument.razor` and `CoverLetterDocument.razor`. These components inject the `CvThemeConfig` colors as root CSS variables (e.g., `var(--primary-color)`). This architecture completely eliminates color duplication between C# and CSS, guaranteeing high fidelity and parity between the Web UI and PDF outputs.
 
