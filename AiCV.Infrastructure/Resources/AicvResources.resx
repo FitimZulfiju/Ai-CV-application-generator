@@ -1359,5 +1359,11 @@
   <data name="SelectIcon" xml:space="preserve">
     <value>Select Icon</value>
   </data>
+  <data name="DemoAccountInfo" xml:space="preserve">
+    <value>Demo Account</value>
+  </data>
+  <data name="FillDemoCredentials" xml:space="preserve">
+    <value>Fill Demo Credentials</value>
+  </data>
 </root>
 

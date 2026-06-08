@@ -58,7 +58,7 @@ public class DbInitializer(
             }
 
             // Seed User
-            const string adminEmail = "demouser@aicv.com";
+            const string adminEmail = AiCV.Application.Common.DemoConstants.DemoUserEmail;
             var adminUser = await _userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
@@ -71,7 +71,7 @@ public class DbInitializer(
                     EmailConfirmed = true,
                 };
 
-                var result = await _userManager.CreateAsync(adminUser, "Demo123!");
+                var result = await _userManager.CreateAsync(adminUser, AiCV.Application.Common.DemoConstants.DemoUserPassword);
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(adminUser, Roles.User);

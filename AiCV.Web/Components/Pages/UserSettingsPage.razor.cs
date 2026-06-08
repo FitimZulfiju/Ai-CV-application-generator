@@ -90,7 +90,7 @@ public partial class UserSettingsPage
             // Mark as protected if it's the default demo account
             _isProtected = string.Equals(
                 _userEmail,
-                "demouser@aicv.com",
+                AiCV.Application.Common.DemoConstants.DemoUserEmail,
                 StringComparison.OrdinalIgnoreCase
             );
 

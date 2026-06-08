@@ -5,8 +5,14 @@ public partial class Login
     [SupplyParameterFromQuery]
     public string? Error { get; set; }
 
-    private string _email = "";
-    private string _password = "";
+    private string _email = AiCV.Application.Common.DemoConstants.DemoUserEmail;
+    private string _password = AiCV.Application.Common.DemoConstants.DemoUserPassword;
+
+    private void FillDemoCredentials()
+    {
+        _email = AiCV.Application.Common.DemoConstants.DemoUserEmail;
+        _password = AiCV.Application.Common.DemoConstants.DemoUserPassword;
+    }
     private bool _rememberMe;
     private bool _showPassword;
 

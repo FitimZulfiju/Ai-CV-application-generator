@@ -62,6 +62,9 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
 * **System Protection**
   Built-in safeguards for default demo accounts and critical system configurations to prevent accidental deletion.
 
+* **Frictionless Demo Access**
+  A one-click demo login is built directly into the login screen, allowing evaluators to instantly test the system without registering. Demo credentials are fully centralized and configurable.
+
 * **Multi-Language UI**
   English, Albanian (Shqip), Danish (Dansk).
 

@@ -90,7 +90,7 @@ public class UserManagementService(ApplicationDbContext context, UserManager<Use
         }
 
         // Protect the default demo account from deletion
-        if (string.Equals(user.Email, "demouser@aicv.com", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(user.Email, AiCV.Application.Common.DemoConstants.DemoUserEmail, StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }

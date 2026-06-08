@@ -9,18 +9,28 @@
         </div>
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">@Localizer["LoginTitle"]</MudText>
 
+        <MudPaper Outlined="true" Class="pa-3 mb-4 d-flex align-center justify-space-between" Style="background-color: var(--mud-palette-background-grey); border-color: var(--mud-palette-info); border-width: 1px; border-style: solid;">
+            <MudText Typo="Typo.body2">
+                <strong>@Localizer["DemoAccountInfo"]:</strong> @AiCV.Application.Common.DemoConstants.DemoUserEmail <br/>
+                <strong>@Localizer["Password"]:</strong> @AiCV.Application.Common.DemoConstants.DemoUserPassword
+            </MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" OnClick="FillDemoCredentials" Style="white-space: nowrap;">
+                @Localizer["FillDemoCredentials"]
+            </MudButton>
+        </MudPaper>
+
         <form method="post" action="/perform-login">
 
             <MudTextField T="string" @bind-Value="_email"
                 UserAttributes="@(new Dictionary<string, object> { { "name", "email" } })" Label="@Localizer["Email"]"
                 Variant="Variant.Outlined" InputType="InputType.Email" Adornment="Adornment.Start"
-                AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" />
+                AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-3" Required="true" Clearable="true" />
 
             <MudTextField T="string" @bind-Value="_password"
                 UserAttributes="@(new Dictionary<string, object> { { "name", "password" } })"
                 Label="@Localizer["Password"]" Variant="Variant.Outlined" InputType="@PasswordInputType"
                 Adornment="Adornment.End" AdornmentIcon="@PasswordIcon" OnAdornmentClick="TogglePasswordVisibility"
-                AdornmentAriaLabel="Toggle password visibility" Class="mb-3" Required="true" />
+                AdornmentAriaLabel="Toggle password visibility" Class="mb-3" Required="true" Clearable="true" />
 
             <div class="d-flex align-center mb-3">
                 <input type="hidden" name="rememberMe" value="@(_rememberMe.ToString().ToLower())" />
