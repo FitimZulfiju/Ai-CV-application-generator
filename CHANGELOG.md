@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.12.1] - 2026-06-08
+
+### Changed
+- chore: consolidate migrations into single InitialSetup
+
 ## [1.12.0] - 2026-06-08
 
 ### Added
