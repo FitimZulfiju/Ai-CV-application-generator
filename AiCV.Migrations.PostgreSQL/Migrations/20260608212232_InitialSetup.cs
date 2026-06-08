@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AiCV.Migrations.PostgreSQL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -85,27 +85,6 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SystemLogs", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserAIConfigurations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Provider = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    ApiKey = table.Column<string>(type: "text", nullable: true),
-                    ModelId = table.Column<string>(type: "text", nullable: true),
-                    CostType = table.Column<string>(type: "text", nullable: true),
-                    Notes = table.Column<string>(type: "text", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAIConfigurations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,7 +210,29 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     ProfessionalSummary = table.Column<string>(type: "text", nullable: false),
                     ProfilePictureUrl = table.Column<string>(type: "text", nullable: false),
                     ShowProfilePicture = table.Column<bool>(type: "boolean", nullable: false),
-                    Tagline = table.Column<string>(type: "text", nullable: false)
+                    Tagline = table.Column<string>(type: "text", nullable: false),
+                    FooterText = table.Column<string>(type: "text", nullable: false),
+                    SummarySection_Title = table.Column<string>(type: "text", nullable: false),
+                    SummarySection_Icon = table.Column<string>(type: "text", nullable: false),
+                    SummarySection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false),
+                    ExperienceSection_Title = table.Column<string>(type: "text", nullable: false),
+                    ExperienceSection_Icon = table.Column<string>(type: "text", nullable: false),
+                    ExperienceSection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false),
+                    EducationSection_Title = table.Column<string>(type: "text", nullable: false),
+                    EducationSection_Icon = table.Column<string>(type: "text", nullable: false),
+                    EducationSection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false),
+                    SkillsSection_Title = table.Column<string>(type: "text", nullable: false),
+                    SkillsSection_Icon = table.Column<string>(type: "text", nullable: false),
+                    SkillsSection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false),
+                    ProjectsSection_Title = table.Column<string>(type: "text", nullable: false),
+                    ProjectsSection_Icon = table.Column<string>(type: "text", nullable: false),
+                    ProjectsSection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false),
+                    LanguagesSection_Title = table.Column<string>(type: "text", nullable: false),
+                    LanguagesSection_Icon = table.Column<string>(type: "text", nullable: false),
+                    LanguagesSection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false),
+                    InterestsSection_Title = table.Column<string>(type: "text", nullable: false),
+                    InterestsSection_Icon = table.Column<string>(type: "text", nullable: false),
+                    InterestsSection_DisplayAsChips = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -265,6 +266,33 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     table.PrimaryKey("PK_Notes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Notes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAIConfigurations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Provider = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ApiKey = table.Column<string>(type: "text", nullable: true),
+                    ModelId = table.Column<string>(type: "text", nullable: true),
+                    CostType = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAIConfigurations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserAIConfigurations_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -362,6 +390,7 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     CoverLetterContent = table.Column<string>(type: "text", nullable: false),
                     TailoredResumeJson = table.Column<string>(type: "text", nullable: false),
                     ApplicationEmailContent = table.Column<string>(type: "text", nullable: false),
+                    Template = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -371,7 +400,8 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         name: "FK_GeneratedApplications_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GeneratedApplications_CandidateProfiles_CandidateProfileId",
                         column: x => x.CandidateProfileId,
@@ -568,6 +598,11 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                 name: "IX_Skills_CandidateProfileId",
                 table: "Skills",
                 column: "CandidateProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAIConfigurations_UserId",
+                table: "UserAIConfigurations",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSettings_UserId",

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AiCV.Migrations.SqlServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260608013248_AddCustomSectionHeaders")]
-    partial class AddCustomSectionHeaders
+    [Migration("20260608212224_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -764,6 +764,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -784,6 +787,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         {
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
 
                             b1.Property<string>("Icon")
                                 .IsRequired()
@@ -806,6 +812,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -826,6 +835,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         {
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
 
                             b1.Property<string>("Icon")
                                 .IsRequired()
@@ -848,6 +860,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -869,6 +884,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -889,6 +907,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         {
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
 
                             b1.Property<string>("Icon")
                                 .IsRequired()
