@@ -44,8 +44,8 @@ public static class AuthEndpoints
                     if (result.Succeeded)
                         return Results.Redirect("/");
                     if (result.IsLockedOut)
-                        return Results.Redirect($"/{NavUri.LoginPage}?error=AccountLocked");
-                    return Results.Redirect($"/{NavUri.LoginPage}?error=InvalidLoginAttempt");
+                        return Results.Redirect($"/{NavUri.LoginPage}?error=AccountLocked&email={Uri.EscapeDataString(email)}");
+                    return Results.Redirect($"/{NavUri.LoginPage}?error=InvalidLoginAttempt&email={Uri.EscapeDataString(email)}");
                 }
             )
             .DisableAntiforgery();

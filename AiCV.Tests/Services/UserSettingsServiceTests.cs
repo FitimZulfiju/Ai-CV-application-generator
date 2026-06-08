@@ -30,7 +30,13 @@ public class UserSettingsServiceTests : IDisposable
         _dataProtectionProviderMock.Setup(p => p.CreateProtector(It.IsAny<string>()))
                                    .Returns(_dataProtectorMock.Object);
 
-        _service = new UserSettingsService(_contextFactoryMock.Object, _dataProtectionProviderMock.Object);
+        var loggerMock = new Mock<ILogger<UserSettingsService>>();
+
+        _service = new UserSettingsService(
+            _contextFactoryMock.Object, 
+            _dataProtectionProviderMock.Object,
+            loggerMock.Object
+        );
     }
 
     [Fact]

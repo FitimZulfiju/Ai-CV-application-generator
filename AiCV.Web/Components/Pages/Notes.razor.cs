@@ -11,6 +11,8 @@ public partial class Notes
     private string? _userId;
     private MudDropContainer<Note>? _dropContainer;
 
+    [Inject] private ILogger<Notes> Logger { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -48,7 +50,7 @@ public partial class Notes
         catch (Exception ex)
         {
             Snackbar.Add("Error loading notes", Severity.Error);
-            Console.WriteLine($"Error loading notes: {ex.Message}");
+            Logger.LogError(ex, "Error loading notes");
         }
         finally
         {
@@ -153,14 +155,14 @@ public partial class Notes
 
         if (result?.Canceled == false && result.Data is Note createdNote)
         {
-            Console.WriteLine($"Dialog closed. Creating note: {createdNote.Title}");
+            Logger.LogInformation("Dialog closed. Creating note: {Title}", createdNote.Title);
             await NoteService.CreateNoteAsync(createdNote);
             await LoadNotes();
             Snackbar.Add(Localizer["NoteCreated"], Severity.Success);
         }
         else
         {
-            Console.WriteLine("Dialog canceled or result data is not a Note");
+            Logger.LogInformation("Dialog canceled or result data is not a Note");
         }
     }
 

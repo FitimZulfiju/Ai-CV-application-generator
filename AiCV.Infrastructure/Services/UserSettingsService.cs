@@ -7,28 +7,32 @@ public class UserSettingsService : IUserSettingsService
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly IDataProtector _protector;
 
+    private readonly ILogger<UserSettingsService> _logger;
+
     public UserSettingsService(
         IDbContextFactory<ApplicationDbContext> contextFactory,
-        IDataProtectionProvider dataProtectionProvider
+        IDataProtectionProvider dataProtectionProvider,
+        ILogger<UserSettingsService> logger
     )
     {
         _contextFactory = contextFactory;
         _protector = dataProtectionProvider.CreateProtector(
             "AiCV.Infrastructure.Services.UserSettingsService"
         );
+        _logger = logger;
     }
 
     public async Task<UserSettings?> GetUserSettingsAsync(string userId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        Console.WriteLine($"[UserSettingsService] Getting settings for userId: {userId}");
+        _logger.LogInformation("Getting settings for userId: {UserId}", userId);
         var settings = await context
             .UserSettings.AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == userId);
 
         if (settings == null)
         {
-            Console.WriteLine($"[UserSettingsService] No settings found for userId: {userId}");
+            _logger.LogInformation("No settings found for userId: {UserId}", userId);
             return null;
         }
 
@@ -63,7 +67,7 @@ public class UserSettingsService : IUserSettingsService
             settings.OpenRouterApiKey = Decrypt(settings.OpenRouterApiKey);
         }
 
-        Console.WriteLine("[UserSettingsService] Settings retrieved.");
+        _logger.LogInformation("Settings retrieved for userId: {UserId}", userId);
         return settings;
     }
 
@@ -80,7 +84,7 @@ public class UserSettingsService : IUserSettingsService
     )
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        Console.WriteLine($"[UserSettingsService] Saving settings for userId: {userId}.");
+        _logger.LogInformation("Saving settings for userId: {UserId}", userId);
         var settings = await context.UserSettings.FirstOrDefaultAsync(s => s.UserId == userId);
 
         if (settings == null)
@@ -89,9 +93,7 @@ public class UserSettingsService : IUserSettingsService
             var userExists = await context.Users.AnyAsync(u => u.Id == userId);
             if (!userExists)
             {
-                Console.WriteLine(
-                    $"[UserSettingsService] User {userId} not found. Cannot save settings."
-                );
+                _logger.LogWarning("User {UserId} not found. Cannot save settings.", userId);
                 throw new InvalidOperationException("User not found.");
             }
 
@@ -117,7 +119,7 @@ public class UserSettingsService : IUserSettingsService
         settings.UpdatedDate = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
-        Console.WriteLine("[UserSettingsService] Settings saved to database.");
+        _logger.LogInformation("Settings saved to database for userId: {UserId}", userId);
     }
 
     private string Encrypt(string clearText)
@@ -128,7 +130,7 @@ public class UserSettingsService : IUserSettingsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Encryption failed: {ex.Message}");
+            _logger.LogError(ex, "Encryption failed");
             return string.Empty;
         }
     }
@@ -141,7 +143,7 @@ public class UserSettingsService : IUserSettingsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Decryption failed: {ex.Message}");
+            _logger.LogError(ex, "Decryption failed");
             return string.Empty;
         }
     }
