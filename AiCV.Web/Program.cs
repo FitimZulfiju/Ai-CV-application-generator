@@ -31,18 +31,24 @@ builder.Configuration.AddUserSecrets<Program>();
 builder.Host.UseSerilog((ctx, cfg) =>
 {
     cfg.ReadFrom.Configuration(ctx.Configuration)
-       .Enrich.FromLogContext()
-       .WriteTo.Console(outputTemplate:
-           "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");
+       .Enrich.FromLogContext();
 
-    // File sink only in Development (not useful inside Docker containers)
     if (ctx.HostingEnvironment.IsDevelopment())
     {
+        // Development: Human-readable Console & File Sink
+        cfg.WriteTo.Console(outputTemplate:
+            "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");
+            
         cfg.WriteTo.File(
-            "logs/aicv-.log",
+            "logs/aicv-dev-.log",
             outputTemplate:
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}",
             rollingInterval: RollingInterval.Day);
+    }
+    else
+    {
+        // Production (Docker/Containers): Structured JSON output to Console
+        cfg.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
     }
 });
 

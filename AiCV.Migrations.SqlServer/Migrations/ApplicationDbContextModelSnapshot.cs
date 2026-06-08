@@ -17,7 +17,7 @@ namespace AiCV.Migrations.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -31,6 +31,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FooterText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -275,8 +279,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Template")
-                        .HasColumnType("int");
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -749,6 +754,195 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         .WithOne("CandidateProfile")
                         .HasForeignKey("AiCV.Domain.CandidateProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "EducationSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "ExperienceSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "InterestsSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "LanguagesSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "ProjectsSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "SkillsSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "SummarySection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.Navigation("EducationSection")
+                        .IsRequired();
+
+                    b.Navigation("ExperienceSection")
+                        .IsRequired();
+
+                    b.Navigation("InterestsSection")
+                        .IsRequired();
+
+                    b.Navigation("LanguagesSection")
+                        .IsRequired();
+
+                    b.Navigation("ProjectsSection")
+                        .IsRequired();
+
+                    b.Navigation("SkillsSection")
+                        .IsRequired();
+
+                    b.Navigation("SummarySection")
                         .IsRequired();
 
                     b.Navigation("User");

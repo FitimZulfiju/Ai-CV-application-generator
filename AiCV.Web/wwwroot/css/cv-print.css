@@ -109,7 +109,8 @@ body {
 .skill-category,
 .education,
 .project,
-.interest-tag,
+.language-list,
+.interests,
 .footer {
   background-color: var(--bg-light) !important;
   -webkit-print-color-adjust: exact;
@@ -328,6 +329,31 @@ body.show-photo .header {
   /* Increased from 0.688em */
 }
 
+.cv-container.cv-modern .education .school,
+.cv-container.cv-modern .education-institution,
+.cv-container.cv-minimalist .education .school,
+.cv-container.cv-minimalist .education-institution {
+  font-size: 0.719em;
+  font-weight: 700 !important;
+  line-height: 1.3;
+}
+
+.cv-container.cv-modern .education .school,
+.cv-container.cv-modern .education-institution {
+  color: #2c3e50 !important;
+}
+
+.cv-container.cv-minimalist .education .school,
+.cv-container.cv-minimalist .education-institution {
+  color: #333333 !important;
+}
+
+.cv-container.cv-minimalist .project,
+.cv-container.cv-minimalist .language-list,
+.cv-container.cv-minimalist .interests {
+  border-left-color: #eeeeee !important;
+}
+
 .recognition {
   font-size: 0.688em;
   /* Increased from 0.625em */
@@ -456,24 +482,9 @@ body.show-photo .header {
   padding-bottom: 0.75em;
 }
 
-.interests {
-  gap: 0.312em;
-  margin-top: 0.5em;
-  /* Keep interests on a single row when printing */
-  flex-wrap: nowrap;
-  /* prevent wrapping onto a new line */
-  white-space: nowrap;
-  /* keep inner text from wrapping */
-  /* Allow items to overflow horizontally if too long — safer than wrapping to a new line in print */
-  overflow-x: visible;
-}
-
-.interest-tag {
-  padding: 0.25em 0.5em;
+.interests,
+.language-list {
   font-size: 0.625em;
-  white-space: nowrap;
-  /* ensure multi-word tags stay together */
-  /* Increased from 0.562em */
 }
 
 /* Footer */
@@ -487,13 +498,6 @@ body.show-photo .header {
 .skill-category:hover {
   transform: none;
   box-shadow: none;
-}
-
-.interest-tag:hover {
-  background: var(--bg-light);
-  color: var(--text-medium);
-  border-color: var(--border-color);
-  transform: none;
 }
 
 /* Ensure links are visible when printed */

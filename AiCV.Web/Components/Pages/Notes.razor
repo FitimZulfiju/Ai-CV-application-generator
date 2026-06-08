@@ -35,9 +35,9 @@
         }
         else if (!filteredNotes.Any())
         {
-            <MudPaper Class="pa-8 d-flex flex-column align-center justify-center" Elevation="0" Style="min-height: 300px;">
+            <MudPaper Class="pa-8 d-flex flex-column align-center justify-center" Elevation="0" Style="min-height: 18.75rem;">
                 <MudIcon Icon="@Icons.Material.Outlined.StickyNote2" Size="Size.Large" Color="Color.Secondary" Class="mb-4"
-                         Style="font-size: 64px;" />
+                         Style="font-size: 4rem;" />
                 <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center">
                     @(_showArchived? Localizer["NoArchivedNotes"] : Localizer["NoNotesYet"])
                 </MudText>
@@ -75,6 +75,6 @@
         }
     </MudContainer>
 
-    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);"
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);"
             OnClick="AddNote" />
 </div>

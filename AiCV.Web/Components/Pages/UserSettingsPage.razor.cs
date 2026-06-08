@@ -1,6 +1,3 @@
-using System.Text;
-using System.Text.Json;
-
 namespace AiCV.Web.Components.Pages;
 
 public partial class UserSettingsPage
@@ -93,7 +90,7 @@ public partial class UserSettingsPage
             // Mark as protected if it's the default demo account
             _isProtected = string.Equals(
                 _userEmail,
-                "demouser@aicv.com",
+                AiCV.Application.Common.DemoConstants.DemoUserEmail,
                 StringComparison.OrdinalIgnoreCase
             );
 
@@ -780,11 +777,20 @@ public partial class UserSettingsPage
 
             if (!BackupContainsSelectedSections(backup))
             {
-                Snackbar.Add(Localizer["BackupMissingSelectedSections"], Severity.Error);
-                return;
+                var missingConfirmed = await DialogService.ShowMessageBoxAsync(
+                    Localizer["BackupMissingSectionsWarningTitle"],
+                    Localizer["BackupMissingSectionsWarningContent"],
+                    yesText: Localizer["Continue"],
+                    cancelText: Localizer["Cancel"]
+                );
+
+                if (missingConfirmed != true)
+                {
+                    return;
+                }
             }
 
-            if (_backupProfile && backup.Profile is not null)
+            if (_backupProfile && backup.Profile is not null && backup.Sections.Profile)
             {
                 await ImportProfileBackup(backup.Profile);
             }
@@ -792,19 +798,19 @@ public partial class UserSettingsPage
             await using var context = await DbContextFactory.CreateDbContextAsync();
             await using var transaction = await context.Database.BeginTransactionAsync();
 
-            if (_backupApplications)
+            if (_backupApplications && backup.Sections.Applications)
             {
                 await ReplaceApplications(context, backup.Applications);
             }
 
-            if (_backupNotes)
+            if (_backupNotes && backup.Sections.Notes)
             {
                 await ReplaceNotes(context, backup.Notes);
             }
 
             await transaction.CommitAsync();
 
-            if (_backupSettings)
+            if (_backupSettings && backup.Sections.Settings)
             {
                 await ReplaceSettings(backup);
                 await LoadConfigurations();
@@ -1148,7 +1154,20 @@ public partial class UserSettingsPage
             && IsValidProfileText(profile.Location)
             && IsValidProfileText(profile.ProfessionalSummary)
             && IsValidProfileText(profile.ProfilePictureUrl)
-            && IsValidProfileText(profile.Tagline);
+            && IsValidProfileText(profile.Tagline)
+            && IsValidSectionConfig(profile.SummarySection)
+            && IsValidSectionConfig(profile.ExperienceSection)
+            && IsValidSectionConfig(profile.EducationSection)
+            && IsValidSectionConfig(profile.SkillsSection)
+            && IsValidSectionConfig(profile.ProjectsSection)
+            && IsValidSectionConfig(profile.LanguagesSection)
+            && IsValidSectionConfig(profile.InterestsSection);
+    }
+
+    private static bool IsValidSectionConfig(AiCV.Domain.SectionConfig? config)
+    {
+        if (config == null) return true;
+        return IsValidProfileText(config.Title) && IsValidProfileText(config.Icon);
     }
 
     private static bool HasValidExperienceTextLengths(Experience experience)
@@ -1270,6 +1289,14 @@ public partial class UserSettingsPage
         importedProfile.ProfilePictureUrl ??= string.Empty;
         importedProfile.Tagline ??= string.Empty;
 
+        importedProfile.SummarySection ??= new();
+        importedProfile.ExperienceSection ??= new();
+        importedProfile.EducationSection ??= new();
+        importedProfile.SkillsSection ??= new();
+        importedProfile.ProjectsSection ??= new();
+        importedProfile.LanguagesSection ??= new();
+        importedProfile.InterestsSection ??= new();
+
         foreach (var skill in importedProfile.Skills)
         {
             skill.Id = 0;
@@ -1349,7 +1376,7 @@ public partial class UserSettingsPage
         public string? CoverLetterContent { get; set; }
         public string? TailoredResumeJson { get; set; }
         public string? ApplicationEmailContent { get; set; }
-        public CvTemplate Template { get; set; } = CvTemplate.Professional;
+        public string Template { get; set; } = AiCV.Domain.Constants.CvTemplates.Professional;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 

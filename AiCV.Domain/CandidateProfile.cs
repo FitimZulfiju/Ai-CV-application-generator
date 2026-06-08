@@ -1,12 +1,5 @@
 namespace AiCV.Domain;
 
-public enum CvTemplate
-{
-    Professional = 0,
-    Modern = 1,
-    Minimalist = 2,
-}
-
 public class CandidateProfile
 {
     public int Id { get; set; }
@@ -23,12 +16,41 @@ public class CandidateProfile
     public string ProfilePictureUrl { get; set; } = string.Empty;
     public bool ShowProfilePicture { get; set; } = false;
     public string Tagline { get; set; } = string.Empty;
+    public string FooterText { get; set; } = string.Empty;
     public List<Experience> WorkExperience { get; set; } = [];
     public List<Education> Educations { get; set; } = [];
     public List<Skill> Skills { get; set; } = [];
     public List<Project> Projects { get; set; } = [];
     public List<Language> Languages { get; set; } = [];
     public List<Interest> Interests { get; set; } = [];
+
+    // Customizable Section Headers
+    public SectionConfig SummarySection { get; set; } = new();
+    public SectionConfig ExperienceSection { get; set; } = new();
+    public SectionConfig EducationSection { get; set; } = new();
+    public SectionConfig SkillsSection { get; set; } = new();
+    public SectionConfig ProjectsSection { get; set; } = new();
+    public SectionConfig LanguagesSection { get; set; } = new();
+    public SectionConfig InterestsSection { get; set; } = new();
+}
+
+public class SectionConfig
+{
+    private string _title = string.Empty;
+    public string Title 
+    { 
+        get => _title; 
+        set => _title = value ?? string.Empty; 
+    }
+
+    private string _icon = string.Empty;
+    public string Icon 
+    { 
+        get => _icon; 
+        set => _icon = value ?? string.Empty; 
+    }
+
+    public bool DisplayAsChips { get; set; } = false;
 }
 
 public class Skill

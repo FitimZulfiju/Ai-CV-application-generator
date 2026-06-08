@@ -5,42 +5,47 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     protected readonly IWebHostEnvironment _env = env;
     protected readonly IStringLocalizer<AicvResources> _localizer = localizer;
 
-    protected string _primaryColor = "#2c7be5";
-    protected string _primaryDark = "#1e5fae";
-    protected string _accentColor = "#10b981";
-    protected string _textDark = "#1f2937";
-    protected string _textMedium = "#4b5563";
-    protected string _backgroundLight = "#f9fafb";
-    protected string _borderColor = "#e5e7eb";
-    protected virtual bool UseSectionSeparators => false;
-    protected virtual bool CenterLanguageContent => false;
-    protected virtual bool UseInterestChips => false;
-    protected virtual bool UseReferencesFooterPanel => false;
+    protected virtual AiCV.Application.Common.Models.CvThemeConfig Style { get; } = AiCV.Application.Common.Constants.ThemeRegistry.Professional;
 
     protected const string CheckmarkSvgPath = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
 
     public abstract void ComposeHeader(IContainer container, CandidateProfile profile);
-    public abstract void ComposePageOne(
+    public virtual void ComposePageOne(
         IContainer container,
         CandidateProfile profile,
         float fontSize
-    );
-    public abstract void ComposePageTwo(
+    )
+    {
+        ComposeSummaryAndSkills(container, profile, fontSize);
+    }
+
+    public virtual void ComposePageTwo(
         IContainer container,
         CandidateProfile profile,
         float fontSize
-    );
-    public abstract void ComposePageThree(
+    )
+    {
+        ComposeWorkExperienceSection(container, profile, fontSize);
+    }
+
+    public virtual void ComposePageThree(
         IContainer container,
         CandidateProfile profile,
         float fontSize
-    );
-    public abstract void ComposeCoverLetter(
+    )
+    {
+        ComposeEducationAndAdditionalSections(container, profile, fontSize);
+    }
+
+    public virtual void ComposeCoverLetter(
         IContainer container,
         string letterContent,
         CandidateProfile profile,
         float fontSize
-    );
+    )
+    {
+        ComposeCoverLetterPanel(container, letterContent, fontSize);
+    }
 
     public int GetPageCount(byte[] pdfBytes)
     {
@@ -56,26 +61,41 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         }
     }
 
-    protected virtual void SectionTitle(ColumnDescriptor column, string title)
+    protected virtual void SectionTitle(ColumnDescriptor column, string defaultTitle, SectionConfig sectionConfig)
     {
-        column
-            .Item()
-            .PaddingBottom(0.3f, Unit.Centimetre)
-            .PaddingTop(0.3f, Unit.Centimetre)
-            .Row(row =>
-            {
-                row.AutoItem()
-                    .Text(title.ToUpper())
-                    .FontSize(12)
-                    .Bold()
-                    .FontColor(_primaryDark)
-                    .LetterSpacing(0.06f);
-            });
+        var title = string.IsNullOrWhiteSpace(sectionConfig?.Title) ? defaultTitle : sectionConfig.Title;
+        ComposeSectionTitle(column, title, sectionConfig?.Icon ?? "", hasTopPadding: true);
     }
 
-    protected virtual void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
+    protected virtual void SectionTitleAfterSeparator(ColumnDescriptor column, string defaultTitle, SectionConfig sectionConfig)
     {
-        SectionTitle(column, title);
+        var title = string.IsNullOrWhiteSpace(sectionConfig?.Title) ? defaultTitle : sectionConfig.Title;
+        ComposeSectionTitle(column, title, sectionConfig?.Icon ?? "", hasTopPadding: false);
+    }
+
+    protected virtual void ComposeSectionTitle(ColumnDescriptor column, string title, string icon, bool hasTopPadding)
+    {
+        var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
+        if (hasTopPadding)
+        {
+            item = item.PaddingTop(0.3f, Unit.Centimetre);
+        }
+        item.Row(row =>
+        {
+            row.AutoItem()
+                .Text(t =>
+                {
+                    if (!string.IsNullOrEmpty(icon))
+                    {
+                        t.Span(icon + " ").FontFamily("Segoe UI Emoji");
+                    }
+                    t.Span(title.ToUpper())
+                        .FontSize(12)
+                        .Bold()
+                        .FontColor(Style.PrimaryDark)
+                        .LetterSpacing(0.06f);
+                });
+        });
     }
 
     protected void SectionSeparator(ColumnDescriptor column)
@@ -85,7 +105,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             .PaddingTop(0.4f, Unit.Centimetre)
             .PaddingBottom(0.4f, Unit.Centimetre)
             .LineHorizontal(1)
-            .LineColor(_borderColor);
+            .LineColor(Style.BorderColor);
     }
 
     protected void ComposePageThreeAdditionalSections(
@@ -94,16 +114,18 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         float fontSize
     )
     {
-        if (profile.Projects != null && profile.Projects.Count != 0)
+        var renderModel = CvRenderModel.FromProfile(profile, _localizer);
+
+        if (renderModel.Projects.Count != 0)
         {
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionSeparator(column);
 
-            if (UseSectionSeparators)
-                SectionTitleAfterSeparator(column, _localizer["PersonalProjectsCv"]);
+            if (Style.UseSectionSeparators)
+                SectionTitleAfterSeparator(column, _localizer["PersonalProjectsCv"], profile.ProjectsSection);
             else
-                SectionTitle(column, _localizer["PersonalProjectsCv"]);
-            var projectList = profile.Projects.OrderByDescending(p => p.StartDate).ToList();
+                SectionTitle(column, _localizer["PersonalProjectsCv"], profile.ProjectsSection);
+            var projectList = renderModel.Projects;
             for (int i = 0; i < projectList.Count; i++)
             {
                 var project = projectList[i];
@@ -112,9 +134,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     .PaddingBottom(i < projectList.Count - 1 ? 0.3f : 0f, Unit.Centimetre)
                     .Element(cell =>
                     {
-                        cell.Background(_backgroundLight)
+                        cell.Background(Style.BackgroundLight)
                             .BorderLeft(1.5f)
-                            .BorderColor(_primaryColor)
+                            .BorderColor(Style.EffectiveAdditionalSectionBorderColor)
                             .CornerRadius(5)
                             .Padding(10)
                             .Column(c =>
@@ -128,17 +150,15 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                 t.DefaultTextStyle(x =>
                                                     x.Bold()
                                                         .FontSize(fontSize + 1)
-                                                        .FontColor(_textDark)
+                                                        .FontColor(Style.TextDark)
                                                 );
                                                 ComposeMarkdownText(t, project.Name ?? "");
                                             });
                                         r.ConstantItem(100)
                                             .AlignRight()
-                                            .Text(
-                                                $"{project.StartDate:yyyy} - {(project.EndDate.HasValue ? project.EndDate.Value.ToString("yyyy") : _localizer["Present"])}"
-                                            )
+                                            .Text(project.DateRange)
                                             .FontSize(fontSize - 2)
-                                            .FontColor(_textMedium);
+                                            .FontColor(Style.TextMedium);
                                     });
 
                                 if (!string.IsNullOrWhiteSpace(project.Link))
@@ -149,14 +169,14 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                         {
                                             t.DefaultTextStyle(x =>
                                                 x.FontSize(fontSize - 1)
-                                                    .FontColor(_primaryColor)
+                                                    .FontColor(Style.PrimaryColor)
                                                     .SemiBold()
                                             );
                                             t.Span($"{_localizer["GitHubLabel"]} ");
                                             ComposeMarkdownText(
                                                 t,
                                                 $"<a href='{project.Link}'>{project.Link}</a>",
-                                                _primaryColor
+                                                Style.PrimaryColor
                                             );
                                         });
                                 }
@@ -169,7 +189,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                         {
                                             t.DefaultTextStyle(x =>
                                                 x.FontSize(fontSize - 1)
-                                                    .FontColor(_textMedium)
+                                                    .FontColor(Style.TextMedium)
                                             );
                                             t.Span($"{_localizer["TechnologiesLabel"]} ");
                                             ComposeMarkdownText(t, project.Technologies);
@@ -184,7 +204,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                         {
                                             t.DefaultTextStyle(x =>
                                                 x.FontSize(fontSize - 1)
-                                                    .FontColor(_textMedium)
+                                                    .FontColor(Style.TextMedium)
                                                     .Italic()
                                             );
                                             ComposeMarkdownText(t, project.Role);
@@ -200,7 +220,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                                 c2,
                                                 project.Description,
                                                 fontSize - 1,
-                                                _textMedium
+                                                Style.TextMedium
                                             )
                                         );
                                 }
@@ -212,95 +232,152 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
         }
 
-        if (profile.Languages != null && profile.Languages.Count != 0)
+        if (renderModel.Languages.Count != 0)
         {
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionSeparator(column);
 
-            if (UseSectionSeparators)
-                SectionTitleAfterSeparator(column, _localizer["LanguagesCv"]);
+            if (Style.UseSectionSeparators)
+                SectionTitleAfterSeparator(column, _localizer["LanguagesCv"], profile.LanguagesSection);
             else
-                SectionTitle(column, _localizer["LanguagesCv"]);
+                SectionTitle(column, _localizer["LanguagesCv"], profile.LanguagesSection);
             var languageItem = column
                 .Item()
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(_primaryColor)
+                .BorderColor(Style.EffectiveAdditionalSectionBorderColor)
                 .CornerRadius(5)
                 .Padding(10);
 
-            if (CenterLanguageContent)
+            if (Style.CenterLanguageContent)
                 languageItem = languageItem.AlignCenter();
 
-            languageItem.Text(t =>
+            if (profile.LanguagesSection?.DisplayAsChips == true)
             {
-                if (CenterLanguageContent)
-                    t.AlignCenter();
-
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
-                for (int i = 0; i < profile.Languages.Count; i++)
+                languageItem.AlignCenter().Inlined(inlined =>
                 {
-                    var language = profile.Languages[i];
-                    if (i > 0)
-                        t.Span(" • ").FontColor(_textDark);
-
-                    ComposeMarkdownText(t, language.Name ?? "");
-
-                    if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                    inlined.Spacing(5);
+                    inlined.AlignCenter();
+                    foreach (var language in renderModel.Languages)
                     {
-                        t.Span(" ");
-                        ComposeMarkdownText(t, language.Proficiency, _textDark);
+                        inlined.Item()
+                            .Background("#EEEEEE")
+                            .Border(1)
+                            .BorderColor(Style.BorderColor)
+                            .CornerRadius(10)
+                            .PaddingHorizontal(8)
+                            .PaddingVertical(3)
+                            .Text(t =>
+                            {
+                                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextDark));
+                                ComposeMarkdownText(t, language.Name ?? "");
+                                if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                                {
+                                    t.Span(" ");
+                                    ComposeMarkdownText(t, language.Proficiency, Style.TextMedium);
+                                }
+                            });
                     }
-                }
-            });
+                });
+            }
+            else
+            {
+                languageItem.Text(t =>
+                {
+                    if (Style.CenterLanguageContent)
+                        t.AlignCenter();
+
+                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
+                    for (int i = 0; i < renderModel.Languages.Count; i++)
+                    {
+                        var language = renderModel.Languages[i];
+                        if (i > 0)
+                            t.Span(" • ").FontColor(Style.TextDark);
+
+                        ComposeMarkdownText(t, language.Name ?? "");
+
+                        if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                        {
+                            t.Span(" ");
+                            ComposeMarkdownText(t, language.Proficiency, Style.TextDark);
+                        }
+                    }
+                });
+            }
 
         }
 
-        if (profile.Interests != null && profile.Interests.Count != 0)
+        if (renderModel.Interests.Count != 0)
         {
-            if (UseSectionSeparators)
+            if (Style.UseSectionSeparators)
                 SectionSeparator(column);
 
-            if (UseSectionSeparators)
-                SectionTitleAfterSeparator(column, _localizer["InterestsCv"]);
+            if (Style.UseSectionSeparators)
+                SectionTitleAfterSeparator(column, _localizer["InterestsCv"], profile.InterestsSection);
             else
-                SectionTitle(column, _localizer["InterestsCv"]);
+                SectionTitle(column, _localizer["InterestsCv"], profile.InterestsSection);
             var interestItem = column
                 .Item()
                 .PaddingTop(0.1f, Unit.Centimetre)
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderLeft(1.5f)
-                .BorderColor(_primaryColor)
+                .BorderColor(Style.EffectiveAdditionalSectionBorderColor)
                 .CornerRadius(5)
                 .Padding(10);
 
-            if (UseInterestChips)
+            if (Style.UseInterestChips)
                 interestItem = interestItem.AlignCenter();
 
-            interestItem.Text(t =>
+            if (profile.InterestsSection?.DisplayAsChips == true)
             {
-                if (UseInterestChips)
-                    t.AlignCenter();
-
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(_textMedium));
-                for (int i = 0; i < profile.Interests.Count; i++)
+                interestItem.AlignCenter().Inlined(inlined =>
                 {
-                    if (i > 0)
-                        t.Span(" • ").FontColor(_textDark);
+                    inlined.Spacing(5);
+                    inlined.AlignCenter();
+                    foreach (var interest in renderModel.Interests)
+                    {
+                        inlined.Item()
+                            .Background("#EEEEEE")
+                            .Border(1)
+                            .BorderColor(Style.BorderColor)
+                            .CornerRadius(10)
+                            .PaddingHorizontal(8)
+                            .PaddingVertical(3)
+                            .Text(t =>
+                            {
+                                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextDark));
+                                ComposeMarkdownText(t, interest.Name ?? "");
+                            });
+                    }
+                });
+            }
+            else
+            {
+                interestItem.Text(t =>
+                {
+                    if (Style.UseInterestChips)
+                        t.AlignCenter();
 
-                    ComposeMarkdownText(t, profile.Interests[i].Name ?? "");
-                }
-            });
+                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
+                    for (int i = 0; i < renderModel.Interests.Count; i++)
+                    {
+                        if (i > 0)
+                            t.Span(" • ").FontColor(Style.TextDark);
+
+                        ComposeMarkdownText(t, renderModel.Interests[i].Name ?? "");
+                    }
+                });
+            }
         }
 
         var referencesItem = column.Item().ExtendVertical().AlignBottom();
 
-        if (UseReferencesFooterPanel)
+        if (Style.UseReferencesFooterPanel)
         {
             referencesItem
-                .Background(_backgroundLight)
+                .Background(Style.BackgroundLight)
                 .BorderTop(1)
-                .BorderColor(_borderColor)
+                .BorderColor(Style.BorderColor)
                 .PaddingVertical(0.18f, Unit.Centimetre)
                 .PaddingHorizontal(0.4f, Unit.Centimetre)
                 .AlignCenter()
@@ -308,9 +385,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 {
                     t.AlignCenter();
                     t.DefaultTextStyle(x =>
-                        x.FontSize(fontSize - 2).Italic().FontColor(_textMedium)
+                        x.FontSize(fontSize - 2).Italic().FontColor(Style.TextMedium)
                     );
-                    ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
+                    ComposeMarkdownText(t, string.IsNullOrWhiteSpace(profile.FooterText) ? _localizer["ReferencesAvailableUponRequest"] : profile.FooterText);
                 });
         }
         else
@@ -321,80 +398,331 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 {
                     t.AlignCenter();
                     t.DefaultTextStyle(x =>
-                        x.FontSize(fontSize - 2).Italic().FontColor(_textMedium)
+                        x.FontSize(fontSize - 2).Italic().FontColor(Style.TextMedium)
                     );
-                    ComposeMarkdownText(t, _localizer["ReferencesAvailableUponRequest"]);
+                    ComposeMarkdownText(t, string.IsNullOrWhiteSpace(profile.FooterText) ? _localizer["ReferencesAvailableUponRequest"] : profile.FooterText);
                 });
         }
     }
 
-    private void ComposeProjectSectionDetails(
-        ColumnDescriptor column,
-        Project project,
+    protected void ComposeSummaryAndSkills(
+        IContainer container,
+        CandidateProfile profile,
         float fontSize
     )
     {
-        if (
-            string.IsNullOrWhiteSpace(project.SectionTitle)
-            && string.IsNullOrWhiteSpace(project.SectionDescription)
-        )
-        {
-            return;
-        }
+        var renderModel = CvRenderModel.FromProfile(profile, _localizer);
 
-        if (!string.IsNullOrWhiteSpace(project.SectionDescription))
+        container.Column(col =>
         {
-            if (!string.IsNullOrWhiteSpace(project.SectionTitle))
+            col.Item().PaddingTop(1, Unit.Centimetre);
+            if (!string.IsNullOrWhiteSpace(profile.ProfessionalSummary))
             {
-                column
-                    .Item()
-                    .PaddingTop(0.15f, Unit.Centimetre)
-                    .Text(t =>
+                col.Item()
+                    .Background(Style.BackgroundLight)
+                    .BorderLeft(1.5f)
+                    .BorderColor(Style.EffectiveSummaryBorderColor)
+                    .CornerRadius(5)
+                    .Padding(10)
+                    .Column(c =>
+                        ComposeHtmlContent(c, profile.ProfessionalSummary, fontSize, Style.TextMedium)
+                    );
+                col.Item().PaddingBottom(1, Unit.Centimetre);
+            }
+
+            if (renderModel.SkillGroups.Count != 0)
+            {
+                SectionTitle(col, _localizer["CoreCompetencies"], profile.SkillsSection);
+                foreach (var skillGroup in renderModel.SkillGroups)
+                {
+                    col.Item()
+                        .PaddingBottom(0.3f, Unit.Centimetre)
+                        .Background(Style.BackgroundLight)
+                        .BorderLeft(1.5f)
+                        .BorderColor(Style.EffectiveSkillsBorderColor)
+                        .CornerRadius(5)
+                        .Padding(10)
+                        .Column(c =>
+                        {
+                            c.Item()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.Bold().FontSize(fontSize).FontColor(Style.PrimaryDark)
+                                    );
+                                    ComposeMarkdownText(t, skillGroup.Category);
+                                });
+                            c.Item()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.FontSize(fontSize - 1).FontColor(Style.TextMedium)
+                                    );
+                                    ComposeMarkdownText(t, skillGroup.SkillNames);
+                                });
+                        });
+                }
+                col.Item().PaddingBottom(1, Unit.Centimetre);
+            }
+        });
+    }
+
+    protected void ComposeWorkExperienceSection(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize
+    )
+    {
+        var renderModel = CvRenderModel.FromProfile(profile, _localizer);
+
+        container.Column(col =>
+        {
+            col.Item().PaddingTop(1, Unit.Centimetre);
+            if (renderModel.WorkExperiences.Count != 0)
+            {
+                SectionTitle(col, _localizer["WorkExperienceCv"], profile.ExperienceSection);
+                col.Item()
+                    .Table(table =>
                     {
-                        t.DefaultTextStyle(x =>
-                            x.FontSize(fontSize - 1).Bold().FontColor(_primaryColor)
-                        );
-                        ComposeMarkdownText(t, project.SectionTitle);
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn();
+                            columns.ConstantColumn(180);
+                        });
+                        var workExperiences = renderModel.WorkExperiences;
+                        for (int i = 0; i < workExperiences.Count; i++)
+                        {
+                            var exp = workExperiences[i];
+                            table
+                                .Cell()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(s =>
+                                        s.FontSize(fontSize + 1).FontColor(Style.TextDark).Bold()
+                                    );
+                                    ComposeMarkdownText(t, exp.JobTitle);
+                                });
+                            table
+                                .Cell()
+                                .AlignRight()
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(s =>
+                                        s.FontSize(fontSize - 2).FontColor(Style.TextMedium)
+                                    );
+                                    t.Span(exp.DateRange);
+                                    if (!string.IsNullOrEmpty(exp.Duration))
+                                        t.Span($" ({exp.Duration})").Italic();
+                                });
+                            table
+                                .Cell()
+                                .ColumnSpan(2)
+                                .Text(t =>
+                                {
+                                    t.DefaultTextStyle(x =>
+                                        x.FontSize(fontSize).FontColor(Style.EffectiveWorkCompanyColor).SemiBold()
+                                    );
+                                    ComposeMarkdownText(t, exp.CompanyLine);
+                                });
+                            if (!string.IsNullOrWhiteSpace(exp.Description))
+                            {
+                                table
+                                    .Cell()
+                                    .ColumnSpan(2)
+                                    .PaddingTop(0.2f, Unit.Centimetre)
+                                    .Column(c =>
+                                        ComposeHtmlContent(
+                                            c,
+                                            exp.Description,
+                                            fontSize - 1,
+                                            Style.TextMedium,
+                                            bullet: Style.SuppressWorkDescriptionBullet ? null : "•"
+                                        )
+                                    );
+                            }
+
+                            if (i < workExperiences.Count - 1)
+                            {
+                                table
+                                    .Cell()
+                                    .ColumnSpan(2)
+                                    .PaddingTop(0.4f, Unit.Centimetre)
+                                    .PaddingBottom(0.4f, Unit.Centimetre)
+                                    .LineHorizontal(1)
+                                    .LineColor(Style.BorderColor);
+                            }
+                        }
+                    });
+                col.Item().PaddingBottom(1, Unit.Centimetre);
+            }
+        });
+    }
+
+    protected void ComposeEducationAndAdditionalSections(
+        IContainer container,
+        CandidateProfile profile,
+        float fontSize
+    )
+    {
+        var renderModel = CvRenderModel.FromProfile(profile, _localizer);
+
+        container.Column(col =>
+        {
+            col.Item().PaddingTop(1, Unit.Centimetre);
+            if (renderModel.Educations.Count != 0)
+            {
+                SectionTitle(col, _localizer["EducationCv"], profile.EducationSection);
+                col.Item()
+                    .Table(table =>
+                    {
+                        table.ColumnsDefinition(columns => columns.RelativeColumn());
+                        var eduList = renderModel.Educations;
+                        for (int i = 0; i < eduList.Count; i++)
+                        {
+                            var edu = eduList[i];
+                            table
+                                .Cell()
+                                .Element(cell =>
+                                {
+                                    cell.Background(Style.BackgroundLight)
+                                        .BorderLeft(1.5f)
+                                        .BorderColor(Style.EffectiveEducationBorderColor)
+                                        .CornerRadius(5)
+                                        .Padding(10)
+                                        .Column(c =>
+                                        {
+                                            c.Item()
+                                                .Row(r =>
+                                                {
+                                                    r.RelativeItem()
+                                                        .Text(t =>
+                                                        {
+                                                            t.DefaultTextStyle(x =>
+                                                                x.Bold()
+                                                                    .FontSize(fontSize + 1)
+                                                                    .FontColor(Style.TextDark)
+                                                            );
+                                                            ComposeMarkdownText(
+                                                                t,
+                                                                edu.Degree ?? ""
+                                                            );
+                                                        });
+                                                    r.ConstantItem(100)
+                                                        .AlignRight()
+                                                        .Text(edu.DateRange)
+                                                        .FontSize(fontSize - 2)
+                                                        .FontColor(Style.TextMedium);
+                                                });
+                                            c.Item()
+                                                .Text(t =>
+                                                {
+                                                    t.DefaultTextStyle(x =>
+                                                        x.FontSize(fontSize)
+                                                            .FontColor(Style.PrimaryColor)
+                                                            .SemiBold()
+                                                            .Bold()
+                                                    );
+                                                    ComposeMarkdownText(
+                                                        t,
+                                                        edu.InstitutionName ?? ""
+                                                    );
+                                                });
+                                            if (!string.IsNullOrEmpty(edu.Description))
+                                            {
+                                                c.Item()
+                                                    .PaddingTop(0.25f, Unit.Centimetre)
+                                                    .PaddingBottom(0.25f, Unit.Centimetre)
+                                                    .LineHorizontal(1)
+                                                    .LineColor(Style.BorderColor);
+                                                c.Item()
+                                                    .Column(cc =>
+                                                        ComposeHtmlContent(
+                                                            cc,
+                                                            edu.Description,
+                                                            fontSize - 1,
+                                                            Style.TextMedium
+                                                        )
+                                                    );
+                                            }
+                                        });
+                                });
+                            if (i < eduList.Count - 1)
+                                table.Cell().ColumnSpan(1).LineHorizontal(1).LineColor("#E0E0E0");
+                        }
                     });
             }
 
-            column
-                .Item()
-                .PaddingTop(0.1f, Unit.Centimetre)
-                .Column(c =>
-                    ComposeHtmlContent(c, project.SectionDescription, fontSize - 1, _textMedium)
-                );
+            ComposePageThreeAdditionalSections(col, profile, fontSize);
+        });
+    }
+
+    protected void ComposeCoverLetterPanel(
+        IContainer container,
+        string letterContent,
+        float fontSize
+    )
+    {
+        container.Column(col =>
+        {
+            col.Item().PaddingTop(0.8f, Unit.Centimetre);
+            col.Item()
+                .Background(Style.BackgroundLight)
+                .BorderLeft(1.5f)
+                .BorderColor(Style.EffectiveCoverLetterBorderColor)
+                .CornerRadius(5)
+                .Padding(10)
+                .Column(letterCol =>
+                {
+                    if (!string.IsNullOrWhiteSpace(letterContent))
+                    {
+                        ComposeHtmlContent(
+                            letterCol,
+                            letterContent,
+                            fontSize,
+                            Style.TextDark,
+                            lineHeight: 1.35f,
+                            paragraphSpacing: 8f,
+                            preserveParagraphBreaks: true
+                        );
+                    }
+                    else
+                    {
+                        letterCol.Item().Text("No content provided.").Italic();
+                    }
+                });
+        });
+    }
+
+    private void ComposeProjectSectionDetails(
+        ColumnDescriptor column,
+        CvProjectItem project,
+        float fontSize
+    )
+    {
+        if (string.IsNullOrWhiteSpace(project.Section.Header) && string.IsNullOrWhiteSpace(project.Section.Details))
+        {
             return;
         }
 
-        var sectionLines = (project.SectionTitle ?? "")
-            .Replace("\r\n", "\n")
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (!string.IsNullOrWhiteSpace(project.Section.Header))
+        {
+            column
+                .Item()
+                .PaddingTop(0.15f, Unit.Centimetre)
+                .Text(t =>
+                {
+                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).Bold().FontColor(Style.PrimaryColor));
+                    ComposeMarkdownText(t, project.Section.Header);
+                });
+        }
 
-        if (sectionLines.Length == 0)
-            return;
-
-        column
-            .Item()
-            .PaddingTop(0.15f, Unit.Centimetre)
-            .Text(t =>
-            {
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).Bold().FontColor(_primaryColor));
-                ComposeMarkdownText(t, sectionLines[0]);
-            });
-
-        if (sectionLines.Length > 1)
+        if (!string.IsNullOrWhiteSpace(project.Section.Details))
         {
             column
                 .Item()
                 .PaddingTop(0.1f, Unit.Centimetre)
                 .Column(c =>
-                    ComposeHtmlContent(
-                        c,
-                        string.Join("\n", sectionLines.Skip(1)),
-                        fontSize - 1,
-                        _textMedium
-                    )
+                    ComposeHtmlContent(c, project.Section.Details, fontSize - 1, Style.TextMedium)
                 );
         }
     }
@@ -469,6 +797,154 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         AddLink("GitHubLabel", profile.PortfolioUrl);
     }
 
+    protected bool HasProfilePhoto(CandidateProfile profile, out string photoPath)
+    {
+        photoPath = string.Empty;
+        if (!profile.ShowProfilePicture || string.IsNullOrEmpty(profile.ProfilePictureUrl))
+            return false;
+
+        var webRootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+        photoPath = Path.Combine(webRootPath, profile.ProfilePictureUrl.TrimStart('/', '\\'));
+        return File.Exists(photoPath);
+    }
+
+    protected void ComposeProfilePhoto(
+        IContainer container,
+        string photoPath,
+        float sizeCm,
+        string borderColor = "#ffffff",
+        float borderThickness = 2
+    )
+    {
+        container
+            .Background("#ffffff")
+            .CornerRadius(sizeCm / 2, Unit.Centimetre)
+            .Border(borderThickness)
+            .BorderColor(borderColor)
+            .Image(photoPath)
+            .FitArea();
+    }
+
+    protected void ComposeHeaderName(
+        ColumnDescriptor col,
+        string name,
+        float fontSize,
+        string fontColor,
+        float letterSpacing = 0f,
+        bool makeUppercase = false
+    )
+    {
+        col.Item()
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontSize(fontSize).Bold().FontColor(fontColor).LetterSpacing(letterSpacing)
+                );
+                ComposeMarkdownText(t, makeUppercase ? name.ToUpper() : name, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderTitle(
+        ColumnDescriptor col,
+        string title,
+        float fontSize,
+        string fontColor,
+        float letterSpacing = 0f,
+        bool makeUppercase = false,
+        bool isBold = false
+    )
+    {
+        col.Item()
+            .PaddingTop(0.1f, Unit.Centimetre)
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                {
+                    var s = x.FontSize(fontSize).FontColor(fontColor).LetterSpacing(letterSpacing);
+                    if (isBold)
+                        s.Bold();
+                    return s;
+                });
+                ComposeMarkdownText(t, makeUppercase ? title.ToUpper() : title, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderContactRow(
+        ColumnDescriptor col,
+        CandidateProfile profile,
+        float fontSize,
+        string fontColor,
+        bool makeUppercase = false,
+        float letterSpacing = 0f
+    )
+    {
+        col.Item()
+            .PaddingTop(0.3f, Unit.Centimetre)
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontColor(fontColor).FontSize(fontSize).LetterSpacing(letterSpacing)
+                );
+                ComposeContactRow(t, profile, makeUppercase, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderLinkRow(
+        ColumnDescriptor col,
+        CandidateProfile profile,
+        float fontSize,
+        string fontColor,
+        bool makeUppercase = false,
+        float letterSpacing = 0f
+    )
+    {
+        col.Item()
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontColor(fontColor).FontSize(fontSize).LetterSpacing(letterSpacing)
+                );
+                ComposeLinkRow(t, profile, makeUppercase, fontColor);
+            });
+    }
+
+    protected void ComposeHeaderTagline(
+        ColumnDescriptor col,
+        string tagline,
+        float fontSize,
+        string fontColor,
+        string lineColor,
+        float lineHeight = 1.2f
+    )
+    {
+        if (string.IsNullOrWhiteSpace(tagline))
+            return;
+
+        col.Item()
+            .PaddingTop(0.2f, Unit.Centimetre)
+            .PaddingBottom(0.2f, Unit.Centimetre)
+            .LineHorizontal(0.5f)
+            .LineColor(lineColor);
+        col.Item()
+            .AlignCenter()
+            .Text(t =>
+            {
+                t.AlignCenter();
+                t.DefaultTextStyle(x =>
+                    x.FontColor(fontColor).FontSize(fontSize).LineHeight(lineHeight)
+                );
+                ComposeMarkdownText(t, tagline, fontColor);
+            });
+    }
+
     protected void ComposeMarkdownText(TextDescriptor t, string? content, string? color = null)
     {
         if (string.IsNullOrWhiteSpace(content))
@@ -529,7 +1005,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                             .Row(row =>
                             {
                                 var svgXml =
-                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{_accentColor}\"/></svg>";
+                                    $"<svg viewBox=\"0 0 24 24\"><path d=\"{CheckmarkSvgPath}\" fill=\"{Style.AccentColor}\"/></svg>";
                                 row.ConstantItem(fontSize + 5)
                                     .PaddingRight(5)
                                     .PaddingTop(2)
@@ -561,7 +1037,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     .Item()
                     .PaddingVertical(0.1f, Unit.Centimetre)
                     .LineHorizontal(1)
-                    .LineColor(_borderColor);
+                    .LineColor(Style.BorderColor);
             }
         }
     }
@@ -779,7 +1255,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (!string.IsNullOrEmpty(bullet))
             {
                 if (bullet.Contains('\u25B8'))
-                    bRep = $"<span style='color:{_primaryColor}'>\u25B8</span> ";
+                    bRep = $"<span style='color:{Style.PrimaryColor}'>\u25B8</span> ";
                 else if (bullet.Contains('\u2713'))
                     bRep = checkmarkPlaceholder;
             }
@@ -798,7 +1274,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             ? MultipleParagraphBreakRegex().Replace(pText, "[[PARAGRAPH]]")
             : MultipleNewlineRegex().Replace(pText, "\n");
         pText = pText.Replace("\u2713", checkmarkPlaceholder);
-        pText = pText.Replace("\u25B8", $"<span style='color:{_primaryColor}'>\u25B8</span>");
+        pText = pText.Replace("\u25B8", $"<span style='color:{Style.PrimaryColor}'>\u25B8</span>");
 
         return pText.Trim();
     }

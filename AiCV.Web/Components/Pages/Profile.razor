@@ -13,7 +13,7 @@ else
 {
     <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
         <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
-                  Class="pb-4 d-print-none stack-on-mobile" Style="gap: 16px;">
+                  Class="pb-4 d-print-none stack-on-mobile" Style="gap: 1rem;">
             <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
                 <MudIcon Icon="@Icons.Material.Filled.Badge" Color="Color.Primary" />
                 <MudText Typo="Typo.h5">@Localizer["MasterCvProfile"]</MudText>
@@ -23,7 +23,7 @@ else
                 </MudTooltip>
             </MudStack>
             <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
-                @if (_activeTabIndex != 7)
+                @if (_activeTabIndex != 8)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
                                Disabled="_isSaving" Style="white-space: nowrap;"
@@ -39,13 +39,13 @@ else
                         }
                     </MudButton>
                 }
-                @if (_activeTabIndex == 7)
+                @if (_activeTabIndex == 8)
                 {
-                    <MudSelect T="CvTemplate" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:150px;"
+                    <MudSelect T="string" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:9.375rem;"
                                Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
-                        <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
-                        <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
-                        <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
+                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
+                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
                     </MudSelect>
 
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
@@ -69,43 +69,48 @@ else
             <MudDivider DividerType="DividerType.Middle" Class="my-3" />
 
             @* Tab Personal Details *@
-            <MudTabPanel Text="@Localizer["PersonalDetails"]" Icon="@Icons.Material.Filled.Person">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.SummarySection.Title) ? Localizer["PersonalDetails"] : _profile.SummarySection.Title)" Icon="@Icons.Material.Filled.Person">
                 <PersonalDetailsTab Profile="_profile" OnFilesChanged="UploadFiles" OnDeletePicture="DeleteProfilePicture" />
             </MudTabPanel>
 
             @* Tab Experience *@
-            <MudTabPanel Text="@Localizer["Experience"]" Icon="@Icons.Material.Filled.WorkHistory">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.ExperienceSection.Title) ? Localizer["Experience"] : _profile.ExperienceSection.Title)" Icon="@Icons.Material.Filled.WorkHistory">
                 <ExperienceTab Profile="_profile" />
             </MudTabPanel>
 
             @* Tab Education *@
-            <MudTabPanel Text="@Localizer["Education"]" Icon="@Icons.Material.Filled.School">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.EducationSection.Title) ? Localizer["Education"] : _profile.EducationSection.Title)" Icon="@Icons.Material.Filled.School">
                 <EducationTab Profile="_profile" />
             </MudTabPanel>
 
             @* Tab Skills *@
-            <MudTabPanel Text="@Localizer["Skills"]" Icon="@Icons.Material.Filled.Build">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.SkillsSection.Title) ? Localizer["Skills"] : _profile.SkillsSection.Title)" Icon="@Icons.Material.Filled.Build">
                 <SkillsTab Profile="_profile" SkillCategories="_skillCategories" OnSkillsUpdated="UpdateProfileSkills" />
             </MudTabPanel>
 
             @* Tab Projects *@
-            <MudTabPanel Text="@Localizer["Projects"]" Icon="@Icons.Material.Filled.Code">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.ProjectsSection.Title) ? Localizer["Projects"] : _profile.ProjectsSection.Title)" Icon="@Icons.Material.Filled.Code">
                 <ProjectsTab Profile="_profile" />
             </MudTabPanel>
 
             @* Tab Languages *@
-            <MudTabPanel Text="@Localizer["Languages"]" Icon="@Icons.Material.Filled.Language">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.LanguagesSection.Title) ? Localizer["Languages"] : _profile.LanguagesSection.Title)" Icon="@Icons.Material.Filled.Language">
                 <LanguagesTab Profile="_profile" />
             </MudTabPanel>
 
             @* Tab Interests *@
-            <MudTabPanel Text="@Localizer["Interests"]" Icon="@Icons.Material.Filled.Interests">
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.InterestsSection.Title) ? Localizer["Interests"] : _profile.InterestsSection.Title)" Icon="@Icons.Material.Filled.Interests">
                 <InterestsTab Profile="_profile" />
+            </MudTabPanel>
+
+            @* Tab Footer *@
+            <MudTabPanel Text="@Localizer["Footer"]" Icon="@Icons.Material.Filled.ShortText">
+                <AiCV.Web.Components.Shared.ProfileTabs.FooterTab Profile="_profile" />
             </MudTabPanel>
 
             @* Tab CV Preview *@
             <MudTabPanel Text="@Localizer["CvPreview"]" Icon="@Icons.Material.Filled.Preview" Style="background-color:cornflowerblue;color:whitesmoke; border-radius:0.5rem;">
-                <AiCV.Web.Components.Shared.CvPreview Profile="@_profile" Template="@_selectedTemplate" />
+                <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="@_profile" Template="@_selectedTemplate" />
             </MudTabPanel>
         </MudTabs>
     </MudContainer>

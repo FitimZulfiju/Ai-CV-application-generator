@@ -136,3 +136,6 @@ AiCV.Web/wwwroot/uploads/
 .dotnet/.dotnet/10.0.201.dotnetFirstUseSentinel
 /.dotnet/.dotnet
 /.dotnet-cli/.dotnet
+
+# AI Rules
+AI_RULES.md

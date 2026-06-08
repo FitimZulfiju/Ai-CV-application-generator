@@ -149,7 +149,7 @@ public class JobApplicationOrchestratorTests
             testCoverLetter,
             tailoredResume,
             testApplicationEmail,
-            CvTemplate.Modern
+            Domain.Constants.CvTemplates.Modern
         );
 
         // Assert - Note: The orchestrator creates a fresh JobPosting entity to avoid EF Core tracking issues
@@ -169,7 +169,7 @@ public class JobApplicationOrchestratorTests
                         && app.CoverLetterContent == testCoverLetter
                         && !string.IsNullOrEmpty(app.TailoredResumeJson)
                         && app.ApplicationEmailContent == testApplicationEmail
-                        && app.Template == CvTemplate.Modern
+                        && app.Template == Domain.Constants.CvTemplates.Modern
                     )
                 ),
             Times.Once

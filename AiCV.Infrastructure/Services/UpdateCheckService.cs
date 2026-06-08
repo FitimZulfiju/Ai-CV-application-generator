@@ -25,7 +25,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
     private readonly ILogger<UpdateCheckService> _logger;
     private readonly IHostEnvironment _environment;
     private readonly string _repository;
-    private readonly string _tag = "latest";
+    private readonly string _tag;
     private readonly string _watchtowerToken;
     private string? _currentDigest;
     private string? _newVersionDigest;
@@ -62,6 +62,14 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         _logger = logger;
         _environment = environment;
         _repository = _configuration["DOCKER_REPOSITORY"] ?? "timi74/aicv";
+        _tag = _configuration["IMAGE_TAG"] ?? "latest";
+        
+        // If IMAGE_TAG is empty for some reason, fallback to latest
+        if (string.IsNullOrWhiteSpace(_tag))
+        {
+            _tag = "latest";
+        }
+        
         _watchtowerToken = _configuration["WATCHTOWER_HTTP_API_TOKEN"] ?? string.Empty;
     }
 

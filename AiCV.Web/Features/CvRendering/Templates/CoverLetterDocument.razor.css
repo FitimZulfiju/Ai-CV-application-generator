@@ -1,0 +1,145 @@
+/* --- MINIMALIST COVER LETTER --- */
+
+.cv-container.cv-minimalist .header {
+    background: white;
+    color: var(--text-dark);
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    text-align: center;
+    border-bottom: 0.125rem solid var(--border-color);
+    min-height: 10em;
+}
+
+.cv-container.cv-minimalist .name {
+    font-size: var(--font-size-name);
+    font-weight: 300;
+    color: var(--text-dark);
+}
+
+.cv-container.cv-minimalist .title {
+    font-size: var(--font-size-title);
+    color: var(--text-medium);
+    font-weight: 400;
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper {
+    color: var(--text-medium);
+}
+
+.cv-container.cv-minimalist .contact-info-wrapper a {
+    color: var(--primary-color);
+}
+
+.cv-container.cover-letter.cv-minimalist .summary {
+    padding: 3.5em;
+    font-size: var(--font-size-body);
+    color: var(--text-dark);
+    line-height: 1.8;
+}
+
+.cv-container.cover-letter.cv-minimalist .page {
+    /* No fixed height here */
+}
+
+/* --- MODERN COVER LETTER --- */
+
+.cv-container.cv-modern {
+    --modern-primary: #2c3e50;
+    --modern-accent: #e67e22;
+}
+
+.cv-container.cv-modern .header {
+    background: var(--modern-primary);
+    color: white;
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    display: flex;
+    align-items: center;
+    gap: 2.5em;
+    text-align: left;
+    min-height: 10em;
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--modern-accent);
+}
+
+.cv-container.cv-modern .name {
+    font-size: var(--font-size-name);
+    color: white;
+}
+
+.cv-container.cv-modern .title {
+    font-size: var(--font-size-title);
+    color: var(--modern-accent);
+    text-transform: uppercase;
+}
+
+.cv-container.cv-modern .contact-info-wrapper a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+}
+
+.cv-container.cover-letter.cv-modern .summary {
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    font-size: var(--font-size-body);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+
+.cv-container.cover-letter.cv-modern .page {
+    /* No fixed height here */
+}
+
+/* --- PROFESSIONAL COVER LETTER --- */
+
+/* Re-use Header from CV Template */
+.cv-container.cv-professional .header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: var(--cv-padding-y) var(--cv-padding-x);
+    text-align: center;
+    position: relative;
+    border-radius: 0.5em;
+    border-bottom: 0.35em solid var(--accent-color);
+}
+
+.cv-container.cv-professional .name {
+    font-size: var(--font-size-name);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.cv-container.cv-professional .title {
+    font-size: var(--font-size-title);
+    font-weight: 400;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+    letter-spacing: 0.05em;
+}
+
+.cv-container.cv-professional .contact-info-wrapper {
+    text-align: center;
+    font-size: var(--font-size-meta);
+    color: white;
+    line-height: 1.6;
+}
+
+.cv-container.cv-professional .contact-info-wrapper a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 0.062em solid rgba(255, 255, 255, 0.4);
+}
+
+/* Specific Summary Styling for Cover Letter */
+.cv-container.cover-letter.cv-professional .summary {
+    background: transparent;
+    border-left: none;
+    padding: 2.5em 3.5em;
+    text-align: left;
+    color: var(--text-dark);
+}
+
+.cv-container.cover-letter.cv-professional .page {
+    /* No fixed height here - let scaler handle it */
+}

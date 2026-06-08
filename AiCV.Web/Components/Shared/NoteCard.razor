@@ -4,7 +4,7 @@
     @if (NoteItem.IsPinned)
     {
         <MudIcon Icon="@Icons.Material.Filled.PushPin" Size="Size.Small" Color="Color.Default"
-        Style="position: absolute; top: 12px; right: 12px; opacity: 0.6; transform: rotate(45deg);" />
+        Style="position: absolute; top: 0.75rem; right: 0.75rem; opacity: 0.6; transform: rotate(45deg);" />
     }
     <MudCardContent Class="pa-3" @onclick="OnCardClick" Style="cursor: pointer;">
         @if (!string.IsNullOrWhiteSpace(NoteItem.Title))

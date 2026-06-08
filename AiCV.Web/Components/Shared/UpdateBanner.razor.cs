@@ -1,4 +1,4 @@
-﻿namespace AiCV.Web.Components.Shared;
+namespace AiCV.Web.Components.Shared;
 
 public partial class UpdateBanner
 {
@@ -63,7 +63,7 @@ public partial class UpdateBanner
                     ? DateTime.UtcNow - _installingSinceUtc.Value
                     : TimeSpan.Zero;
 
-                if (!response.IsUpdateScheduled && installElapsed >= TimeSpan.FromSeconds(15))
+                if (!response.IsUpdateScheduled && installElapsed >= TimeSpan.FromSeconds(60))
                 {
                     _isInstalling = false;
                     _showBanner = false;

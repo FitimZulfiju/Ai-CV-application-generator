@@ -102,5 +102,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(i => i.CandidateProfile)
             .HasForeignKey(i => i.CandidateProfileId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CandidateProfile>(entity =>
+        {
+            entity.OwnsOne(p => p.SummarySection);
+            entity.OwnsOne(p => p.ExperienceSection);
+            entity.OwnsOne(p => p.EducationSection);
+            entity.OwnsOne(p => p.SkillsSection);
+            entity.OwnsOne(p => p.ProjectsSection);
+            entity.OwnsOne(p => p.LanguagesSection);
+            entity.OwnsOne(p => p.InterestsSection);
+        });
     }
 }

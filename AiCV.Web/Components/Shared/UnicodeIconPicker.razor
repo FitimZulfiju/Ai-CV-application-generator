@@ -1,0 +1,21 @@
+<MudAutocomplete T="string" 
+                 Label="@Label" 
+                 Value="Icon"
+                 ValueChanged="OnIconChanged"
+                 SearchFunc="@SearchIcons" 
+                 Clearable="true" 
+                 ResetValueOnEmptyText="true"
+                 AdornmentIcon="@(string.IsNullOrEmpty(Icon) ? Icons.Material.Filled.EmojiEmotions : "")" 
+                 AdornmentColor="Color.Primary" 
+                 Placeholder="@Localizer["SearchIconPlaceholder"]"
+                 MaxItems="50"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense"
+                 HelperText=" ">
+    <ItemTemplate>
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="0" Class="pa-0 ma-0">
+            <span style="font-size: 1.5rem; width: 30px; text-align: center;">@context</span>
+            <MudText Class="pa-0 ma-0">@GetIconName(context)</MudText>
+        </MudStack>
+    </ItemTemplate>
+</MudAutocomplete>

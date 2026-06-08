@@ -1323,5 +1323,50 @@
   <data name="BackupMissingSelectedSections" xml:space="preserve">
     <value>The backup file does not contain every selected section.</value>
   </data>
+  <data name="CustomFooter" xml:space="preserve">
+    <value>Custom Footer</value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value>Footer Text</value>
+  </data>
+  <data name="SupportsMarkdown" xml:space="preserve">
+    <value>Supports Markdown</value>
+  </data>
+  <data name="BackupMissingSectionsWarningTitle" xml:space="preserve">
+    <value>Missing Sections</value>
+  </data>
+  <data name="BackupMissingSectionsWarningContent" xml:space="preserve">
+    <value>The backup file does not contain every selected section. Do you want to continue importing only the available sections?</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="CustomSectionHeader" xml:space="preserve">
+    <value>Custom Section Header</value>
+  </data>
+  <data name="SectionIcon" xml:space="preserve">
+    <value>Section Icon</value>
+  </data>
+  <data name="LeaveBlankToUseDefault" xml:space="preserve">
+    <value>Leave blank to use default '{0}' title</value>
+  </data>
+  <data name="SearchIconPlaceholder" xml:space="preserve">
+    <value>Search for an icon (e.g. briefcase, star)...</value>
+  </data>
+  <data name="CustomIcon" xml:space="preserve">
+    <value>Custom Icon</value>
+  </data>
+  <data name="SelectIcon" xml:space="preserve">
+    <value>Select Icon</value>
+  </data>
+  <data name="DemoAccountInfo" xml:space="preserve">
+    <value>Demo Account</value>
+  </data>
+  <data name="FillDemoCredentials" xml:space="preserve">
+    <value>Fill Demo Credentials</value>
+  </data>
+  <data name="DisplayAsChips" xml:space="preserve">
+    <value>Display as Tags/Chips</value>
+  </data>
 </root>
 

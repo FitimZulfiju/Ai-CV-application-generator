@@ -8,7 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- feat: add customizable CV section titles and Unicode icons
+
 ---
+## [1.12.0] - 2026-06-08
+
+### Added
+- feat: add Display As Chips layout toggle for languages and interests
+- feat: centralize demo credentials and add frictionless demo login UI
+- feat: add customizable CV section titles and Unicode icons
+
+### Fixed
+- fix: overhaul logging architecture and preserve email on failed login attempts
+- fix: use actual CvPreview component for sample CV dialog instead of hardcoded layout
+
 ## [1.11.1] - 2026-06-06
 
 ### Fixed

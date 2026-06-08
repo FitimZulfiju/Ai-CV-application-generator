@@ -14,7 +14,7 @@
     }
     else
     {
-        <MudStack Row AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 12px;">
+        <MudStack Row AlignItems="AlignItems.Center" Class="mb-4 d-print-none stack-on-mobile" Style="gap: 0.75rem;">
             <div class="d-flex align-center">
                 <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => Navigation.NavigateTo($"/{NavUri.MyApplicationsPage}"))" />
                 <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title @Localizer["at"] @_application.JobPosting?.CompanyName</MudText>
@@ -24,18 +24,18 @@
 
             @if (_activeTabIndex < 2)
             {
-                <div style="width: 200px;" class="hide-on-mobile">
-                    <MudSelect T="CvTemplate" @bind-Value="_application.Template" @bind-Value:after="OnTemplateSelected" Label="@Localizer["PreviewTemplate"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
-                        <MudSelectItem Value="CvTemplate.Professional">@Localizer["Professional"]</MudSelectItem>
-                        <MudSelectItem Value="CvTemplate.Modern">@Localizer["Modern"]</MudSelectItem>
-                        <MudSelectItem Value="CvTemplate.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                <div style="width: 12.5rem;" class="hide-on-mobile">
+                    <MudSelect T="string" @bind-Value="_application.Template" @bind-Value:after="OnTemplateSelected" Label="@Localizer["PreviewTemplate"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
+                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
+                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
+                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
                     </MudSelect>
                 </div>
             }
             <div class="d-flex gap-2 width-100-mobile justify-center">
                 @if (_activeTabIndex == 0 && _application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter" FullWidth="true" Style="max-width: 200px;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter" FullWidth="true" Style="max-width: 12.5rem;">
                         @if (_isPrintingCoverLetter)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -50,7 +50,7 @@
                 }
                 @if (_activeTabIndex == 1 && _tailoredResume != null)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume" Disabled="_isPrintingResume" FullWidth="true" Style="max-width: 200px;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume" Disabled="_isPrintingResume" FullWidth="true" Style="max-width: 12.5rem;">
                         @if (_isPrintingResume)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -65,7 +65,7 @@
                 }
                 @if (_activeTabIndex == 2 && _application != null && !string.IsNullOrEmpty(_application.ApplicationEmailContent))
                 {
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => CopyToClipboard(_application.ApplicationEmailContent))" StartIcon="@Icons.Material.Filled.ContentCopy" FullWidth="true" Style="max-width: 200px;">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => CopyToClipboard(_application.ApplicationEmailContent))" StartIcon="@Icons.Material.Filled.ContentCopy" FullWidth="true" Style="max-width: 12.5rem;">
                         @Localizer["CopyEmail"]
                     </MudButton>
                 }
@@ -77,7 +77,7 @@
                 @if (_application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
                     <MudPaper Elevation="0" Class="cv-paper-container">
-                        <AiCV.Web.Components.Shared.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" Template="_application.Template" />
+                        <AiCV.Web.Features.CvRendering.Preview.CoverLetterPreview Profile="_cachedProfile" LetterContent="@_application.CoverLetterContent" Template="@_application.Template" />
                     </MudPaper>
                 }
                 else
@@ -89,7 +89,7 @@
                 @if (_tailoredResume != null)
                 {
                     <MudPaper Elevation="1" Class="cv-paper-container">
-                        <AiCV.Web.Components.Shared.CvPreview Profile="_tailoredResume" Template="_application.Template" />
+                        <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="_tailoredResume" Template="@_application.Template" />
                     </MudPaper>
                 }
                 else

@@ -5,8 +5,25 @@ public partial class Login
     [SupplyParameterFromQuery]
     public string? Error { get; set; }
 
-    private string _email = "";
-    private string _password = "";
+    [SupplyParameterFromQuery(Name = "email")]
+    public string? SuppliedEmail { get; set; }
+
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(SuppliedEmail))
+        {
+            _email = SuppliedEmail;
+        }
+    }
+
+    private void FillDemoCredentials()
+    {
+        _email = AiCV.Application.Common.DemoConstants.DemoUserEmail;
+        _password = AiCV.Application.Common.DemoConstants.DemoUserPassword;
+    }
     private bool _rememberMe;
     private bool _showPassword;
 

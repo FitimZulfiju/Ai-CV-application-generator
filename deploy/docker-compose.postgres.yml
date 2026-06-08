@@ -50,6 +50,7 @@ services:
       - ConnectionStrings__DefaultConnection=Host=shared-postgres;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
       - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}
       - DOCKER_REPOSITORY=${DOCKER_REPOSITORY}
+      - IMAGE_TAG=${IMAGE_TAG:-latest}
       - Authentication__Google__ClientId=${Authentication__Google__ClientId:-}
       - Authentication__Google__ClientSecret=${Authentication__Google__ClientSecret:-}
       - Authentication__Microsoft__ClientId=${Authentication__Microsoft__ClientId:-}
@@ -75,6 +76,7 @@ services:
     command: --http-api-update --label-enable --cleanup --scope aicv-scope
     restart: unless-stopped
     environment:
+      - WATCHTOWER_HTTP_API_UPDATE=true
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_SCOPE=aicv-scope

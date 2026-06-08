@@ -1323,5 +1323,40 @@
   <data name="BackupMissingSelectedSections" xml:space="preserve">
     <value>Skedari i kopjes rezervë nuk përmban çdo seksion të zgjedhur.</value>
   </data>
+  <data name="CustomSectionHeader" xml:space="preserve">
+    <value>Titulli i Seksionit të Personalizuar</value>
+  </data>
+  <data name="SectionIcon" xml:space="preserve">
+    <value>Ikona e Seksionit</value>
+  </data>
+  <data name="LeaveBlankToUseDefault" xml:space="preserve">
+    <value>Lëreni bosh për të përdorur titullin e paracaktuar '{0}'</value>
+  </data>
+  <data name="SearchIconPlaceholder" xml:space="preserve">
+    <value>Kërkoni për një ikonë (p.sh. yll, valixhe)...</value>
+  </data>
+  <data name="CustomIcon" xml:space="preserve">
+    <value>Ikonë e personalizuar</value>
+  </data>
+  <data name="SelectIcon" xml:space="preserve">
+    <value>Zgjidhni Ikonën</value>
+  </data>
+  <data name="CustomFooter" xml:space="preserve">
+    <value>Fundori i Personalizuar</value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value>Teksti i Fundorit</value>
+  </data>
+  <data name="SupportsMarkdown" xml:space="preserve">
+    <value>Mundëson Markdown</value>
+  </data>
+  <data name="BackupMissingSectionsWarningTitle" xml:space="preserve">
+    <value>Seksione që Mungojnë</value>
+  </data>
+  <data name="BackupMissingSectionsWarningContent" xml:space="preserve">
+    <value>Skedari i kopjes rezervë nuk përmban çdo seksion të zgjedhur. Dëshironi të vazhdoni të importoni vetëm seksionet e disponueshme?</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Vazhdo</value>
+  </data>
 </root>
-

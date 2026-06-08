@@ -1,4 +1,6 @@
 global using AiCV.Application.Common;
+global using AiCV.Application.Common.Models;
+global using AiCV.Application.Common.Constants;
 global using AiCV.Application.DTOs;
 global using AiCV.Application.Interfaces;
 global using AiCV.Domain;
@@ -39,3 +41,4 @@ global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text.Json;
 global using System.Threading.Tasks;
+global using System.Text;

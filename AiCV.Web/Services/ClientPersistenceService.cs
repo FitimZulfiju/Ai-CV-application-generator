@@ -1,7 +1,8 @@
 namespace AiCV.Web.Services;
 
-public class ClientPersistenceService(IJSRuntime jsRuntime) : IAsyncDisposable
+public class ClientPersistenceService(IJSRuntime jsRuntime, ILogger<ClientPersistenceService> logger) : IAsyncDisposable
 {
+    private readonly ILogger<ClientPersistenceService> _logger = logger;
     private readonly Lazy<Task<IJSObjectReference>> _moduleTask = new(() =>
         jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/persistence.js").AsTask()
     );
@@ -15,7 +16,7 @@ public class ClientPersistenceService(IJSRuntime jsRuntime) : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving draft '{key}': {ex.Message}");
+            _logger.LogError(ex, "Error saving draft '{Key}'", key);
         }
     }
 
@@ -28,7 +29,7 @@ public class ClientPersistenceService(IJSRuntime jsRuntime) : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading draft '{key}': {ex.Message}");
+            _logger.LogError(ex, "Error loading draft '{Key}'", key);
             return default;
         }
     }
@@ -42,7 +43,7 @@ public class ClientPersistenceService(IJSRuntime jsRuntime) : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error clearing draft '{key}': {ex.Message}");
+            _logger.LogError(ex, "Error clearing draft '{Key}'", key);
         }
     }
 

@@ -1,0 +1,12 @@
+@if (Template == AiCV.Domain.Constants.CvTemplates.Professional)
+{
+    <AiCV.Web.Features.CvRendering.Templates.Professional.ProfessionalTemplate Profile="Profile" />
+}
+else if (Template == AiCV.Domain.Constants.CvTemplates.Modern)
+{
+    <AiCV.Web.Features.CvRendering.Templates.Modern.ModernTemplate Profile="Profile" />
+}
+else if (Template == AiCV.Domain.Constants.CvTemplates.Minimalist)
+{
+    <AiCV.Web.Features.CvRendering.Templates.Minimalist.MinimalistTemplate Profile="Profile" />
+}

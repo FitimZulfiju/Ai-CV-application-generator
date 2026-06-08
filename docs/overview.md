@@ -63,6 +63,7 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
 
   * Multiple professional layouts (Modern, Minimalist, Professional)
   * Dynamic rendering of profile data with Markdown support
+  * Customizable CV footer text (supports Markdown)
 * Session management:
 
   * Prevents data loss during updates

@@ -12,6 +12,6 @@ public class GeneratedApplication
     public string CoverLetterContent { get; set; } = string.Empty;
     public string TailoredResumeJson { get; set; } = string.Empty;
     public string ApplicationEmailContent { get; set; } = string.Empty;
-    public CvTemplate Template { get; set; } = CvTemplate.Professional;
+    public string Template { get; set; } = Constants.CvTemplates.Professional;
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 }

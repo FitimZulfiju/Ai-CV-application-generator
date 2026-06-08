@@ -1,7 +1,23 @@
 @if (Profile != null)
 {
+    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
+        <MudCardContent Class="py-1 px-4">
+            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="8">
+                    <MudTextField @bind-Value="Profile.SkillsSection.Title"
+                                  Label="@Localizer["SectionTitle"]"
+                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["CoreCompetencies"].Value)"
+                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <UnicodeIconPicker @bind-Icon="Profile.SkillsSection.Icon" Label="@Localizer["SectionIcon"]" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
     <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-4"
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-2"
                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
         <MudText Typo="Typo.body2" Class="mb-4">@Localizer["SkillsHelper"]</MudText>
     </MudStack>
@@ -33,3 +49,4 @@
         }
     </MudGrid>
 }
+

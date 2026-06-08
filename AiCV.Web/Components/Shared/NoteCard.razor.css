@@ -4,12 +4,12 @@
 }
 
 .note-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-0.25rem);
 }
 
 .note-content {
-    max-height: 400px;
+    max-height: 25rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
