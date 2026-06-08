@@ -1,4 +1,4 @@
-﻿global using System.Text;
+global using System.Text;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using Moq;
@@ -9,3 +9,11 @@ global using AiCV.Application.DTOs;
 global using AiCV.Application.Interfaces;
 global using Microsoft.Extensions.Logging;
 global using AiCV.Domain.Entities;
+global using Moq.Protected;
+global using AiCV.Infrastructure.Resources;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Net;
+global using HtmlAgilityPack;
+global using System.Text.Json;
+global using Microsoft.Extensions.Localization;
+global using Microsoft.AspNetCore.DataProtection;
