@@ -33,6 +33,14 @@ public static partial class AIResponseParser
             // Clean up JSON markdown code blocks if present (common in AI responses)
             var cleanJson = jsonResponse.Replace("```json", "").Replace("```", "").Trim();
 
+            // Extract just the JSON object from the response (first '{' to last '}')
+            int startIndex = cleanJson.IndexOf('{');
+            int endIndex = cleanJson.LastIndexOf('}');
+            if (startIndex >= 0 && endIndex > startIndex)
+            {
+                cleanJson = cleanJson.Substring(startIndex, endIndex - startIndex + 1);
+            }
+
             var resultDto = JsonSerializer.Deserialize<TailoredResumeResponseDto>(
                 cleanJson,
                 _jsonOptions

@@ -777,11 +777,20 @@ public partial class UserSettingsPage
 
             if (!BackupContainsSelectedSections(backup))
             {
-                Snackbar.Add(Localizer["BackupMissingSelectedSections"], Severity.Error);
-                return;
+                var missingConfirmed = await DialogService.ShowMessageBoxAsync(
+                    Localizer["BackupMissingSectionsWarningTitle"],
+                    Localizer["BackupMissingSectionsWarningContent"],
+                    yesText: Localizer["Continue"],
+                    cancelText: Localizer["Cancel"]
+                );
+
+                if (missingConfirmed != true)
+                {
+                    return;
+                }
             }
 
-            if (_backupProfile && backup.Profile is not null)
+            if (_backupProfile && backup.Profile is not null && backup.Sections.Profile)
             {
                 await ImportProfileBackup(backup.Profile);
             }
@@ -789,19 +798,19 @@ public partial class UserSettingsPage
             await using var context = await DbContextFactory.CreateDbContextAsync();
             await using var transaction = await context.Database.BeginTransactionAsync();
 
-            if (_backupApplications)
+            if (_backupApplications && backup.Sections.Applications)
             {
                 await ReplaceApplications(context, backup.Applications);
             }
 
-            if (_backupNotes)
+            if (_backupNotes && backup.Sections.Notes)
             {
                 await ReplaceNotes(context, backup.Notes);
             }
 
             await transaction.CommitAsync();
 
-            if (_backupSettings)
+            if (_backupSettings && backup.Sections.Settings)
             {
                 await ReplaceSettings(backup);
                 await LoadConfigurations();

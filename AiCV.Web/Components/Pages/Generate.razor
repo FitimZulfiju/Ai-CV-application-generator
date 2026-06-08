@@ -215,9 +215,9 @@
                                 <div class="generate-toolbar-group" style="@GetDisplayStyle(_generatedResume != null && (_activeTabIndex == 0 || _activeTabIndex == 1))">
                                     <MudSelect T="string" @bind-Value="_selectedTemplateInPreview" Label="@Localizer["Template"]"
                                                Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
-                                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
-                                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
-                                        <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
+                                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
+                                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
                                     </MudSelect>
                                 </div>
 
@@ -311,7 +311,7 @@
                                           Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
                                     <AiCV.Web.Features.CvRendering.Preview.CoverLetterPreview Profile="_cachedProfile"
                                                                                    LetterContent="@_generatedCoverLetter"
-                                                                                   Template="_selectedTemplateInPreview" />
+                                                                                   Template="@_selectedTemplateInPreview" />
                                 </MudPaper>
                             }
                             else
@@ -332,7 +332,7 @@
                             {
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
                                           Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
-                                    <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="_generatedResume" Template="_selectedTemplateInPreview" />
+                                    <AiCV.Web.Features.CvRendering.Preview.CvPreview Profile="_generatedResume" Template="@_selectedTemplateInPreview" />
                                 </MudPaper>
                             }
                             else

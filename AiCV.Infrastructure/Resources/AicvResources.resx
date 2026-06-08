@@ -1332,5 +1332,14 @@
   <data name="SupportsMarkdown" xml:space="preserve">
     <value>Supports Markdown</value>
   </data>
+  <data name="BackupMissingSectionsWarningTitle" xml:space="preserve">
+    <value>Missing Sections</value>
+  </data>
+  <data name="BackupMissingSectionsWarningContent" xml:space="preserve">
+    <value>The backup file does not contain every selected section. Do you want to continue importing only the available sections?</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
 </root>
 
