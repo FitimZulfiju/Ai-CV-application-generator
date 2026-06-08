@@ -1,5 +1,21 @@
 @if (Profile != null)
 {
+    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
+        <MudCardContent Class="py-1 px-4">
+            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="8">
+                    <MudTextField @bind-Value="Profile.LanguagesSection.Title"
+                                  Label="@Localizer["SectionTitle"]"
+                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["LanguagesCv"].Value)"
+                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <UnicodeIconPicker @bind-Icon="Profile.LanguagesSection.Icon" Label="@Localizer["SectionIcon"]" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
 
     var proficiencyLabel = $"{Localizer["Proficiency"]} ({Localizer["LanguageProficiencyHelper"]})";
     var isEditing = _editingLanguage != null;
@@ -22,7 +38,7 @@
         }
     </MudStack>
 
-    <MudStack Spacing="4" Class="pt-2">
+    <MudStack Spacing="4" Class="pt-0">
 
         <MudGrid Spacing="2">
             <MudItem xs="12" sm="6">
@@ -92,3 +108,4 @@
         }
     </MudStack>
 }
+

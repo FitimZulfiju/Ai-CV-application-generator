@@ -1,7 +1,5 @@
 namespace AiCV.Domain;
 
-
-
 public class CandidateProfile
 {
     public int Id { get; set; }
@@ -25,6 +23,32 @@ public class CandidateProfile
     public List<Project> Projects { get; set; } = [];
     public List<Language> Languages { get; set; } = [];
     public List<Interest> Interests { get; set; } = [];
+
+    // Customizable Section Headers
+    public SectionConfig SummarySection { get; set; } = new();
+    public SectionConfig ExperienceSection { get; set; } = new();
+    public SectionConfig EducationSection { get; set; } = new();
+    public SectionConfig SkillsSection { get; set; } = new();
+    public SectionConfig ProjectsSection { get; set; } = new();
+    public SectionConfig LanguagesSection { get; set; } = new();
+    public SectionConfig InterestsSection { get; set; } = new();
+}
+
+public class SectionConfig
+{
+    private string _title = string.Empty;
+    public string Title 
+    { 
+        get => _title; 
+        set => _title = value ?? string.Empty; 
+    }
+
+    private string _icon = string.Empty;
+    public string Icon 
+    { 
+        get => _icon; 
+        set => _icon = value ?? string.Empty; 
+    }
 }
 
 public class Skill

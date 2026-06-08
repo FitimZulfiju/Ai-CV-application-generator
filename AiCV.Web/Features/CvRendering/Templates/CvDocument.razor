@@ -46,7 +46,13 @@ else
                 }
                 <!-- Core Competencies -->
                 <section class="section">
-                    <h3 class="section-title">@Localizer["CoreCompetencies"]</h3>
+                    <h3 class="section-title">
+                        @if (!string.IsNullOrEmpty(Profile.SkillsSection?.Icon))
+                        {
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.SkillsSection.Icon</span>
+                        }
+                        @(string.IsNullOrWhiteSpace(Profile.SkillsSection?.Title) ? Localizer["CoreCompetencies"] : Profile.SkillsSection.Title)
+                    </h3>
                     <div class="skills-grid">
                         @if (SkillGroups.Any())
                         {
@@ -68,7 +74,13 @@ else
             <div class="second-page page">
                 <!-- Work Experience -->
                 <section class="section work-experience-section">
-                    <h3 class="section-title">@Localizer["WorkExperienceCv"]</h3>
+                    <h3 class="section-title">
+                        @if (!string.IsNullOrEmpty(Profile.ExperienceSection?.Icon))
+                        {
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.ExperienceSection.Icon</span>
+                        }
+                        @(string.IsNullOrWhiteSpace(Profile.ExperienceSection?.Title) ? Localizer["WorkExperienceCv"] : Profile.ExperienceSection.Title)
+                    </h3>
                     @if (WorkExperiences.Any())
                     {
                         @foreach (var job in WorkExperiences)
@@ -110,7 +122,13 @@ else
             <div class="third-page page">
                 <!-- Education -->
                 <section class="section education-section">
-                    <h3 class="section-title">@Localizer["EducationCv"]</h3>
+                    <h3 class="section-title">
+                        @if (!string.IsNullOrEmpty(Profile.EducationSection?.Icon))
+                        {
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.EducationSection.Icon</span>
+                        }
+                        @(string.IsNullOrWhiteSpace(Profile.EducationSection?.Title) ? Localizer["EducationCv"] : Profile.EducationSection.Title)
+                    </h3>
                     @if (OrderedEducations.Any())
                     {
                         @foreach (var edu in OrderedEducations)
@@ -136,7 +154,13 @@ else
 
                 <!-- Personal Projects -->
                 <section class="section">
-                    <h3 class="section-title">@Localizer["PersonalProjectsCv"]</h3>
+                    <h3 class="section-title">
+                        @if (!string.IsNullOrEmpty(Profile.ProjectsSection?.Icon))
+                        {
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.ProjectsSection.Icon</span>
+                        }
+                        @(string.IsNullOrWhiteSpace(Profile.ProjectsSection?.Title) ? Localizer["PersonalProjectsCv"] : Profile.ProjectsSection.Title)
+                    </h3>
                     @if (OrderedProjects.Any())
                     {
                         var projectList = OrderedProjects;
@@ -197,7 +221,13 @@ else
 
                 <!-- Languages Section -->
                 <section class="section">
-                    <h3 class="section-title">@Localizer["LanguagesCv"]</h3>
+                    <h3 class="section-title">
+                        @if (!string.IsNullOrEmpty(Profile.LanguagesSection?.Icon))
+                        {
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.LanguagesSection.Icon</span>
+                        }
+                        @(string.IsNullOrWhiteSpace(Profile.LanguagesSection?.Title) ? Localizer["LanguagesCv"] : Profile.LanguagesSection.Title)
+                    </h3>
                     <div class="language-list">
                         @if (Languages.Any())
                         {
@@ -226,7 +256,13 @@ else
 
                 <!-- Interests -->
                 <section class="section interests-section">
-                    <h3 class="section-title">@Localizer["InterestsCv"]</h3>
+                    <h3 class="section-title">
+                        @if (!string.IsNullOrEmpty(Profile.InterestsSection?.Icon))
+                        {
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.InterestsSection.Icon</span>
+                        }
+                        @(string.IsNullOrWhiteSpace(Profile.InterestsSection?.Title) ? Localizer["InterestsCv"] : Profile.InterestsSection.Title)
+                    </h3>
                     <div class="interests">
                         @if (Interests.Any())
                         {

@@ -1,9 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Localization;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-using AiCV.Domain.Entities;
-using System.IO;
 
 namespace AiCV.Infrastructure.Services.PdfTemplates.Professional;
 
@@ -66,7 +60,7 @@ public class ProfessionalPdfTemplate(
         });
     }
 
-    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
+    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, string icon, bool hasTopPadding)
     {
         var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
         if (hasTopPadding)
@@ -79,11 +73,18 @@ public class ProfessionalPdfTemplate(
                 .BorderBottom(1.5f)
                 .BorderColor(Style.PrimaryColor)
                 .PaddingBottom(2)
-                .Text(title.ToUpper())
-                .FontSize(12)
-                .Bold()
-                .FontColor(Style.PrimaryDark)
-                .LetterSpacing(0.06f);
+                .Text(t =>
+                {
+                    if (!string.IsNullOrEmpty(icon))
+                    {
+                        t.Span(icon + " ").FontFamily("Segoe UI Emoji");
+                    }
+                    t.Span(title.ToUpper())
+                        .FontSize(12)
+                        .Bold()
+                        .FontColor(Style.PrimaryDark)
+                        .LetterSpacing(0.06f);
+                });
         });
     }
 }

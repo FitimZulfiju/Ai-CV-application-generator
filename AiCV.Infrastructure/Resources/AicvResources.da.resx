@@ -1316,4 +1316,40 @@
   <data name="BackupMissingSelectedSections" xml:space="preserve">
     <value>Backupfilen indeholder ikke alle valgte sektioner.</value>
   </data>
+  <data name="CustomSectionHeader" xml:space="preserve">
+    <value>Brugerdefineret Sektionsoverskrift</value>
+  </data>
+  <data name="SectionIcon" xml:space="preserve">
+    <value>Sektionsikon</value>
+  </data>
+  <data name="LeaveBlankToUseDefault" xml:space="preserve">
+    <value>Lad stå tom for at bruge standardtitlen '{0}'</value>
+  </data>
+  <data name="SearchIconPlaceholder" xml:space="preserve">
+    <value>Søg efter et ikon (f.eks. stjerne, mappe)...</value>
+  </data>
+  <data name="CustomIcon" xml:space="preserve">
+    <value>Brugerdefineret ikon</value>
+  </data>
+  <data name="SelectIcon" xml:space="preserve">
+    <value>Vælg Ikon</value>
+  </data>
+  <data name="CustomFooter" xml:space="preserve">
+    <value>Brugerdefineret Sidefod</value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value>Sidefodstekst</value>
+  </data>
+  <data name="SupportsMarkdown" xml:space="preserve">
+    <value>Understøtter Markdown</value>
+  </data>
+  <data name="BackupMissingSectionsWarningTitle" xml:space="preserve">
+    <value>Manglende Sektioner</value>
+  </data>
+  <data name="BackupMissingSectionsWarningContent" xml:space="preserve">
+    <value>Sikkerhedskopifilen indeholder ikke alle valgte sektioner. Vil du fortsætte med kun at importere de tilgængelige sektioner?</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Fortsæt</value>
+  </data>
 </root>

@@ -1341,5 +1341,23 @@
   <data name="Continue" xml:space="preserve">
     <value>Continue</value>
   </data>
+  <data name="CustomSectionHeader" xml:space="preserve">
+    <value>Custom Section Header</value>
+  </data>
+  <data name="SectionIcon" xml:space="preserve">
+    <value>Section Icon</value>
+  </data>
+  <data name="LeaveBlankToUseDefault" xml:space="preserve">
+    <value>Leave blank to use default '{0}' title</value>
+  </data>
+  <data name="SearchIconPlaceholder" xml:space="preserve">
+    <value>Search for an icon (e.g. briefcase, star)...</value>
+  </data>
+  <data name="CustomIcon" xml:space="preserve">
+    <value>Custom Icon</value>
+  </data>
+  <data name="SelectIcon" xml:space="preserve">
+    <value>Select Icon</value>
+  </data>
 </root>
 

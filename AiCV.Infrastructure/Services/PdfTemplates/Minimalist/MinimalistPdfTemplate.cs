@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Localization;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-using AiCV.Domain.Entities;
-using System.IO;
-
 namespace AiCV.Infrastructure.Services.PdfTemplates.Minimalist;
 
 public class MinimalistPdfTemplate : PdfTemplateBase
@@ -52,25 +45,22 @@ public class MinimalistPdfTemplate : PdfTemplateBase
         });
     }
 
-    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
+    protected override void ComposeSectionTitle(ColumnDescriptor column, string title, string icon, bool hasTopPadding)
     {
-        var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
+        var item = column.Item().PaddingBottom(0.2f, Unit.Centimetre);
         if (hasTopPadding)
         {
-            item = item.PaddingTop(0.3f, Unit.Centimetre);
+            item = item.PaddingTop(0.2f, Unit.Centimetre);
         }
-        item.Row(row =>
+        item.Text(t =>
         {
-            row.AutoItem()
-                .Width(17, Unit.Centimetre)
-                .BorderBottom(1.5f)
-                .BorderColor(Style.PrimaryDark)
-                .PaddingBottom(2)
-                .Text(title.ToUpper())
+            if (!string.IsNullOrEmpty(icon))
+            {
+                t.Span(icon + " ").FontFamily("Segoe UI Emoji");
+            }
+            t.Span(title.ToUpper())
                 .FontSize(11)
-                .Bold()
-                .FontColor(Style.PrimaryDark)
-                .LetterSpacing(0.15f);
+                .Bold();
         });
     }
 }

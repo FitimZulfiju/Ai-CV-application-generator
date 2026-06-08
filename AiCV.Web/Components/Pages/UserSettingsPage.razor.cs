@@ -1154,7 +1154,20 @@ public partial class UserSettingsPage
             && IsValidProfileText(profile.Location)
             && IsValidProfileText(profile.ProfessionalSummary)
             && IsValidProfileText(profile.ProfilePictureUrl)
-            && IsValidProfileText(profile.Tagline);
+            && IsValidProfileText(profile.Tagline)
+            && IsValidSectionConfig(profile.SummarySection)
+            && IsValidSectionConfig(profile.ExperienceSection)
+            && IsValidSectionConfig(profile.EducationSection)
+            && IsValidSectionConfig(profile.SkillsSection)
+            && IsValidSectionConfig(profile.ProjectsSection)
+            && IsValidSectionConfig(profile.LanguagesSection)
+            && IsValidSectionConfig(profile.InterestsSection);
+    }
+
+    private static bool IsValidSectionConfig(AiCV.Domain.SectionConfig? config)
+    {
+        if (config == null) return true;
+        return IsValidProfileText(config.Title) && IsValidProfileText(config.Icon);
     }
 
     private static bool HasValidExperienceTextLengths(Experience experience)
@@ -1275,6 +1288,14 @@ public partial class UserSettingsPage
         importedProfile.ProfessionalSummary ??= string.Empty;
         importedProfile.ProfilePictureUrl ??= string.Empty;
         importedProfile.Tagline ??= string.Empty;
+
+        importedProfile.SummarySection ??= new();
+        importedProfile.ExperienceSection ??= new();
+        importedProfile.EducationSection ??= new();
+        importedProfile.SkillsSection ??= new();
+        importedProfile.ProjectsSection ??= new();
+        importedProfile.LanguagesSection ??= new();
+        importedProfile.InterestsSection ??= new();
 
         foreach (var skill in importedProfile.Skills)
         {

@@ -68,6 +68,9 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
 * **Premium CV Templates**
   Multiple professional layouts (Modern, Minimalist, Professional) optimized for both digital viewing and printing.
 
+* **Customizable Section Headers**
+  Personalize your CV with custom section titles and Unicode icons for each section.
+
 * **Smart Markdown Rendering**
   Context-aware formatting engine that balances full Markdown support (bold, italic, links) with perfect document alignment, preventing line breaks and trailing whitespace.
 

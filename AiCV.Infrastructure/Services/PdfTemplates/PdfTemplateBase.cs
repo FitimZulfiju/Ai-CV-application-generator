@@ -61,17 +61,19 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         }
     }
 
-    protected virtual void SectionTitle(ColumnDescriptor column, string title)
+    protected virtual void SectionTitle(ColumnDescriptor column, string defaultTitle, SectionConfig sectionConfig)
     {
-        ComposeSectionTitle(column, title, hasTopPadding: true);
+        var title = string.IsNullOrWhiteSpace(sectionConfig?.Title) ? defaultTitle : sectionConfig.Title;
+        ComposeSectionTitle(column, title, sectionConfig?.Icon ?? "", hasTopPadding: true);
     }
 
-    protected virtual void SectionTitleAfterSeparator(ColumnDescriptor column, string title)
+    protected virtual void SectionTitleAfterSeparator(ColumnDescriptor column, string defaultTitle, SectionConfig sectionConfig)
     {
-        ComposeSectionTitle(column, title, hasTopPadding: false);
+        var title = string.IsNullOrWhiteSpace(sectionConfig?.Title) ? defaultTitle : sectionConfig.Title;
+        ComposeSectionTitle(column, title, sectionConfig?.Icon ?? "", hasTopPadding: false);
     }
 
-    protected virtual void ComposeSectionTitle(ColumnDescriptor column, string title, bool hasTopPadding)
+    protected virtual void ComposeSectionTitle(ColumnDescriptor column, string title, string icon, bool hasTopPadding)
     {
         var item = column.Item().PaddingBottom(0.3f, Unit.Centimetre);
         if (hasTopPadding)
@@ -81,11 +83,18 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         item.Row(row =>
         {
             row.AutoItem()
-                .Text(title.ToUpper())
-                .FontSize(12)
-                .Bold()
-                .FontColor(Style.PrimaryDark)
-                .LetterSpacing(0.06f);
+                .Text(t =>
+                {
+                    if (!string.IsNullOrEmpty(icon))
+                    {
+                        t.Span(icon + " ").FontFamily("Segoe UI Emoji");
+                    }
+                    t.Span(title.ToUpper())
+                        .FontSize(12)
+                        .Bold()
+                        .FontColor(Style.PrimaryDark)
+                        .LetterSpacing(0.06f);
+                });
         });
     }
 
@@ -113,9 +122,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 SectionSeparator(column);
 
             if (Style.UseSectionSeparators)
-                SectionTitleAfterSeparator(column, _localizer["PersonalProjectsCv"]);
+                SectionTitleAfterSeparator(column, _localizer["PersonalProjectsCv"], profile.ProjectsSection);
             else
-                SectionTitle(column, _localizer["PersonalProjectsCv"]);
+                SectionTitle(column, _localizer["PersonalProjectsCv"], profile.ProjectsSection);
             var projectList = renderModel.Projects;
             for (int i = 0; i < projectList.Count; i++)
             {
@@ -229,9 +238,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 SectionSeparator(column);
 
             if (Style.UseSectionSeparators)
-                SectionTitleAfterSeparator(column, _localizer["LanguagesCv"]);
+                SectionTitleAfterSeparator(column, _localizer["LanguagesCv"], profile.LanguagesSection);
             else
-                SectionTitle(column, _localizer["LanguagesCv"]);
+                SectionTitle(column, _localizer["LanguagesCv"], profile.LanguagesSection);
             var languageItem = column
                 .Item()
                 .Background(Style.BackgroundLight)
@@ -273,9 +282,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 SectionSeparator(column);
 
             if (Style.UseSectionSeparators)
-                SectionTitleAfterSeparator(column, _localizer["InterestsCv"]);
+                SectionTitleAfterSeparator(column, _localizer["InterestsCv"], profile.InterestsSection);
             else
-                SectionTitle(column, _localizer["InterestsCv"]);
+                SectionTitle(column, _localizer["InterestsCv"], profile.InterestsSection);
             var interestItem = column
                 .Item()
                 .PaddingTop(0.1f, Unit.Centimetre)
@@ -366,7 +375,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
             if (renderModel.SkillGroups.Count != 0)
             {
-                SectionTitle(col, _localizer["CoreCompetencies"]);
+                SectionTitle(col, _localizer["CoreCompetencies"], profile.SkillsSection);
                 foreach (var skillGroup in renderModel.SkillGroups)
                 {
                     col.Item()
@@ -414,7 +423,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             col.Item().PaddingTop(1, Unit.Centimetre);
             if (renderModel.WorkExperiences.Count != 0)
             {
-                SectionTitle(col, _localizer["WorkExperienceCv"]);
+                SectionTitle(col, _localizer["WorkExperienceCv"], profile.ExperienceSection);
                 col.Item()
                     .Table(table =>
                     {
@@ -505,7 +514,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             col.Item().PaddingTop(1, Unit.Centimetre);
             if (renderModel.Educations.Count != 0)
             {
-                SectionTitle(col, _localizer["EducationCv"]);
+                SectionTitle(col, _localizer["EducationCv"], profile.EducationSection);
                 col.Item()
                     .Table(table =>
                     {
