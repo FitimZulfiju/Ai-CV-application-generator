@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AiCV.Migrations.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table => table.PrimaryKey("PK_AspNetRoles", x => x.Id));
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
@@ -42,7 +45,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => table.PrimaryKey("PK_AspNetUsers", x => x.Id));
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "JobPostings",
@@ -56,7 +62,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DatePosted = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
-                constraints: table => table.PrimaryKey("PK_JobPostings", x => x.Id));
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobPostings", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "SystemLogs",
@@ -72,25 +81,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
-                constraints: table => table.PrimaryKey("PK_SystemLogs", x => x.Id));
-
-            migrationBuilder.CreateTable(
-                name: "UserAIConfigurations",
-                columns: table => new
+                constraints: table =>
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Provider = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModelId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CostType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table => table.PrimaryKey("PK_UserAIConfigurations", x => x.Id));
+                    table.PrimaryKey("PK_SystemLogs", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
@@ -215,7 +209,29 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     ProfessionalSummary = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShowProfilePicture = table.Column<bool>(type: "bit", nullable: false),
-                    Tagline = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Tagline = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FooterText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SummarySection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SummarySection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SummarySection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false),
+                    ExperienceSection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExperienceSection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExperienceSection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false),
+                    EducationSection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EducationSection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EducationSection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false),
+                    SkillsSection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SkillsSection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SkillsSection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false),
+                    ProjectsSection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectsSection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectsSection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false),
+                    LanguagesSection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LanguagesSection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LanguagesSection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false),
+                    InterestsSection_Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InterestsSection_Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InterestsSection_DisplayAsChips = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,6 +265,33 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     table.PrimaryKey("PK_Notes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Notes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAIConfigurations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Provider = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApiKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModelId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CostType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAIConfigurations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserAIConfigurations_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -346,6 +389,7 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     CoverLetterContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TailoredResumeJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApplicationEmailContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Template = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -355,7 +399,8 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         name: "FK_GeneratedApplications_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GeneratedApplications_CandidateProfiles_CandidateProfileId",
                         column: x => x.CandidateProfileId,
@@ -554,6 +599,11 @@ namespace AiCV.Migrations.SqlServer.Migrations
                 name: "IX_Skills_CandidateProfileId",
                 table: "Skills",
                 column: "CandidateProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAIConfigurations_UserId",
+                table: "UserAIConfigurations",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSettings_UserId",

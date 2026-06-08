@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AiCV.Migrations.PostgreSQL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260607231110_ChangeCvTemplateToString")]
-    partial class ChangeCvTemplateToString
+    [Migration("20260608212232_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -755,6 +755,195 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         .WithOne("CandidateProfile")
                         .HasForeignKey("AiCV.Domain.CandidateProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "EducationSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "ExperienceSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "InterestsSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "LanguagesSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "ProjectsSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "SkillsSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "SummarySection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
+                    b.Navigation("EducationSection")
+                        .IsRequired();
+
+                    b.Navigation("ExperienceSection")
+                        .IsRequired();
+
+                    b.Navigation("InterestsSection")
+                        .IsRequired();
+
+                    b.Navigation("LanguagesSection")
+                        .IsRequired();
+
+                    b.Navigation("ProjectsSection")
+                        .IsRequired();
+
+                    b.Navigation("SkillsSection")
+                        .IsRequired();
+
+                    b.Navigation("SummarySection")
                         .IsRequired();
 
                     b.Navigation("User");
