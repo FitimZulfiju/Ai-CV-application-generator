@@ -49,6 +49,8 @@ public class SectionConfig
         get => _icon; 
         set => _icon = value ?? string.Empty; 
     }
+
+    public bool DisplayAsChips { get; set; } = false;
 }
 
 public class Skill

@@ -252,27 +252,58 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (Style.CenterLanguageContent)
                 languageItem = languageItem.AlignCenter();
 
-            languageItem.Text(t =>
+            if (profile.LanguagesSection?.DisplayAsChips == true)
             {
-                if (Style.CenterLanguageContent)
-                    t.AlignCenter();
-
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
-                for (int i = 0; i < renderModel.Languages.Count; i++)
+                languageItem.AlignCenter().Inlined(inlined =>
                 {
-                    var language = renderModel.Languages[i];
-                    if (i > 0)
-                        t.Span(" • ").FontColor(Style.TextDark);
-
-                    ComposeMarkdownText(t, language.Name ?? "");
-
-                    if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                    inlined.Spacing(5);
+                    inlined.AlignCenter();
+                    foreach (var language in renderModel.Languages)
                     {
-                        t.Span(" ");
-                        ComposeMarkdownText(t, language.Proficiency, Style.TextDark);
+                        inlined.Item()
+                            .Background("#EEEEEE")
+                            .Border(1)
+                            .BorderColor(Style.BorderColor)
+                            .CornerRadius(10)
+                            .PaddingHorizontal(8)
+                            .PaddingVertical(3)
+                            .Text(t =>
+                            {
+                                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextDark));
+                                ComposeMarkdownText(t, language.Name ?? "");
+                                if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                                {
+                                    t.Span(" ");
+                                    ComposeMarkdownText(t, language.Proficiency, Style.TextMedium);
+                                }
+                            });
                     }
-                }
-            });
+                });
+            }
+            else
+            {
+                languageItem.Text(t =>
+                {
+                    if (Style.CenterLanguageContent)
+                        t.AlignCenter();
+
+                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
+                    for (int i = 0; i < renderModel.Languages.Count; i++)
+                    {
+                        var language = renderModel.Languages[i];
+                        if (i > 0)
+                            t.Span(" • ").FontColor(Style.TextDark);
+
+                        ComposeMarkdownText(t, language.Name ?? "");
+
+                        if (!string.IsNullOrWhiteSpace(language.Proficiency))
+                        {
+                            t.Span(" ");
+                            ComposeMarkdownText(t, language.Proficiency, Style.TextDark);
+                        }
+                    }
+                });
+            }
 
         }
 
@@ -297,20 +328,46 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (Style.UseInterestChips)
                 interestItem = interestItem.AlignCenter();
 
-            interestItem.Text(t =>
+            if (profile.InterestsSection?.DisplayAsChips == true)
             {
-                if (Style.UseInterestChips)
-                    t.AlignCenter();
-
-                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
-                for (int i = 0; i < renderModel.Interests.Count; i++)
+                interestItem.AlignCenter().Inlined(inlined =>
                 {
-                    if (i > 0)
-                        t.Span(" • ").FontColor(Style.TextDark);
+                    inlined.Spacing(5);
+                    inlined.AlignCenter();
+                    foreach (var interest in renderModel.Interests)
+                    {
+                        inlined.Item()
+                            .Background("#EEEEEE")
+                            .Border(1)
+                            .BorderColor(Style.BorderColor)
+                            .CornerRadius(10)
+                            .PaddingHorizontal(8)
+                            .PaddingVertical(3)
+                            .Text(t =>
+                            {
+                                t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextDark));
+                                ComposeMarkdownText(t, interest.Name ?? "");
+                            });
+                    }
+                });
+            }
+            else
+            {
+                interestItem.Text(t =>
+                {
+                    if (Style.UseInterestChips)
+                        t.AlignCenter();
 
-                    ComposeMarkdownText(t, renderModel.Interests[i].Name ?? "");
-                }
-            });
+                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextMedium));
+                    for (int i = 0; i < renderModel.Interests.Count; i++)
+                    {
+                        if (i > 0)
+                            t.Span(" • ").FontColor(Style.TextDark);
+
+                        ComposeMarkdownText(t, renderModel.Interests[i].Name ?? "");
+                    }
+                });
+            }
         }
 
         var referencesItem = column.Item().ExtendVertical().AlignBottom();

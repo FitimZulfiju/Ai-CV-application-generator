@@ -1365,5 +1365,8 @@
   <data name="FillDemoCredentials" xml:space="preserve">
     <value>Fill Demo Credentials</value>
   </data>
+  <data name="DisplayAsChips" xml:space="preserve">
+    <value>Display as Tags/Chips</value>
+  </data>
 </root>
 

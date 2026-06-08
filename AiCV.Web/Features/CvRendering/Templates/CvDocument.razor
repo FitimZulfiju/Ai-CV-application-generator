@@ -231,20 +231,38 @@ else
                     <div class="language-list">
                         @if (Languages.Any())
                         {
-                            @for (int i = 0; i < Languages.Count; i++)
+                            @if (Profile.LanguagesSection?.DisplayAsChips == true)
                             {
-                                var lang = Languages[i];
-                                @if (i > 0)
-                                {
-                                    <span class="item-separator">&nbsp;&bull;&nbsp;</span>
-                                }
-                                <span class="language-item">
-                                    <FormattedText Text="@lang.Name" />
-                                    @if (!string.IsNullOrWhiteSpace(lang.Proficiency))
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                                    @foreach (var lang in Languages)
                                     {
-                                        <text>&nbsp;</text><FormattedText Text="@lang.Proficiency" />
+                                        <span class="chip" style="display:inline-block; padding:4px 12px; border-radius:16px; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
+                                            <FormattedText Text="@lang.Name" />
+                                            @if (!string.IsNullOrWhiteSpace(lang.Proficiency))
+                                            {
+                                                <text>&nbsp;</text><FormattedText Text="@lang.Proficiency" />
+                                            }
+                                        </span>
                                     }
-                                </span>
+                                </div>
+                            }
+                            else
+                            {
+                                @for (int i = 0; i < Languages.Count; i++)
+                                {
+                                    var lang = Languages[i];
+                                    @if (i > 0)
+                                    {
+                                        <span class="item-separator">&nbsp;&bull;&nbsp;</span>
+                                    }
+                                    <span class="language-item">
+                                        <FormattedText Text="@lang.Name" />
+                                        @if (!string.IsNullOrWhiteSpace(lang.Proficiency))
+                                        {
+                                            <text>&nbsp;</text><FormattedText Text="@lang.Proficiency" />
+                                        }
+                                    </span>
+                                }
                             }
                         }
                         else
@@ -266,13 +284,27 @@ else
                     <div class="interests">
                         @if (Interests.Any())
                         {
-                            @for (int i = 0; i < Interests.Count; i++)
+                            @if (Profile.InterestsSection?.DisplayAsChips == true)
                             {
-                                @if (i > 0)
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                                    @foreach (var interest in Interests)
+                                    {
+                                        <span class="chip" style="display:inline-block; padding:4px 12px; border-radius:16px; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
+                                            <FormattedText Text="@interest.Name" />
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                @for (int i = 0; i < Interests.Count; i++)
                                 {
-                                    <span class="item-separator">&nbsp;&bull;&nbsp;</span>
+                                    @if (i > 0)
+                                    {
+                                        <span class="item-separator">&nbsp;&bull;&nbsp;</span>
+                                    }
+                                    <FormattedText Text="@Interests[i].Name" />
                                 }
-                                <FormattedText Text="@Interests[i].Name" />
                             }
                         }
                         else

@@ -36,6 +36,7 @@
                                OnClick="CancelLanguageEdit" />
             </MudTooltip>
         }
+        <MudSwitch T="bool" @bind-Value="Profile.LanguagesSection.DisplayAsChips" Color="Color.Primary" Label="@Localizer["DisplayAsChips"]" Class="ml-auto" />
     </MudStack>
 
     <MudStack Spacing="4" Class="pt-0">

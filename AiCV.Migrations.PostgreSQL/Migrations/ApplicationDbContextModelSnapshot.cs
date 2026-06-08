@@ -759,6 +759,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -779,6 +782,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         {
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
 
                             b1.Property<string>("Icon")
                                 .IsRequired()
@@ -801,6 +807,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -821,6 +830,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         {
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
 
                             b1.Property<string>("Icon")
                                 .IsRequired()
@@ -843,6 +855,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -864,6 +879,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
 
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
+
                             b1.Property<string>("Icon")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -884,6 +902,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         {
                             b1.Property<int>("CandidateProfileId")
                                 .HasColumnType("integer");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("boolean");
 
                             b1.Property<string>("Icon")
                                 .IsRequired()
