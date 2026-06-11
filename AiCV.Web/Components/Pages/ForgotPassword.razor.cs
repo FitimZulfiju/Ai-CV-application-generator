@@ -36,7 +36,7 @@ public partial class ForgotPassword
                 // Construct reset password link
                 var resetLink = Navigation.ToAbsoluteUri($"/{NavUri.ResetPasswordPage}?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(token)}").ToString();
                 
-                Logger.LogInformation("Password reset link generated for {Email}: {Link}", user.Email, resetLink);
+                Logger.LogInformation("Password reset link generated for user {UserId}.", user.Id);
 
                 // Send email using the configured IEmailSender service
                 await EmailSender.SendPasswordResetLinkAsync(user, user.Email!, resetLink);
@@ -53,7 +53,7 @@ public partial class ForgotPassword
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error occurred during forgot password request for {Email}", Email);
+            Logger.LogError(ex, "Error occurred during forgot password request.");
             _error = "An error occurred while processing your request.";
         }
         finally
