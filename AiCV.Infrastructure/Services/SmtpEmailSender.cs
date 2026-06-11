@@ -118,6 +118,37 @@ public class SmtpEmailSender : IEmailSender<User>
 ";
     }
 
+    private string MaskEmailForLog(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return "[redacted]";
+        }
+
+        var atIndex = email.IndexOf('@');
+        if (atIndex <= 0 || atIndex == email.Length - 1)
+        {
+            return "[redacted]";
+        }
+
+        var local = email[..atIndex];
+        var domain = email[(atIndex + 1)..];
+
+        var maskedLocal = local.Length <= 2
+            ? new string('*', local.Length)
+            : $"{local[0]}***{local[^1]}";
+
+        var dotIndex = domain.LastIndexOf('.');
+        var domainName = dotIndex > 0 ? domain[..dotIndex] : domain;
+        var tld = dotIndex > 0 ? domain[dotIndex..] : string.Empty;
+
+        var maskedDomain = domainName.Length <= 2
+            ? new string('*', domainName.Length)
+            : $"{domainName[0]}***{domainName[^1]}";
+
+        return $"{maskedLocal}@{maskedDomain}{tld}";
+    }
+
     private async Task SendEmailAsync(string to, string subject, string htmlMessage)
     {
         var host = _configuration["SMTP_HOST"];
@@ -125,10 +156,11 @@ public class SmtpEmailSender : IEmailSender<User>
         var user = _configuration["SMTP_USER"];
         var pass = _configuration["SMTP_PASSWORD"];
         var from = _configuration["SMTP_FROM_EMAIL"] ?? "no-reply@aicv.local";
+        var maskedTo = MaskEmailForLog(to);
 
         if (string.IsNullOrWhiteSpace(host))
         {
-            _logger.LogWarning("SMTP_HOST is not configured. Email to {To} with subject '{Subject}' will NOT be sent physically. BodyLength={BodyLength}", to, subject, htmlMessage?.Length ?? 0);
+            _logger.LogWarning("SMTP_HOST is not configured. Email to {To} with subject '{Subject}' will NOT be sent physically. BodyLength={BodyLength}", maskedTo, subject, htmlMessage?.Length ?? 0);
             return;
         }
 
@@ -159,13 +191,13 @@ public class SmtpEmailSender : IEmailSender<User>
             };
             mailMessage.To.Add(to);
 
-            _logger.LogInformation("Sending email to {To} via SMTP host {Host}:{Port}...", to, host, port);
+            _logger.LogInformation("Sending email to {To} via SMTP host {Host}:{Port}...", maskedTo, host, port);
             await client.SendMailAsync(mailMessage);
-            _logger.LogInformation("Email to {To} sent successfully.", to);
+            _logger.LogInformation("Email to {To} sent successfully.", maskedTo);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {To} via SMTP.", to);
+            _logger.LogError(ex, "Failed to send email to {To} via SMTP.", maskedTo);
         }
     }
 }
