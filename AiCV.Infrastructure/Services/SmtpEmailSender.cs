@@ -16,7 +16,8 @@ public class SmtpEmailSender : IEmailSender<User>
         var subject = "Reset Your Password - AiCV";
         var heading = "Password Reset Request";
         var messageBody = "<p>Hello,</p><p>We received a request to reset the password for your account. Click the button below to set a new password. This link will expire shortly.</p>";
-        var body = GetEmailHtmlLayout(subject, heading, messageBody, "Reset Password", resetLink);
+        var safeResetLink = SanitizeActionLink(resetLink);
+        var body = GetEmailHtmlLayout(subject, heading, messageBody, "Reset Password", safeResetLink);
         await SendEmailAsync(email, subject, body);
     }
 
@@ -25,7 +26,8 @@ public class SmtpEmailSender : IEmailSender<User>
         var subject = "Confirm Your Email - AiCV";
         var heading = "Confirm Your Email Address";
         var messageBody = "<p>Hello,</p><p>Thank you for signing up for AiCV! Please click the button below to verify your email address and activate your account.</p>";
-        var body = GetEmailHtmlLayout(subject, heading, messageBody, "Confirm Email", confirmationLink);
+        var safeConfirmationLink = SanitizeActionLink(confirmationLink);
+        var body = GetEmailHtmlLayout(subject, heading, messageBody, "Confirm Email", safeConfirmationLink);
         await SendEmailAsync(email, subject, body);
     }
 
@@ -147,6 +149,26 @@ public class SmtpEmailSender : IEmailSender<User>
             : $"{domainName[0]}***{domainName[^1]}";
 
         return $"{maskedLocal}@{maskedDomain}{tld}";
+    }
+
+    private static string SanitizeActionLink(string? rawLink)
+    {
+        if (string.IsNullOrWhiteSpace(rawLink))
+        {
+            return "#";
+        }
+
+        if (!Uri.TryCreate(rawLink, UriKind.Absolute, out var uri))
+        {
+            return "#";
+        }
+
+        if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+        {
+            return "#";
+        }
+
+        return WebUtility.HtmlEncode(uri.ToString());
     }
 
     private async Task SendEmailAsync(string to, string subject, string htmlMessage)
