@@ -371,6 +371,15 @@ var app = builder.Build();
 
 app.UseForwardedHeaders(); // Must run first to ensure all subsequent middleware detects HTTPS scheme correctly
 
+if (!app.Environment.IsDevelopment())
+{
+    app.Use((context, next) =>
+    {
+        context.Request.Scheme = "https";
+        return next();
+    });
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
