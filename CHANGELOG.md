@@ -15,10 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.12.2] - 2026-06-11
 
 ### Changed
+- Potential fix for code scanning alert no. 7: Workflow does not contain permissions
 - security: untaint password reset token and email body to resolve CodeQL alert #22
+- Potential fix for code scanning alert no. 7: Workflow does not contain permissions
 - security: remove PII and clear-text token exposure from authentication logs
-- Potential fix for pull request finding 'CodeQL / Exposure of private information'
-- Potential fix for pull request finding 'CodeQL / Information exposure through transmitted data'
 - Potential fix for pull request finding 'CodeQL / Exposure of private information'
 
 ## [1.12.1] - 2026-06-08
