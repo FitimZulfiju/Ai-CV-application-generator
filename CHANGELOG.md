@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.12.5] - 2026-06-11
+
+### Changed
+- Fix Watchtower HTTP API trigger method (POST) and add self-healing on failure
+
 ## [1.12.4] - 2026-06-11
 
 ### Fixed
