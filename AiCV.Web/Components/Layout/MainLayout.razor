@@ -17,7 +17,11 @@
         <MudText Typo="Typo.h6" Class="responsive-app-title">@Localizer["AiCvApplications"]</MudText>
         <div class="appbar-breadcrumb-center">
             <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="appbar-breadcrumb-chip">
-                <MudBreadcrumbs Items="_breadcrumbs" />
+                <MudBreadcrumbs Items="_breadcrumbs">
+                    <SeparatorTemplate>
+                        <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Size="Size.Small" />
+                    </SeparatorTemplate>
+                </MudBreadcrumbs>
             </MudChip>
         </div>
         <MudSpacer />
