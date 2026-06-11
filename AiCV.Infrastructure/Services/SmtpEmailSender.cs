@@ -128,7 +128,7 @@ public class SmtpEmailSender : IEmailSender<User>
 
         if (string.IsNullOrWhiteSpace(host))
         {
-            _logger.LogWarning("SMTP_HOST is not configured. Email to {To} with subject '{Subject}' will NOT be sent physically, but was logged. Body: {Body}", to, subject, htmlMessage);
+            _logger.LogWarning("SMTP_HOST is not configured. Email to {To} with subject '{Subject}' will NOT be sent physically. BodyLength={BodyLength}", to, subject, htmlMessage?.Length ?? 0);
             return;
         }
 
