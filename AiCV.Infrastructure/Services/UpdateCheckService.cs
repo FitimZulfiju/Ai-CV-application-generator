@@ -367,7 +367,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
 
             // Use the Compose service name so Docker DNS resolves it consistently.
             using var request = new HttpRequestMessage(
-                HttpMethod.Get,
+                HttpMethod.Post,
                 "http://watchtower:8080/v1/update"
             );
             var response = await client.SendAsync(
@@ -382,6 +382,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             }
             else
             {
+                _isUpdateAvailable = false; // Reset flag on failure so the loop can retry
                 var error = await response.Content.ReadAsStringAsync();
                 _lastUpdateError = $"Watchtower returned {(int)response.StatusCode} {response.StatusCode}.";
                 if (_logger.IsEnabled(LogLevel.Error))
@@ -404,6 +405,7 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
         }
         catch (Exception ex)
         {
+            _isUpdateAvailable = false; // Reset flag on failure so the loop can retry
             _lastUpdateError = ex.Message;
             if (_logger.IsEnabled(LogLevel.Error))
             {
