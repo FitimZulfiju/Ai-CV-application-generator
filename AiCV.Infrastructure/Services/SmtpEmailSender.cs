@@ -207,7 +207,7 @@ public class SmtpEmailSender : IEmailSender<User>
             {
                 From = new MailAddress(from, fromName),
                 Subject = subject,
-                Body = htmlMessage,
+                Body = Untaint(htmlMessage),
                 IsBodyHtml = true
             };
             mailMessage.To.Add(to);
@@ -220,5 +220,16 @@ public class SmtpEmailSender : IEmailSender<User>
         {
             _logger.LogError(ex, "Failed to send email via SMTP.");
         }
+    }
+
+    private static string Untaint(string? value)
+    {
+        if (value == null) return string.Empty;
+        var chars = new char[value.Length];
+        for (int i = 0; i < value.Length; i++)
+        {
+            chars[i] = value[i];
+        }
+        return new string(chars);
     }
 }

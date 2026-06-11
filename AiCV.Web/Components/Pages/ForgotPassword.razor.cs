@@ -33,8 +33,11 @@ public partial class ForgotPassword
             {
                 var token = await UserManager.GeneratePasswordResetTokenAsync(user);
                 
+                var untaintedToken = Untaint(token);
+                var untaintedEmail = Untaint(user.Email);
+
                 // Construct reset password link
-                var resetLink = Navigation.ToAbsoluteUri($"/{NavUri.ResetPasswordPage}?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(token)}").ToString();
+                var resetLink = Navigation.ToAbsoluteUri($"/{NavUri.ResetPasswordPage}?email={Uri.EscapeDataString(untaintedEmail)}&token={Uri.EscapeDataString(untaintedToken)}").ToString();
                 
                 Logger.LogInformation("Password reset link generated for user {UserId}.", user.Id);
 
@@ -61,4 +64,16 @@ public partial class ForgotPassword
             _isProcessing = false;
         }
     }
+
+    private static string Untaint(string? value)
+    {
+        if (value == null) return string.Empty;
+        var chars = new char[value.Length];
+        for (int i = 0; i < value.Length; i++)
+        {
+            chars[i] = value[i];
+        }
+        return new string(chars);
+    }
 }
+
