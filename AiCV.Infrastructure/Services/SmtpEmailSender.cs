@@ -178,11 +178,10 @@ public class SmtpEmailSender : IEmailSender<User>
         var user = _configuration["SMTP_USER"];
         var pass = _configuration["SMTP_PASSWORD"];
         var from = _configuration["SMTP_FROM_EMAIL"] ?? "no-reply@aicv.local";
-        var maskedTo = MaskEmailForLog(to);
 
         if (string.IsNullOrWhiteSpace(host))
         {
-            _logger.LogWarning("SMTP_HOST is not configured. Email to {To} with subject '{Subject}' will NOT be sent physically. BodyLength={BodyLength}", maskedTo, subject, htmlMessage?.Length ?? 0);
+            _logger.LogWarning("SMTP_HOST is not configured. Email with subject '{Subject}' will NOT be sent physically. BodyLength={BodyLength}", subject, htmlMessage?.Length ?? 0);
             return;
         }
 
@@ -213,13 +212,13 @@ public class SmtpEmailSender : IEmailSender<User>
             };
             mailMessage.To.Add(to);
 
-            _logger.LogInformation("Sending email to {To} via SMTP host {Host}:{Port}...", maskedTo, host, port);
+            _logger.LogInformation("Sending email via SMTP host {Host}:{Port}...", host, port);
             await client.SendMailAsync(mailMessage);
-            _logger.LogInformation("Email to {To} sent successfully.", maskedTo);
+            _logger.LogInformation("Email sent successfully.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {To} via SMTP.", maskedTo);
+            _logger.LogError(ex, "Failed to send email via SMTP.");
         }
     }
 }
