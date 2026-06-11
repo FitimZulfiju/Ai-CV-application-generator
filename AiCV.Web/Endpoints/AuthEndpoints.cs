@@ -25,6 +25,34 @@ public static class AuthEndpoints
             }
         );
 
+        // GET /refresh-signin — for Blazor components (avoids "Headers are read-only" error when refreshing sign-in cookie)
+        app.MapGet(
+            "/refresh-signin",
+            async (
+                [FromQuery] string? action,
+                SignInManager<User> signInManager,
+                UserManager<User> userManager,
+                HttpContext httpContext,
+                ILogger<Program> logger
+            ) =>
+            {
+                var user = await userManager.GetUserAsync(httpContext.User);
+                if (user != null)
+                {
+                    logger.LogInformation("Refreshing sign-in for user {UserId} after password change/set.", user.Id);
+                    await signInManager.RefreshSignInAsync(user);
+                    var redirectUrl = $"/{NavUri.SettingsPage}";
+                    if (!string.IsNullOrEmpty(action))
+                    {
+                        redirectUrl += $"?{action}=true";
+                    }
+                    return Results.Redirect(redirectUrl);
+                }
+                logger.LogWarning("User not found in HttpContext to refresh sign-in.");
+                return Results.Redirect($"/{NavUri.LoginPage}");
+            }
+        );
+
         // POST /perform-login
         app.MapPost(
                 "/perform-login",

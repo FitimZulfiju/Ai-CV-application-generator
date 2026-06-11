@@ -1,4 +1,4 @@
-﻿global using AiCV.Application.Common;
+global using AiCV.Application.Common;
 global using AiCV.Application.DTOs;
 global using AiCV.Application.Interfaces;
 global using AiCV.Domain;
@@ -28,6 +28,7 @@ global using System.Data;
 global using System.Diagnostics;
 global using System.IO.Compression;
 global using System.Net;
+global using System.Net.Mail;
 global using System.Net.Http.Headers;
 global using System.Net.Http.Json;
 global using System.Text;

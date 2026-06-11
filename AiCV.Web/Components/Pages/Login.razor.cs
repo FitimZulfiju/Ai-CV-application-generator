@@ -8,6 +8,9 @@ public partial class Login
     [SupplyParameterFromQuery(Name = "email")]
     public string? SuppliedEmail { get; set; }
 
+    [SupplyParameterFromQuery(Name = "resetSuccess")]
+    public bool? ResetSuccess { get; set; }
+
     private string _email = string.Empty;
     private string _password = string.Empty;
 

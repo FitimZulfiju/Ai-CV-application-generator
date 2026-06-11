@@ -32,14 +32,21 @@
                 Adornment="Adornment.End" AdornmentIcon="@PasswordIcon" OnAdornmentClick="TogglePasswordVisibility"
                 AdornmentAriaLabel="Toggle password visibility" Class="mb-3" Required="true" Clearable="true" />
 
-            <div class="d-flex align-center mb-3">
-                <input type="hidden" name="rememberMe" value="@(_rememberMe.ToString().ToLower())" />
-                <MudCheckBox T="bool" @bind-Value="_rememberMe" Label="@Localizer["RememberMe"]"
-                    Color="Color.Primary" />
+            <div class="d-flex align-center justify-space-between mb-3">
+                <div class="d-flex align-center">
+                    <input type="hidden" name="rememberMe" value="@(_rememberMe.ToString().ToLower())" />
+                    <MudCheckBox T="bool" @bind-Value="_rememberMe" Label="@Localizer["RememberMe"]"
+                        Color="Color.Primary" />
+                </div>
+                <MudLink Href="@($"/{NavUri.ForgotPasswordPage}")">@Localizer["ForgotPassword"]?</MudLink>
             </div>
 
-            @if (!string.IsNullOrEmpty(Error))
+            @if (ResetSuccess == true)
+            {
+                <MudAlert Severity="Severity.Success" Class="mb-3">@Localizer["PasswordResetSuccessMessage"]</MudAlert>
+            }
 
+            @if (!string.IsNullOrEmpty(Error))
             {
                 <MudAlert Severity="Severity.Error" Class="mb-3">@Localizer[Error]</MudAlert>
             }
@@ -55,29 +62,23 @@
             <MudText Typo="Typo.body2" Align="Align.Center" Class="mb-3" Color="Color.Secondary">@Localizer["OrSignInWith"]
             </MudText>
 
-            <MudStack Spacing="2">
+            <div class="d-flex justify-center gap-4">
                 @if (IsGoogleConfigured)
                 {
-                    <MudButton Href="/external-login/Google" Variant="Variant.Outlined" FullWidth="true"
-                StartIcon="@Icons.Custom.Brands.Google" Style="border-color: #DB4437; color: #DB4437;">
-                        @Localizer["ContinueWithGoogle"]
-                    </MudButton>
+                    <MudIconButton Href="/external-login/Google" Variant="Variant.Outlined"
+                        Icon="@Icons.Custom.Brands.Google" Style="border-color: #DB4437; color: #DB4437;" />
                 }
                 @if (IsMicrosoftConfigured)
                 {
-                    <MudButton Href="/external-login/Microsoft" Variant="Variant.Outlined" FullWidth="true"
-                StartIcon="@Icons.Custom.Brands.Microsoft" Style="border-color: #00a4ef; color: #00a4ef;">
-                        @Localizer["ContinueWithMicrosoft"]
-                    </MudButton>
+                    <MudIconButton Href="/external-login/Microsoft" Variant="Variant.Outlined"
+                        Icon="@Icons.Custom.Brands.Microsoft" Style="border-color: #00a4ef; color: #00a4ef;" />
                 }
                 @if (IsGitHubConfigured)
                 {
-                    <MudButton Href="/external-login/GitHub" Variant="Variant.Outlined" FullWidth="true"
-                StartIcon="@Icons.Custom.Brands.GitHub" Style="border-color: #333; color: #333;">
-                        @Localizer["ContinueWithGitHub"]
-                    </MudButton>
+                    <MudIconButton Href="/external-login/GitHub" Variant="Variant.Outlined"
+                        Icon="@Icons.Custom.Brands.GitHub" Style="border-color: #333; color: #333;" />
                 }
-            </MudStack>
+            </div>
 
             <MudDivider Class="my-4" />
         }

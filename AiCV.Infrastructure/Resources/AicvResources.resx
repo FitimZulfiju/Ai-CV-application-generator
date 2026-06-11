@@ -1368,5 +1368,29 @@
   <data name="DisplayAsChips" xml:space="preserve">
     <value>Display as Tags/Chips</value>
   </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="ForgotPasswordInstructions" xml:space="preserve">
+    <value>Enter the email address associated with your account and we will generate a password reset link.</value>
+  </data>
+  <data name="ForgotPasswordSuccessMessage" xml:space="preserve">
+    <value>If the email is registered in our system, you will receive a reset link shortly. Please check your spam or junk folder if you don't see it.</value>
+  </data>
+  <data name="SendResetLink" xml:space="preserve">
+    <value>Send Reset Link</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Back to Login</value>
+  </data>
+  <data name="PasswordResetSuccessMessage" xml:space="preserve">
+    <value>Your password has been successfully reset. Please log in with your new password.</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="ResetPasswordInstructions" xml:space="preserve">
+    <value>Enter and confirm your new password below.</value>
+  </data>
 </root>
 
