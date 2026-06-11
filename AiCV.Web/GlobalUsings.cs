@@ -42,3 +42,5 @@ global using System.Security.Claims;
 global using System.Text.Json;
 global using System.Threading.Tasks;
 global using System.Text;
+global using System.ComponentModel.DataAnnotations;
+global using Microsoft.Extensions.Logging;

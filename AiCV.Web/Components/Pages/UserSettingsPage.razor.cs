@@ -112,6 +112,20 @@ public partial class UserSettingsPage
         var uri = new Uri(Navigation.Uri);
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
+        if (query.TryGetValue("passwordChanged", out var passwordChanged) && passwordChanged == "true")
+        {
+            Snackbar.Add(Localizer["PasswordChangedSuccessfully"], Severity.Success);
+            Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
+            return;
+        }
+
+        if (query.TryGetValue("passwordAdded", out var passwordAdded) && passwordAdded == "true")
+        {
+            Snackbar.Add(Localizer["PasswordAddedLocalLoginEnabled"], Severity.Success);
+            Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
+            return;
+        }
+
         if (query.TryGetValue("connected", out var connected))
         {
             var msg = connected.ToString() switch
@@ -189,10 +203,7 @@ public partial class UserSettingsPage
             var result = await UserManager.AddPasswordAsync(user, _newPassword);
             if (result.Succeeded)
             {
-                _hasPassword = true;
-                _showSetPassword = false;
-                ClearPasswordFields();
-                Snackbar.Add(Localizer["PasswordAddedLocalLoginEnabled"], Severity.Success);
+                Navigation.NavigateTo("/refresh-signin?action=passwordAdded", forceLoad: true);
             }
             else
             {
@@ -237,10 +248,7 @@ public partial class UserSettingsPage
             var result = await UserManager.ChangePasswordAsync(user, _currentPassword, _newPassword);
             if (result.Succeeded)
             {
-                await SignInManager.RefreshSignInAsync(user);
-                _showChangePassword = false;
-                ClearPasswordFields();
-                Snackbar.Add(Localizer["PasswordChangedSuccessfully"], Severity.Success);
+                Navigation.NavigateTo("/refresh-signin?action=passwordChanged", forceLoad: true);
             }
             else
             {

@@ -178,6 +178,10 @@ builder
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// Configure token lifespan for password reset and email confirmation to 1 hour
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+    options.TokenLifespan = TimeSpan.FromHours(1));
+
 // Add External Authentication Providers
 var authBuilder = builder.Services.AddAuthentication();
 
@@ -285,6 +289,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
         | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
     options.KnownIPNetworks.Clear();
     options.KnownProxies.Clear();
+    options.ForwardLimit = null; // Support multi-hop proxies (Cloudflare Edge -> Cloudflare Tunnel -> App)
 });
 
 builder.Services.AddScoped<IAIServiceFactory, AIServiceFactory>();
@@ -359,7 +364,12 @@ builder.Services.AddHostedService<BackupBackgroundService>();
 // Database Initialization
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
+// Email Sender for Password Reset
+builder.Services.AddTransient<IEmailSender<User>, SmtpEmailSender>();
+
 var app = builder.Build();
+
+app.UseForwardedHeaders(); // Must run first to ensure all subsequent middleware detects HTTPS scheme correctly
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -372,8 +382,6 @@ app.UseStatusCodePagesWithReExecute($"/{NavUri.NotFoundPage}", createScopeForSta
 app.UseStatusCodePagesWithReExecute($"/{NavUri.NotFoundPage}", createScopeForStatusCodePages: true);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseForwardedHeaders(); // Must be before UseHttpsRedirection
 
 app.UseHttpsRedirection();
 

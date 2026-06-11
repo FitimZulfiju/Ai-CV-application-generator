@@ -54,7 +54,7 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
   All data is stored in your own database. No external tracking or third‑party storage.
 
 * **Authentication & Account Merging**
-  Local accounts plus OAuth (Google, Microsoft, GitHub). Automatically merges accounts with matching email addresses.
+  Local accounts (with password registration, recovery/reset) plus OAuth (Google, Microsoft, GitHub). Automatically merges accounts with matching email addresses.
 
 * **User Account Self-Service**
   Full control over your data. Delete your entire account and all associated AI configurations directly from settings.

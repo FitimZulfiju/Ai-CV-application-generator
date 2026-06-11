@@ -24,6 +24,7 @@
 @using AiCV.Application.Common
 @using System.Globalization
 @using System.Text
+@using Microsoft.AspNetCore.Identity
 @inject ISystemLogService LogService
 @inject IDialogService DialogService
 @inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
@@ -39,6 +40,7 @@
 @inject IClipboardService ClipboardService
 @inject UserManager<User> UserManager
 @inject SignInManager<User> SignInManager
+@inject IEmailSender<User> EmailSender
 @inject ILoadingService LoadingService
 @inject IPdfService PdfService
 @inject IWebHostEnvironment Environment

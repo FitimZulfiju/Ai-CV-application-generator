@@ -1359,4 +1359,28 @@
   <data name="Continue" xml:space="preserve">
     <value>Vazhdo</value>
   </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Keni harruar fjalëkalimin</value>
+  </data>
+  <data name="ForgotPasswordInstructions" xml:space="preserve">
+    <value>Vendosni adresën e emailit të lidhur me llogarinë tuaj dhe ne do të gjenerojmë një link për rivendosjen e fjalëkalimit.</value>
+  </data>
+  <data name="ForgotPasswordSuccessMessage" xml:space="preserve">
+    <value>Nëse emaili është i regjistruar në sistemin tonë, do të merrni një link për rivendosjen së shpejti. Ju lutemi kontrolloni edhe dosjen e spam-it ose junk nëse nuk e shihni atë.</value>
+  </data>
+  <data name="SendResetLink" xml:space="preserve">
+    <value>Dërgo linkun e rivendosjes</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Kthehu te kyçja</value>
+  </data>
+  <data name="PasswordResetSuccessMessage" xml:space="preserve">
+    <value>Fjalëkalimi juaj u rivendos me sukses. Ju lutemi kyçuni me fjalëkalimin tuaj të ri.</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Rivendos fjalëkalimin</value>
+  </data>
+  <data name="ResetPasswordInstructions" xml:space="preserve">
+    <value>Vendosni dhe konfirmoni fjalëkalimin tuaj të ri më poshtë.</value>
+  </data>
 </root>

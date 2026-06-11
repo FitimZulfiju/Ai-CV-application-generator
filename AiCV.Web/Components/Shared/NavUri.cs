@@ -1,4 +1,4 @@
-﻿namespace AiCV.Web.Components.Shared;
+namespace AiCV.Web.Components.Shared;
 
 public static class NavUri
 {
@@ -13,6 +13,8 @@ public static class NavUri
     public const string NotFoundPage = "404";
     public const string ProfilePage = "profile";
     public const string RegisterPage = "register";
+    public const string ForgotPasswordPage = "forgot-password";
+    public const string ResetPasswordPage = "reset-password";
     public const string SettingsPage = "settings";
     public const string NotesPage = "notes";
     public const string AccessDeniedPage = "accessdenied";

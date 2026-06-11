@@ -1352,4 +1352,28 @@
   <data name="Continue" xml:space="preserve">
     <value>Fortsæt</value>
   </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Glemt adgangskode</value>
+  </data>
+  <data name="ForgotPasswordInstructions" xml:space="preserve">
+    <value>Indtast den e-mailadresse, der er knyttet til din konto, så genererer vi et link til nulstilling af adgangskode.</value>
+  </data>
+  <data name="ForgotPasswordSuccessMessage" xml:space="preserve">
+    <value>Hvis e-mailen er registreret i vores system, modtager du et nulstillingslink inden længe. Tjek venligst også din spam- eller uønsket e-mail-mappe, hvis du ikke kan finde det.</value>
+  </data>
+  <data name="SendResetLink" xml:space="preserve">
+    <value>Send nulstillingslink</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Tilbage til login</value>
+  </data>
+  <data name="PasswordResetSuccessMessage" xml:space="preserve">
+    <value>Din adgangskode er blevet nulstillet. Log venligst ind med din nye adgangskode.</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Nulstil adgangskode</value>
+  </data>
+  <data name="ResetPasswordInstructions" xml:space="preserve">
+    <value>Indtast og bekræft din nye adgangskode nedenfor.</value>
+  </data>
 </root>
