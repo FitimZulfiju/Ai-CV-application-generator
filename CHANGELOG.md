@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.12.2] - 2026-06-11
+
+### Changed
+- Configure SMTP/OAuth settings, update forgot password flow with spam folder reminders
+
 ## [1.12.1] - 2026-06-08
 
 ### Changed
