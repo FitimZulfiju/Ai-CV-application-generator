@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.12.2] - 2026-06-11
 
 ### Changed
+- Potential fix for pull request finding 'CodeQL / Exposure of private information'
 - Potential fix for pull request finding 'CodeQL / Log entries created from user input'
 - Potential fix for pull request finding 'CodeQL / Clear text storage of sensitive information'
 - Configure SMTP/OAuth settings, update forgot password flow with spam folder reminders
