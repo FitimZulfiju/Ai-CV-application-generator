@@ -59,7 +59,7 @@ public partial class ResetPassword
             var result = await UserManager.ResetPasswordAsync(user, Token, NewPassword);
             if (result.Succeeded)
             {
-                Logger.LogInformation("Successfully reset password for user: {Email}", Email);
+                Logger.LogInformation("Successfully reset password for user: {Email}", SanitizeForLog(Email));
                 Navigation.NavigateTo($"/{NavUri.LoginPage}?resetSuccess=true");
             }
             else
@@ -69,12 +69,19 @@ public partial class ResetPassword
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error resetting password for user {Email}", Email);
+            Logger.LogError(ex, "Error resetting password for user {Email}", SanitizeForLog(Email));
             _error = "An error occurred while resetting your password. Please try again.";
         }
         finally
         {
             _isProcessing = false;
         }
+    }
+
+    private static string SanitizeForLog(string? value)
+    {
+        return (value ?? string.Empty)
+            .Replace("\r", string.Empty)
+            .Replace("\n", string.Empty);
     }
 }
