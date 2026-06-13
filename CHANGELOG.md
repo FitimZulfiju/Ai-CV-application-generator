@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.12.7] - 2026-06-13
+
+### Changed
+- chore: revert AGENTS.md tracking and add to gitignore
+- chore: enforce strict AI operational rules via AGENTS.md
+
 ## [1.12.6] - 2026-06-11
 
 ### Changed
