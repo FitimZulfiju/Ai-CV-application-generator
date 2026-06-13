@@ -21,32 +21,67 @@
                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
         <MudText Typo="Typo.body2" Class="mb-4">@Localizer["SkillsHelper"]</MudText>
     </MudStack>
-    <MudGrid>
-        @foreach (var category in SkillCategories)
-        {
-            <MudItem xs="12" md="6">
-                <MudCard Class="pa-3" Elevation="2">
+    <div class="categories-drop-container">
+        <MudDropContainer T="Profile.SkillCategoryViewModel"
+                          @ref="_categoryDropContainer"
+                          Items="SkillCategories"
+                          ItemsSelector="@((item, zone) => true)"
+                          ItemDropped="OnCategoryDropped">
+            <ChildContent>
+                <MudDropZone T="Profile.SkillCategoryViewModel" Identifier="CategoriesZone" AllowReorder="true" Class="skills-categories-zone" />
+            </ChildContent>
+            <ItemRenderer Context="category">
+                <MudCard Class="pa-3 profile-draggable-category" Elevation="2">
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                        <MudIcon Icon="@Icons.Material.Filled.DragIndicator" />
                         <MudTextField @bind-Value="category.Name" Label="@Localizer["CategoryName"]"
                                       Variant="Variant.Text" />
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
                                        OnClick="@(() => RemoveCategory(category))" />
                         <MudTextField Class="" @bind-Value="category.NewSkillInput"
-                                      Label="@($"{Localizer["AddSkill"]} {category.Name}")" Variant="Variant.Outlined"
-                                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add"
-                                      OnAdornmentClick="@(() => AddSkill(category))" />
-                    </MudStack>
-                    <MudChipSet T="string" Class="mt-1">
-                        @foreach (var skill in category.Skills.ToList())
+                                      Label="@((_editingSkillCategory == category && _editingSkillOriginalValue != null) ? Localizer["Edit"].Value : $"{Localizer["AddSkill"]} {category.Name}")" Variant="Variant.Outlined"
+                                      Adornment="Adornment.End" AdornmentIcon="@((_editingSkillCategory == category && _editingSkillOriginalValue != null) ? Icons.Material.Filled.Check : Icons.Material.Filled.Add)"
+                                      OnAdornmentClick="@(() => AddSkill(category))" Immediate="true" />
+                        @if (_editingSkillCategory == category && _editingSkillOriginalValue != null)
                         {
-                            var s = skill;
-                            <MudChip T="string" Value="@s" Text="@s" Color="Color.Primary"
-                                     OnClose="@((MudChip<string> chip) => RemoveSkill(category, s))" />
+                            <MudTooltip Text="@Localizer["Cancel"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => CancelSkillEdit(category))" />
+                            </MudTooltip>
                         }
-                    </MudChipSet>
+                    </MudStack>
+                    <div class="skills-chip-drop-container mt-1">
+                        <MudDropContainer T="string"
+                                          @ref="_skillContainers[category]"
+                                          Items="category.Skills"
+                                          ItemsSelector="@((item, zone) => zone == $"SkillsZone_{category.Name}")"
+                                          ItemDropped="@((info) => OnSkillDropped(category, info))"
+                                          Class="profile-chip-drop-container">
+                            <ChildContent>
+                                <MudDropZone T="string" Identifier="@($"SkillsZone_{category.Name}")" AllowReorder="true" Class="profile-chip-drop-zone" />
+                            </ChildContent>
+                            <ItemRenderer Context="skillContext">
+                                <MudChip T="string" Value="skillContext" Text="@skillContext" Color="Color.Primary" Variant="Variant.Filled"
+                                         OnClose="@((MudChip<string> chip) => RemoveSkill(category, skillContext))"
+                                         Class="profile-draggable-chip">
+                                    <span class="profile-chip-content">
+                                        <FormattedText Text="@skillContext" />
+                                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                                            <MudTooltip Text="@Localizer["Edit"]">
+                                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                               Size="Size.Small"
+                                                               Color="Color.Default"
+                                                               Variant="Variant.Text"
+                                                               OnClick="@(() => BeginSkillEdit(category, skillContext))" />
+                                            </MudTooltip>
+                                        </span>
+                                    </span>
+                                </MudChip>
+                            </ItemRenderer>
+                        </MudDropContainer>
+                    </div>
                 </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
+            </ItemRenderer>
+        </MudDropContainer>
+    </div>
 }
 

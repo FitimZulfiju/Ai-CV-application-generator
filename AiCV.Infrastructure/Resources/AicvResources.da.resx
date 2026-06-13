@@ -533,7 +533,7 @@
     <value>f.eks. ministeriel anerkendelse, udmærkelser, speciale</value>
   </data>
   <data name="SkillsHelper" xml:space="preserve">
-    <value>Tilføj kompetencekategorier og kompetencer. Klik på chippens X for at fjerne en kompetence.</value>
+    <value>Tilføj kompetencekategorier og kompetencer. Træk kategorier eller chips for at ændre rækkefølgen. Klik på en chip for at redigere den, eller klik på dens X for at fjerne den.</value>
   </data>
   <data name="ProjectSectionTitleHelper" xml:space="preserve">
     <value>Første linje = sektionstitel (f.eks. 'AI-aktiveret analysemodul'), følgende linjer = punkttegn</value>

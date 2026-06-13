@@ -540,7 +540,7 @@
     <value>p.sh. Njohja nga Ministria, Nderime, Teza</value>
   </data>
   <data name="SkillsHelper" xml:space="preserve">
-    <value>Shtoni kategori aftësish dhe aftësi. Klikoni X-in e çipit për të hequr një aftësi.</value>
+    <value>Shtoni kategori aftësish dhe aftësi. Tërhiqni kategoritë ose çipat për t'i rirenditur. Klikoni një çip për ta modifikuar, ose klikoni X-in e tij për ta hequr atë.</value>
   </data>
   <data name="ProjectSectionTitleHelper" xml:space="preserve">
     <value>Linja e parë = koka e seksionit (p.sh. 'Moduli i Analitikës së mundësuar nga AI'), linjat pasuese = pika (bullet points)</value>
