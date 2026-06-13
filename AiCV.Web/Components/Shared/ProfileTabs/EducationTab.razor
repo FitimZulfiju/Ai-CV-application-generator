@@ -34,10 +34,10 @@
                                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.WorkspacePremium" />
                     </MudItem>
                     <MudItem xs="12" sm="4">
-                        <MudDatePicker @bind-Date="edu.StartDate" Label="@Localizer["StartDate"]" />
+                        <MudDatePicker @bind-Date="edu.StartDate" Label="@Localizer["StartDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
                     </MudItem>
                     <MudItem xs="12" sm="4">
-                        <MudDatePicker @bind-Date="edu.EndDate" Label="@Localizer["EndDate"]" />
+                        <MudDatePicker @bind-Date="edu.EndDate" Label="@Localizer["EndDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
                     </MudItem>
                     <MudItem xs="12" sm="4">
                         <MudButton Variant="Variant.Outlined" Color="Color.Error"
