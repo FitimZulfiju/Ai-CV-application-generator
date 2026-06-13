@@ -138,4 +138,4 @@ AiCV.Web/wwwroot/uploads/
 /.dotnet-cli/.dotnet
 
 # AI Rules
-AI_RULES.md
+AGENTS.md
