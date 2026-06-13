@@ -564,7 +564,7 @@
     <value>e.g. Ministry Recognition, Honors, Thesis</value>
   </data>
   <data name="SkillsHelper" xml:space="preserve">
-    <value>Add skill categories and skills. Click the chip's X to remove a skill.</value>
+    <value>Add skill categories and skills. Drag categories or chips to reorder them. Click a chip to edit it, or click its X to remove it.</value>
   </data>
   <data name="ProjectSectionTitleHelper" xml:space="preserve">
     <value>First line = section header (e.g. 'AI-Enabled Analytics Module'), following lines = bullet points</value>
@@ -1391,6 +1391,12 @@
   </data>
   <data name="ResetPasswordInstructions" xml:space="preserve">
     <value>Enter and confirm your new password below.</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Move Up</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move Down</value>
   </data>
 </root>
 

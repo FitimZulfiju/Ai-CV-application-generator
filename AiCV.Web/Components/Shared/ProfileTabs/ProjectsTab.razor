@@ -21,6 +21,10 @@
     <MudStack Spacing="4">
         @foreach (var proj in Profile.Projects)
         {
+            var index = Profile.Projects.IndexOf(proj);
+            var isFirst = index == 0;
+            var isLast = index == Profile.Projects.Count - 1;
+
             <MudCard Class="pa-3" Elevation="2">
                 <MudGrid>
                     <MudItem xs="12" sm="6">
@@ -53,16 +57,32 @@
                         <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]"
                                       Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
                     </MudItem>
-                    <MudItem xs="12" sm="11" Class="pt-2">
+                    <MudItem xs="12" sm="9" Class="pt-2">
                         <div class="pl-5">
                             <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]"
                                           Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Subject"
                                           Variant="Variant.Text" Clearable="true"></MudTextField>
                         </div>
                     </MudItem>
-                    <MudItem xs="12" sm="1">
+                    <MudItem xs="12" sm="3" Class="d-flex justify-end align-center pt-2">
+                        <MudTooltip Text="@Localizer["MoveUp"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" 
+                                           Disabled="@isFirst" 
+                                           OnClick="@(() => MoveProjectUp(proj))" 
+                                           Size="Size.Small" 
+                                           Color="Color.Default"
+                                           Class="mr-1" />
+                        </MudTooltip>
+                        <MudTooltip Text="@Localizer["MoveDown"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" 
+                                           Disabled="@isLast" 
+                                           OnClick="@(() => MoveProjectDown(proj))" 
+                                           Size="Size.Small" 
+                                           Color="Color.Default"
+                                           Class="mr-4" />
+                        </MudTooltip>
                         <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                                   Class="ml-auto d-flex align-items-end" Size="Size.Small"
+                                   Size="Size.Small"
                                    OnClick="@(() => RemoveProject(proj))" StartIcon="@Icons.Material.Filled.Delete">
                             @Localizer["Remove"]
                         </MudButton>

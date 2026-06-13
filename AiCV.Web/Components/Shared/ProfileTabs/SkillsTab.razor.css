@@ -1,0 +1,58 @@
+.skills-chip-drop-container ::deep .profile-chip-drop-zone {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 2.25rem !important;
+    width: 100% !important;
+}
+
+.skills-chip-drop-container ::deep .mud-drop-item {
+    display: inline-flex !important;
+    width: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.skills-chip-drop-container ::deep .profile-draggable-chip {
+    cursor: grab;
+}
+
+.skills-chip-drop-container ::deep .profile-draggable-chip:active {
+    cursor: grabbing;
+}
+
+.skills-chip-drop-container ::deep .profile-chip-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.categories-drop-container ::deep .skills-categories-zone {
+    column-count: 1;
+    column-gap: 24px;
+    width: 100% !important;
+    display: block !important;
+}
+
+.categories-drop-container ::deep .skills-categories-zone>.mud-drop-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    display: block;
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 0;
+}
+
+@media (min-width: 960px) {
+    .categories-drop-container ::deep .skills-categories-zone {
+        column-count: 2;
+    }
+}
+
+.categories-drop-container ::deep .profile-draggable-category {
+    cursor: grab;
+}
+
+.categories-drop-container ::deep .profile-draggable-category:active {
+    cursor: grabbing;
+}

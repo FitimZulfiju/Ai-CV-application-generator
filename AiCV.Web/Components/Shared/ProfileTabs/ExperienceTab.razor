@@ -22,6 +22,10 @@
     <MudStack Spacing="4">
         @foreach (var exp in Profile.WorkExperience)
         {
+            var index = Profile.WorkExperience.IndexOf(exp);
+            var isFirst = index == 0;
+            var isLast = index == Profile.WorkExperience.Count - 1;
+
             <MudCard Class="pa-3" Elevation="2">
                 <MudGrid>
                     <MudItem xs="12" sm="4">
@@ -44,7 +48,7 @@
                     </MudItem>
                     <MudItem xs="12" sm="2">
                         <MudDatePicker @bind-Date="exp.EndDate"
-                                       Label="@(exp.IsCurrentRole ? Localizer["Present"] : Localizer["EndDate"])"
+                                       Label="@(exp.IsCurrentRole ? Localizer["Present"].Value : Localizer["EndDate"].Value)"
                                        Disabled="@exp.IsCurrentRole" />
                     </MudItem>
                     <MudItem xs="4" sm="2" Class="d-flex align-center">
@@ -59,15 +63,31 @@
                         }
                     </MudItem>
 
-                    <MudItem xs="4" sm="3">
+                    <MudItem xs="4" sm="3" Class="d-flex align-center">
                         <MudSwitch T="bool"
                                    @bind-Value="exp.IsCurrentRole"
                                    Color="Color.Primary"
                                    Label="@Localizer["CurrentRole"]" />
                     </MudItem>
 
-                    <MudItem xs="4" sm="3">
-                        <MudButton Class="ml-auto d-flex align-items-end" Variant="Variant.Outlined"
+                    <MudItem xs="12" sm="3" Class="d-flex justify-end align-center">
+                        <MudTooltip Text="@Localizer["MoveUp"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" 
+                                           Disabled="@isFirst" 
+                                           OnClick="@(() => MoveExperienceUp(exp))" 
+                                           Size="Size.Small" 
+                                           Color="Color.Default"
+                                           Class="mr-1" />
+                        </MudTooltip>
+                        <MudTooltip Text="@Localizer["MoveDown"]">
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" 
+                                           Disabled="@isLast" 
+                                           OnClick="@(() => MoveExperienceDown(exp))" 
+                                           Size="Size.Small" 
+                                           Color="Color.Default"
+                                           Class="mr-4" />
+                        </MudTooltip>
+                        <MudButton Variant="Variant.Outlined"
                                    Size="Size.Small" Color="Color.Error" OnClick="@(() => RemoveExperience(exp))"
                                    StartIcon="@Icons.Material.Filled.Delete">
                             @Localizer["Remove"]

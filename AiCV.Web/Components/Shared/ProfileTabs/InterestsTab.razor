@@ -49,40 +49,41 @@
             </MudItem>
         </MudGrid>
 
-        <MudDropContainer @ref="_dropContainer"
-                          T="Interest"
-                          Items="Profile.Interests"
-                          ItemsSelector="@((Interest item, string zone) => zone == InterestsDropZone)"
-                          ItemDropped="OnInterestDropped"
-                          Class="profile-chip-drop-container">
-            <ChildContent>
-                <MudDropZone T="Interest"
-                             Identifier="@InterestsDropZone"
-                             AllowReorder="true"
-                             Class="profile-chip-drop-zone" />
-            </ChildContent>
-            <ItemRenderer>
-                <MudChip T="Interest"
-                         Value="context"
-                         Color="@GetInterestChipColor(context)"
-                         Variant="@GetInterestChipVariant(context)"
-                         OnClose="@((MudChip<Interest> chip) => RemoveInterest(context))"
-                         Class="profile-draggable-chip">
-                    <span class="profile-chip-content">
-                        <FormattedText Text="@context.Name" />
-                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
-                            <MudTooltip Text="@Localizer["Edit"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => BeginInterestEdit(context))" />
-                            </MudTooltip>
+        <div class="profile-chip-drop-container">
+            <MudDropContainer @ref="_dropContainer"
+                              T="Interest"
+                              Items="Profile.Interests"
+                              ItemsSelector="@((Interest item, string zone) => zone == InterestsDropZone)"
+                              ItemDropped="OnInterestDropped">
+                <ChildContent>
+                    <MudDropZone T="Interest"
+                                 Identifier="@InterestsDropZone"
+                                 AllowReorder="true"
+                                 Class="profile-chip-drop-zone" />
+                </ChildContent>
+                <ItemRenderer>
+                    <MudChip T="Interest"
+                             Value="context"
+                             Color="@GetInterestChipColor(context)"
+                             Variant="@GetInterestChipVariant(context)"
+                             OnClose="@((MudChip<Interest> chip) => RemoveInterest(context))"
+                             Class="profile-draggable-chip">
+                        <span class="profile-chip-content">
+                            <FormattedText Text="@context.Name" />
+                            <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                                <MudTooltip Text="@Localizer["Edit"]">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                   Size="Size.Small"
+                                                   Color="Color.Default"
+                                                   Variant="Variant.Text"
+                                                   OnClick="@(() => BeginInterestEdit(context))" />
+                                </MudTooltip>
+                            </span>
                         </span>
-                    </span>
-                </MudChip>
-            </ItemRenderer>
-        </MudDropContainer>
+                    </MudChip>
+                </ItemRenderer>
+            </MudDropContainer>
+        </div>
 
         @if (_showChipHelp)
         {

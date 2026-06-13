@@ -56,44 +56,45 @@
             </MudItem>
         </MudGrid>
 
-        <MudDropContainer @ref="_dropContainer"
-                          T="Language"
-                          Items="Profile.Languages"
-                          ItemsSelector="@((Language item, string zone) => zone == LanguagesDropZone)"
-                          ItemDropped="OnLanguageDropped"
-                          Class="profile-chip-drop-container">
-            <ChildContent>
-                <MudDropZone T="Language"
-                             Identifier="@LanguagesDropZone"
-                             AllowReorder="true"
-                             Class="profile-chip-drop-zone" />
-            </ChildContent>
-            <ItemRenderer>
-                @{
-                    var chipText = GetLanguageChipText(context);
-                }
+        <div class="profile-chip-drop-container">
+            <MudDropContainer @ref="_dropContainer"
+                              T="Language"
+                              Items="Profile.Languages"
+                              ItemsSelector="@((Language item, string zone) => zone == LanguagesDropZone)"
+                              ItemDropped="OnLanguageDropped">
+                <ChildContent>
+                    <MudDropZone T="Language"
+                                 Identifier="@LanguagesDropZone"
+                                 AllowReorder="true"
+                                 Class="profile-chip-drop-zone" />
+                </ChildContent>
+                <ItemRenderer>
+                    @{
+                        var chipText = GetLanguageChipText(context);
+                    }
 
-                <MudChip T="Language"
-                         Value="context"
-                         Color="@GetLanguageChipColor(context)"
-                         Variant="@GetLanguageChipVariant(context)"
-                         OnClose="@((MudChip<Language> chip) => RemoveLanguage(context))"
-                         Class="profile-draggable-chip">
-                    <span class="profile-chip-content">
-                        <FormattedText Text="@chipText" />
-                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
-                            <MudTooltip Text="@Localizer["Edit"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => BeginLanguageEdit(context))" />
-                            </MudTooltip>
+                    <MudChip T="Language"
+                             Value="context"
+                             Color="@GetLanguageChipColor(context)"
+                             Variant="@GetLanguageChipVariant(context)"
+                             OnClose="@((MudChip<Language> chip) => RemoveLanguage(context))"
+                             Class="profile-draggable-chip">
+                        <span class="profile-chip-content">
+                            <FormattedText Text="@chipText" />
+                            <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                                <MudTooltip Text="@Localizer["Edit"]">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                   Size="Size.Small"
+                                                   Color="Color.Default"
+                                                   Variant="Variant.Text"
+                                                   OnClick="@(() => BeginLanguageEdit(context))" />
+                                </MudTooltip>
+                            </span>
                         </span>
-                    </span>
-                </MudChip>
-            </ItemRenderer>
-        </MudDropContainer>
+                    </MudChip>
+                </ItemRenderer>
+            </MudDropContainer>
+        </div>
 
         @if (_showChipHelp)
         {
