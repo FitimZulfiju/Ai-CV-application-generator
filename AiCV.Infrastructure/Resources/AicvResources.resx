@@ -1392,5 +1392,11 @@
   <data name="ResetPasswordInstructions" xml:space="preserve">
     <value>Enter and confirm your new password below.</value>
   </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Move Up</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move Down</value>
+  </data>
 </root>
 

@@ -1376,4 +1376,10 @@
   <data name="ResetPasswordInstructions" xml:space="preserve">
     <value>Indtast og bekræft din nye adgangskode nedenfor.</value>
   </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Flyt op</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Flyt ned</value>
+  </data>
 </root>

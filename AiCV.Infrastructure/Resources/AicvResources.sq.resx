@@ -1383,4 +1383,10 @@
   <data name="ResetPasswordInstructions" xml:space="preserve">
     <value>Vendosni dhe konfirmoni fjalëkalimin tuaj të ri më poshtë.</value>
   </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Lëviz Lart</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Lëviz Poshtë</value>
+  </data>
 </root>
