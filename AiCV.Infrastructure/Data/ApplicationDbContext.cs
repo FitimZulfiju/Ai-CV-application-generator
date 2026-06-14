@@ -108,7 +108,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.OwnsOne(p => p.SummarySection);
             entity.OwnsOne(p => p.ExperienceSection);
             entity.OwnsOne(p => p.EducationSection);
-            entity.OwnsOne(p => p.SkillsSection);
+            entity.OwnsOne(p => p.CoreCompetenciesSection);
             entity.OwnsOne(p => p.ProjectsSection);
             entity.OwnsOne(p => p.LanguagesSection);
             entity.OwnsOne(p => p.InterestsSection);

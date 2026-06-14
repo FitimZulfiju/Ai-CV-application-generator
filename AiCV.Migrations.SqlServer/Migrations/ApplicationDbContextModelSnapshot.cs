@@ -756,6 +756,30 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("AiCV.Domain.SectionConfig", "CoreCompetenciesSection", b1 =>
+                        {
+                            b1.Property<int>("CandidateProfileId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("DisplayAsChips")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("Icon")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CandidateProfileId");
+
+                            b1.ToTable("CandidateProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CandidateProfileId");
+                        });
+
                     b.OwnsOne("AiCV.Domain.SectionConfig", "EducationSection", b1 =>
                         {
                             b1.Property<int>("CandidateProfileId")
@@ -876,30 +900,6 @@ namespace AiCV.Migrations.SqlServer.Migrations
                                 .HasForeignKey("CandidateProfileId");
                         });
 
-                    b.OwnsOne("AiCV.Domain.SectionConfig", "SkillsSection", b1 =>
-                        {
-                            b1.Property<int>("CandidateProfileId")
-                                .HasColumnType("int");
-
-                            b1.Property<bool>("DisplayAsChips")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("Icon")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Title")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("CandidateProfileId");
-
-                            b1.ToTable("CandidateProfiles");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CandidateProfileId");
-                        });
-
                     b.OwnsOne("AiCV.Domain.SectionConfig", "SummarySection", b1 =>
                         {
                             b1.Property<int>("CandidateProfileId")
@@ -924,6 +924,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                                 .HasForeignKey("CandidateProfileId");
                         });
 
+                    b.Navigation("CoreCompetenciesSection")
+                        .IsRequired();
+
                     b.Navigation("EducationSection")
                         .IsRequired();
 
@@ -937,9 +940,6 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         .IsRequired();
 
                     b.Navigation("ProjectsSection")
-                        .IsRequired();
-
-                    b.Navigation("SkillsSection")
                         .IsRequired();
 
                     b.Navigation("SummarySection")

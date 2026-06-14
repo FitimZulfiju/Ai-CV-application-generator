@@ -1166,7 +1166,7 @@ public partial class UserSettingsPage
             && IsValidSectionConfig(profile.SummarySection)
             && IsValidSectionConfig(profile.ExperienceSection)
             && IsValidSectionConfig(profile.EducationSection)
-            && IsValidSectionConfig(profile.SkillsSection)
+            && IsValidSectionConfig(profile.CoreCompetenciesSection)
             && IsValidSectionConfig(profile.ProjectsSection)
             && IsValidSectionConfig(profile.LanguagesSection)
             && IsValidSectionConfig(profile.InterestsSection);
@@ -1300,7 +1300,7 @@ public partial class UserSettingsPage
         importedProfile.SummarySection ??= new();
         importedProfile.ExperienceSection ??= new();
         importedProfile.EducationSection ??= new();
-        importedProfile.SkillsSection ??= new();
+        importedProfile.CoreCompetenciesSection ??= new();
         importedProfile.ProjectsSection ??= new();
         importedProfile.LanguagesSection ??= new();
         importedProfile.InterestsSection ??= new();

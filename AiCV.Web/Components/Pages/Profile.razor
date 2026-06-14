@@ -73,6 +73,11 @@ else
                 <PersonalDetailsTab Profile="_profile" OnFilesChanged="UploadFiles" OnDeletePicture="DeleteProfilePicture" />
             </MudTabPanel>
 
+            @* Tab Core Competencies *@
+            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.CoreCompetenciesSection.Title) ? Localizer["CoreCompetencies"] : _profile.CoreCompetenciesSection.Title)" Icon="@Icons.Material.Filled.Build">
+                <CoreCompetenciesTab Profile="_profile" CoreCompetencyCategories="_coreCompetenciesCategories" OnCoreCompetenciesUpdated="UpdateProfileCoreCompetencies" />
+            </MudTabPanel>
+
             @* Tab Experience *@
             <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.ExperienceSection.Title) ? Localizer["Experience"] : _profile.ExperienceSection.Title)" Icon="@Icons.Material.Filled.WorkHistory">
                 <ExperienceTab Profile="_profile" />
@@ -83,12 +88,7 @@ else
                 <EducationTab Profile="_profile" />
             </MudTabPanel>
 
-            @* Tab Skills *@
-            <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.SkillsSection.Title) ? Localizer["Skills"] : _profile.SkillsSection.Title)" Icon="@Icons.Material.Filled.Build">
-                <SkillsTab Profile="_profile" SkillCategories="_skillCategories" OnSkillsUpdated="UpdateProfileSkills" />
-            </MudTabPanel>
-
-            @* Tab Projects *@
+            @* Tab Personal Projects *@
             <MudTabPanel Text="@(string.IsNullOrWhiteSpace(_profile.ProjectsSection.Title) ? Localizer["Projects"] : _profile.ProjectsSection.Title)" Icon="@Icons.Material.Filled.Code">
                 <ProjectsTab Profile="_profile" />
             </MudTabPanel>

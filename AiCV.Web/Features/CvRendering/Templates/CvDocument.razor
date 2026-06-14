@@ -47,11 +47,11 @@ else
                 <!-- Core Competencies -->
                 <section class="section">
                     <h3 class="section-title">
-                        @if (!string.IsNullOrEmpty(Profile.SkillsSection?.Icon))
+                        @if (!string.IsNullOrEmpty(Profile.CoreCompetenciesSection?.Icon))
                         {
-                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.SkillsSection.Icon</span>
+                            <span class="section-icon" style="margin-right: 0.5em;">@Profile.CoreCompetenciesSection.Icon</span>
                         }
-                        @(string.IsNullOrWhiteSpace(Profile.SkillsSection?.Title) ? Localizer["CoreCompetencies"] : Profile.SkillsSection.Title)
+                        @(string.IsNullOrWhiteSpace(Profile.CoreCompetenciesSection?.Title) ? Localizer["CoreCompetencies"] : Profile.CoreCompetenciesSection.Title)
                     </h3>
                     <div class="skills-grid">
                         @if (SkillGroups.Any())
@@ -316,7 +316,9 @@ else
 
                 <!-- Footer -->
                 <footer class="footer">
-                    <p>@(string.IsNullOrWhiteSpace(Profile.FooterText) ? Localizer["ReferencesAvailableUponRequest"] : Profile.FooterText)</p>
+                    <div class="footer-content">
+                        <FormattedText Text="@(string.IsNullOrWhiteSpace(Profile.FooterText) ? Localizer["ReferencesAvailableUponRequest"].ToString() : Profile.FooterText)" />
+                    </div>
                 </footer>
             </div>
         </div>

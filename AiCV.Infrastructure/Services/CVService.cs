@@ -1,14 +1,12 @@
 namespace AiCV.Infrastructure.Services;
 
-public class CVService : ICVService
+public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) : ICVService
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-
-    public CVService(IDbContextFactory<ApplicationDbContext> contextFactory) => _contextFactory = contextFactory;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
 
     public async Task<CandidateProfile> GetProfileAsync(string userId)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var profile = await context
             .CandidateProfiles.AsNoTracking()
             .AsSplitQuery()
