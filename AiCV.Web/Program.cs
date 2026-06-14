@@ -361,6 +361,9 @@ builder.Services.AddScoped<IDbBackupRestoreService, DbBackupRestoreService>();
 builder.Services.AddSingleton<IBackupService, BackupService>();
 builder.Services.AddHostedService<BackupBackgroundService>();
 
+// Log Cleanup Service
+builder.Services.AddHostedService<LogCleanupBackgroundService>();
+
 // Database Initialization
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
@@ -400,9 +403,6 @@ app.UseAuthorization();
 app.UseAntiforgery();
 
 app.UseRequestLocalization();
-
-// Note: Database initialization and seeding is now handled consistently at the end of the file
-// using the DI-registered IDbInitializer service.
 
 app.UseStaticFiles();
 app.MapStaticAssets();
