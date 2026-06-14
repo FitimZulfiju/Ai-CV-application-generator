@@ -28,7 +28,7 @@ public partial class Profile
         public List<string> Skills { get; set; } = [];
     }
 
-    private List<SkillCategoryViewModel> _skillCategories = [];
+    private List<SkillCategoryViewModel> _coreCompetenciesCategories = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,7 +61,7 @@ public partial class Profile
 
             if (_profile.Skills != null && _profile.Skills.Count != 0)
             {
-                _skillCategories =
+                _coreCompetenciesCategories =
                 [
                     .. _profile
                         .Skills.GroupBy(s => s.Category ?? "Uncategorized")
@@ -102,13 +102,13 @@ public partial class Profile
         }
     }
 
-    private void UpdateProfileSkills()
+    private void UpdateProfileCoreCompetencies()
     {
         if (_profile == null)
             return;
 
         _profile.Skills.Clear();
-        foreach (var category in _skillCategories)
+        foreach (var category in _coreCompetenciesCategories)
         {
             foreach (var skillName in category.Skills)
             {
@@ -126,7 +126,7 @@ public partial class Profile
             await Task.Yield();
             try
             {
-                UpdateProfileSkills();
+                UpdateProfileCoreCompetencies();
                 await CVService.SaveProfileAsync(_profile);
                 Snackbar.Add("Profile saved successfully!", Severity.Success);
             }
@@ -149,7 +149,7 @@ public partial class Profile
             return;
         }
 
-        UpdateProfileSkills();
+        UpdateProfileCoreCompetencies();
 
         var exportProfile = CloneProfileForExport(_profile);
         var json = JsonSerializer.Serialize(exportProfile, ProfileJsonOptions);
@@ -215,7 +215,7 @@ public partial class Profile
             await CVService.SaveProfileAsync(importedProfile);
 
             _profile = importedProfile;
-            RefreshSkillCategoriesFromProfile();
+            RefreshCoreCompetencyCategoriesFromProfile();
             Snackbar.Add(Localizer["ProfileImported"], Severity.Success);
             StateHasChanged();
         }
@@ -461,16 +461,16 @@ public partial class Profile
         profile.Interests ??= [];
     }
 
-    private void RefreshSkillCategoriesFromProfile()
+    private void RefreshCoreCompetencyCategoriesFromProfile()
     {
-        _skillCategories = [];
+        _coreCompetenciesCategories = [];
 
         if (_profile?.Skills == null || _profile.Skills.Count == 0)
         {
             return;
         }
 
-        _skillCategories =
+        _coreCompetenciesCategories =
         [
             .. _profile
                 .Skills.GroupBy(s => s.Category ?? "Uncategorized")

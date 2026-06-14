@@ -28,7 +28,7 @@ public class CandidateProfile
     public SectionConfig SummarySection { get; set; } = new();
     public SectionConfig ExperienceSection { get; set; } = new();
     public SectionConfig EducationSection { get; set; } = new();
-    public SectionConfig SkillsSection { get; set; } = new();
+    public SectionConfig CoreCompetenciesSection { get; set; } = new();
     public SectionConfig ProjectsSection { get; set; } = new();
     public SectionConfig LanguagesSection { get; set; } = new();
     public SectionConfig InterestsSection { get; set; } = new();

@@ -1,42 +1,35 @@
 namespace AiCV.Web.Components.Shared.ProfileTabs;
 
-public partial class SkillsTab
+public partial class CoreCompetenciesTab
 {
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 
     [Parameter]
-    public List<Profile.SkillCategoryViewModel> SkillCategories { get; set; } = [];
+    public List<Profile.SkillCategoryViewModel> CoreCompetencyCategories { get; set; } = [];
 
     [Parameter]
-    public EventCallback OnSkillsUpdated { get; set; }
+    public EventCallback OnCoreCompetenciesUpdated { get; set; }
 
     private async Task AddCategory()
     {
-        SkillCategories.Add(new Profile.SkillCategoryViewModel { Name = "New Category" });
+        CoreCompetencyCategories.Add(new Profile.SkillCategoryViewModel { Name = "New Category" });
         RefreshUI();
-        await OnSkillsUpdated.InvokeAsync();
+        await OnCoreCompetenciesUpdated.InvokeAsync();
     }
 
     private async Task RemoveCategory(Profile.SkillCategoryViewModel category)
     {
-        SkillCategories.Remove(category);
+        CoreCompetencyCategories.Remove(category);
         RefreshUI();
-        await OnSkillsUpdated.InvokeAsync();
+        await OnCoreCompetenciesUpdated.InvokeAsync();
     }
 
     private string? _editingSkillOriginalValue = null;
     private Profile.SkillCategoryViewModel? _editingSkillCategory = null;
-    private MudDropContainer<Profile.SkillCategoryViewModel>? _categoryDropContainer;
-    private Dictionary<Profile.SkillCategoryViewModel, MudDropContainer<string>> _skillContainers = new();
 
     private void RefreshUI()
     {
-        _categoryDropContainer?.Refresh();
-        foreach (var container in _skillContainers.Values)
-        {
-            container?.Refresh();
-        }
         _ = InvokeAsync(StateHasChanged);
     }
 
@@ -70,7 +63,7 @@ public partial class SkillsTab
             category.Skills = category.Skills.ToList();
             category.NewSkillInput = "";
             RefreshUI();
-            await OnSkillsUpdated.InvokeAsync();
+            await OnCoreCompetenciesUpdated.InvokeAsync();
         }
     }
 
@@ -100,28 +93,30 @@ public partial class SkillsTab
         category.Skills.Remove(skill);
         category.Skills = category.Skills.ToList();
         RefreshUI();
-        await OnSkillsUpdated.InvokeAsync();
+        await OnCoreCompetenciesUpdated.InvokeAsync();
     }
 
-    private void OnSkillDropped(Profile.SkillCategoryViewModel category, MudItemDropInfo<string> dropInfo)
+    private async Task MoveCategoryUp(Profile.SkillCategoryViewModel category)
     {
-        if (dropInfo.Item == null) return;
-        var skill = dropInfo.Item;
-        category.Skills.Remove(skill);
-        var newIndex = Math.Min(dropInfo.IndexInZone, category.Skills.Count);
-        category.Skills.Insert(newIndex, skill);
-        category.Skills = category.Skills.ToList();
-        RefreshUI();
-        _ = OnSkillsUpdated.InvokeAsync();
+        var index = CoreCompetencyCategories.IndexOf(category);
+        if (index > 0)
+        {
+            CoreCompetencyCategories.RemoveAt(index);
+            CoreCompetencyCategories.Insert(index - 1, category);
+            RefreshUI();
+            await OnCoreCompetenciesUpdated.InvokeAsync();
+        }
     }
 
-    private void OnCategoryDropped(MudItemDropInfo<Profile.SkillCategoryViewModel> dropInfo)
+    private async Task MoveCategoryDown(Profile.SkillCategoryViewModel category)
     {
-        if (dropInfo.Item == null) return;
-        var category = dropInfo.Item;
-        SkillCategories.Remove(category);
-        var newIndex = Math.Min(dropInfo.IndexInZone, SkillCategories.Count);
-        SkillCategories.Insert(newIndex, category);
-        _ = OnSkillsUpdated.InvokeAsync();
+        var index = CoreCompetencyCategories.IndexOf(category);
+        if (index < CoreCompetencyCategories.Count - 1)
+        {
+            CoreCompetencyCategories.RemoveAt(index);
+            CoreCompetencyCategories.Insert(index + 1, category);
+            RefreshUI();
+            await OnCoreCompetenciesUpdated.InvokeAsync();
+        }
     }
 }

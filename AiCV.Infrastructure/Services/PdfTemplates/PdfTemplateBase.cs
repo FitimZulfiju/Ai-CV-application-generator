@@ -432,7 +432,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
             if (renderModel.SkillGroups.Count != 0)
             {
-                SectionTitle(col, _localizer["CoreCompetencies"], profile.SkillsSection);
+                SectionTitle(col, _localizer["CoreCompetencies"], profile.CoreCompetenciesSection);
                 foreach (var skillGroup in renderModel.SkillGroups)
                 {
                     col.Item()
