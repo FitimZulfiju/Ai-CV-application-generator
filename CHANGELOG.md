@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.12.9] - 2026-06-14
+
+### Changed
+- Refactor: Enhance CV date calculation and simplify UI date pickers
+
 ## [1.12.8] - 2026-06-13
 
 ### Fixed

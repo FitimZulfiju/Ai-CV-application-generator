@@ -44,12 +44,12 @@
                                       AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                     </MudItem>
                     <MudItem xs="12" sm="2">
-                        <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" />
+                        <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
                     </MudItem>
                     <MudItem xs="12" sm="2">
                         <MudDatePicker @bind-Date="exp.EndDate"
                                        Label="@(exp.IsCurrentRole ? Localizer["Present"].Value : Localizer["EndDate"].Value)"
-                                       Disabled="@exp.IsCurrentRole" />
+                                       Disabled="@exp.IsCurrentRole" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
                     </MudItem>
                     <MudItem xs="4" sm="2" Class="d-flex align-center">
                         @if (!exp.IsCurrentRole)
