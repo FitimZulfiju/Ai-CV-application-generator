@@ -83,6 +83,32 @@ public partial class CoreCompetenciesTab
         RefreshUI();
     }
 
+    private async Task MoveSkillLeft(Profile.SkillCategoryViewModel category, string skill)
+    {
+        var idx = category.Skills.IndexOf(skill);
+        if (idx > 0)
+        {
+            category.Skills.RemoveAt(idx);
+            category.Skills.Insert(idx - 1, skill);
+            category.Skills = category.Skills.ToList();
+            RefreshUI();
+            await OnCoreCompetenciesUpdated.InvokeAsync();
+        }
+    }
+
+    private async Task MoveSkillRight(Profile.SkillCategoryViewModel category, string skill)
+    {
+        var idx = category.Skills.IndexOf(skill);
+        if (idx >= 0 && idx < category.Skills.Count - 1)
+        {
+            category.Skills.RemoveAt(idx);
+            category.Skills.Insert(idx + 1, skill);
+            category.Skills = category.Skills.ToList();
+            RefreshUI();
+            await OnCoreCompetenciesUpdated.InvokeAsync();
+        }
+    }
+
     private async Task RemoveSkill(Profile.SkillCategoryViewModel category, string skill)
     {
         if (_editingSkillOriginalValue == skill && _editingSkillCategory == category)
@@ -119,4 +145,5 @@ public partial class CoreCompetenciesTab
             await OnCoreCompetenciesUpdated.InvokeAsync();
         }
     }
+
 }

@@ -56,44 +56,56 @@
             </MudItem>
         </MudGrid>
 
-        <div class="profile-chip-drop-container">
-            <MudDropContainer @ref="_dropContainer"
-                              T="Language"
-                              Items="Profile.Languages"
-                              ItemsSelector="@((Language item, string zone) => zone == LanguagesDropZone)"
-                              ItemDropped="OnLanguageDropped">
-                <ChildContent>
-                    <MudDropZone T="Language"
-                                 Identifier="@LanguagesDropZone"
-                                 AllowReorder="true"
-                                 Class="profile-chip-drop-zone" />
-                </ChildContent>
-                <ItemRenderer>
-                    @{
-                        var chipText = GetLanguageChipText(context);
-                    }
+        <div class="profile-chip-container">
+            @foreach (var language in Profile.Languages)
+            {
+                var languageIndex = Profile.Languages.IndexOf(language);
+                var isFirstLanguage = languageIndex == 0;
+                var isLastLanguage = languageIndex == Profile.Languages.Count - 1;
+                var chipText = GetLanguageChipText(language);
 
-                    <MudChip T="Language"
-                             Value="context"
-                             Color="@GetLanguageChipColor(context)"
-                             Variant="@GetLanguageChipVariant(context)"
-                             OnClose="@((MudChip<Language> chip) => RemoveLanguage(context))"
-                             Class="profile-draggable-chip">
-                        <span class="profile-chip-content">
-                            <FormattedText Text="@chipText" />
-                            <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
-                                <MudTooltip Text="@Localizer["Edit"]">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                                   Size="Size.Small"
-                                                   Color="Color.Default"
-                                                   Variant="Variant.Text"
-                                                   OnClick="@(() => BeginLanguageEdit(context))" />
-                                </MudTooltip>
-                            </span>
+                <MudChip T="Language"
+                         Value="language"
+                         Color="@GetLanguageChipColor(language)"
+                         Variant="@GetLanguageChipVariant(language)"
+                         Class="profile-chip">
+                    <span class="profile-chip-content">
+                        <FormattedText Text="@chipText" />
+                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                            <MudTooltip Text="@Localizer["MoveLeft"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                               Disabled="@isFirstLanguage"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => MoveLanguageLeft(language))" />
+                            </MudTooltip>
+                            <MudTooltip Text="@Localizer["MoveRight"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                               Disabled="@isLastLanguage"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => MoveLanguageRight(language))" />
+                            </MudTooltip>
+                            <MudTooltip Text="@Localizer["Edit"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => BeginLanguageEdit(language))" />
+                            </MudTooltip>
+                            <MudTooltip Text="@Localizer["Remove"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => RemoveLanguage(language))" />
+                            </MudTooltip>
                         </span>
-                    </MudChip>
-                </ItemRenderer>
-            </MudDropContainer>
+                    </span>
+                </MudChip>
+            }
         </div>
 
         @if (_showChipHelp)

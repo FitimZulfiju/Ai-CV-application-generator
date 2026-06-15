@@ -60,7 +60,21 @@ else
                             {
                                 <div class="skill-category">
                                     <h4 class="skill-title"><FormattedText Text="@group.Category" /></h4>
-                                    <p class="skill-list"><FormattedText Text="@group.SkillNames" /></p>
+                                    @if (Profile.CoreCompetenciesSection?.DisplayAsChips == true)
+                                    {
+                                        <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: var(--font-size-body); margin-top: 4px;">
+                                            @foreach (var skill in group.Skills)
+                                            {
+                                                <span class="chip" style="display:inline-block; padding:4px 12px; border-radius:16px; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
+                                                    <FormattedText Text="@skill.Name" />
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="skill-list"><FormattedText Text="@group.SkillNames" /></p>
+                                    }
                                 </div>
                             }
                         }

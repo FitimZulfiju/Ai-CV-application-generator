@@ -158,7 +158,7 @@ public partial class Notes
             Logger.LogInformation("Dialog closed. Creating note: {Title}", createdNote.Title);
             await NoteService.CreateNoteAsync(createdNote);
             await LoadNotes();
-            Snackbar.Add(Localizer["NoteCreated"], Severity.Success);
+
         }
         else
         {
@@ -193,7 +193,7 @@ public partial class Notes
         {
             await NoteService.UpdateNoteAsync(updatedNote);
             await LoadNotes();
-            Snackbar.Add(Localizer["NoteUpdated"], Severity.Success);
+
         }
     }
 
@@ -201,20 +201,14 @@ public partial class Notes
     {
         var result = await NoteService.TogglePinAsync(note.Id, _userId!);
         await LoadNotes();
-        Snackbar.Add(
-            result.IsPinned ? Localizer["NotePinned"] : Localizer["NoteUnpinned"],
-            Severity.Info
-        );
+
     }
 
     private async Task ToggleArchive(Note note)
     {
         var result = await NoteService.ToggleArchiveAsync(note.Id, _userId!);
         await LoadNotes();
-        Snackbar.Add(
-            result.IsArchived ? Localizer["NoteArchived"] : Localizer["NoteUnarchived"],
-            Severity.Info
-        );
+
     }
 
     private async Task DeleteNote(Note note)
@@ -230,7 +224,7 @@ public partial class Notes
         {
             await NoteService.DeleteNoteAsync(note.Id, _userId!);
             await LoadNotes();
-            Snackbar.Add(Localizer["NoteDeleted"], Severity.Success);
+
         }
     }
 }

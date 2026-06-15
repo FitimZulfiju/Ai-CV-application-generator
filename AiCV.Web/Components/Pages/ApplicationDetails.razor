@@ -22,17 +22,17 @@
             
             <div class="hide-on-mobile" style="flex: 1 1 auto;"></div>
 
-            @if (_activeTabIndex < 2)
-            {
-                <div style="width: 12.5rem;" class="hide-on-mobile">
-                    <MudSelect T="string" @bind-Value="_application.Template" @bind-Value:after="OnTemplateSelected" Label="@Localizer["PreviewTemplate"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
-                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
-                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
-                        <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
-                    </MudSelect>
-                </div>
-            }
-            <div class="d-flex gap-2 width-100-mobile justify-center">
+            <div class="d-flex gap-2 width-100-mobile justify-center align-center">
+                @if (_activeTabIndex < 2)
+                {
+                    <div style="flex: 1 1 auto; max-width: 12.5rem;">
+                        <MudSelect T="string" @bind-Value="_application.Template" @bind-Value:after="OnTemplateSelected" Label="@Localizer["PreviewTemplate"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
+                            <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
+                            <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
+                            <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                }
                 @if (_activeTabIndex == 0 && _application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter" FullWidth="true" Style="max-width: 12.5rem;">

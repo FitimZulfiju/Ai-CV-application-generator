@@ -204,8 +204,6 @@ public partial class Generate
 
             LoadingService.Update(100, "Done!");
             await Task.Delay(200);
-
-            Snackbar.Add("Job details fetched successfully!", Severity.Success);
         }
         catch (Exception ex)
         {
@@ -335,6 +333,17 @@ public partial class Generate
                 _generatedResume.ShowProfilePicture =
                     _includeProfilePicture
                     && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
+                
+                _generatedResume.Tagline = _cachedProfile.Tagline;
+                _generatedResume.FooterText = _cachedProfile.FooterText;
+                
+                _generatedResume.SummarySection = _cachedProfile.SummarySection;
+                _generatedResume.ExperienceSection = _cachedProfile.ExperienceSection;
+                _generatedResume.EducationSection = _cachedProfile.EducationSection;
+                _generatedResume.CoreCompetenciesSection = _cachedProfile.CoreCompetenciesSection;
+                _generatedResume.ProjectsSection = _cachedProfile.ProjectsSection;
+                _generatedResume.LanguagesSection = _cachedProfile.LanguagesSection;
+                _generatedResume.InterestsSection = _cachedProfile.InterestsSection;
             }
             _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             _originalResumeJson = _resumeJson;

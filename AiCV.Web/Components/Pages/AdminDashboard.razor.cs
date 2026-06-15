@@ -71,7 +71,7 @@ public partial class AdminDashboard
             var result = await UserManagementService.ToggleUserLockoutAsync(userId, lockout);
             if (result)
             {
-                Snackbar.Add($"User account {action}ed successfully", Severity.Success);
+
                 await LoadStatistics(); // Refresh data
             }
             else

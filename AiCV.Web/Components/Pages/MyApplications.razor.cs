@@ -70,7 +70,7 @@ public partial class MyApplications
             {
                 await CVService.DeleteApplicationAsync(app.Id);
                 _applications.Remove(app);
-                Snackbar.Add("Application deleted", Severity.Success);
+
             }
             catch (Exception ex)
             {

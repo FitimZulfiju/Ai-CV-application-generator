@@ -49,40 +49,55 @@
             </MudItem>
         </MudGrid>
 
-        <div class="profile-chip-drop-container">
-            <MudDropContainer @ref="_dropContainer"
-                              T="Interest"
-                              Items="Profile.Interests"
-                              ItemsSelector="@((Interest item, string zone) => zone == InterestsDropZone)"
-                              ItemDropped="OnInterestDropped">
-                <ChildContent>
-                    <MudDropZone T="Interest"
-                                 Identifier="@InterestsDropZone"
-                                 AllowReorder="true"
-                                 Class="profile-chip-drop-zone" />
-                </ChildContent>
-                <ItemRenderer>
-                    <MudChip T="Interest"
-                             Value="context"
-                             Color="@GetInterestChipColor(context)"
-                             Variant="@GetInterestChipVariant(context)"
-                             OnClose="@((MudChip<Interest> chip) => RemoveInterest(context))"
-                             Class="profile-draggable-chip">
-                        <span class="profile-chip-content">
-                            <FormattedText Text="@context.Name" />
-                            <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
-                                <MudTooltip Text="@Localizer["Edit"]">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                                   Size="Size.Small"
-                                                   Color="Color.Default"
-                                                   Variant="Variant.Text"
-                                                   OnClick="@(() => BeginInterestEdit(context))" />
-                                </MudTooltip>
-                            </span>
+        <div class="profile-chip-container">
+            @foreach (var interest in Profile.Interests)
+            {
+                var interestIndex = Profile.Interests.IndexOf(interest);
+                var isFirstInterest = interestIndex == 0;
+                var isLastInterest = interestIndex == Profile.Interests.Count - 1;
+
+                <MudChip T="Interest"
+                         Value="interest"
+                         Color="@GetInterestChipColor(interest)"
+                         Variant="@GetInterestChipVariant(interest)"
+                         Class="profile-chip">
+                    <span class="profile-chip-content">
+                        <FormattedText Text="@interest.Name" />
+                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                            <MudTooltip Text="@Localizer["MoveLeft"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                               Disabled="@isFirstInterest"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => MoveInterestLeft(interest))" />
+                            </MudTooltip>
+                            <MudTooltip Text="@Localizer["MoveRight"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                               Disabled="@isLastInterest"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => MoveInterestRight(interest))" />
+                            </MudTooltip>
+                            <MudTooltip Text="@Localizer["Edit"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => BeginInterestEdit(interest))" />
+                            </MudTooltip>
+                            <MudTooltip Text="@Localizer["Remove"]">
+                                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                               Size="Size.Small"
+                                               Color="Color.Default"
+                                               Variant="Variant.Text"
+                                               OnClick="@(() => RemoveInterest(interest))" />
+                            </MudTooltip>
                         </span>
-                    </MudChip>
-                </ItemRenderer>
-            </MudDropContainer>
+                    </span>
+                </MudChip>
+            }
         </div>
 
         @if (_showChipHelp)
