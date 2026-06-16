@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.14.0] - 2026-06-16
+
+### Added
+- feat: Add Generate page draft persistence, Profile Cancel button, SectionHeaderCard component, and fix chip gap
+- feat: Add Core Competencies chip view and arrow-based chip reordering
+
 ## [1.13.1] - 2026-06-14
 
 ### Changed

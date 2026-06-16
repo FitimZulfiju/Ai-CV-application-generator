@@ -284,7 +284,7 @@
     <value>Tilføj interesse</value>
   </data>
   <data name="ProfileChipHelp" xml:space="preserve">
-    <value>Træk chips for at ændre rækkefølgen. Hold musen over en chip for at redigere eller fjerne den. Gem profilen for at beholde ændringerne.</value>
+    <value>Hold musen over en chip for at se dens pile, og brug dem til at omarrangere, redigere eller fjerne den. Gem profilen for at beholde ændringerne.</value>
   </data>
   <data name="ExportProfile" xml:space="preserve">
     <value>Eksporter profil</value>
@@ -533,7 +533,7 @@
     <value>f.eks. ministeriel anerkendelse, udmærkelser, speciale</value>
   </data>
   <data name="SkillsHelper" xml:space="preserve">
-    <value>Tilføj kompetencekategorier og kompetencer. Træk kategorier eller chips for at ændre rækkefølgen. Klik på en chip for at redigere den, eller klik på dens X for at fjerne den.</value>
+    <value>Flyt kategorier op/ned for at ændre rækkefølgen. Hold musen over en chip for at se dens pile, og brug dem til at omarrangere, redigere eller fjerne den.</value>
   </data>
   <data name="ProjectSectionTitleHelper" xml:space="preserve">
     <value>Første linje = sektionstitel (f.eks. 'AI-aktiveret analysemodul'), følgende linjer = punkttegn</value>
@@ -1381,5 +1381,11 @@
   </data>
   <data name="MoveDown" xml:space="preserve">
     <value>Flyt ned</value>
+  </data>
+  <data name="MoveLeft" xml:space="preserve">
+    <value>Flyt til venstre</value>
+  </data>
+  <data name="MoveRight" xml:space="preserve">
+    <value>Flyt til højre</value>
   </data>
 </root>

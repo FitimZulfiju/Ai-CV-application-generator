@@ -1,58 +1,36 @@
-.skills-chip-drop-container ::deep .profile-chip-drop-zone {
-    display: flex !important;
+.profile-chip-container {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
-    min-height: 2.25rem !important;
-    width: 100% !important;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    min-height: 2.25rem;
+    width: 100%;
 }
 
-.skills-chip-drop-container ::deep .mud-drop-item {
-    display: inline-flex !important;
-    width: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.skills-chip-drop-container ::deep .profile-draggable-chip {
-    cursor: grab;
-}
-
-.skills-chip-drop-container ::deep .profile-draggable-chip:active {
-    cursor: grabbing;
-}
-
-.skills-chip-drop-container ::deep .profile-chip-content {
+.profile-chip-container ::deep .profile-chip-content {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
 }
 
-.categories-drop-container ::deep .skills-categories-zone {
-    column-count: 1;
-    column-gap: 24px;
-    width: 100% !important;
-    display: block !important;
+.profile-chip-container ::deep .profile-chip-edit-action {
+    display: inline-flex;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 120ms ease, opacity 120ms ease;
 }
 
-.categories-drop-container ::deep .skills-categories-zone>.mud-drop-item {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    display: block;
-    width: 100%;
-    margin-bottom: 24px;
-    padding: 0;
+.profile-chip-container ::deep .profile-chip:hover .profile-chip-edit-action,
+.profile-chip-container ::deep .profile-chip:focus-within .profile-chip-edit-action {
+    max-width: 6rem;
+    opacity: 1;
 }
 
-@media (min-width: 960px) {
-    .categories-drop-container ::deep .skills-categories-zone {
-        column-count: 2;
-    }
-}
-
-.categories-drop-container ::deep .profile-draggable-category {
-    cursor: grab;
-}
-
-.categories-drop-container ::deep .profile-draggable-category:active {
-    cursor: grabbing;
+.profile-chip-container ::deep .profile-chip-edit-action .mud-icon-button {
+    height: 1.375rem;
+    min-width: 1.375rem;
+    padding: 0.125rem;
+    width: 1.375rem;
 }

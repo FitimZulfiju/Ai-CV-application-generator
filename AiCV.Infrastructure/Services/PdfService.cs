@@ -43,7 +43,7 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
     {
         var builder = GetTemplateBuilder(template);
 
-        float[] fontSizes = [14f, 13.75f, 13.5f, 13.25f, 13f, 12.75f, 12.5f, 12.25f, 12f, 11.75f, 11.5f, 11.25f, 11f, 10.75f, 10.5f, 10.25f, 10f, 9.5f, 9f, 8.5f, 8f];
+        float[] fontSizes = [14f, 13.75f, 13.5f, 13.25f, 13f, 12.75f, 12.5f, 12.25f, 12f, 11.75f, 11.5f, 11.25f, 11f, 10.75f, 10.5f, 10.25f, 10f, 9.5f, 9f, 8.5f, 8f, 7.5f, 7f, 6.5f, 6f];
         float page1Size = FindOptimalFontSize(builder, fontSizes, (page, size) => 
         {
             page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, profile));
@@ -68,7 +68,7 @@ public class PdfService(IWebHostEnvironment env, IStringLocalizer<AicvResources>
             {
                 page.Size(PageSizes.A4);
                 page.Margin(0.75f, Unit.Centimetre);
-                page.Header().Element(c => builder.ComposeHeader(c, profile));
+                page.Header().ShowOnce().Element(c => builder.ComposeHeader(c, profile));
                 page.Content().Element(c => builder.ComposePageOne(c, profile, page1Size));
             });
             container.Page(page =>

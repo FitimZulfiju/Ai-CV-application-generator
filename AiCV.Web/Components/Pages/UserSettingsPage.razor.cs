@@ -587,7 +587,6 @@ public partial class UserSettingsPage
                 {
                     _configurations.Remove(config);
                     await LoadConfigurations();
-                    Snackbar.Add(Localizer["ConfigurationDeleted"], Severity.Success);
                 }
             }
             catch (Exception ex)
@@ -1051,7 +1050,7 @@ public partial class UserSettingsPage
                 if (success)
                 {
                     _isDeleted = true;
-                    Snackbar.Add(Localizer["AccountDeletedSuccess"], Severity.Success);
+
                 }
                 else
                 {

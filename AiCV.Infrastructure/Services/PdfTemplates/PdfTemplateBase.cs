@@ -452,14 +452,41 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                                     );
                                     ComposeMarkdownText(t, skillGroup.Category);
                                 });
-                            c.Item()
-                                .Text(t =>
-                                {
-                                    t.DefaultTextStyle(x =>
-                                        x.FontSize(fontSize - 1).FontColor(Style.TextMedium)
-                                    );
-                                    ComposeMarkdownText(t, skillGroup.SkillNames);
-                                });
+                            if (profile.CoreCompetenciesSection?.DisplayAsChips == true)
+                            {
+                                c.Item()
+                                    .PaddingTop(4)
+                                    .Inlined(inlined =>
+                                    {
+                                        inlined.Spacing(5);
+                                        foreach (var skill in skillGroup.Skills)
+                                        {
+                                            inlined.Item()
+                                                .Background("#EEEEEE")
+                                                .Border(1)
+                                                .BorderColor(Style.BorderColor)
+                                                .CornerRadius(10)
+                                                .PaddingHorizontal(8)
+                                                .PaddingVertical(3)
+                                                .Text(t =>
+                                                {
+                                                    t.DefaultTextStyle(x => x.FontSize(fontSize - 1).FontColor(Style.TextDark));
+                                                    ComposeMarkdownText(t, skill.Name ?? "");
+                                                });
+                                        }
+                                    });
+                            }
+                            else
+                            {
+                                c.Item()
+                                    .Text(t =>
+                                    {
+                                        t.DefaultTextStyle(x =>
+                                            x.FontSize(fontSize - 1).FontColor(Style.TextMedium)
+                                        );
+                                        ComposeMarkdownText(t, skillGroup.SkillNames);
+                                    });
+                            }
                         });
                 }
                 col.Item().PaddingBottom(1, Unit.Centimetre);

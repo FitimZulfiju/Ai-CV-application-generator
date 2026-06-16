@@ -2,14 +2,11 @@ namespace AiCV.Web.Components.Shared.ProfileTabs;
 
 public partial class InterestsTab
 {
-    private const string InterestsDropZone = "interests";
-
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 
     private string _newInterest = string.Empty;
     private Interest? _editingInterest;
-    private MudDropContainer<Interest>? _dropContainer;
     private bool _showChipHelp = true;
 
     private void SaveInterest()
@@ -38,7 +35,6 @@ public partial class InterestsTab
         }
 
         ClearInterestEditor();
-        _dropContainer?.Refresh();
     }
 
     private void BeginInterestEdit(Interest interest)
@@ -58,21 +54,6 @@ public partial class InterestsTab
         _newInterest = string.Empty;
     }
 
-    private void OnInterestDropped(MudItemDropInfo<Interest> dropInfo)
-    {
-        if (Profile == null || dropInfo.Item is null)
-        {
-            return;
-        }
-
-        var interest = dropInfo.Item;
-        Profile.Interests.Remove(interest);
-
-        var newIndex = Math.Min(dropInfo.IndexInZone, Profile.Interests.Count);
-        Profile.Interests.Insert(newIndex, interest);
-        _dropContainer?.Refresh();
-    }
-
     private Color GetInterestChipColor(Interest interest)
     {
         return ReferenceEquals(interest, _editingInterest) ? Color.Secondary : Color.Primary;
@@ -81,6 +62,28 @@ public partial class InterestsTab
     private Variant GetInterestChipVariant(Interest interest)
     {
         return ReferenceEquals(interest, _editingInterest) ? Variant.Filled : Variant.Outlined;
+    }
+
+    private void MoveInterestLeft(Interest interest)
+    {
+        if (Profile == null) return;
+        var idx = Profile.Interests.IndexOf(interest);
+        if (idx > 0)
+        {
+            Profile.Interests.RemoveAt(idx);
+            Profile.Interests.Insert(idx - 1, interest);
+        }
+    }
+
+    private void MoveInterestRight(Interest interest)
+    {
+        if (Profile == null) return;
+        var idx = Profile.Interests.IndexOf(interest);
+        if (idx >= 0 && idx < Profile.Interests.Count - 1)
+        {
+            Profile.Interests.RemoveAt(idx);
+            Profile.Interests.Insert(idx + 1, interest);
+        }
     }
 
     private void RemoveInterest(Interest interest)
@@ -96,6 +99,5 @@ public partial class InterestsTab
         }
 
         Profile.Interests.Remove(interest);
-        _dropContainer?.Refresh();
     }
 }

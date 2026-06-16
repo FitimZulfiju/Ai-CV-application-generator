@@ -2,15 +2,12 @@ namespace AiCV.Web.Components.Shared.ProfileTabs;
 
 public partial class LanguagesTab
 {
-    private const string LanguagesDropZone = "languages";
-
     [Parameter]
     public CandidateProfile? Profile { get; set; }
 
     private string _newLanguageName = string.Empty;
     private string _newLanguageProficiency = string.Empty;
     private Language? _editingLanguage;
-    private MudDropContainer<Language>? _dropContainer;
     private bool _showChipHelp = true;
 
     private void SaveLanguage()
@@ -49,7 +46,6 @@ public partial class LanguagesTab
         }
 
         ClearLanguageEditor();
-        _dropContainer?.Refresh();
     }
 
     private void BeginLanguageEdit(Language language)
@@ -69,21 +65,6 @@ public partial class LanguagesTab
         _editingLanguage = null;
         _newLanguageName = string.Empty;
         _newLanguageProficiency = string.Empty;
-    }
-
-    private void OnLanguageDropped(MudItemDropInfo<Language> dropInfo)
-    {
-        if (Profile == null || dropInfo.Item is null)
-        {
-            return;
-        }
-
-        var language = dropInfo.Item;
-        Profile.Languages.Remove(language);
-
-        var newIndex = Math.Min(dropInfo.IndexInZone, Profile.Languages.Count);
-        Profile.Languages.Insert(newIndex, language);
-        _dropContainer?.Refresh();
     }
 
     private static string GetLanguageChipText(Language language)
@@ -106,6 +87,28 @@ public partial class LanguagesTab
         return ReferenceEquals(language, _editingLanguage) ? Variant.Filled : Variant.Outlined;
     }
 
+    private void MoveLanguageLeft(Language lang)
+    {
+        if (Profile == null) return;
+        var idx = Profile.Languages.IndexOf(lang);
+        if (idx > 0)
+        {
+            Profile.Languages.RemoveAt(idx);
+            Profile.Languages.Insert(idx - 1, lang);
+        }
+    }
+
+    private void MoveLanguageRight(Language lang)
+    {
+        if (Profile == null) return;
+        var idx = Profile.Languages.IndexOf(lang);
+        if (idx >= 0 && idx < Profile.Languages.Count - 1)
+        {
+            Profile.Languages.RemoveAt(idx);
+            Profile.Languages.Insert(idx + 1, lang);
+        }
+    }
+
     private void RemoveLanguage(Language lang)
     {
         if (Profile == null)
@@ -119,6 +122,5 @@ public partial class LanguagesTab
         }
 
         Profile.Languages.Remove(lang);
-        _dropContainer?.Refresh();
     }
 }

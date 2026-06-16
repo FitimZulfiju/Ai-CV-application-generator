@@ -184,7 +184,7 @@ public partial class ApplicationDetails
         try
         {
             await CVService.SaveApplicationAsync(_application);
-            Snackbar.Add(Localizer["TemplateUpdated"], Severity.Success);
+
         }
         catch (Exception ex)
         {

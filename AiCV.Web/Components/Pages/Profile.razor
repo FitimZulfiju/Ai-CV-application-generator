@@ -25,6 +25,11 @@ else
             <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
                 @if (_activeTabIndex != 8)
                 {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Default" Size="Size.Medium" OnClick="CancelChanges"
+                               Disabled="@(!_isDirty)" Style="white-space: nowrap;"
+                               StartIcon="@Icons.Material.Filled.Cancel">
+                        @Localizer["Cancel"]
+                    </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
                                Disabled="_isSaving" Style="white-space: nowrap;"
                                StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">

@@ -1,34 +1,27 @@
 @if (Profile != null)
 {
-    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
-        <MudCardContent Class="py-1 px-4">
-            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
-            <MudGrid>
-                <MudItem xs="12" sm="8">
-                    <MudTextField @bind-Value="Profile.CoreCompetenciesSection.Title"
-                                  Label="@Localizer["SectionTitle"]"
-                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["CoreCompetencies"].Value)"
-                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <UnicodeIconPicker @bind-Icon="Profile.CoreCompetenciesSection.Icon" Label="@Localizer["SectionIcon"]" />
-                </MudItem>
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
-    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Class="mb-2"
+    <SectionHeaderCard Section="Profile.CoreCompetenciesSection" DefaultNameKey="CoreCompetencies" />
+
+    <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Size="Size.Small"
                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
-        <MudText Typo="Typo.body2" Class="mb-4">@Localizer["SkillsHelper"]</MudText>
+        @if (_showChipHelp)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
+                @Localizer["SkillsHelper"]
+            </MudAlert>
+        }
+        <MudSwitch T="bool" @bind-Value="Profile.CoreCompetenciesSection.DisplayAsChips" Color="Color.Primary" Label="@Localizer["DisplayAsChips"]" Class="ml-auto" />
     </MudStack>
-    <MudStack Spacing="4">
+
+    <MudStack Spacing="4" Class="pt-2">
         @foreach (var category in CoreCompetencyCategories)
         {
             var index = CoreCompetencyCategories.IndexOf(category);
             var isFirst = index == 0;
             var isLast = index == CoreCompetencyCategories.Count - 1;
 
-            <MudCard Class="pa-3" Elevation="2">
+            <MudCard Class="pb-1 pt-3 pl-3 pr-3" Elevation="2">
                 <MudGrid>
                     <MudItem xs="12" sm="5">
                         <MudTextField @bind-Value="category.Name" Label="@Localizer["CategoryName"]" Variant="Variant.Text" />
@@ -47,18 +40,18 @@
                     </MudItem>
                     <MudItem xs="12" sm="2" Class="d-flex justify-end align-center">
                         <MudTooltip Text="@Localizer["MoveUp"]">
-                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" 
-                                           Disabled="@isFirst" 
-                                           OnClick="@(() => MoveCategoryUp(category))" 
-                                           Size="Size.Small" 
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward"
+                                           Disabled="@isFirst"
+                                           OnClick="@(() => MoveCategoryUp(category))"
+                                           Size="Size.Small"
                                            Color="Color.Default"
                                            Class="mr-1" />
                         </MudTooltip>
                         <MudTooltip Text="@Localizer["MoveDown"]">
-                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" 
-                                           Disabled="@isLast" 
-                                           OnClick="@(() => MoveCategoryDown(category))" 
-                                           Size="Size.Small" 
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward"
+                                           Disabled="@isLast"
+                                           OnClick="@(() => MoveCategoryDown(category))"
+                                           Size="Size.Small"
                                            Color="Color.Default"
                                            Class="mr-4" />
                         </MudTooltip>
@@ -68,22 +61,54 @@
                             @Localizer["Remove"]
                         </MudButton>
                     </MudItem>
-                    <MudItem xs="12">
-                        <MudChipSet T="string" AllClosable="true" OnClose="((MudChip<string> chip) => RemoveSkill(category, chip.Value!))">
+                    <MudItem xs="12" Class="pt-0 pb-0">
+                        <div class="profile-chip-container">
                             @foreach (var skill in category.Skills)
                             {
-                                <MudChip T="string" Value="@skill" Color="Color.Primary" Variant="Variant.Filled">
-                                    <span class="d-flex align-center">
+                                var skillIndex = category.Skills.IndexOf(skill);
+                                var isFirstSkill = skillIndex == 0;
+                                var isLastSkill = skillIndex == category.Skills.Count - 1;
+
+                                <MudChip T="string" Value="@skill" Color="Color.Primary" Variant="Variant.Text"
+                                         Class="profile-chip">
+                                    <span class="profile-chip-content">
                                         <FormattedText Text="@skill" />
-                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                                       Size="Size.Small"
-                                                       Color="Color.Inherit"
-                                                       Variant="Variant.Text"
-                                                       OnClick="@(() => BeginSkillEdit(category, skill))" Class="ml-1" />
+                                        <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
+                                            <MudTooltip Text="@Localizer["MoveLeft"]">
+                                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                                               Disabled="@isFirstSkill"
+                                                               Size="Size.Small"
+                                                               Color="Color.Default"
+                                                               Variant="Variant.Text"
+                                                               OnClick="@(() => MoveSkillLeft(category, skill))" />
+                                            </MudTooltip>
+                                            <MudTooltip Text="@Localizer["MoveRight"]">
+                                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                                               Disabled="@isLastSkill"
+                                                               Size="Size.Small"
+                                                               Color="Color.Default"
+                                                               Variant="Variant.Text"
+                                                               OnClick="@(() => MoveSkillRight(category, skill))" />
+                                            </MudTooltip>
+                                            <MudTooltip Text="@Localizer["Edit"]">
+                                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                               Size="Size.Small"
+                                                               Color="Color.Default"
+                                                               Variant="Variant.Text"
+                                                               OnClick="@(() => BeginSkillEdit(category, skill))" />
+                                            </MudTooltip>
+                                            <MudTooltip Text="@Localizer["Remove"]">
+                                                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                                               Size="Size.Small"
+                                                               Color="Color.Default"
+                                                               Variant="Variant.Text"
+                                                               OnClick="@(() => RemoveSkill(category, skill))" />
+                                            </MudTooltip>
+                                        </span>
                                     </span>
                                 </MudChip>
                             }
-                        </MudChipSet>
+                        </div>
                     </MudItem>
                 </MudGrid>
             </MudCard>

@@ -61,11 +61,21 @@ builder
         options.ClientTimeoutInterval = TimeSpan.FromMinutes(10);
         options.HandshakeTimeout = TimeSpan.FromMinutes(2);
         options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+        options.MaximumReceiveMessageSize = 1024 * 1024; // 1 MB
     });
 
 builder.Services.AddCascadingAuthenticationState();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+    config.SnackbarConfiguration.PreventDuplicates = true;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 4000;
+    config.SnackbarConfiguration.HideTransitionDuration = 500;
+    config.SnackbarConfiguration.ShowTransitionDuration = 500;
+});
 
 // Add authorization
 builder.Services.AddAuthorizationBuilder().SetFallbackPolicy(null);

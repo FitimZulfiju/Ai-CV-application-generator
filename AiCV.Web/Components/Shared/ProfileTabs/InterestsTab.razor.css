@@ -1,34 +1,20 @@
-.profile-chip-drop-container ::deep .profile-chip-drop-zone {
-    display: flex !important;
+.profile-chip-container {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
-    min-height: 2.25rem !important;
-    width: 100% !important;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    min-height: 2.25rem;
+    width: 100%;
 }
 
-.profile-chip-drop-container ::deep .mud-drop-item {
-    display: inline-flex !important;
-    width: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.profile-chip-drop-container ::deep .profile-draggable-chip {
-    cursor: grab;
-}
-
-.profile-chip-drop-container ::deep .profile-draggable-chip:active {
-    cursor: grabbing;
-}
-
-.profile-chip-drop-container ::deep .profile-chip-content {
+.profile-chip-container ::deep .profile-chip-content {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
 }
 
-.profile-chip-drop-container ::deep .profile-chip-edit-action {
+.profile-chip-container ::deep .profile-chip-edit-action {
     display: inline-flex;
     max-width: 0;
     opacity: 0;
@@ -36,13 +22,13 @@
     transition: max-width 120ms ease, opacity 120ms ease;
 }
 
-.profile-chip-drop-container ::deep .profile-draggable-chip:hover .profile-chip-edit-action,
-.profile-chip-drop-container ::deep .profile-draggable-chip:focus-within .profile-chip-edit-action {
-    max-width: 1.75rem;
+.profile-chip-container ::deep .profile-chip:hover .profile-chip-edit-action,
+.profile-chip-container ::deep .profile-chip:focus-within .profile-chip-edit-action {
+    max-width: 6rem;
     opacity: 1;
 }
 
-.profile-chip-drop-container ::deep .profile-chip-edit-action .mud-icon-button {
+.profile-chip-container ::deep .profile-chip-edit-action .mud-icon-button {
     height: 1.375rem;
     min-width: 1.375rem;
     padding: 0.125rem;
