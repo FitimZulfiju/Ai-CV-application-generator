@@ -1,11 +1,13 @@
-<MudCard Elevation="0" Class="pa-4">
-    <MudText Typo="Typo.h6" Class="mb-4">@Localizer["CustomFooter"]</MudText>
+<MudCard Elevation="2" Class="pa-4">
+    <MudText Typo="Typo.body1">@Localizer["CustomFooter"]</MudText>
     <MudTextField @bind-Value="Profile.FooterText"
                   Label="@Localizer["FooterText"]"
-                  Lines="3"
+                  Margin="Margin.Dense"
                   Variant="Variant.Outlined"
                   Placeholder="@Localizer["ReferencesAvailableUponRequest"]"
                   Adornment="Adornment.End"
+                  Clearable="true"
+                  Immediate="true"
                   AdornmentIcon="@Icons.Material.Filled.ShortText"
                   HelperText="@Localizer["SupportsMarkdown"]" />
 </MudCard>

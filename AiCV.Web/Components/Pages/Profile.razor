@@ -25,12 +25,12 @@ else
             <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="justify-center">
                 @if (_activeTabIndex != 8)
                 {
-                    <MudButton Variant="Variant.Outlined" Color="Color.Default" Size="Size.Medium" OnClick="CancelChanges"
+                    <MudButton Variant="Variant.Outlined" Color="Color.Default" Size="Size.Small" OnClick="CancelChanges"
                                Disabled="@(!_isDirty)" Style="white-space: nowrap;"
                                StartIcon="@Icons.Material.Filled.Cancel">
                         @Localizer["Cancel"]
                     </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="SaveProfile"
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="SaveProfile"
                                Disabled="_isSaving" Style="white-space: nowrap;"
                                StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
                         @if (_isSaving)
@@ -46,15 +46,15 @@ else
                 }
                 @if (_activeTabIndex == 8)
                 {
-                    <MudSelect T="string" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 mr-2" Style="width:9.375rem;"
-                               Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
+                    <MudSelect T="string" @bind-Value="_selectedTemplate" Label="@Localizer["Template"]" Class="pa-0 ma-0 pr-4" FitContent="false"
+                               Variant="Variant.Text" Margin="Margin.Dense">
                         <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
                         <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
                         <MudSelectItem Value="AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
                     </MudSelect>
 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" OnClick="PrintProfile"
-                               Disabled="_isPrinting" Style="white-space: nowrap;"
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium"
+                               OnClick="PrintProfile" Disabled="_isPrinting"
                                StartIcon="@(_isPrinting ? null : Icons.Material.Filled.Print)">
                         @if (_isPrinting)
                         {
@@ -70,7 +70,7 @@ else
             </MudStack>
         </MudStack>
         <MudTabs Elevation="1" Rounded="true" @bind-ActivePanelIndex="_activeTabIndex">
-            
+
             <MudDivider DividerType="DividerType.Middle" Class="my-3" />
 
             @* Tab Personal Details *@

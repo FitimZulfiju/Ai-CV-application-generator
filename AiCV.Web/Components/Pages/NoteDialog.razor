@@ -10,18 +10,18 @@
     <DialogContent>
         <MudStack Spacing="3">
             <MudTextField @bind-Value="NoteModel.Title" Label="@Localizer["NoteTitle"]" Variant="Variant.Outlined"
-                MaxLength="200" Immediate="true" Adornment="Adornment.Start" Clearable="true"
+                MaxLength="200" Immediate="true" Adornment="Adornment.Start" Clearable="true" Margin="Margin.Dense"
                 AdornmentIcon="@Icons.Material.Outlined.Label" />
 
             <MudTextField @bind-Value="NoteModel.Content" Label="@Localizer["NoteContent"]" Variant="Variant.Outlined"
-                Lines="8" Immediate="true" Adornment="Adornment.Start" Clearable="true"
+                Immediate="true" Adornment="Adornment.Start" Clearable="true" Margin="Margin.Dense" Sizing="InputSizing.Auto"
                 AdornmentIcon="@Icons.Material.Outlined.Description" />
 
             <MudText Typo="Typo.body2">@Localizer["NoteColor"]</MudText>
             <MudChipSet T="string" @bind-SelectedValue="NoteModel.Color" SelectionMode="SelectionMode.SingleSelection">
                 @foreach (var color in NoteColors)
                 {
-                    <MudChip T="string" Value="@color.Key" Style="@GetColorStyle(color.Key)" Size="Size.Medium"
+                    <MudChip T="string" Value="@color.Key" Style="@GetColorStyle(color.Key)" Size="Size.Small"
                     Variant="@(NoteModel.Color == color.Key ? Variant.Filled : Variant.Outlined)">
                         @if (NoteModel.Color == color.Key)
                         {
@@ -33,8 +33,8 @@
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton StartIcon="@Icons.Material.Filled.Cancel" OnClick="Cancel">@Localizer["Cancel"]</MudButton>
-        <MudButton StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" Variant="Variant.Filled"
+        <MudButton Size="Size.Small" StartIcon="@Icons.Material.Filled.Cancel" OnClick="Cancel">@Localizer["Cancel"]</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small"
             OnClick="Submit">@Localizer["Save"]</MudButton>
     </DialogActions>
 </MudDialog>

@@ -155,7 +155,6 @@ public partial class Notes
 
         if (result?.Canceled == false && result.Data is Note createdNote)
         {
-            Logger.LogInformation("Dialog closed. Creating note: {Title}", createdNote.Title);
             await NoteService.CreateNoteAsync(createdNote);
             await LoadNotes();
 
@@ -199,14 +198,14 @@ public partial class Notes
 
     private async Task TogglePin(Note note)
     {
-        var result = await NoteService.TogglePinAsync(note.Id, _userId!);
+        _ = await NoteService.TogglePinAsync(note.Id, _userId!);
         await LoadNotes();
 
     }
 
     private async Task ToggleArchive(Note note)
     {
-        var result = await NoteService.ToggleArchiveAsync(note.Id, _userId!);
+        _ = await NoteService.ToggleArchiveAsync(note.Id, _userId!);
         await LoadNotes();
 
     }

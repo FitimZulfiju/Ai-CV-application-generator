@@ -18,7 +18,7 @@
                               ValueChanged="@(new EventCallback<string>(this, OnSearchChanged))" />
                 <MudToggleIconButton Toggled="_showArchived"
                                      ToggledChanged="@(new EventCallback<bool>(this, (bool b) => OnShowArchivedChanged(b)))"
-                                     Icon="@Icons.Material.Outlined.Archive" ToggledIcon="@Icons.Material.Filled.Archive"
+                                     Icon="@Icons.Material.Outlined.Archive" ToggledIcon="@Icons.Material.Filled.Archive" Size="Size.Medium"
                                      title="@Localizer["ShowArchived"]" toggled-title="@Localizer["ShowArchived"]" Color="Color.Default"
                                      ToggledColor="Color.Primary" />
             </MudStack>
@@ -75,6 +75,6 @@
         }
     </MudContainer>
 
-    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);"
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Style="position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);"
             OnClick="AddNote" />
 </div>
