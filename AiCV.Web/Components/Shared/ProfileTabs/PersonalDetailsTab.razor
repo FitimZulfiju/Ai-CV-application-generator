@@ -36,53 +36,54 @@
                         </MudButton>
                     }
 
-                    <MudSwitch @bind-Value="Profile.ShowProfilePicture" Color="Color.Primary"
+                    <MudSwitch @bind-Value="Profile.ShowProfilePicture" Color="Color.Primary" Size="Size.Small"
                                Label="@Localizer["ShowInCv"]" />
                 </MudStack>
             </MudItem>
             <MudItem xs="12" sm="2" Class="pt-2">
                 <MudTextField @bind-Value="Profile.FullName" Label="@Localizer["FullName"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.Badge" />
             </MudItem>
             <MudItem xs="12" sm="3" Class="pt-2">
                 <MudTextField @bind-Value="Profile.Title" Label="@Localizer["ProfessionalTitle"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.Work" />
             </MudItem>
             <MudItem xs="12" sm="2" Class="pt-2">
                 <MudTextField @bind-Value="Profile.Email" Label="@Localizer["Email"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.Email" />
             </MudItem>
             <MudItem xs="12" sm="2" Class="pt-2">
                 <MudTextField @bind-Value="Profile.PhoneNumber" Label="@Localizer["PhoneNumber"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.Phone" />
             </MudItem>
             <MudItem xs="12" sm="3" Class="pt-2">
                 <MudTextField @bind-Value="Profile.Location" Label="@Localizer["Location"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.LocationOn" />
             </MudItem>
             <MudItem xs="12" sm="3" Class="pt-2">
                 <MudTextField @bind-Value="Profile.LinkedInUrl" Label="@Localizer["LinkedInUrl"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Custom.Brands.LinkedIn" />
             </MudItem>
             <MudItem xs="12" sm="3" Class="pt-2">
                 <MudTextField @bind-Value="Profile.PortfolioUrl" Label="@Localizer["PortfolioUrl"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.Link" />
             </MudItem>
             <MudItem xs="12" sm="6" Class="pt-2">
                 <MudTextField @bind-Value="Profile.Tagline" Label="@Localizer["Tagline"]"
-                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                               AdornmentIcon="@Icons.Material.Filled.ShortText" />
             </MudItem>
             <MudItem xs="12" Class="pt-2">
                 <MudTextField @bind-Value="Profile.ProfessionalSummary" Sizing="InputSizing.Auto"
                               Label="@Localizer["ProfessionalSummary"]" Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
                               Clearable="true" Immediate="true" />
             </MudItem>
         </MudGrid>

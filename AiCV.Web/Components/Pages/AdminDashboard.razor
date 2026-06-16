@@ -11,7 +11,7 @@
         </MudText>
         <MudSpacer />
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download"
-                   OnClick="ExportCsv">@Localizer["ExportCsv"]</MudButton>
+                   Size="Size.Small" OnClick="ExportCsv">@Localizer["ExportCsv"]</MudButton>
     </MudStack>
 
     @if (_statistics != null)
@@ -175,7 +175,7 @@
                             </MudTd>
                             <MudTd DataLabel="Email">
                                 <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-                                    <MudIcon Icon="@(context.EmailConfirmed? Icons.Material.Filled.Verified : Icons.Material.Filled.Cancel)"
+                                    <MudIcon Icon="@(context.EmailConfirmed ? Icons.Material.Filled.Verified : Icons.Material.Filled.Cancel)"
                                              Color="@(context.EmailConfirmed ? Color.Success : Color.Error)" Size="Size.Small" />
                                     @context.Email
                                 </MudStack>
@@ -189,11 +189,11 @@
                                 }
                             </MudTd>
                             <MudTd DataLabel="Profile">
-                                <MudIcon Icon="@(context.HasProfile? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)"
+                                <MudIcon Icon="@(context.HasProfile ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)"
                                          Color="@(context.HasProfile ? Color.Success : Color.Error)" />
                             </MudTd>
                             <MudTd DataLabel="API Keys">
-                                <MudIcon Icon="@(context.HasApiKeys? Icons.Material.Filled.Key : Icons.Material.Filled.KeyOff)"
+                                <MudIcon Icon="@(context.HasApiKeys ? Icons.Material.Filled.Key : Icons.Material.Filled.KeyOff)"
                                          Color="@(context.HasApiKeys ? Color.Success : Color.Default)" />
                             </MudTd>
                             <MudTd DataLabel="Apps">

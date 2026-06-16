@@ -13,29 +13,27 @@
             <MudCard Class="pa-3" Elevation="2">
                 <MudGrid>
                     <MudItem xs="12" sm="4">
-                        <MudTextField @bind-Value="exp.CompanyName" Label="@Localizer["Company"]"
-                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                        <MudTextField @bind-Value="exp.CompanyName" Label="@Localizer["Company"]" Clearable="true"
+                                      Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                                       AdornmentIcon="@Icons.Material.Filled.Business" />
                     </MudItem>
                     <MudItem xs="12" sm="4">
-                        <MudTextField @bind-Value="exp.JobTitle" Label="@Localizer["JobTitle"]"
-                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                        <MudTextField @bind-Value="exp.JobTitle" Label="@Localizer["JobTitle"]" Clearable="true"
+                                      Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                                       AdornmentIcon="@Icons.Material.Filled.Work" />
                     </MudItem>
                     <MudItem xs="12" sm="4">
-                        <MudTextField @bind-Value="exp.Location" Label="@Localizer["Location"]"
-                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                        <MudTextField @bind-Value="exp.Location" Label="@Localizer["Location"]" Clearable="true"
+                                      Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                                       AdornmentIcon="@Icons.Material.Filled.LocationOn" />
                     </MudItem>
-                    <MudItem xs="12" sm="2">
-                        <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
+                    <MudItem xs="12" sm="2" Class="pt-1">
+                        <MudDatePicker @bind-Date="exp.StartDate" Label="@Localizer["StartDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" Margin="Margin.Dense" Variant="Variant.Outlined" />
                     </MudItem>
-                    <MudItem xs="12" sm="2">
-                        <MudDatePicker @bind-Date="exp.EndDate"
-                                       Label="@(exp.IsCurrentRole ? Localizer["Present"].Value : Localizer["EndDate"].Value)"
-                                       Disabled="@exp.IsCurrentRole" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
+                    <MudItem xs="12" sm="2" Class="pt-1">
+                        <MudDatePicker @bind-Date="exp.EndDate" Label="@(exp.IsCurrentRole ? Localizer["Present"].Value : Localizer["EndDate"].Value)" Disabled="@exp.IsCurrentRole" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" Margin="Margin.Dense" Variant="Variant.Outlined" />
                     </MudItem>
-                    <MudItem xs="4" sm="2" Class="d-flex align-center">
+                    <MudItem xs="4" sm="2" Class="d-flex align-center pt-1">
                         @if (!exp.IsCurrentRole)
                         {
                             <MudChip T="string"
@@ -47,20 +45,19 @@
                         }
                     </MudItem>
 
-                    <MudItem xs="4" sm="3" Class="d-flex align-center">
-                        <MudSwitch T="bool"
+                    <MudItem xs="4" sm="3" Class="d-flex align-center pt-1">
+                        <MudSwitch T="bool" Size="Size.Small"
                                    @bind-Value="exp.IsCurrentRole"
                                    Color="Color.Primary"
                                    Label="@Localizer["CurrentRole"]" />
                     </MudItem>
 
-                    <MudItem xs="12" sm="3" Class="d-flex justify-end align-center">
+                    <MudItem xs="12" sm="3" Class="d-flex justify-end align-center pt-1">
                         <MudTooltip Text="@Localizer["MoveUp"]">
                             <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward"
                                            Disabled="@isFirst"
                                            OnClick="@(() => MoveExperienceUp(exp))"
                                            Size="Size.Small"
-                                           Color="Color.Default"
                                            Class="mr-1" />
                         </MudTooltip>
                         <MudTooltip Text="@Localizer["MoveDown"]">
@@ -68,7 +65,6 @@
                                            Disabled="@isLast"
                                            OnClick="@(() => MoveExperienceDown(exp))"
                                            Size="Size.Small"
-                                           Color="Color.Default"
                                            Class="mr-4" />
                         </MudTooltip>
                         <MudButton Variant="Variant.Outlined"
@@ -77,9 +73,9 @@
                             @Localizer["Remove"]
                         </MudButton>
                     </MudItem>
-                    <MudItem xs="12" Class="pt-2">
+                    <MudItem xs="12" Class="pt-1">
                         <MudTextField @bind-Value="exp.Description" Label="@Localizer["Description"]" Lines="3"
-                                      Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
+                                      Sizing="InputSizing.Auto" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
                     </MudItem>
                 </MudGrid>
             </MudCard>

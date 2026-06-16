@@ -10,30 +10,30 @@
                 <MudGrid>
                     <MudItem xs="12" sm="6">
                         <MudTextField @bind-Value="edu.InstitutionName" Label="@Localizer["Institution"]"
-                                      Variant="Variant.Text" Adornment="Adornment.Start"
+                                      Variant="Variant.Text" Adornment="Adornment.Start" Margin="Margin.Dense"
                                       AdornmentIcon="@Icons.Material.Filled.School" />
                     </MudItem>
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="edu.Degree" Label="@Localizer["Degree"]" Variant="Variant.Text"
+                        <MudTextField @bind-Value="edu.Degree" Label="@Localizer["Degree"]" Variant="Variant.Text" Margin="Margin.Dense"
                                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.WorkspacePremium" />
                     </MudItem>
-                    <MudItem xs="12" sm="4">
-                        <MudDatePicker @bind-Date="edu.StartDate" Label="@Localizer["StartDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
+                    <MudItem xs="12" sm="4" Class="pt-1">
+                        <MudDatePicker @bind-Date="edu.StartDate" Label="@Localizer["StartDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" Margin="Margin.Dense" />
                     </MudItem>
-                    <MudItem xs="12" sm="4">
-                        <MudDatePicker @bind-Date="edu.EndDate" Label="@Localizer["EndDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
+                    <MudItem xs="12" sm="4" Class="pt-1">
+                        <MudDatePicker @bind-Date="edu.EndDate" Label="@Localizer["EndDate"]" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" Margin="Margin.Dense" />
                     </MudItem>
-                    <MudItem xs="12" sm="4">
+                    <MudItem xs="12" sm="4" Class="pt-4">
                         <MudButton Variant="Variant.Outlined" Color="Color.Error"
                                    Class="ml-auto d-flex align-items-end" Size="Size.Small"
                                    OnClick="@(() => RemoveEducation(edu))" StartIcon="@Icons.Material.Filled.Delete">
                             @Localizer["Remove"]
                         </MudButton>
                     </MudItem>
-                    <MudItem xs="12" Class="pt-2">
-                        <MudTextField @bind-Value="edu.Description" Label="@Localizer["Description"]" Lines="3"
-                                      Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true"
-                                      HelperText="@Localizer["EducationDescriptionHelper"]" />
+                    <MudItem xs="12" Class="pt-1">
+                        <MudTextField @bind-Value="edu.Description" Label="@Localizer["Description"]"
+                                      Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense"
+                                      HelperText="@Localizer["EducationDescriptionHelper"]" Immediate="true" />
                     </MudItem>
                 </MudGrid>
             </MudCard>

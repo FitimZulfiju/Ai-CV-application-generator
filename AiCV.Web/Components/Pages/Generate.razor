@@ -25,8 +25,7 @@
                                 }
                                 else
                                 {
-                                    <MudSelect T="int?" Label="@Localizer["Provider"]" @bind-Value="_activeConfigId"
-                                               Variant="Variant.Outlined">
+                                    <MudSelect T="int?" Label="@Localizer["Provider"]" @bind-Value="_activeConfigId" Variant="Variant.Outlined" Margin="Margin.Dense">
                                         @foreach (var config in _configuredProviders)
                                         {
                                             <MudSelectItem Value="@((int?)config.Id)">
@@ -42,18 +41,18 @@
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
                                 <MudTextField @bind-Value="_job.CompanyName" Label="@Localizer["CompanyName"]"
-                                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                                               AdornmentIcon="@Icons.Material.Filled.Business" Clearable="true"
                                               HelperText="@Localizer["WillBeAutoDetected"]" Class="pb-0 mb-0" />
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
                                 <MudTextField @bind-Value="_job.Title" Label="@Localizer["JobTitle"]"
-                                              Variant="Variant.Outlined" Adornment="Adornment.Start"
+                                              Variant="Variant.Outlined" Adornment="Adornment.Start" Margin="Margin.Dense"
                                               AdornmentIcon="@Icons.Material.Filled.Work" Clearable="true"
                                               HelperText="@Localizer["WillBeAutoDetected"]" Class="pb-0 mb-0" />
                             </MudItem>
                             <MudItem xs="12" sm="6" md="2" Class="d-flex align-center pt-0 mt-0">
-                                <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary"
+                                <MudSwitch @bind-Value="_manualEntry" Color="Color.Primary" Size="Size.Small"
                                            Label="@Localizer["ManualEntryMode"]" T="bool" />
                             </MudItem>
                         </MudGrid>
@@ -61,20 +60,20 @@
                         @if (!_manualEntry)
                         {
                             <MudGrid Spacing="2">
-                                <MudItem xs="12" sm="9" md="10">
-                                    <MudTextField @bind-Value="_job.Url" Label="@Localizer["JobUrl"]"
+                                <MudItem xs="12" sm="9" md="10" Class="pt-1">
+                                    <MudTextField @bind-Value="_job.Url" Label="@Localizer["JobUrl"]" Margin="Margin.Dense"
                                                   Variant="Variant.Outlined" Adornment="Adornment.Start"
                                                   AdornmentIcon="@Icons.Material.Filled.Link" Required="true" RequiredError=""
                                                   Clearable="true" />
                                 </MudItem>
 
-                                <MudItem xs="12" sm="3" md="2" Class="d-flex align-center">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large"
+                                <MudItem xs="12" sm="3" md="2" Class="d-flex align-center pt-1">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium"
                                                OnClick="FetchJobDetails" Disabled="_isFetching"
                                                StartIcon="@Icons.Material.Filled.CloudDownload" FullWidth="true" Class="mt-1">
                                         @if (_isFetching)
                                         {
-                                            <AiCV.Web.Components.Shared.LoadingIndicator />
+                                            <AiCV.Web.Components.Shared.LoadingIndicator Class="" />
                                         }
                                         else
                                         {
@@ -137,9 +136,9 @@
 
                             <!--Custom Prompt Field -->
                             <MudTextField @bind-Value="_customPrompt" Label="@Localizer["CustomInstructions"]"
-                                          Variant="Variant.Outlined" Adornment="Adornment.Start"
-                                          AdornmentIcon="@Icons.Material.Filled.Edit" Clearable="true" Counter="1000" MaxLength="1000"
-                                          HelperText="@Localizer["JobDescriptionInstructions"]" Class="mb-1 mt-4" Lines="3" Sizing="InputSizing.Auto" />
+                                          Variant="Variant.Outlined" Adornment="Adornment.Start" Immediate="true"
+                                          AdornmentIcon="@Icons.Material.Filled.Edit" Clearable="true" Counter="1000" MaxLength="1000" Margin="Margin.Dense"
+                                          HelperText="@Localizer["JobDescriptionInstructions"]" Class="mb-1 mt-4" Sizing="InputSizing.Auto" />
 
                             <div class="d-flex flex-wrap align-center justify-space-around gap-4 mt-2 py-3 px-2"
                                  style="border:0.0625rem solid lightgrey; border-radius:0.25rem;">
@@ -158,7 +157,7 @@
                                                StartIcon="@Icons.Material.Filled.AutoAwesome" FullWidth="true">
                                         @if (_isGenerating)
                                         {
-                                            <AiCV.Web.Components.Shared.LoadingIndicator />
+                                            <AiCV.Web.Components.Shared.LoadingIndicator Class="" />
                                             <MudText Class="ms-2">@Localizer["Generating"]</MudText>
                                         }
                                         else
@@ -198,16 +197,16 @@
                         {
                             <div class="generate-content-toolbar">
                                 <div class="generate-toolbar-group" style="@GetDisplayStyle((_activeTabIndex == 0 && !string.IsNullOrEmpty(_generatedCoverLetter)) || (_activeTabIndex == 1 && _generatedResume != null))">
-                                    <MudSwitch @bind-Value="_previewCoverLetter" Color="Color.Primary"
+                                    <MudSwitch @bind-Value="_previewCoverLetter" Color="Color.Primary" Size="Size.Small"
                                                Label="@Localizer["VisualPreview"]" Style="@GetDisplayStyle(_activeTabIndex == 0)" />
                                     <MudSwitch T="bool" Value="_previewResume" ValueChanged="OnResumePreviewToggled"
-                                               Color="Color.Primary" Label="@Localizer["VisualPreview"]"
+                                               Color="Color.Primary" Label="@Localizer["VisualPreview"]" Size="Size.Small"
                                                Style="@GetDisplayStyle(_activeTabIndex == 1)" />
                                     <MudTooltip Text="@(HasProfilePicture() ? Localizer["IncludePhotoInCv"] : Localizer["NoProfilePictureUploadOne"])"
                                                 Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
                                         <MudSwitch T="bool" Value="_includeProfilePicture" ValueChanged="OnIncludeProfilePictureToggled"
                                                    Color="Color.Secondary" Label="@Localizer["IncludePhoto"]"
-                                                   Disabled="@(!HasProfilePicture())"
+                                                   Disabled="@(!HasProfilePicture())" Size="Size.Small"
                                                    Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)" />
                                     </MudTooltip>
                                 </div>
@@ -223,13 +222,13 @@
 
                                 <div class="generate-toolbar-group generate-toolbar-actions">
                                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
-                                               StartIcon="@Icons.Material.Filled.ContentCopy"
+                                               StartIcon="@Icons.Material.Filled.ContentCopy" Size="Size.Small"
                                                OnClick="@(() => CopyToClipboard(_generatedCoverLetter))"
                                                Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
                                         @Localizer["Copy"]
                                     </MudButton>
                                     <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter"
-                                               Disabled="_isPrintingCoverLetter"
+                                               Disabled="_isPrintingCoverLetter" Size="Size.Small"
                                                Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedCoverLetter) && _activeTabIndex == 0)">
                                         @if (_isPrintingCoverLetter)
                                         {
@@ -238,18 +237,18 @@
                                         }
                                         else
                                         {
-                                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" Size="Size.Small" />
                                             <span>@Localizer["Print"]</span>
                                         }
                                     </MudButton>
 
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small"
                                                StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyResumeJson"
                                                Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
                                         @Localizer["CopyJson"]
                                     </MudButton>
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume"
-                                               Disabled="_isPrintingResume"
+                                               Disabled="_isPrintingResume" Size="Size.Small"
                                                Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
                                         @if (_isPrintingResume)
                                         {
@@ -258,12 +257,12 @@
                                         }
                                         else
                                         {
-                                            <MudIcon Icon="@Icons.Material.Filled.Print" Class="mr-2" />
+                                            <MudIcon Icon="@Icons.Material.Filled.Print" Size="Size.Small" Class="mr-2" />
                                             <span>@Localizer["Print"] CV</span>
                                         }
                                     </MudButton>
 
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small"
                                                StartIcon="@Icons.Material.Filled.ContentCopy"
                                                OnClick="@(() => CopyToClipboard(_generatedEmail))"
                                                Style="@GetDisplayStyle(!string.IsNullOrEmpty(_generatedEmail) && _activeTabIndex == 2)">
@@ -275,7 +274,7 @@
 
                         @if (!string.IsNullOrEmpty(_generatedCoverLetter))
                         {
-                            <MudButton Variant="Variant.Filled" Color="@(_isAlreadySaved? Color.Default: Color.Success)"
+                            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="@(_isAlreadySaved ? Color.Default : Color.Success)"
                                        OnClick="SaveApplication" Disabled="@(_isSaving || _isAlreadySaved)"
                                        StartIcon="@(_isSaving ? null : (_isAlreadySaved ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Save))">
                                 @if (_isSaving)
@@ -310,8 +309,8 @@
                                 <MudPaper Elevation="0" Class="cv-paper-container d-print-block"
                                           Style="overflow-y: auto; max-height: calc(100vh - 15.625rem);">
                                     <AiCV.Web.Features.CvRendering.Preview.CoverLetterPreview Profile="_cachedProfile"
-                                                                                   LetterContent="@_generatedCoverLetter"
-                                                                                   Template="@_selectedTemplateInPreview" />
+                                                                                              LetterContent="@_generatedCoverLetter"
+                                                                                              Template="@_selectedTemplateInPreview" />
                                 </MudPaper>
                             }
                             else

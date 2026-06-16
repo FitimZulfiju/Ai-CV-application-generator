@@ -13,43 +13,44 @@
             <MudCard Class="pa-3" Elevation="2">
                 <MudGrid>
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="proj.Name" Label="@Localizer["ProjectName"]"
+                        <MudTextField @bind-Value="proj.Name" Label="@Localizer["ProjectName"]" Margin="Margin.Dense"
                                       Variant="Variant.Text" Clearable="true" Adornment="Adornment.Start"
                                       AdornmentIcon="@Icons.Material.Filled.Label" />
                     </MudItem>
                     <MudItem xs="12" sm="2">
                         <MudTextField @bind-Value="proj.Role" Label="@Localizer["Role"]" Variant="Variant.Text"
-                                      Clearable="true" Adornment="Adornment.Start"
+                                      Clearable="true" Adornment="Adornment.Start" Margin="Margin.Dense"
                                       AdornmentIcon="@Icons.Material.Filled.Person" />
                     </MudItem>
                     <MudItem xs="12" sm="6" md="2">
-                        <MudDatePicker @bind-Date="proj.StartDate" Label="@Localizer["StartDate"]"
+                        <MudDatePicker @bind-Date="proj.StartDate" Label="@Localizer["StartDate"]" Margin="Margin.Dense"
                                        Clearable="true" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
                     </MudItem>
                     <MudItem xs="12" sm="6" md="2">
-                        <MudDatePicker @bind-Date="proj.EndDate" Label="@Localizer["EndDate"]" Clearable="true" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
+                        <MudDatePicker @bind-Date="proj.EndDate" Label="@Localizer["EndDate"]"
+                                       Clearable="true" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" Margin="Margin.Dense" />
                     </MudItem>
-                    <MudItem xs="12" sm="12" md="6" Class="pt-2">
-                        <MudTextField @bind-Value="proj.Link" Label="@Localizer["LinkGitHubLive"]"
+                    <MudItem xs="12" sm="12" md="6" Class="pt-1">
+                        <MudTextField @bind-Value="proj.Link" Label="@Localizer["LinkGitHubLive"]" Margin="Margin.Dense"
                                       Variant="Variant.Outlined" Clearable="true" Adornment="Adornment.Start"
                                       AdornmentIcon="@Icons.Material.Filled.Link" />
                     </MudItem>
-                    <MudItem xs="12" sm="12" md="6" Class="pt-2">
+                    <MudItem xs="12" sm="12" md="6" Class="pt-1">
                         <MudTextField @bind-Value="proj.Technologies" Label="@Localizer["TechnologiesUsed"]"
-                                      Clearable="true" Variant="Variant.Outlined" />
+                                      Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense" />
                     </MudItem>
                     <MudItem xs="12" Class="pt-1">
-                        <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]"
+                        <MudTextField @bind-Value="proj.Description" Label="@Localizer["Description"]" Margin="Margin.Dense"
                                       Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
                     </MudItem>
-                    <MudItem xs="12" sm="9" Class="pt-2">
+                    <MudItem xs="12" sm="9" Class="pt-1">
                         <div class="pl-5">
-                            <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]"
+                            <MudTextField @bind-Value="proj.SectionTitle" Label="@Localizer["SectionTitle"]" Margin="Margin.Dense"
                                           Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Subject"
                                           Variant="Variant.Text" Clearable="true"></MudTextField>
                         </div>
                     </MudItem>
-                    <MudItem xs="12" sm="3" Class="d-flex justify-end align-center pt-2">
+                    <MudItem xs="12" sm="3" Class="d-flex justify-end align-center pt-1">
                         <MudTooltip Text="@Localizer["MoveUp"]">
                             <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward"
                                            Disabled="@isFirst"
@@ -72,8 +73,8 @@
                             @Localizer["Remove"]
                         </MudButton>
                     </MudItem>
-                    <MudItem xs="12" Class="pt-2 ml-5">
-                        <MudTextField @bind-Value="proj.SectionDescription" Label="@Localizer["Description"]"
+                    <MudItem xs="12" Class="pt-1 ml-5">
+                        <MudTextField @bind-Value="proj.SectionDescription" Label="@Localizer["Description"]" Margin="Margin.Dense"
                                       Sizing="InputSizing.Auto" Variant="Variant.Outlined" Clearable="true" />
                     </MudItem>
                 </MudGrid>

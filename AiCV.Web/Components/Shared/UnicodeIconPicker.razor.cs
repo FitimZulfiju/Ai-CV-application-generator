@@ -67,7 +67,7 @@ public partial class UnicodeIconPicker
         { "Settings / Gears", "⚙️" }
     };
 
-    private Task<IEnumerable<string>> SearchIcons(string value, CancellationToken token)
+    private static Task<IEnumerable<string>> SearchIcons(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value))
         {
