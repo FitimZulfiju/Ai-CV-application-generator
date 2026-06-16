@@ -1,6 +1,6 @@
 namespace AiCV.Web.Components.Pages;
 
-public partial class Profile
+public partial class Profile : IDisposable
 {
     private const long MaxProfileImportFileBytes = 1024 * 1024 * 5;
     private const int MaxProfileTextLength = 20_000;
@@ -20,6 +20,9 @@ public partial class Profile
     private bool _isPrinting;
     private string _selectedTemplate = AiCV.Domain.Constants.CvTemplates.Professional;
     private CandidateProfile? _profile;
+    private string _profileSnapshot = string.Empty;
+    private bool _isDirty;
+    private Timer? _dirtyCheckTimer;
 
     public class SkillCategoryViewModel
     {
@@ -94,12 +97,64 @@ public partial class Profile
                     }
                 }
             }
+
+            _profileSnapshot = ComputeProfileSnapshot();
+            _isDirty = false;
         }
         finally
         {
             _isLoading = false;
             LoadingService.Hide();
         }
+    }
+
+    private string ComputeProfileSnapshot()
+    {
+        return JsonSerializer.Serialize(_profile, ProfileJsonOptions)
+            + JsonSerializer.Serialize(_coreCompetenciesCategories, ProfileJsonOptions);
+    }
+
+    private void CheckDirtyState(object? state)
+    {
+        if (_profile == null)
+        {
+            return;
+        }
+
+        var dirty = ComputeProfileSnapshot() != _profileSnapshot;
+        if (dirty != _isDirty)
+        {
+            _isDirty = dirty;
+            _ = InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task CancelChanges()
+    {
+        if (_profile == null || !_isDirty)
+        {
+            return;
+        }
+
+        var confirmed = await DialogService.ShowMessageBoxAsync(
+            Localizer["ClearDraftConfirmationTitle"],
+            Localizer["ClearDraftConfirmationContent"],
+            yesText: Localizer["ClearDraftConfirmButton"],
+            cancelText: Localizer["ClearDraftCancelButton"]
+        );
+
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        await LoadProfileAsync();
+        Snackbar.Add(Localizer["DraftCleared"], Severity.Info);
+    }
+
+    public void Dispose()
+    {
+        _dirtyCheckTimer?.Dispose();
     }
 
     private void UpdateProfileCoreCompetencies()
@@ -128,6 +183,8 @@ public partial class Profile
             {
                 UpdateProfileCoreCompetencies();
                 await CVService.SaveProfileAsync(_profile);
+                _profileSnapshot = ComputeProfileSnapshot();
+                _isDirty = false;
                 Snackbar.Add("Profile saved successfully!", Severity.Success);
             }
             catch (Exception ex)
@@ -216,6 +273,8 @@ public partial class Profile
 
             _profile = importedProfile;
             RefreshCoreCompetencyCategoriesFromProfile();
+            _profileSnapshot = ComputeProfileSnapshot();
+            _isDirty = false;
             Snackbar.Add(Localizer["ProfileImported"], Severity.Success);
             StateHasChanged();
         }
@@ -585,8 +644,18 @@ public partial class Profile
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) { }
+        if (firstRender)
+        {
+            _dirtyCheckTimer = new Timer(
+                CheckDirtyState,
+                null,
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(1)
+            );
+        }
+
+        return Task.CompletedTask;
     }
 }

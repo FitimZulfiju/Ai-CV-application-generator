@@ -1,61 +1,39 @@
 @if (Profile != null)
 {
-    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
-        <MudCardContent Class="py-1 px-4">
-            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
-            <MudGrid>
-                <MudItem xs="12" sm="8">
-                    <MudTextField @bind-Value="Profile.LanguagesSection.Title"
-                                  Label="@Localizer["SectionTitle"]"
-                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["LanguagesCv"].Value)"
-                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <UnicodeIconPicker @bind-Icon="Profile.LanguagesSection.Icon" Label="@Localizer["SectionIcon"]" />
-                </MudItem>
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
+    <SectionHeaderCard Section="Profile.LanguagesSection" DefaultNameKey="LanguagesCv" />
 
     var proficiencyLabel = $"{Localizer["Proficiency"]} ({Localizer["LanguageProficiencyHelper"]})";
     var isEditing = _editingLanguage != null;
 
-    <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-        <MudButton StartIcon="@(isEditing ? Icons.Material.Filled.Check : Icons.Material.Filled.Add)"
-                   Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   OnClick="SaveLanguage">
+    <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+        <MudButton StartIcon="@(isEditing ? Icons.Material.Filled.Check : Icons.Material.Filled.Add)" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="SaveLanguage">
             @(isEditing ? Localizer["Update"] : Localizer["AddLanguage"])
         </MudButton>
+        @if (_showChipHelp)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
+                @Localizer["ProfileChipHelp"]
+            </MudAlert>
+        }
         @if (isEditing)
         {
             <MudTooltip Text="@Localizer["Cancel"]">
-                <MudIconButton Icon="@Icons.Material.Filled.Close"
-                               Color="Color.Default"
-                               Variant="Variant.Outlined"
-                               OnClick="CancelLanguageEdit" />
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" Variant="Variant.Outlined" OnClick="CancelLanguageEdit" />
             </MudTooltip>
         }
         <MudSwitch T="bool" @bind-Value="Profile.LanguagesSection.DisplayAsChips" Color="Color.Primary" Label="@Localizer["DisplayAsChips"]" Class="ml-auto" />
     </MudStack>
 
-    <MudStack Spacing="4" Class="pt-0">
+    <MudGrid Spacing="2">
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newLanguageName" Label="@Localizer["Language"]" Variant="Variant.Outlined" Clearable="true" Immediate="true" Margin="Margin.Dense" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newLanguageProficiency" Label="@proficiencyLabel" Variant="Variant.Outlined" Clearable="true" Immediate="true" Margin="Margin.Dense" />
+        </MudItem>
+    </MudGrid>
 
-        <MudGrid Spacing="2">
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="_newLanguageName"
-                              Label="@Localizer["Language"]"
-                              Variant="Variant.Outlined"
-                              Immediate="true" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="_newLanguageProficiency"
-                              Label="@proficiencyLabel"
-                              Variant="Variant.Outlined"
-                              Immediate="true" />
-            </MudItem>
-        </MudGrid>
-
+    <MudStack Spacing="4" Class="pt-0 pb-0">
         <div class="profile-chip-container">
             @foreach (var language in Profile.Languages)
             {
@@ -64,62 +42,27 @@
                 var isLastLanguage = languageIndex == Profile.Languages.Count - 1;
                 var chipText = GetLanguageChipText(language);
 
-                <MudChip T="Language"
-                         Value="language"
-                         Color="@GetLanguageChipColor(language)"
-                         Variant="@GetLanguageChipVariant(language)"
-                         Class="profile-chip">
+                <MudChip T="Language" Value="language" Color="@GetLanguageChipColor(language)" Variant="@GetLanguageChipVariant(language)" Class="profile-chip">
                     <span class="profile-chip-content">
                         <FormattedText Text="@chipText" />
                         <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
                             <MudTooltip Text="@Localizer["MoveLeft"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
-                                               Disabled="@isFirstLanguage"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => MoveLanguageLeft(language))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" Disabled="@isFirstLanguage" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => MoveLanguageLeft(language))" />
                             </MudTooltip>
                             <MudTooltip Text="@Localizer["MoveRight"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
-                                               Disabled="@isLastLanguage"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => MoveLanguageRight(language))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" Disabled="@isLastLanguage" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => MoveLanguageRight(language))" />
                             </MudTooltip>
                             <MudTooltip Text="@Localizer["Edit"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => BeginLanguageEdit(language))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => BeginLanguageEdit(language))" />
                             </MudTooltip>
                             <MudTooltip Text="@Localizer["Remove"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.Close"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => RemoveLanguage(language))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => RemoveLanguage(language))" />
                             </MudTooltip>
                         </span>
                     </span>
                 </MudChip>
             }
         </div>
-
-        @if (_showChipHelp)
-        {
-            <MudAlert Severity="Severity.Info"
-                      Variant="Variant.Text"
-                      Dense="true"
-                      Icon="@Icons.Material.Filled.Info"
-                      ShowCloseIcon="true"
-                      CloseIconClicked="() => _showChipHelp = false"
-                      Class="profile-chip-help-row">
-                @Localizer["ProfileChipHelp"]
-            </MudAlert>
-        }
     </MudStack>
 }
 

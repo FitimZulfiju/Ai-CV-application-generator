@@ -10,7 +10,7 @@ public partial class CoreCompetenciesTab
 
     [Parameter]
     public EventCallback OnCoreCompetenciesUpdated { get; set; }
-
+    private bool _showChipHelp = true;
     private async Task AddCategory()
     {
         CoreCompetencyCategories.Add(new Profile.SkillCategoryViewModel { Name = "New Category" });
@@ -38,7 +38,7 @@ public partial class CoreCompetenciesTab
         if (!string.IsNullOrWhiteSpace(category.NewSkillInput))
         {
             var t = category.NewSkillInput.Trim();
-            
+
             if (_editingSkillCategory == category && _editingSkillOriginalValue != null)
             {
                 var index = category.Skills.IndexOf(_editingSkillOriginalValue);

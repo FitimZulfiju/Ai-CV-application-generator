@@ -51,7 +51,8 @@ body {
     }
 
     .mud-appbar .appbar-breadcrumb-chip {
-        max-width: min(38vw, 26.25rem);
+        max-width: min(42vw, 28rem);
+        min-width: 0;
         background-color: transparent !important;
         box-shadow: none !important;
     }
@@ -65,26 +66,26 @@ body {
         align-items: center;
         justify-content: center;
         pointer-events: none;
-        max-width: min(38vw, 26.25rem);
+        max-width: min(42vw, 28rem);
         width: 100%;
     }
 
         .mud-appbar .appbar-breadcrumb-chip .mud-chip-content {
             overflow: hidden;
+            min-width: 0;
         }
 
         .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumbs {
-            overflow: hidden;
-        }
-
-        .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumbs-ol {
             flex-wrap: nowrap;
             overflow: hidden;
+            min-width: 0;
+            padding: 0 0.5rem;
         }
 
         .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumb-item,
         .mud-appbar .appbar-breadcrumb-chip .mud-breadcrumb-separator {
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
     .mud-appbar .appbar-breadcrumb-center .appbar-breadcrumb-chip {

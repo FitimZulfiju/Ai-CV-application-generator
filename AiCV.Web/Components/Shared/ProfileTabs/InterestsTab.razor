@@ -1,54 +1,35 @@
 @if (Profile != null)
 {
-    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
-        <MudCardContent Class="py-1 px-4">
-            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
-            <MudGrid>
-                <MudItem xs="12" sm="8">
-                    <MudTextField @bind-Value="Profile.InterestsSection.Title"
-                                  Label="@Localizer["SectionTitle"]"
-                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["InterestsCv"].Value)"
-                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <UnicodeIconPicker @bind-Icon="Profile.InterestsSection.Icon" Label="@Localizer["SectionIcon"]" />
-                </MudItem>
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
+    <SectionHeaderCard Section="Profile.InterestsSection" DefaultNameKey="InterestsCv" />
 
     var isEditing = _editingInterest != null;
 
-    <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-        <MudButton StartIcon="@(isEditing ? Icons.Material.Filled.Check : Icons.Material.Filled.Add)"
-                   Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   OnClick="SaveInterest">
+    <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+        <MudButton StartIcon="@(isEditing ? Icons.Material.Filled.Check : Icons.Material.Filled.Add)" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="SaveInterest">
             @(isEditing ? Localizer["Update"] : Localizer["AddInterest"])
         </MudButton>
+        @if (_showChipHelp)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
+                @Localizer["ProfileChipHelp"]
+            </MudAlert>
+        }
         @if (isEditing)
         {
             <MudTooltip Text="@Localizer["Cancel"]">
-                <MudIconButton Icon="@Icons.Material.Filled.Close"
-                               Color="Color.Default"
-                               Variant="Variant.Outlined"
-                               OnClick="CancelInterestEdit" />
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" Variant="Variant.Outlined" OnClick="CancelInterestEdit" />
             </MudTooltip>
         }
         <MudSwitch T="bool" @bind-Value="Profile.InterestsSection.DisplayAsChips" Color="Color.Primary" Label="@Localizer["DisplayAsChips"]" Class="ml-auto" />
     </MudStack>
 
+    <MudGrid Spacing="2">
+        <MudItem xs="12" sm="12">
+            <MudTextField @bind-Value="_newInterest" Label="@Localizer["AddInterest"]" Variant="Variant.Outlined" Clearable="true" Immediate="true" Margin="Margin.Dense" />
+        </MudItem>
+    </MudGrid>
+
     <MudStack Spacing="4" Class="pt-0">
-
-        <MudGrid Spacing="2">
-            <MudItem xs="12" sm="12">
-                <MudTextField @bind-Value="_newInterest"
-                              Label="@Localizer["AddInterest"]"
-                              Variant="Variant.Outlined"
-                              Immediate="true" />
-            </MudItem>
-        </MudGrid>
-
         <div class="profile-chip-container">
             @foreach (var interest in Profile.Interests)
             {
@@ -56,62 +37,27 @@
                 var isFirstInterest = interestIndex == 0;
                 var isLastInterest = interestIndex == Profile.Interests.Count - 1;
 
-                <MudChip T="Interest"
-                         Value="interest"
-                         Color="@GetInterestChipColor(interest)"
-                         Variant="@GetInterestChipVariant(interest)"
-                         Class="profile-chip">
+                <MudChip T="Interest" Value="interest" Color="@GetInterestChipColor(interest)" Variant="@GetInterestChipVariant(interest)" Class="profile-chip">
                     <span class="profile-chip-content">
                         <FormattedText Text="@interest.Name" />
                         <span class="profile-chip-edit-action" @onclick:stopPropagation="true">
                             <MudTooltip Text="@Localizer["MoveLeft"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
-                                               Disabled="@isFirstInterest"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => MoveInterestLeft(interest))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" Disabled="@isFirstInterest" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => MoveInterestLeft(interest))" />
                             </MudTooltip>
                             <MudTooltip Text="@Localizer["MoveRight"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
-                                               Disabled="@isLastInterest"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => MoveInterestRight(interest))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" Disabled="@isLastInterest" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => MoveInterestRight(interest))" />
                             </MudTooltip>
                             <MudTooltip Text="@Localizer["Edit"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => BeginInterestEdit(interest))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => BeginInterestEdit(interest))" />
                             </MudTooltip>
                             <MudTooltip Text="@Localizer["Remove"]">
-                                <MudIconButton Icon="@Icons.Material.Filled.Close"
-                                               Size="Size.Small"
-                                               Color="Color.Default"
-                                               Variant="Variant.Text"
-                                               OnClick="@(() => RemoveInterest(interest))" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" OnClick="@(() => RemoveInterest(interest))" />
                             </MudTooltip>
                         </span>
                     </span>
                 </MudChip>
             }
         </div>
-
-        @if (_showChipHelp)
-        {
-            <MudAlert Severity="Severity.Info"
-                      Variant="Variant.Text"
-                      Dense="true"
-                      Icon="@Icons.Material.Filled.Info"
-                      ShowCloseIcon="true"
-                      CloseIconClicked="() => _showChipHelp = false"
-                      Class="profile-chip-help-row">
-                @Localizer["ProfileChipHelp"]
-            </MudAlert>
-        }
     </MudStack>
 }
 

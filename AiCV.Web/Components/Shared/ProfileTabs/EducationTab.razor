@@ -1,24 +1,8 @@
 @if (Profile != null)
 {
-    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
-        <MudCardContent Class="py-1 px-4">
-            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
-            <MudGrid>
-                <MudItem xs="12" sm="8">
-                    <MudTextField @bind-Value="Profile.EducationSection.Title"
-                                  Label="@Localizer["SectionTitle"]"
-                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["EducationCv"].Value)"
-                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <UnicodeIconPicker @bind-Icon="Profile.EducationSection.Icon" Label="@Localizer["SectionIcon"]" />
-                </MudItem>
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEducation" Class="mb-2"
+    <SectionHeaderCard Section="Profile.EducationSection" DefaultNameKey="EducationCv" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEducation" Class="mb-2" Size="Size.Small"
                StartIcon="@Icons.Material.Filled.Add">@Localizer["AddEducation"]</MudButton>
-
     <MudStack Spacing="4">
         @foreach (var edu in Profile.Educations)
         {

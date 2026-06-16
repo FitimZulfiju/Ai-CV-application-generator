@@ -1,34 +1,19 @@
 @if (Profile != null)
 {
-    <MudCard Class="mb-2 mud-elevation-1" Style="background-color: var(--mud-palette-background-grey);">
-        <MudCardContent Class="py-1 px-4">
-            <MudText Typo="Typo.subtitle2" Class="mb-1">@Localizer["CustomSectionHeader"]</MudText>
-            <MudGrid>
-                <MudItem xs="12" sm="8">
-                    <MudTextField @bind-Value="Profile.SummarySection.Title" 
-                                  Label="@Localizer["SectionTitle"]" 
-                                  HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer["ProfessionalSummary"].Value)" 
-                                  Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <UnicodeIconPicker @bind-Icon="Profile.SummarySection.Icon" Label="@Localizer["SectionIcon"]" />
-                </MudItem>
-            </MudGrid>
-        </MudCardContent>
-    </MudCard>
+    <SectionHeaderCard Section="Profile.SummarySection" DefaultNameKey="ProfessionalSummary" />
     <MudCard Class="pa-3" Elevation="2">
         <MudGrid Justify="Justify.Center">
             <MudItem xs="12">
                 <MudStack Row AlignItems="AlignItems.Center" Spacing="3" Class="pt-2">
                     @if (!string.IsNullOrEmpty(Profile.ProfilePictureUrl))
                     {
-                        <MudAvatar Size="Size.Large" Color="Color.Default">
+                        <MudAvatar Size="Size.Medium" Color="Color.Default">
                             <MudImage Src="@Profile.ProfilePictureUrl" />
                         </MudAvatar>
                     }
                     else
                     {
-                        <MudAvatar Size="Size.Large" Color="Color.Primary">
+                        <MudAvatar Size="Size.Medium" Color="Color.Primary">
                             @(Profile.FullName?.FirstOrDefault() ?? 'U')
                         </MudAvatar>
                     }

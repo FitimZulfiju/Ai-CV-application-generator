@@ -61,6 +61,7 @@ builder
         options.ClientTimeoutInterval = TimeSpan.FromMinutes(10);
         options.HandshakeTimeout = TimeSpan.FromMinutes(2);
         options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+        options.MaximumReceiveMessageSize = 1024 * 1024; // 1 MB
     });
 
 builder.Services.AddCascadingAuthenticationState();

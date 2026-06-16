@@ -1,6 +1,6 @@
 namespace AiCV.Web.Components.Pages;
 
-public partial class Generate
+public partial class Generate : IDisposable
 {
     private PrintPreviewModal _printPreviewModal = default!;
     private readonly JobPosting _job = new();
@@ -39,6 +39,8 @@ public partial class Generate
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
     private string _userId = string.Empty;
+    private string _draftSnapshot = string.Empty;
+    private Timer? _draftSaveTimer;
     private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
@@ -143,7 +145,10 @@ public partial class Generate
         if (!string.IsNullOrEmpty(_userId))
         {
             await LoadConfiguredProviders();
+            await RestoreDraftAsync();
         }
+
+        _draftSnapshot = ComputeDraftSnapshot();
     }
 
     private async Task LoadConfiguredProviders()
@@ -213,6 +218,7 @@ public partial class Generate
         {
             _isFetching = false;
             LoadingService.Hide();
+            await PersistDraftAsync();
         }
     }
 
@@ -248,6 +254,143 @@ public partial class Generate
         _savedResumeJson = string.Empty;
 
         StateHasChanged();
+    }
+
+    private void ResetForNewApplication()
+    {
+        ClearPreviousJobData();
+        _job.Url = string.Empty;
+        _generatedEmail = string.Empty;
+        _savedEmail = string.Empty;
+        _cachedProfile = null;
+        _showAdvancedEditor = false;
+    }
+
+    private string GetDraftKey() => $"generate-draft-{_userId}";
+
+    private GenerateDraft BuildDraft() =>
+        new()
+        {
+            JobUrl = _job.Url,
+            JobTitle = _job.Title,
+            JobCompanyName = _job.CompanyName,
+            JobDescription = _job.Description,
+            CustomPrompt = _customPrompt,
+            ManualEntry = _manualEntry,
+            SelectedConfigId = _activeConfigId,
+            ShowAdvancedEditor = _showAdvancedEditor,
+            GeneratedCoverLetter = _generatedCoverLetter,
+            GeneratedEmail = _generatedEmail,
+            ResumeJson = _resumeJson,
+            OriginalResumeJson = _originalResumeJson,
+            DetectedCompanyName = _detectedCompanyName,
+            DetectedJobTitle = _detectedJobTitle,
+            ActiveTabIndex = _activeTabIndex,
+            PreviewCoverLetter = _previewCoverLetter,
+            PreviewResume = _previewResume,
+            IncludeProfilePicture = _includeProfilePicture,
+            SelectedTemplateInPreview = _selectedTemplateInPreview,
+            IsAlreadySaved = _isAlreadySaved,
+            SavedCoverLetter = _savedCoverLetter,
+            SavedResumeJson = _savedResumeJson,
+            SavedEmail = _savedEmail,
+        };
+
+    private string ComputeDraftSnapshot() =>
+        System.Text.Json.JsonSerializer.Serialize(BuildDraft(), _jsonOptions);
+
+    private static bool IsDraftEmpty(GenerateDraft draft) =>
+        string.IsNullOrWhiteSpace(draft.JobUrl)
+        && string.IsNullOrWhiteSpace(draft.JobDescription)
+        && string.IsNullOrWhiteSpace(draft.GeneratedCoverLetter)
+        && string.IsNullOrWhiteSpace(draft.ResumeJson);
+
+    private async Task RestoreDraftAsync()
+    {
+        var draft = await PersistenceService.GetDraftAsync<GenerateDraft>(GetDraftKey());
+        if (draft == null || IsDraftEmpty(draft))
+        {
+            return;
+        }
+
+        _job.Url = draft.JobUrl;
+        _job.Title = draft.JobTitle;
+        _job.CompanyName = draft.JobCompanyName;
+        _job.Description = draft.JobDescription;
+        _customPrompt = draft.CustomPrompt;
+        _manualEntry = draft.ManualEntry;
+        _showAdvancedEditor = draft.ShowAdvancedEditor;
+        _generatedCoverLetter = draft.GeneratedCoverLetter;
+        _generatedEmail = draft.GeneratedEmail;
+        _resumeJson = draft.ResumeJson;
+        _originalResumeJson = draft.OriginalResumeJson;
+        _detectedCompanyName = draft.DetectedCompanyName;
+        _detectedJobTitle = draft.DetectedJobTitle;
+        _activeTabIndex = draft.ActiveTabIndex;
+        _previewCoverLetter = draft.PreviewCoverLetter;
+        _previewResume = draft.PreviewResume;
+        _includeProfilePicture = draft.IncludeProfilePicture;
+        _selectedTemplateInPreview = draft.SelectedTemplateInPreview;
+        _isAlreadySaved = draft.IsAlreadySaved;
+        _savedCoverLetter = draft.SavedCoverLetter;
+        _savedResumeJson = draft.SavedResumeJson;
+        _savedEmail = draft.SavedEmail;
+
+        if (
+            draft.SelectedConfigId.HasValue
+            && _configuredProviders.Any(c => c.Id == draft.SelectedConfigId.Value)
+        )
+        {
+            _activeConfigId = draft.SelectedConfigId;
+        }
+
+        UpdatePreview(_job.Description);
+
+        if (!string.IsNullOrEmpty(_resumeJson))
+        {
+            _cachedProfile = await CVService.GetProfileAsync(_userId);
+
+            if (_previewResume)
+            {
+                try
+                {
+                    _generatedResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(
+                        _resumeJson
+                    );
+                }
+                catch
+                {
+                    _previewResume = false;
+                }
+            }
+        }
+    }
+
+    private async Task PersistDraftAsync()
+    {
+        if (string.IsNullOrEmpty(_userId))
+        {
+            return;
+        }
+
+        _draftSnapshot = ComputeDraftSnapshot();
+        await PersistenceService.SaveDraftAsync(GetDraftKey(), BuildDraft());
+    }
+
+    private void CheckDraftState(object? state)
+    {
+        if (string.IsNullOrEmpty(_userId))
+        {
+            return;
+        }
+
+        var snapshot = ComputeDraftSnapshot();
+        if (snapshot == _draftSnapshot)
+        {
+            return;
+        }
+
+        _ = InvokeAsync(PersistDraftAsync);
     }
 
     private async Task GenerateContent()
@@ -416,6 +559,7 @@ public partial class Generate
         {
             _isGenerating = false;
             LoadingService.Hide();
+            await PersistDraftAsync();
         }
     }
 
@@ -483,6 +627,11 @@ public partial class Generate
             _savedEmail = _generatedEmail;
             await Task.Yield();
             Snackbar.Add("Application saved successfully!", Severity.Success);
+
+            // The application is now safely stored in "My Applications" -
+            // clear the draft and reset the screen for the next task.
+            await PersistenceService.ClearDraftAsync(GetDraftKey());
+            ResetForNewApplication();
         }
         catch (Exception ex)
         {
@@ -577,16 +726,50 @@ public partial class Generate
 
     public class GenerateDraft
     {
-        public JobPosting Job { get; set; } = new();
+        public string JobUrl { get; set; } = string.Empty;
+        public string JobTitle { get; set; } = string.Empty;
+        public string JobCompanyName { get; set; } = string.Empty;
+        public string JobDescription { get; set; } = string.Empty;
         public string CustomPrompt { get; set; } = string.Empty;
         public bool ManualEntry { get; set; }
         public int? SelectedConfigId { get; set; }
         public bool ShowAdvancedEditor { get; set; }
+        public string GeneratedCoverLetter { get; set; } = string.Empty;
+        public string GeneratedEmail { get; set; } = string.Empty;
+        public string ResumeJson { get; set; } = string.Empty;
+        public string OriginalResumeJson { get; set; } = string.Empty;
+        public string? DetectedCompanyName { get; set; }
+        public string? DetectedJobTitle { get; set; }
+        public int ActiveTabIndex { get; set; }
+        public bool PreviewCoverLetter { get; set; }
+        public bool PreviewResume { get; set; } = true;
+        public bool IncludeProfilePicture { get; set; }
+        public string SelectedTemplateInPreview { get; set; } =
+            AiCV.Domain.Constants.CvTemplates.Professional;
+        public bool IsAlreadySaved { get; set; }
+        public string SavedCoverLetter { get; set; } = string.Empty;
+        public string SavedResumeJson { get; set; } = string.Empty;
+        public string SavedEmail { get; set; } = string.Empty;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) { }
+        if (firstRender)
+        {
+            _draftSaveTimer = new Timer(
+                CheckDraftState,
+                null,
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(2)
+            );
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _draftSaveTimer?.Dispose();
     }
 
     private static Color GetProviderColor(AIProvider provider) =>

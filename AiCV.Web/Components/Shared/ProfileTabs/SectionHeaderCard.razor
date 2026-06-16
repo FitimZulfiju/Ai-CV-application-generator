@@ -1,0 +1,37 @@
+<MudCard Class="mb-2 mud-elevation-1 card-floating-title" Style="background-color: var(--mud-palette-background-grey);">
+    <div class="card-floating-title-text">
+        @Localizer["CustomSectionHeader"]
+    </div>
+    <MudCardContent Class="pt-1 pb-0">
+        <MudGrid>
+            <MudItem xs="12" sm="8">
+                <MudTextField @bind-Value="Section.Title"
+                              Label="@Localizer["SectionTitle"]"
+                              HelperText="@string.Format(Localizer["LeaveBlankToUseDefault"].Value, Localizer[DefaultNameKey].Value)"
+                              Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" />
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <UnicodeIconPicker @bind-Icon="Section.Icon" Label="@Localizer["SectionIcon"]" />
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+<style>
+    .card-floating-title {
+        position: relative;
+    }
+
+    .card-floating-title-text {
+        position: absolute;
+        top: 0;
+        left: 12px;
+
+        transform: translateY(-50%);
+        background: var(--mud-palette-background-grey);
+        padding: 0 10px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+</style>
