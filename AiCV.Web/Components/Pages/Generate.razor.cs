@@ -61,7 +61,7 @@ public partial class Generate : IDisposable
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Invalid JSON: {ex.Message}", Severity.Error);
+                Snackbar.Add($"{Localizer["InvalidJson"]}: {ex.Message}", Severity.Error);
                 _previewResume = false;
             }
         }
@@ -80,7 +80,7 @@ public partial class Generate : IDisposable
     private void ResetResumeJson()
     {
         _resumeJson = _originalResumeJson;
-        Snackbar.Add("Reset to original generated version.", Severity.Info);
+        Snackbar.Add(Localizer["ResetToOriginalGeneratedVersion"], Severity.Info);
     }
 
     private void OnIncludeProfilePictureToggled(bool value)
@@ -159,7 +159,7 @@ public partial class Generate : IDisposable
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading AI configurations: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorLoadingAiConfigurations"]}: {ex.Message}", Severity.Error);
         }
     }
 
@@ -172,23 +172,23 @@ public partial class Generate : IDisposable
     {
         if (string.IsNullOrWhiteSpace(_job.Url))
         {
-            Snackbar.Add("Please enter a URL first.", Severity.Warning);
+            Snackbar.Add(Localizer["PleaseEnterUrlFirst"], Severity.Warning);
             return;
         }
 
         _isFetching = true;
-        LoadingService.Show("Fetching job details...", 0);
+        LoadingService.Show(Localizer["FetchingJobDetails"], 0);
 
         ClearPreviousJobData();
 
         try
         {
-            LoadingService.Update(20, "Connecting to job site...");
+            LoadingService.Update(20, Localizer["ConnectingToJobSite"]);
             await Task.Delay(300);
 
             var fetchedJob = await JobOrchestrator.FetchJobDetailsAsync(_job.Url);
 
-            LoadingService.Update(60, "Parsing content...");
+            LoadingService.Update(60, Localizer["ParsingContent"]);
 
             _job.Description = fetchedJob.Description;
             _job.CompanyName = fetchedJob.CompanyName;
@@ -196,12 +196,12 @@ public partial class Generate : IDisposable
             _showAdvancedEditor = true;
             UpdatePreview(_job.Description);
 
-            LoadingService.Update(100, "Done!");
+            LoadingService.Update(100, Localizer["Done"]);
             await Task.Delay(200);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error fetching job: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorFetchingJob"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -378,7 +378,7 @@ public partial class Generate : IDisposable
             return;
 
         _isGenerating = true;
-        LoadingService.Show("Generating application...", 0);
+        LoadingService.Show(Localizer["GeneratingApplication"], 0);
         try
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -387,16 +387,16 @@ public partial class Generate : IDisposable
 
             if (string.IsNullOrEmpty(userId))
             {
-                Snackbar.Add("User ID not found. Please log in again.", Severity.Error);
+                Snackbar.Add(Localizer["UserIdNotFound"], Severity.Error);
                 return;
             }
 
-            LoadingService.Update(10, "Analyzing profile...");
+            LoadingService.Update(10, Localizer["AnalyzingProfile"]);
             _cachedProfile = await CVService.GetProfileAsync(userId);
 
             if (_cachedProfile == null)
             {
-                Snackbar.Add("User profile not found. Please log in again.", Severity.Error);
+                Snackbar.Add(Localizer["UserProfileNotFound"], Severity.Error);
                 return;
             }
 
@@ -406,18 +406,18 @@ public partial class Generate : IDisposable
             )
             {
                 Snackbar.Add(
-                    "Your profile is empty! Please go to the Profile page and fill in your details first.",
+                    Localizer["YourProfileIsEmpty"],
                     Severity.Warning
                 );
                 return;
             }
 
-            LoadingService.Update(30, "Generating cover letter...");
+            LoadingService.Update(30, Localizer["GeneratingCoverLetter"]);
             var activeConfig = GetActiveConfiguration();
             if (activeConfig == null)
             {
                 Snackbar.Add(
-                    "No AI configuration selected. Please configure a provider in Settings.",
+                    Localizer["NoAiConfigurationSelected"],
                     Severity.Warning
                 );
                 return;
@@ -426,7 +426,7 @@ public partial class Generate : IDisposable
             if (activeConfig.ApiKey == "DECRYPTION_FAILED")
             {
                 Snackbar.Add(
-                    "Error: The selected API Key could not be decrypted. Please go to Settings and re-enter your API Key.",
+                    Localizer["ApiKeyDecryptionFailed"],
                     Severity.Error
                 );
                 return;
@@ -441,7 +441,7 @@ public partial class Generate : IDisposable
                     _customPrompt
                 );
 
-            LoadingService.Update(70, "Tailoring CV...");
+            LoadingService.Update(70, Localizer["TailoringCv"]);
             _generatedCoverLetter = CoverLetter;
             _generatedResume = ResumeResult.Profile;
             _generatedEmail = ApplicationEmail;
@@ -500,15 +500,15 @@ public partial class Generate : IDisposable
             )
             {
                 Snackbar.Add(
-                    $"AI Detected: {_detectedCompanyName} - {_detectedJobTitle}",
+                    string.Format(Localizer["AiDetected"], _detectedCompanyName, _detectedJobTitle),
                     Severity.Info
                 );
             }
 
-            LoadingService.Update(100, "Complete!");
+            LoadingService.Update(100, Localizer["Complete"]);
             await Task.Delay(300);
 
-            Snackbar.Add("Application Generated!", Severity.Success);
+            Snackbar.Add(Localizer["ApplicationGenerated"], Severity.Success);
             _previewCoverLetter = true;
 
             if (
@@ -527,7 +527,7 @@ public partial class Generate : IDisposable
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorDiscoveryService"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -546,7 +546,7 @@ public partial class Generate : IDisposable
         if (_isAlreadySaved)
         {
             Snackbar.Add(
-                "This application has already been saved. Generate a new application to save again.",
+                Localizer["ApplicationAlreadySaved"],
                 Severity.Info
             );
             _isSaving = false;
@@ -556,19 +556,19 @@ public partial class Generate : IDisposable
 
         if (string.IsNullOrEmpty(_generatedCoverLetter))
         {
-            Snackbar.Add("Please generate a cover letter first.", Severity.Warning);
+            Snackbar.Add(Localizer["PleaseGenerateCoverLetterFirst"], Severity.Warning);
             return;
         }
 
         if (_generatedResume == null)
         {
-            Snackbar.Add("Please generate a tailored CV first.", Severity.Warning);
+            Snackbar.Add(Localizer["PleaseGenerateTailoredCvFirst"], Severity.Warning);
             return;
         }
 
         if (_cachedProfile == null)
         {
-            Snackbar.Add("Profile data is missing. Please try generating again.", Severity.Warning);
+            Snackbar.Add(Localizer["ProfileDataMissing"], Severity.Warning);
             return;
         }
 
@@ -578,7 +578,7 @@ public partial class Generate : IDisposable
 
         if (string.IsNullOrEmpty(userId))
         {
-            Snackbar.Add("User ID not found. Please log in again.", Severity.Error);
+            Snackbar.Add(Localizer["UserIdNotFound"], Severity.Error);
             return;
         }
 
@@ -598,14 +598,14 @@ public partial class Generate : IDisposable
             _savedResumeJson = _resumeJson;
             _savedEmail = _generatedEmail;
             await Task.Yield();
-            Snackbar.Add("Application saved successfully!", Severity.Success);
+            Snackbar.Add(Localizer["ApplicationSavedSuccessfully"], Severity.Success);
 
             await PersistenceService.ClearDraftAsync(GetDraftKey());
             ResetForNewApplication();
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error saving: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorSaving"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -617,7 +617,7 @@ public partial class Generate : IDisposable
     private async Task CopyToClipboard(string text)
     {
         await ClipboardService.CopyToClipboardAsync(text);
-        Snackbar.Add("Copied to clipboard!", Severity.Success);
+        Snackbar.Add(Localizer["CopiedToClipboard"], Severity.Success);
     }
 
     private async Task CopyResumeJson()
@@ -626,7 +626,7 @@ public partial class Generate : IDisposable
             return;
         var json = JsonSerializer.Serialize(_generatedResume);
         await ClipboardService.CopyToClipboardAsync(json);
-        Snackbar.Add("Copied JSON to clipboard!", Severity.Success);
+        Snackbar.Add(Localizer["CopiedJsonToClipboard"], Severity.Success);
     }
 
     private async Task PrintResume()
@@ -637,28 +637,28 @@ public partial class Generate : IDisposable
         _isPrintingResume = true;
         StateHasChanged();
         await Task.Yield();
-        LoadingService.Show("Generating PDF...", 0);
+        LoadingService.Show(Localizer["GeneratingPdf"], 0);
         try
         {
             var pdfBytes = await PdfService.GenerateCvAsync(
                 _generatedResume,
                 _selectedTemplateInPreview
             );
-            await _printPreviewModal.ShowAsync(pdfBytes, "Resume", _job.Title);
+            await _printPreviewModal.ShowAsync(pdfBytes, Localizer["ResumeDocumentType"], _job.Title);
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+            catch (Exception ex)
+            {
+                Snackbar.Add($"{Localizer["ErrorGeneratingPdf"]}: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                LoadingService.Hide();
+                _isPrintingResume = false;
+                StateHasChanged();
+            }
         }
-        finally
-        {
-            LoadingService.Hide();
-            _isPrintingResume = false;
-            StateHasChanged();
-        }
-    }
 
-    private async Task PrintCoverLetter()
+        private async Task PrintCoverLetter()
     {
         if (string.IsNullOrEmpty(_generatedCoverLetter) || _generatedResume == null)
             return;
@@ -666,7 +666,7 @@ public partial class Generate : IDisposable
         _isPrintingCoverLetter = true;
         StateHasChanged();
         await Task.Yield();
-        LoadingService.Show("Generating PDF...", 0);
+        LoadingService.Show(Localizer["GeneratingPdf"], 0);
         try
         {
             var pdfBytes = await PdfService.GenerateCoverLetterAsync(
@@ -678,13 +678,13 @@ public partial class Generate : IDisposable
             );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,
-                "Cover Letter",
-                $"{_job.Title} at {_job.CompanyName}"
+                Localizer["CoverLetterDocumentType"],
+                string.Format(Localizer["JobAtCompanyTitle"], _job.Title, _job.CompanyName)
             );
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorGeneratingPdf"]}: {ex.Message}", Severity.Error);
         }
         finally
         {

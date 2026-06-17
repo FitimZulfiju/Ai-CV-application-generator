@@ -39,7 +39,7 @@ public partial class ApplicationDetails
         _isLoading = true;
         _activeTabIndex = 0;
         StateHasChanged();
-        LoadingService.Show("Loading application...", 0);
+        LoadingService.Show(Localizer["LoadingApplication"], 0);
 
         try
         {
@@ -59,7 +59,7 @@ public partial class ApplicationDetails
                         if (_cachedProfile == null)
                         {
                             Snackbar.Add(
-                                "Warning: User profile not found. Cover letter preview may be incomplete.",
+                                Localizer["WarningUserProfileNotFoundCoverPreviewIncomplete"],
                                 Severity.Warning
                             );
                         }
@@ -67,7 +67,7 @@ public partial class ApplicationDetails
                 }
                 catch (Exception ex)
                 {
-                    Snackbar.Add($"Error loading profile: {ex.Message}", Severity.Warning);
+                    Snackbar.Add($"{Localizer["ErrorLoadingProfile"]}: {ex.Message}", Severity.Warning);
                 }
             }
 
@@ -82,7 +82,7 @@ public partial class ApplicationDetails
                 catch (Exception ex)
                 {
                     Snackbar.Add(
-                        $"Error deserializing tailored CV: {ex.Message}",
+                        $"{Localizer["ErrorDeserializingTailoredCv"]}: {ex.Message}",
                         Severity.Warning
                     );
                 }
@@ -90,7 +90,7 @@ public partial class ApplicationDetails
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading application: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorLoadingApplication"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -116,19 +116,19 @@ public partial class ApplicationDetails
             var pdfBytes = await PdfService.GenerateCoverLetterAsync(
                 _application.CoverLetterContent,
                 profile,
-                _application.JobPosting?.Title ?? "Job",
-                _application.JobPosting?.CompanyName ?? "Company",
+                _application.JobPosting?.Title ?? Localizer["JobFallback"],
+                _application.JobPosting?.CompanyName ?? Localizer["CompanyFallback"],
                 _application.Template
             );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,
-                "Cover Letter",
-                $"{_application.JobPosting?.Title} at {_application.JobPosting?.CompanyName}"
+                Localizer["CoverLetterDocumentType"],
+                string.Format(Localizer["JobAtCompanyTitle"], _application.JobPosting?.Title, _application.JobPosting?.CompanyName)
             );
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorGeneratingPdf"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -153,13 +153,17 @@ public partial class ApplicationDetails
             );
             await _printPreviewModal.ShowAsync(
                 pdfBytes,
-                "Resume",
-                $"{_application?.JobPosting?.Title ?? "Job"} at {_application?.JobPosting?.CompanyName ?? "Company"}"
+                Localizer["ResumeDocumentType"],
+                string.Format(
+                    Localizer["JobAtCompanyTitle"],
+                    _application?.JobPosting?.Title ?? Localizer["JobFallback"],
+                    _application?.JobPosting?.CompanyName ?? Localizer["CompanyFallback"]
+                )
             );
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorGeneratingPdf"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -171,7 +175,7 @@ public partial class ApplicationDetails
     private async Task CopyToClipboard(string text)
     {
         await ClipboardService.CopyToClipboardAsync(text);
-        Snackbar.Add("Copied to clipboard!", Severity.Success);
+        Snackbar.Add(Localizer["CopiedToClipboard"], Severity.Success);
     }
 
     private async Task OnTemplateSelected()
@@ -188,7 +192,7 @@ public partial class ApplicationDetails
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error saving template: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorSavingTemplate"]}: {ex.Message}", Severity.Error);
         }
     }
 }

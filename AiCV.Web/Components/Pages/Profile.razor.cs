@@ -41,7 +41,7 @@ public partial class Profile : IDisposable
     private async Task LoadProfileAsync()
     {
         _isLoading = true;
-        LoadingService.Show("Loading profile...", 0);
+        LoadingService.Show(Localizer["LoadingProfile"], 0);
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         try
         {
@@ -50,7 +50,7 @@ public partial class Profile : IDisposable
 
             if (string.IsNullOrEmpty(userId))
             {
-                Snackbar.Add("User not logged in.", Severity.Error);
+                Snackbar.Add(Localizer["UserNotLoggedIn"], Severity.Error);
                 return;
             }
 
@@ -185,11 +185,11 @@ public partial class Profile : IDisposable
                 await CVService.SaveProfileAsync(_profile);
                 _profileSnapshot = ComputeProfileSnapshot();
                 _isDirty = false;
-                Snackbar.Add("Profile saved successfully!", Severity.Success);
+                Snackbar.Add(Localizer["ProfileSavedSuccessfully"], Severity.Success);
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+                Snackbar.Add($"{Localizer["ErrorDiscoveryService"]}: {ex.Message}", Severity.Error);
             }
             finally
             {
@@ -556,7 +556,7 @@ public partial class Profile : IDisposable
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error generating PDF: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorGeneratingPdf"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -602,11 +602,11 @@ public partial class Profile : IDisposable
             await CVService.UpdateProfilePictureAsync(_profile.Id, url);
 
             StateHasChanged();
-            Snackbar.Add("Profile picture uploaded and saved!", Severity.Success);
+            Snackbar.Add(Localizer["ProfilePictureUploadedAndSaved"], Severity.Success);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error uploading file: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorUploadingFile"]}: {ex.Message}", Severity.Error);
         }
     }
 
@@ -636,11 +636,11 @@ public partial class Profile : IDisposable
             _profile.ProfilePictureUrl = string.Empty;
             await CVService.UpdateProfilePictureAsync(_profile.Id, string.Empty);
             StateHasChanged();
-            Snackbar.Add("Profile picture removed.", Severity.Success);
+            Snackbar.Add(Localizer["ProfilePictureRemoved"], Severity.Success);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error removing profile picture: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorRemovingProfilePicture"]}: {ex.Message}", Severity.Error);
         }
     }
 

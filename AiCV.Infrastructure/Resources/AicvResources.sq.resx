@@ -1449,4 +1449,325 @@
   <data name="CopyAsJson" xml:space="preserve">
     <value>Kopjo si JSON</value>
   </data>
+  <data name="DemoAccountInfo" xml:space="preserve">
+    <value>Llogari demo</value>
+  </data>
+  <data name="FillDemoCredentials" xml:space="preserve">
+    <value>Plotëso kredencialet demo</value>
+  </data>
+  <data name="DisplayAsChips" xml:space="preserve">
+    <value>Shfaq si etiketa/chips</value>
+  </data>
+  <data name="ErrorPageNotFound" xml:space="preserve">
+    <value>Faqja nuk u gjet</value>
+  </data>
+  <data name="ErrorPageNotFoundMessage" xml:space="preserve">
+    <value>Nuk mundëm ta gjenim faqen që po kërkoni.</value>
+  </data>
+  <data name="ErrorPageAccessDenied" xml:space="preserve">
+    <value>Qasja u refuzua</value>
+  </data>
+  <data name="ErrorPageAccessDeniedMessage" xml:space="preserve">
+    <value>Nuk keni leje për ta parë këtë burim.</value>
+  </data>
+  <data name="ErrorPageUnauthorized" xml:space="preserve">
+    <value>I paautorizuar</value>
+  </data>
+  <data name="ErrorPageUnauthorizedMessage" xml:space="preserve">
+    <value>Duhet të jeni të kyçur për të hyrë në këtë burim.</value>
+  </data>
+  <data name="ErrorPageServerError" xml:space="preserve">
+    <value>Gabim serveri</value>
+  </data>
+  <data name="ErrorPageServerErrorMessage" xml:space="preserve">
+    <value>Ndodhi një gabim i papritur në server.</value>
+  </data>
+  <data name="ErrorPageGeneric" xml:space="preserve">
+    <value>Diçka shkoi keq</value>
+  </data>
+  <data name="ErrorPageGenericMessage" xml:space="preserve">
+    <value>U has një gjendje e papritur.</value>
+  </data>
+  <data name="ErrorPageUnexpectedError" xml:space="preserve">
+    <value>Diçka shkoi keq</value>
+  </data>
+  <data name="ErrorPageUnexpectedErrorMessage" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë përpunimit të kërkesës suaj. Ekipi ynë është njoftuar.</value>
+  </data>
+  <data name="ErrorPageGoHome" xml:space="preserve">
+    <value>Shko te faqja kryesore</value>
+  </data>
+  <data name="ErrorPageContactSupport" xml:space="preserve">
+    <value>Kontakto mbështetjen</value>
+  </data>
+  <data name="ErrorPageGoBack" xml:space="preserve">
+    <value>Kthehu prapa</value>
+  </data>
+  <data name="ErrorPageSignIn" xml:space="preserve">
+    <value>Kyçu</value>
+  </data>
+  <data name="ErrorPageTip404" xml:space="preserve">
+    <value>Këshillë: Provoni të kontrolloni URL-në për gabime shkrimi ose kthehuni te faqja kryesore.</value>
+  </data>
+  <data name="ErrorPageRequestId" xml:space="preserve">
+    <value>ID e kërkesës:</value>
+  </data>
+  <data name="ResetToOriginalGeneratedVersion" xml:space="preserve">
+    <value>U rikthye te versioni origjinal i gjeneruar.</value>
+  </data>
+  <data name="PleaseEnterUrlFirst" xml:space="preserve">
+    <value>Ju lutemi vendosni së pari një URL.</value>
+  </data>
+  <data name="FetchingJobDetails" xml:space="preserve">
+    <value>Duke marrë detajet e punës...</value>
+  </data>
+  <data name="ConnectingToJobSite" xml:space="preserve">
+    <value>Duke u lidhur me faqen e punës...</value>
+  </data>
+  <data name="ParsingContent" xml:space="preserve">
+    <value>Duke analizuar përmbajtjen...</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Përfundoi!</value>
+  </data>
+  <data name="ErrorFetchingJob" xml:space="preserve">
+    <value>Gabim gjatë marrjes së punës</value>
+  </data>
+  <data name="ErrorLoadingAiConfigurations" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të konfigurimeve të AI-së</value>
+  </data>
+  <data name="UserIdNotFound" xml:space="preserve">
+    <value>ID e përdoruesit nuk u gjet. Ju lutemi kyçuni përsëri.</value>
+  </data>
+  <data name="UserProfileNotFound" xml:space="preserve">
+    <value>Profili i përdoruesit nuk u gjet. Ju lutemi kyçuni përsëri.</value>
+  </data>
+  <data name="YourProfileIsEmpty" xml:space="preserve">
+    <value>Profili juaj është bosh! Ju lutemi shkoni te faqja e Profilit dhe plotësoni së pari të dhënat tuaja.</value>
+  </data>
+  <data name="NoAiConfigurationSelected" xml:space="preserve">
+    <value>Nuk është zgjedhur asnjë konfigurim AI. Ju lutemi konfiguroni një ofrues te Cilësimet.</value>
+  </data>
+  <data name="ApiKeyDecryptionFailed" xml:space="preserve">
+    <value>Gabim: Çelësi i zgjedhur API nuk mund të deshifrohej. Ju lutemi shkoni te Cilësimet dhe vendosni përsëri çelësin tuaj API.</value>
+  </data>
+  <data name="AiDetected" xml:space="preserve">
+    <value>AI u zbulua: {0} - {1}</value>
+  </data>
+  <data name="ApplicationGenerated" xml:space="preserve">
+    <value>Aplikimi u gjenerua!</value>
+  </data>
+  <data name="ApplicationAlreadySaved" xml:space="preserve">
+    <value>Ky aplikim është ruajtur tashmë. Gjeneroni një aplikim të ri për ta ruajtur përsëri.</value>
+  </data>
+  <data name="PleaseGenerateCoverLetterFirst" xml:space="preserve">
+    <value>Ju lutemi gjeneroni së pari një letër motivimi.</value>
+  </data>
+  <data name="PleaseGenerateTailoredCvFirst" xml:space="preserve">
+    <value>Ju lutemi gjeneroni së pari një CV të përshtatur.</value>
+  </data>
+  <data name="ProfileDataMissing" xml:space="preserve">
+    <value>Të dhënat e profilit mungojnë. Ju lutemi provoni ta gjeneroni përsëri.</value>
+  </data>
+  <data name="ApplicationSavedSuccessfully" xml:space="preserve">
+    <value>Aplikimi u ruajt me sukses!</value>
+  </data>
+  <data name="ErrorSaving" xml:space="preserve">
+    <value>Gabim gjatë ruajtjes</value>
+  </data>
+  <data name="CopiedToClipboard" xml:space="preserve">
+    <value>U kopjua në clipboard!</value>
+  </data>
+  <data name="CopiedJsonToClipboard" xml:space="preserve">
+    <value>JSON u kopjua në clipboard!</value>
+  </data>
+  <data name="GeneratingPdf" xml:space="preserve">
+    <value>Duke gjeneruar PDF...</value>
+  </data>
+  <data name="InvalidJson" xml:space="preserve">
+    <value>JSON i pavlefshëm</value>
+  </data>
+  <data name="ErrorLoadingConfigurations" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të konfigurimeve</value>
+  </data>
+  <data name="FoundModels" xml:space="preserve">
+    <value>U gjetën {0} modele</value>
+  </data>
+  <data name="FailedValidateApiKey" xml:space="preserve">
+    <value>Validimi i çelësit API ose marrja e modeleve dështoi.</value>
+  </data>
+  <data name="ErrorDiscoveryService" xml:space="preserve">
+    <value>Gabim</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Testi dështoi</value>
+  </data>
+  <data name="WarningApiKeyMissing" xml:space="preserve">
+    <value>Paralajmërim: Çelësi API mungon. Ju lutemi vendoseni.</value>
+  </data>
+  <data name="ErrorApiKeyDecryption" xml:space="preserve">
+    <value>Gabim: Çelësi API nuk mund të deshifrohej. Kjo zakonisht ndodh pas një rinisjeje të sistemit nëse çelësat nuk janë ruajtur, ose nëse çelësat janë rrotulluar. Ju lutemi vendoseni përsëri.</value>
+  </data>
+  <data name="DiscoveryFailed" xml:space="preserve">
+    <value>Zbulimi dështoi</value>
+  </data>
+  <data name="DiscoveryError" xml:space="preserve">
+    <value>Gabim zbulimi</value>
+  </data>
+  <data name="ErrorUpdating" xml:space="preserve">
+    <value>Gabim gjatë përditësimit</value>
+  </data>
+  <data name="ErrorDeleting" xml:space="preserve">
+    <value>Gabim gjatë fshirjes</value>
+  </data>
+  <data name="StatisticsExportedSuccessfully" xml:space="preserve">
+    <value>Statistikat u eksportuan me sukses</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Eksportimi dështoi</value>
+  </data>
+  <data name="LoadingAdminDashboard" xml:space="preserve">
+    <value>Duke ngarkuar panelin e administratorit...</value>
+  </data>
+  <data name="ErrorLoadingAdminDashboard" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të panelit të administratorit</value>
+  </data>
+  <data name="ConfirmAction" xml:space="preserve">
+    <value>Konfirmo veprimin</value>
+  </data>
+  <data name="AreYouSureWantToLockUser" xml:space="preserve">
+    <value>Jeni i sigurt që dëshironi ta bllokoni këtë llogari përdoruesi?</value>
+  </data>
+  <data name="AreYouSureWantToUnlockUser" xml:space="preserve">
+    <value>Jeni i sigurt që dëshironi ta zhbllokoni këtë llogari përdoruesi?</value>
+  </data>
+  <data name="FailedToLockUserAccount" xml:space="preserve">
+    <value>Bllokimi i llogarisë së përdoruesit dështoi</value>
+  </data>
+  <data name="FailedToUnlockUserAccount" xml:space="preserve">
+    <value>Zhbllokimi i llogarisë së përdoruesit dështoi</value>
+  </data>
+  <data name="ErrorLoadingNotes" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të shënimeve</value>
+  </data>
+  <data name="LoadingNotes" xml:space="preserve">
+    <value>Duke ngarkuar shënimet...</value>
+  </data>
+  <data name="UserNotLoggedIn" xml:space="preserve">
+    <value>Përdoruesi nuk është i kyçur.</value>
+  </data>
+  <data name="LoadingProfile" xml:space="preserve">
+    <value>Duke ngarkuar profilin...</value>
+  </data>
+  <data name="ProfileSavedSuccessfully" xml:space="preserve">
+    <value>Profili u ruajt me sukses!</value>
+  </data>
+  <data name="ProfilePictureUploadedAndSaved" xml:space="preserve">
+    <value>Fotografia e profilit u ngarkua dhe u ruajt!</value>
+  </data>
+  <data name="ProfilePictureRemoved" xml:space="preserve">
+    <value>Fotografia e profilit u hoq.</value>
+  </data>
+  <data name="ErrorUploadingFile" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të skedarit</value>
+  </data>
+  <data name="ErrorRemovingProfilePicture" xml:space="preserve">
+    <value>Gabim gjatë heqjes së fotografisë së profilit</value>
+  </data>
+  <data name="ErrorGeneratingPdf" xml:space="preserve">
+    <value>Gabim gjatë gjenerimit të PDF-së</value>
+  </data>
+  <data name="ErrorSavingTemplate" xml:space="preserve">
+    <value>Gabim gjatë ruajtjes së shabllonit</value>
+  </data>
+  <data name="LoadingSettings" xml:space="preserve">
+    <value>Duke ngarkuar cilësimet...</value>
+  </data>
+  <data name="GeneratingApplication" xml:space="preserve">
+    <value>Duke gjeneruar aplikimin...</value>
+  </data>
+  <data name="AnalyzingProfile" xml:space="preserve">
+    <value>Duke analizuar profilin...</value>
+  </data>
+  <data name="GeneratingCoverLetter" xml:space="preserve">
+    <value>Duke gjeneruar letrën e motivimit...</value>
+  </data>
+  <data name="TailoringCv" xml:space="preserve">
+    <value>Duke përshtatur CV-në...</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Përfunduar!</value>
+  </data>
+  <data name="ResumeDocumentType" xml:space="preserve">
+    <value>CV</value>
+  </data>
+  <data name="CoverLetterDocumentType" xml:space="preserve">
+    <value>Letër motivimi</value>
+  </data>
+  <data name="JobAtCompanyTitle" xml:space="preserve">
+    <value>{0} te {1}</value>
+  </data>
+  <data name="LoadingApplication" xml:space="preserve">
+    <value>Duke ngarkuar aplikimin...</value>
+  </data>
+  <data name="WarningUserProfileNotFoundCoverPreviewIncomplete" xml:space="preserve">
+    <value>Paralajmërim: Profili i përdoruesit nuk u gjet. Parapamja e letrës së motivimit mund të jetë e paplotë.</value>
+  </data>
+  <data name="ErrorLoadingProfile" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të profilit</value>
+  </data>
+  <data name="ErrorDeserializingTailoredCv" xml:space="preserve">
+    <value>Gabim gjatë deserializimit të CV-së së përshtatur</value>
+  </data>
+  <data name="ErrorLoadingApplication" xml:space="preserve">
+    <value>Gabim gjatë ngarkimit të aplikimit</value>
+  </data>
+  <data name="JobFallback" xml:space="preserve">
+    <value>Punë</value>
+  </data>
+  <data name="CompanyFallback" xml:space="preserve">
+    <value>Kompani</value>
+  </data>
+  <data name="OpenRouterAccountConnected" xml:space="preserve">
+    <value>Llogaria OpenRouter u lidh! Tani mund ta përdorni nga faqja Gjenero.</value>
+  </data>
+  <data name="GoogleGeminiAccountConnected" xml:space="preserve">
+    <value>Llogaria Google Gemini u lidh! Do të përdoret plani juaj ekzistues.</value>
+  </data>
+  <data name="AccountConnectedSuccessfully" xml:space="preserve">
+    <value>Llogaria u lidh me sukses!</value>
+  </data>
+  <data name="OpenRouterConnectionCancelled" xml:space="preserve">
+    <value>Lidhja me OpenRouter u anulua.</value>
+  </data>
+  <data name="OpenRouterSessionExpired" xml:space="preserve">
+    <value>Sesioni i OpenRouter skadoi. Ju lutemi provoni përsëri.</value>
+  </data>
+  <data name="CouldNotRetrieveOpenRouterApiKey" xml:space="preserve">
+    <value>Nuk mund të merrej çelësi API i OpenRouter.</value>
+  </data>
+  <data name="GoogleGeminiConnectionCancelled" xml:space="preserve">
+    <value>Lidhja me Google Gemini u anulua.</value>
+  </data>
+  <data name="SessionExpiredTryAgain" xml:space="preserve">
+    <value>Sesioni skadoi. Ju lutemi provoni përsëri.</value>
+  </data>
+  <data name="CouldNotExchangeCodeWithGoogle" xml:space="preserve">
+    <value>Nuk mund të shkëmbehej kodi me Google. Ju lutemi provoni përsëri.</value>
+  </data>
+  <data name="GoogleNoRefreshToken" xml:space="preserve">
+    <value>Google nuk ktheu një token rifreskimi. Ju lutemi revokoni qasjen e aplikacionit në llogarinë tuaj Google dhe provoni përsëri.</value>
+  </data>
+  <data name="GoogleOAuthNotConfigured" xml:space="preserve">
+    <value>Google OAuth nuk është konfiguruar në këtë server.</value>
+  </data>
+  <data name="ConnectionFailedWithCode" xml:space="preserve">
+    <value>Lidhja dështoi ({0}).</value>
+  </data>
+  <data name="ConnectionFailureDetails" xml:space="preserve">
+    <value> Detaje: {0}</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Duke fshirë llogarinë...</value>
+  </data>
 </root>

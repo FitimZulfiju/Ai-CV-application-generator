@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -1511,5 +1511,263 @@
   </data>
   <data name="ErrorPageRequestId" xml:space="preserve">
     <value>Request ID:</value>
+  </data>
+  <data name="ResetToOriginalGeneratedVersion" xml:space="preserve">
+    <value>Reset to original generated version.</value>
+  </data>
+  <data name="PleaseEnterUrlFirst" xml:space="preserve">
+    <value>Please enter a URL first.</value>
+  </data>
+  <data name="FetchingJobDetails" xml:space="preserve">
+    <value>Fetching job details...</value>
+  </data>
+  <data name="ConnectingToJobSite" xml:space="preserve">
+    <value>Connecting to job site...</value>
+  </data>
+  <data name="ParsingContent" xml:space="preserve">
+    <value>Parsing content...</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done!</value>
+  </data>
+  <data name="ErrorFetchingJob" xml:space="preserve">
+    <value>Error fetching job</value>
+  </data>
+  <data name="ErrorLoadingAiConfigurations" xml:space="preserve">
+    <value>Error loading AI configurations</value>
+  </data>
+  <data name="UserIdNotFound" xml:space="preserve">
+    <value>User ID not found. Please log in again.</value>
+  </data>
+  <data name="UserProfileNotFound" xml:space="preserve">
+    <value>User profile not found. Please log in again.</value>
+  </data>
+  <data name="YourProfileIsEmpty" xml:space="preserve">
+    <value>Your profile is empty! Please go to the Profile page and fill in your details first.</value>
+  </data>
+  <data name="NoAiConfigurationSelected" xml:space="preserve">
+    <value>No AI configuration selected. Please configure a provider in Settings.</value>
+  </data>
+  <data name="ApiKeyDecryptionFailed" xml:space="preserve">
+    <value>Error: The selected API Key could not be decrypted. Please go to Settings and re-enter your API Key.</value>
+  </data>
+  <data name="AiDetected" xml:space="preserve">
+    <value>AI Detected: {0} - {1}</value>
+  </data>
+  <data name="ApplicationGenerated" xml:space="preserve">
+    <value>Application Generated!</value>
+  </data>
+  <data name="ApplicationAlreadySaved" xml:space="preserve">
+    <value>This application has already been saved. Generate a new application to save again.</value>
+  </data>
+  <data name="PleaseGenerateCoverLetterFirst" xml:space="preserve">
+    <value>Please generate a cover letter first.</value>
+  </data>
+  <data name="PleaseGenerateTailoredCvFirst" xml:space="preserve">
+    <value>Please generate a tailored CV first.</value>
+  </data>
+  <data name="ProfileDataMissing" xml:space="preserve">
+    <value>Profile data is missing. Please try generating again.</value>
+  </data>
+  <data name="ApplicationSavedSuccessfully" xml:space="preserve">
+    <value>Application saved successfully!</value>
+  </data>
+  <data name="ErrorSaving" xml:space="preserve">
+    <value>Error saving</value>
+  </data>
+  <data name="CopiedToClipboard" xml:space="preserve">
+    <value>Copied to clipboard!</value>
+  </data>
+  <data name="CopiedJsonToClipboard" xml:space="preserve">
+    <value>Copied JSON to clipboard!</value>
+  </data>
+  <data name="GeneratingPdf" xml:space="preserve">
+    <value>Generating PDF...</value>
+  </data>
+  <data name="InvalidJson" xml:space="preserve">
+    <value>Invalid JSON</value>
+  </data>
+  <data name="ErrorLoadingConfigurations" xml:space="preserve">
+    <value>Error loading configurations</value>
+  </data>
+  <data name="FoundModels" xml:space="preserve">
+    <value>Found {0} models</value>
+  </data>
+  <data name="FailedValidateApiKey" xml:space="preserve">
+    <value>Failed to validate API Key or fetch models.</value>
+  </data>
+  <data name="ErrorDiscoveryService" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="TestFailed" xml:space="preserve">
+    <value>Test failed</value>
+  </data>
+  <data name="WarningApiKeyMissing" xml:space="preserve">
+    <value>Warning: API Key is missing. Please enter it.</value>
+  </data>
+  <data name="ErrorApiKeyDecryption" xml:space="preserve">
+    <value>Error: API Key could not be decrypted. This usually happens after a system restart if keys weren't persisted, or if keys were rotated. Please re-enter it.</value>
+  </data>
+  <data name="DiscoveryFailed" xml:space="preserve">
+    <value>Discovery failed</value>
+  </data>
+  <data name="DiscoveryError" xml:space="preserve">
+    <value>Discovery error</value>
+  </data>
+  <data name="ErrorUpdating" xml:space="preserve">
+    <value>Error updating</value>
+  </data>
+  <data name="ErrorDeleting" xml:space="preserve">
+    <value>Error deleting</value>
+  </data>
+  <data name="StatisticsExportedSuccessfully" xml:space="preserve">
+    <value>Statistics exported successfully</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Export failed</value>
+  </data>
+  <data name="LoadingAdminDashboard" xml:space="preserve">
+    <value>Loading admin dashboard...</value>
+  </data>
+  <data name="ErrorLoadingAdminDashboard" xml:space="preserve">
+    <value>Error loading admin dashboard</value>
+  </data>
+  <data name="ConfirmAction" xml:space="preserve">
+    <value>Confirm Action</value>
+  </data>
+  <data name="AreYouSureWantToLockUser" xml:space="preserve">
+    <value>Are you sure you want to lock this user account?</value>
+  </data>
+  <data name="AreYouSureWantToUnlockUser" xml:space="preserve">
+    <value>Are you sure you want to unlock this user account?</value>
+  </data>
+  <data name="FailedToLockUserAccount" xml:space="preserve">
+    <value>Failed to lock user account</value>
+  </data>
+  <data name="FailedToUnlockUserAccount" xml:space="preserve">
+    <value>Failed to unlock user account</value>
+  </data>
+  <data name="ErrorLoadingNotes" xml:space="preserve">
+    <value>Error loading notes</value>
+  </data>
+  <data name="LoadingNotes" xml:space="preserve">
+    <value>Loading notes...</value>
+  </data>
+  <data name="UserNotLoggedIn" xml:space="preserve">
+    <value>User not logged in.</value>
+  </data>
+  <data name="LoadingProfile" xml:space="preserve">
+    <value>Loading profile...</value>
+  </data>
+  <data name="ProfileSavedSuccessfully" xml:space="preserve">
+    <value>Profile saved successfully!</value>
+  </data>
+  <data name="ProfilePictureUploadedAndSaved" xml:space="preserve">
+    <value>Profile picture uploaded and saved!</value>
+  </data>
+  <data name="ProfilePictureRemoved" xml:space="preserve">
+    <value>Profile picture removed.</value>
+  </data>
+  <data name="ErrorUploadingFile" xml:space="preserve">
+    <value>Error uploading file</value>
+  </data>
+  <data name="ErrorRemovingProfilePicture" xml:space="preserve">
+    <value>Error removing profile picture</value>
+  </data>
+  <data name="ErrorGeneratingPdf" xml:space="preserve">
+    <value>Error generating PDF</value>
+  </data>
+  <data name="ErrorSavingTemplate" xml:space="preserve">
+    <value>Error saving template</value>
+  </data>
+  <data name="LoadingSettings" xml:space="preserve">
+    <value>Loading settings...</value>
+  </data>
+  <data name="GeneratingApplication" xml:space="preserve">
+    <value>Generating application...</value>
+  </data>
+  <data name="AnalyzingProfile" xml:space="preserve">
+    <value>Analyzing profile...</value>
+  </data>
+  <data name="GeneratingCoverLetter" xml:space="preserve">
+    <value>Generating cover letter...</value>
+  </data>
+  <data name="TailoringCv" xml:space="preserve">
+    <value>Tailoring CV...</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Complete!</value>
+  </data>
+  <data name="ResumeDocumentType" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="CoverLetterDocumentType" xml:space="preserve">
+    <value>Cover Letter</value>
+  </data>
+  <data name="JobAtCompanyTitle" xml:space="preserve">
+    <value>{0} at {1}</value>
+  </data>
+  <data name="LoadingApplication" xml:space="preserve">
+    <value>Loading application...</value>
+  </data>
+  <data name="WarningUserProfileNotFoundCoverPreviewIncomplete" xml:space="preserve">
+    <value>Warning: User profile not found. Cover letter preview may be incomplete.</value>
+  </data>
+  <data name="ErrorLoadingProfile" xml:space="preserve">
+    <value>Error loading profile</value>
+  </data>
+  <data name="ErrorDeserializingTailoredCv" xml:space="preserve">
+    <value>Error deserializing tailored CV</value>
+  </data>
+  <data name="ErrorLoadingApplication" xml:space="preserve">
+    <value>Error loading application</value>
+  </data>
+  <data name="JobFallback" xml:space="preserve">
+    <value>Job</value>
+  </data>
+  <data name="CompanyFallback" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="OpenRouterAccountConnected" xml:space="preserve">
+    <value>OpenRouter account connected! You can now use it from the Generate page.</value>
+  </data>
+  <data name="GoogleGeminiAccountConnected" xml:space="preserve">
+    <value>Google Gemini account connected! Your existing plan will be used.</value>
+  </data>
+  <data name="AccountConnectedSuccessfully" xml:space="preserve">
+    <value>Account connected successfully!</value>
+  </data>
+  <data name="OpenRouterConnectionCancelled" xml:space="preserve">
+    <value>OpenRouter connection was cancelled.</value>
+  </data>
+  <data name="OpenRouterSessionExpired" xml:space="preserve">
+    <value>OpenRouter session expired. Please try again.</value>
+  </data>
+  <data name="CouldNotRetrieveOpenRouterApiKey" xml:space="preserve">
+    <value>Could not retrieve OpenRouter API key.</value>
+  </data>
+  <data name="GoogleGeminiConnectionCancelled" xml:space="preserve">
+    <value>Google Gemini connection was cancelled.</value>
+  </data>
+  <data name="SessionExpiredTryAgain" xml:space="preserve">
+    <value>Session expired. Please try again.</value>
+  </data>
+  <data name="CouldNotExchangeCodeWithGoogle" xml:space="preserve">
+    <value>Could not exchange code with Google. Please try again.</value>
+  </data>
+  <data name="GoogleNoRefreshToken" xml:space="preserve">
+    <value>Google did not return a refresh token. Please revoke the app access in your Google account and try again.</value>
+  </data>
+  <data name="GoogleOAuthNotConfigured" xml:space="preserve">
+    <value>Google OAuth is not configured on this server.</value>
+  </data>
+  <data name="ConnectionFailedWithCode" xml:space="preserve">
+    <value>Connection failed ({0}).</value>
+  </data>
+  <data name="ConnectionFailureDetails" xml:space="preserve">
+    <value> Details: {0}</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Deleting account...</value>
   </data>
 </root>

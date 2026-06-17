@@ -15,11 +15,11 @@ public partial class AdminDashboard
                 $"AiCV_Export_{DateTime.UtcNow:yyyyMMdd}.csv",
                 streamRef
             );
-            Snackbar.Add("Statistics exported successfully", Severity.Success);
+            Snackbar.Add(Localizer["StatisticsExportedSuccessfully"], Severity.Success);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Export failed: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ExportFailed"]}: {ex.Message}", Severity.Error);
         }
     }
 
@@ -32,14 +32,14 @@ public partial class AdminDashboard
 
     private async Task LoadStatistics()
     {
-        LoadingService.Show("Loading admin dashboard...", 0);
+        LoadingService.Show(Localizer["LoadingAdminDashboard"], 0);
         try
         {
             _statistics = await StatisticsService.GetStatisticsAsync();
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading admin dashboard: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorLoadingAdminDashboard"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -58,12 +58,11 @@ public partial class AdminDashboard
 
     private async Task ToggleUserLockout(string userId, bool lockout)
     {
-        var action = lockout ? "lock" : "unlock";
         var confirmed = await DialogService.ShowMessageBoxAsync(
-            "Confirm Action",
-            $"Are you sure you want to {action} this user account?",
-            yesText: "Yes",
-            cancelText: "Cancel"
+            Localizer["ConfirmAction"],
+            lockout ? Localizer["AreYouSureWantToLockUser"] : Localizer["AreYouSureWantToUnlockUser"],
+            yesText: Localizer["Yes"],
+            cancelText: Localizer["Cancel"]
         );
 
         if (confirmed == true)
@@ -76,7 +75,8 @@ public partial class AdminDashboard
             }
             else
             {
-                Snackbar.Add($"Failed to {action} user account", Severity.Error);
+                var messageKey = lockout ? "FailedToLockUserAccount" : "FailedToUnlockUserAccount";
+                Snackbar.Add($"{Localizer[messageKey]}", Severity.Error);
             }
         }
     }
