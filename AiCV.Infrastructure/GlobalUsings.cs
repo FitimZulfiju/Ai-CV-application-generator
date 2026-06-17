@@ -8,6 +8,7 @@ global using AiCV.Infrastructure.Resources;
 global using HtmlAgilityPack;
 global using Markdig;
 global using Microsoft.AspNetCore.DataProtection;
+global using Microsoft.AspNetCore.DataProtection.KeyManagement;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

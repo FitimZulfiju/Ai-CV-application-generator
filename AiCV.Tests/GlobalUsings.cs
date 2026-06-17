@@ -17,3 +17,5 @@ global using HtmlAgilityPack;
 global using System.Text.Json;
 global using Microsoft.Extensions.Localization;
 global using Microsoft.AspNetCore.DataProtection;
+global using Microsoft.AspNetCore.DataProtection.KeyManagement;
+global using Microsoft.AspNetCore.DataProtection.Infrastructure;

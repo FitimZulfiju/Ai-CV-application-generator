@@ -4,8 +4,6 @@ public class UserSettingsServiceTests : IDisposable
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly Mock<IDbContextFactory<ApplicationDbContext>> _contextFactoryMock;
-    private readonly Mock<IDataProtectionProvider> _dataProtectionProviderMock;
-    private readonly Mock<IDataProtector> _dataProtectorMock;
     private readonly UserSettingsService _service;
 
     public UserSettingsServiceTests()
@@ -20,21 +18,17 @@ public class UserSettingsServiceTests : IDisposable
         _contextFactoryMock.Setup(f => f.CreateDbContextAsync(It.IsAny<CancellationToken>()))
                            .ReturnsAsync(() => new ApplicationDbContext(options));
 
-        _dataProtectorMock = new Mock<IDataProtector>();
-        _dataProtectorMock.Setup(p => p.Protect(It.IsAny<byte[]>()))
-                          .Returns((byte[] data) => data); // Dummy encryption: return same data
-        _dataProtectorMock.Setup(p => p.Unprotect(It.IsAny<byte[]>()))
-                          .Returns((byte[] data) => data); // Dummy decryption: return same data
-
-        _dataProtectionProviderMock = new Mock<IDataProtectionProvider>();
-        _dataProtectionProviderMock.Setup(p => p.CreateProtector(It.IsAny<string>()))
-                                   .Returns(_dataProtectorMock.Object);
-
+        var services = new ServiceCollection()
+            .AddDataProtection()
+            .Services.BuildServiceProvider();
+        var dataProtectionProvider = services.GetRequiredService<IDataProtectionProvider>();
+        var keyManager = services.GetRequiredService<IKeyManager>();
         var loggerMock = new Mock<ILogger<UserSettingsService>>();
 
         _service = new UserSettingsService(
-            _contextFactoryMock.Object, 
-            _dataProtectionProviderMock.Object,
+            _contextFactoryMock.Object,
+            dataProtectionProvider,
+            keyManager,
             loggerMock.Object
         );
     }
@@ -49,7 +43,7 @@ public class UserSettingsServiceTests : IDisposable
     [Fact]
     public async Task SaveUserSettingsAsync_UserNotFound_ThrowsException()
     {
-        await Assert.ThrowsAsync<InvalidOperationException>(() => 
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _service.SaveUserSettingsAsync("nonexistent", "key", null, null, null, null, null, AIProvider.OpenAI, "model")
         );
     }
@@ -58,13 +52,13 @@ public class UserSettingsServiceTests : IDisposable
     public async Task SaveAndGetUserSettingsAsync_ValidUser_EncryptsAndDecrypts()
     {
         // Arrange
-        var userId = "user1";
+        const string userId = "user1";
         _dbContext.Users.Add(new User { Id = userId, UserName = "testuser" });
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var apiKey = "my_secret_key";
-        var provider = AIProvider.OpenAI;
-        var model = "gpt-4";
+        const string apiKey = "my_secret_key";
+        const AIProvider provider = AIProvider.OpenAI;
+        const string model = "gpt-4";
 
         // Act
         await _service.SaveUserSettingsAsync(userId, apiKey, null, null, null, null, null, provider, model);
@@ -73,7 +67,7 @@ public class UserSettingsServiceTests : IDisposable
         // Assert
         Assert.NotNull(settings);
         Assert.Equal(userId, settings.UserId);
-        Assert.Equal(apiKey, settings.OpenAIApiKey); // Our mock protector just returns the string as-is
+        Assert.Equal(apiKey, settings.OpenAIApiKey);
         Assert.Equal(provider, settings.DefaultProvider);
         Assert.Equal(model, settings.DefaultModelId);
     }
@@ -82,5 +76,6 @@ public class UserSettingsServiceTests : IDisposable
     {
         _dbContext.Database.EnsureDeleted();
         _dbContext.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

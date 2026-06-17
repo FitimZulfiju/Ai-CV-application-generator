@@ -3,10 +3,12 @@ namespace AiCV.Infrastructure.Services;
 public class UserSettingsService(
     IDbContextFactory<ApplicationDbContext> contextFactory,
     IDataProtectionProvider dataProtectionProvider,
+    IKeyManager keyManager,
     ILogger<UserSettingsService> logger
     ) : IUserSettingsService
 {
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
+    private readonly IKeyManager _keyManager = keyManager;
     private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(
             "AiCV.Infrastructure.Services.UserSettingsService"
         );
@@ -124,13 +126,18 @@ public class UserSettingsService(
 
     private string Decrypt(string cipherText)
     {
-        try
+        if (!TryDecodeProtectedPayload(cipherText, out var protectedBytes, out var keyId))
         {
-            return _protector.Unprotect(cipherText);
+            return cipherText;
         }
-        catch (Exception ex)
+
+        if (!_keyManager.GetAllKeys().Any(key => key.KeyId == keyId))
         {
-            _logger.LogWarning(ex, "Standard Unprotect failed, attempting DangerousUnprotect fallback.");
+            _logger.LogWarning(
+                "Stored user settings API key was protected with missing Data Protection key {KeyId}.",
+                keyId
+            );
+            return string.Empty;
         }
 
         if (_protector is IPersistedDataProtector persistedProtector)
@@ -138,7 +145,7 @@ public class UserSettingsService(
             try
             {
                 var result = persistedProtector.DangerousUnprotect(
-                    Convert.FromBase64String(cipherText),
+                    protectedBytes,
                     ignoreRevocationErrors: true,
                     out bool requiresMigration,
                     out bool wasRevoked
@@ -158,15 +165,71 @@ public class UserSettingsService(
             }
             catch (Exception ex2)
             {
-                _logger.LogWarning(ex2, "DangerousUnprotect also failed. Returning raw value as fallback.");
+                _logger.LogWarning(ex2, "Could not decrypt stored user settings API key.");
             }
         }
         else
         {
-            _logger.LogWarning("IPersistedDataProtector not available; skipping DangerousUnprotect tier.");
+            try
+            {
+                return _protector.Unprotect(cipherText);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Could not decrypt stored user settings API key.");
+            }
         }
 
-        _logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
-        return cipherText;
+        return string.Empty;
+    }
+
+    private static bool TryDecodeProtectedPayload(
+        string input,
+        out byte[] protectedBytes,
+        out Guid keyId
+    )
+    {
+        protectedBytes = [];
+        keyId = Guid.Empty;
+
+        if (input.StartsWith("oauth_refresh:", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var normalized = input.Replace('-', '+').Replace('_', '/');
+        var padding = normalized.Length % 4;
+        if (padding == 1)
+        {
+            return false;
+        }
+
+        if (padding > 0)
+        {
+            normalized = normalized.PadRight(normalized.Length + 4 - padding, '=');
+        }
+
+        protectedBytes = new byte[normalized.Length];
+        if (!Convert.TryFromBase64String(normalized, protectedBytes, out var bytesWritten))
+        {
+            protectedBytes = [];
+            return false;
+        }
+
+        Array.Resize(ref protectedBytes, bytesWritten);
+        if (
+            protectedBytes.Length < 20
+            || protectedBytes[0] != 0x09
+            || protectedBytes[1] != 0xF0
+            || protectedBytes[2] != 0xC9
+            || protectedBytes[3] != 0xF0
+        )
+        {
+            protectedBytes = [];
+            return false;
+        }
+
+        keyId = new Guid(protectedBytes.AsSpan(4, 16));
+        return true;
     }
 }
