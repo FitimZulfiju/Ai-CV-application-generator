@@ -1,4 +1,3 @@
-// Load .env file for configuration (searches current and parent directories)
 var currentDir = new DirectoryInfo(AppContext.BaseDirectory);
 while (currentDir != null)
 {
@@ -20,8 +19,6 @@ while (currentDir != null)
     currentDir = currentDir.Parent;
 }
 
-// Enable legacy timestamp behavior for PostgreSQL compatibility
-// This allows DateTime with Kind=Unspecified to work with PostgreSQL
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,10 +32,9 @@ builder.Host.UseSerilog((ctx, cfg) =>
 
     if (ctx.HostingEnvironment.IsDevelopment())
     {
-        // Development: Human-readable Console & File Sink
         cfg.WriteTo.Console(outputTemplate:
             "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}");
-            
+
         cfg.WriteTo.File(
             "logs/aicv-dev-.log",
             outputTemplate:
@@ -47,7 +43,6 @@ builder.Host.UseSerilog((ctx, cfg) =>
     }
     else
     {
-        // Production (Docker/Containers): Structured JSON output to Console
         cfg.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
     }
 });
@@ -206,8 +201,6 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
         options.ClientSecret = googleClientSecret;
         options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-        // SaveTokens allows us to read the access/refresh tokens in the callback
-        // for the Gemini account-linking flow (separate from app login)
         options.SaveTokens = true;
     });
 }
@@ -254,7 +247,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
-    // Use SameAsRequest to allow flexibility for proxies and local testing.
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.Name = ".AiCV.Application";
@@ -382,7 +374,7 @@ builder.Services.AddTransient<IEmailSender<User>, SmtpEmailSender>();
 
 var app = builder.Build();
 
-app.UseForwardedHeaders(); // Must run first to ensure all subsequent middleware detects HTTPS scheme correctly
+app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -397,11 +389,10 @@ if (!app.Environment.IsDevelopment())
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler($"/{NavUri.ErrorPage}", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute($"/{NavUri.NotFoundPage}", createScopeForStatusCodePages: true);
-app.UseStatusCodePagesWithReExecute($"/{NavUri.NotFoundPage}", createScopeForStatusCodePages: true);
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}", createScopeForStatusCodePages: true);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -417,13 +408,12 @@ app.UseRequestLocalization();
 app.UseStaticFiles();
 app.MapStaticAssets();
 
-// ─── Endpoints ──────────────────────────────────────────────────────────────
+// ─── Endpoints ────
 app.MapAuthEndpoints();
 app.MapOAuthEndpoints();
 app.MapApiEndpoints();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-
 
 // Initialize database and apply migrations
 using (var scope = app.Services.CreateScope())

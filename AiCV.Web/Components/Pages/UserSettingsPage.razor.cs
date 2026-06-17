@@ -17,7 +17,7 @@ public partial class UserSettingsPage
     private string _userId = string.Empty;
     private string _userEmail = string.Empty;
     private bool _isLoading = true;
-    private bool _isProtected = false;
+    private bool _isProtected;
     private int _activeSettingsTabIndex;
 
     // List of saved configurations
@@ -90,7 +90,7 @@ public partial class UserSettingsPage
             // Mark as protected if it's the default demo account
             _isProtected = string.Equals(
                 _userEmail,
-                AiCV.Application.Common.DemoConstants.DemoUserEmail,
+                DemoConstants.DemoUserEmail,
                 StringComparison.OrdinalIgnoreCase
             );
 
@@ -130,9 +130,9 @@ public partial class UserSettingsPage
         {
             var msg = connected.ToString() switch
             {
-                "openrouter" => "OpenRouter account connected! You can now use it from the Generate page.",
-                "gemini" => "Google Gemini account connected! Your existing plan will be used.",
-                _ => "Account connected successfully!",
+                "openrouter" => Localizer["OpenRouterAccountConnected"].Value,
+                "gemini" => Localizer["GoogleGeminiAccountConnected"].Value,
+                _ => Localizer["AccountConnectedSuccessfully"].Value,
             };
             Snackbar.Add(msg, Severity.Success);
             Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
@@ -141,20 +141,20 @@ public partial class UserSettingsPage
         {
             var msg = errorCode.ToString() switch
             {
-                "openrouter_cancelled" => "OpenRouter connection was cancelled.",
-                "openrouter_expired" => "OpenRouter session expired. Please try again.",
-                "openrouter_exchange_failed" => "Could not retrieve OpenRouter API key.",
-                "gemini_cancelled" => "Google Gemini connection was cancelled.",
-                "gemini_expired" => "Session expired. Please try again.",
-                "gemini_exchange_failed" => "Could not exchange code with Google. Please try again.",
-                "gemini_no_refresh_token" => "Google did not return a refresh token. Please revoke the app access in your Google account and try again.",
-                "google_not_configured" => "Google OAuth is not configured on this server.",
-                _ => $"Connection failed ({errorCode}).",
+                "openrouter_cancelled" => Localizer["OpenRouterConnectionCancelled"].Value,
+                "openrouter_expired" => Localizer["OpenRouterSessionExpired"].Value,
+                "openrouter_exchange_failed" => Localizer["CouldNotRetrieveOpenRouterApiKey"].Value,
+                "gemini_cancelled" => Localizer["GoogleGeminiConnectionCancelled"].Value,
+                "gemini_expired" => Localizer["SessionExpiredTryAgain"].Value,
+                "gemini_exchange_failed" => Localizer["CouldNotExchangeCodeWithGoogle"].Value,
+                "gemini_no_refresh_token" => Localizer["GoogleNoRefreshToken"].Value,
+                "google_not_configured" => Localizer["GoogleOAuthNotConfigured"].Value,
+                _ => string.Format(Localizer["ConnectionFailedWithCode"].Value, errorCode.ToString()),
             };
 
             // Append raw provider error detail if present
             if (query.TryGetValue("detail", out var detail) && !string.IsNullOrWhiteSpace(detail))
-                msg += $" Details: {detail}";
+                msg += string.Format(Localizer["ConnectionFailureDetails"].Value, detail.ToString());
 
             Snackbar.Add(msg, Severity.Error);
             Navigation.NavigateTo($"/{NavUri.SettingsPage}", replace: true);
@@ -278,14 +278,14 @@ public partial class UserSettingsPage
     private async Task LoadConfigurations()
     {
         _isLoading = true;
-        LoadingService.Show("Loading settings...", 0);
+        LoadingService.Show(Localizer["LoadingSettings"], 0);
         try
         {
             _configurations = await ConfigurationService.GetConfigurationsAsync(_userId);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading configurations: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorLoadingConfigurations"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -324,19 +324,19 @@ public partial class UserSettingsPage
                     OnModelSelected();
                 }
 
-                Snackbar.Add($"Found {_availableModels.Count} models", Severity.Success);
+                Snackbar.Add(string.Format(Localizer["FoundModels"], _availableModels.Count), Severity.Success);
             }
             else
             {
                 Snackbar.Add(
-                    result?.ErrorMessage ?? "Failed to validate API Key or fetch models.",
+                    result?.ErrorMessage ?? Localizer["FailedValidateApiKey"],
                     Severity.Error
                 );
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["ErrorDiscoveryService"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -411,7 +411,7 @@ public partial class UserSettingsPage
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Test failed: {ex.Message}", Severity.Error);
+            Snackbar.Add($"{Localizer["TestFailed"]}: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -419,7 +419,6 @@ public partial class UserSettingsPage
         }
     }
 
-    /// <summary>Adapter called by AiModelPicker after selection — syncs metadata to _newConfig.</summary>
     private Task OnModelPickerChanged(string? modelId)
     {
         _newConfig.ModelId = modelId ?? string.Empty;
@@ -444,13 +443,13 @@ public partial class UserSettingsPage
                 Snackbar.Add(Localizer["ConfigurationSaved"], Severity.Success);
             }
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            catch (Exception ex)
+            {
+                Snackbar.Add($"{Localizer["ErrorDiscoveryService"]}: {ex.Message}", Severity.Error);
+            }
         }
-    }
 
-    private async Task ActivateConfiguration(UserAIConfiguration config)
+        private async Task ActivateConfiguration(UserAIConfiguration config)
     {
         try
         {
@@ -468,13 +467,13 @@ public partial class UserSettingsPage
                 );
             }
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            catch (Exception ex)
+            {
+                Snackbar.Add($"{Localizer["ErrorDiscoveryService"]}: {ex.Message}", Severity.Error);
+            }
         }
-    }
 
-    private async Task EditConfiguration(UserAIConfiguration config)
+        private async Task EditConfiguration(UserAIConfiguration config)
     {
         var configToEdit = new UserAIConfiguration
         {
@@ -494,12 +493,12 @@ public partial class UserSettingsPage
 
         if (string.IsNullOrEmpty(config.ApiKey))
         {
-            Snackbar.Add("Warning: API Key is missing. Please enter it.", Severity.Warning);
+            Snackbar.Add(Localizer["WarningApiKeyMissing"], Severity.Warning);
         }
         else if (config.ApiKey == "DECRYPTION_FAILED")
         {
             Snackbar.Add(
-                "Error: API Key could not be decrypted. This usually happens after a system restart if keys weren't persisted, or if keys were rotated. Please re-enter it.",
+                Localizer["ErrorApiKeyDecryption"],
                 Severity.Error
             );
             configToEdit.ApiKey = string.Empty;
@@ -526,7 +525,7 @@ public partial class UserSettingsPage
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Discovery error: {ex.Message}", Severity.Warning);
+                Snackbar.Add($"{Localizer["DiscoveryError"]}: {ex.Message}", Severity.Warning);
             }
         }
 
@@ -561,7 +560,7 @@ public partial class UserSettingsPage
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Error updating: {ex.Message}", Severity.Error);
+                Snackbar.Add($"{Localizer["ErrorUpdating"]}: {ex.Message}", Severity.Error);
             }
         }
     }
@@ -591,7 +590,7 @@ public partial class UserSettingsPage
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Error deleting: {ex.Message}", Severity.Error);
+                Snackbar.Add($"{Localizer["ErrorDeleting"]}: {ex.Message}", Severity.Error);
             }
         }
     }
@@ -1041,7 +1040,7 @@ public partial class UserSettingsPage
         if (confirmed == true)
         {
             _isLoading = true;
-            LoadingService.Show("Deleting account...", 0);
+            LoadingService.Show(Localizer["DeletingAccount"], 0);
             StateHasChanged();
 
             try
@@ -1171,7 +1170,7 @@ public partial class UserSettingsPage
             && IsValidSectionConfig(profile.InterestsSection);
     }
 
-    private static bool IsValidSectionConfig(AiCV.Domain.SectionConfig? config)
+    private static bool IsValidSectionConfig(SectionConfig? config)
     {
         if (config == null) return true;
         return IsValidProfileText(config.Title) && IsValidProfileText(config.Icon);
@@ -1383,7 +1382,7 @@ public partial class UserSettingsPage
         public string? CoverLetterContent { get; set; }
         public string? TailoredResumeJson { get; set; }
         public string? ApplicationEmailContent { get; set; }
-        public string Template { get; set; } = AiCV.Domain.Constants.CvTemplates.Professional;
+        public string Template { get; set; } = Domain.Constants.CvTemplates.Professional;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 
@@ -1431,5 +1430,4 @@ public partial class UserSettingsPage
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
-
 }

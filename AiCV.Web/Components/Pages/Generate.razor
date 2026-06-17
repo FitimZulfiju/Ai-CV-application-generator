@@ -212,8 +212,8 @@
                                 </div>
 
                                 <div class="generate-toolbar-group" style="@GetDisplayStyle(_generatedResume != null && (_activeTabIndex == 0 || _activeTabIndex == 1))">
-                                    <MudSelect T="string" @bind-Value="_selectedTemplateInPreview" Label="@Localizer["Template"]"
-                                               Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
+                                    <MudSelect T="string" @bind-Value="_selectedTemplateInPreview"
+                                               Dense="true" Margin="Margin.Dense" Placeholder="@Localizer["Template"]" Variant="Variant.Outlined" InputClass="py-1">
                                         <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Professional">@Localizer["Professional"]</MudSelectItem>
                                         <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Modern">@Localizer["Modern"]</MudSelectItem>
                                         <MudSelectItem Value="@AiCV.Domain.Constants.CvTemplates.Minimalist">@Localizer["Minimalist"]</MudSelectItem>
@@ -245,7 +245,7 @@
                                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small"
                                                StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyResumeJson"
                                                Style="@GetDisplayStyle(_generatedResume != null && _activeTabIndex == 1)">
-                                        @Localizer["CopyJson"]
+                                        @Localizer["CopyAsJson"]
                                     </MudButton>
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintResume"
                                                Disabled="_isPrintingResume" Size="Size.Small"

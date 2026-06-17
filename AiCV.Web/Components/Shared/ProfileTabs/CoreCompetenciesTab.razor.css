@@ -34,3 +34,9 @@
     padding: 0.125rem;
     width: 1.375rem;
 }
+
+.profile-chip-help-row {
+    margin-top: -0.5rem;
+    padding-bottom: 0;
+    padding-top: 0;
+}

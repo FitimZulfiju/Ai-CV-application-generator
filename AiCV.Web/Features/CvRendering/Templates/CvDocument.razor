@@ -62,10 +62,10 @@ else
                                     <h4 class="skill-title"><FormattedText Text="@group.Category" /></h4>
                                     @if (Profile.CoreCompetenciesSection?.DisplayAsChips == true)
                                     {
-                                        <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: var(--font-size-body); margin-top: 4px;">
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: var(--font-size-body); margin-top: 0.25rem;">
                                             @foreach (var skill in group.Skills)
                                             {
-                                                <span class="chip" style="display:inline-block; padding:4px 12px; border-radius:16px; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
+                                                <span class="chip" style="display:inline-block; padding:0.25rem 0.75rem; border-radius:1rem; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
                                                     <FormattedText Text="@skill.Name" />
                                                 </span>
                                             }
@@ -247,10 +247,10 @@ else
                         {
                             @if (Profile.LanguagesSection?.DisplayAsChips == true)
                             {
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
                                     @foreach (var lang in Languages)
                                     {
-                                        <span class="chip" style="display:inline-block; padding:4px 12px; border-radius:16px; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
+                                        <span class="chip" style="display:inline-block; padding:0.25rem 0.75rem; border-radius:1rem; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
                                             <FormattedText Text="@lang.Name" />
                                             @if (!string.IsNullOrWhiteSpace(lang.Proficiency))
                                             {
@@ -300,10 +300,10 @@ else
                         {
                             @if (Profile.InterestsSection?.DisplayAsChips == true)
                             {
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
                                     @foreach (var interest in Interests)
                                     {
-                                        <span class="chip" style="display:inline-block; padding:4px 12px; border-radius:16px; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
+                                        <span class="chip" style="display:inline-block; padding:0.25rem 0.75rem; border-radius:1rem; background-color: var(--bg-light); border: 1px solid var(--border-color); font-size: 0.9em; color: var(--text-dark);">
                                             <FormattedText Text="@interest.Name" />
                                         </span>
                                     }

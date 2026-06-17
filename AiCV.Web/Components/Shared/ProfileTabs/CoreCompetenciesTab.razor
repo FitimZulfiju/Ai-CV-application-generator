@@ -5,12 +5,14 @@
     <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCategory" Size="Size.Small"
                    StartIcon="@Icons.Material.Filled.Add">@Localizer["AddCategory"]</MudButton>
-        @if (_showChipHelp)
-        {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
-                @Localizer["SkillsHelper"]
-            </MudAlert>
-        }
+        <div class="d-none d-sm-flex flex-grow-1">
+            @if (_showChipHelp)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
+                    @Localizer["SkillsHelper"]
+                </MudAlert>
+            }
+        </div>
         <MudSwitch T="bool" @bind-Value="Profile.CoreCompetenciesSection.DisplayAsChips" Color="Color.Primary" Size="Size.Small" Label="@Localizer["DisplayAsChips"]" Class="ml-auto" />
     </MudStack>
 

@@ -79,6 +79,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This account already has a password..
+        /// </summary>
+        public static string AccountAlreadyHasPassword {
+            get {
+                return ResourceManager.GetString("AccountAlreadyHasPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account Deleted Successfully.
         /// </summary>
         public static string AccountDeleted {
@@ -115,11 +124,47 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This account does not have a password yet..
+        /// </summary>
+        public static string AccountHasNoPasswordYet {
+            get {
+                return ResourceManager.GetString("AccountHasNoPasswordYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your account is locked. Please contact support..
         /// </summary>
         public static string AccountLocked {
             get {
                 return ResourceManager.GetString("AccountLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find your account. Please sign in again..
+        /// </summary>
+        public static string AccountNotFoundSignInAgain {
+            get {
+                return ResourceManager.GetString("AccountNotFoundSignInAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account security.
+        /// </summary>
+        public static string AccountSecurity {
+            get {
+                return ResourceManager.GetString("AccountSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        public static string AccountTab {
+            get {
+                return ResourceManager.GetString("AccountTab", resourceCulture);
             }
         }
         
@@ -259,11 +304,29 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AI Detected: {0} - {1}.
+        /// </summary>
+        public static string AiDetected {
+            get {
+                return ResourceManager.GetString("AiDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your AI-powered career assistant..
         /// </summary>
         public static string AiPoweredCareerAssistant {
             get {
                 return ResourceManager.GetString("AiPoweredCareerAssistant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AI settings.
+        /// </summary>
+        public static string AISettingsTab {
+            get {
+                return ResourceManager.GetString("AISettingsTab", resourceCulture);
             }
         }
         
@@ -295,6 +358,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analyzing profile....
+        /// </summary>
+        public static string AnalyzingProfile {
+            get {
+                return ResourceManager.GetString("AnalyzingProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Anonymous.
         /// </summary>
         public static string Anonymous {
@@ -313,6 +385,33 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: The selected API Key could not be decrypted. Please go to Settings and re-enter your API Key..
+        /// </summary>
+        public static string ApiKeyDecryptionFailed {
+            get {
+                return ResourceManager.GetString("ApiKeyDecryptionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to API Key Providers.
+        /// </summary>
+        public static string ApiKeyProviders {
+            get {
+                return ResourceManager.GetString("ApiKeyProviders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use the form below to add these manually..
+        /// </summary>
+        public static string ApiKeyProvidersHint {
+            get {
+                return ResourceManager.GetString("ApiKeyProvidersHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to API Keys.
         /// </summary>
         public static string ApiKeys {
@@ -322,11 +421,29 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This application has already been saved. Generate a new application to save again..
+        /// </summary>
+        public static string ApplicationAlreadySaved {
+            get {
+                return ResourceManager.GetString("ApplicationAlreadySaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Application Email.
         /// </summary>
         public static string ApplicationEmail {
             get {
                 return ResourceManager.GetString("ApplicationEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application Generated!.
+        /// </summary>
+        public static string ApplicationGenerated {
+            get {
+                return ResourceManager.GetString("ApplicationGenerated", resourceCulture);
             }
         }
         
@@ -345,6 +462,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string Applications {
             get {
                 return ResourceManager.GetString("Applications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application saved successfully!.
+        /// </summary>
+        public static string ApplicationSavedSuccessfully {
+            get {
+                return ResourceManager.GetString("ApplicationSavedSuccessfully", resourceCulture);
             }
         }
         
@@ -394,6 +520,24 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to lock this user account?.
+        /// </summary>
+        public static string AreYouSureWantToLockUser {
+            get {
+                return ResourceManager.GetString("AreYouSureWantToLockUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to unlock this user account?.
+        /// </summary>
+        public static string AreYouSureWantToUnlockUser {
+            get {
+                return ResourceManager.GetString("AreYouSureWantToUnlockUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to as bullets.
         /// </summary>
         public static string AsBullets {
@@ -426,6 +570,141 @@ namespace AiCV.Infrastructure.Resources {
         public static string BackToList {
             get {
                 return ResourceManager.GetString("BackToList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back to Login.
+        /// </summary>
+        public static string BackToLogin {
+            get {
+                return ResourceManager.GetString("BackToLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All data.
+        /// </summary>
+        public static string BackupAllData {
+            get {
+                return ResourceManager.GetString("BackupAllData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Applications.
+        /// </summary>
+        public static string BackupApplications {
+            get {
+                return ResourceManager.GetString("BackupApplications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup exported successfully..
+        /// </summary>
+        public static string BackupExported {
+            get {
+                return ResourceManager.GetString("BackupExported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup export failed.
+        /// </summary>
+        public static string BackupExportFailed {
+            get {
+                return ResourceManager.GetString("BackupExportFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup imported successfully..
+        /// </summary>
+        public static string BackupImported {
+            get {
+                return ResourceManager.GetString("BackupImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup import failed.
+        /// </summary>
+        public static string BackupImportFailed {
+            get {
+                return ResourceManager.GetString("BackupImportFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import replaces the selected sections with the data from the JSON file..
+        /// </summary>
+        public static string BackupImportReplaceWarning {
+            get {
+                return ResourceManager.GetString("BackupImportReplaceWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup file does not contain every selected section. Do you want to continue importing only the available sections?.
+        /// </summary>
+        public static string BackupMissingSectionsWarningContent {
+            get {
+                return ResourceManager.GetString("BackupMissingSectionsWarningContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing Sections.
+        /// </summary>
+        public static string BackupMissingSectionsWarningTitle {
+            get {
+                return ResourceManager.GetString("BackupMissingSectionsWarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The backup file does not contain every selected section..
+        /// </summary>
+        public static string BackupMissingSelectedSections {
+            get {
+                return ResourceManager.GetString("BackupMissingSelectedSections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notes.
+        /// </summary>
+        public static string BackupNotes {
+            get {
+                return ResourceManager.GetString("BackupNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        public static string BackupProfile {
+            get {
+                return ResourceManager.GetString("BackupProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string BackupSettings {
+            get {
+                return ResourceManager.GetString("BackupSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings backups include API keys. Keep exported JSON files private..
+        /// </summary>
+        public static string BackupSettingsSensitiveWarning {
+            get {
+                return ResourceManager.GetString("BackupSettingsSensitiveWarning", resourceCulture);
             }
         }
         
@@ -516,6 +795,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string CategoryName {
             get {
                 return ResourceManager.GetString("CategoryName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change password.
+        /// </summary>
+        public static string ChangePassword {
+            get {
+                return ResourceManager.GetString("ChangePassword", resourceCulture);
             }
         }
         
@@ -628,6 +916,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Complete!.
+        /// </summary>
+        public static string Complete {
+            get {
+                return ResourceManager.GetString("Complete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration deleted successfully.
         /// </summary>
         public static string ConfigurationDeleted {
@@ -646,7 +943,7 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration saved successfully.
+        ///   Looks up a localized string similar to Configuration saved.
         /// </summary>
         public static string ConfigurationSaved {
             get {
@@ -655,7 +952,7 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration updated successfully.
+        ///   Looks up a localized string similar to Configuration updated.
         /// </summary>
         public static string ConfigurationUpdated {
             get {
@@ -673,11 +970,29 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm Action.
+        /// </summary>
+        public static string ConfirmAction {
+            get {
+                return ResourceManager.GetString("ConfirmAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm Password.
         /// </summary>
         public static string ConfirmPassword {
             get {
                 return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log in with your existing AI provider account — no API key copying needed..
+        /// </summary>
+        public static string ConnectAccountDescription {
+            get {
+                return ResourceManager.GetString("ConnectAccountDescription", resourceCulture);
             }
         }
         
@@ -696,6 +1011,42 @@ namespace AiCV.Infrastructure.Resources {
         public static string ConnectAiKeysDescription {
             get {
                 return ResourceManager.GetString("ConnectAiKeysDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting to job site....
+        /// </summary>
+        public static string ConnectingToJobSite {
+            get {
+                return ResourceManager.GetString("ConnectingToJobSite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect OpenRouter.
+        /// </summary>
+        public static string ConnectOpenRouter {
+            get {
+                return ResourceManager.GetString("ConnectOpenRouter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect Your Account.
+        /// </summary>
+        public static string ConnectYourAccount {
+            get {
+                return ResourceManager.GetString("ConnectYourAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        public static string Continue {
+            get {
+                return ResourceManager.GetString("Continue", resourceCulture);
             }
         }
         
@@ -727,11 +1078,38 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copied JSON to clipboard!.
+        /// </summary>
+        public static string CopiedJsonToClipboard {
+            get {
+                return ResourceManager.GetString("CopiedJsonToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copied to clipboard!.
+        /// </summary>
+        public static string CopiedToClipboard {
+            get {
+                return ResourceManager.GetString("CopiedToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         public static string Copy {
             get {
                 return ResourceManager.GetString("Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy as JSON.
+        /// </summary>
+        public static string CopyAsJson {
+            get {
+                return ResourceManager.GetString("CopyAsJson", resourceCulture);
             }
         }
         
@@ -817,6 +1195,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current password.
+        /// </summary>
+        public static string CurrentPassword {
+            get {
+                return ResourceManager.GetString("CurrentPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current Role.
         /// </summary>
         public static string CurrentRole {
@@ -826,11 +1213,38 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom Footer.
+        /// </summary>
+        public static string CustomFooter {
+            get {
+                return ResourceManager.GetString("CustomFooter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Icon.
+        /// </summary>
+        public static string CustomIcon {
+            get {
+                return ResourceManager.GetString("CustomIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom Instructions (Optional).
         /// </summary>
         public static string CustomInstructions {
             get {
                 return ResourceManager.GetString("CustomInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Section Header.
+        /// </summary>
+        public static string CustomSectionHeader {
+            get {
+                return ResourceManager.GetString("CustomSectionHeader", resourceCulture);
             }
         }
         
@@ -858,6 +1272,33 @@ namespace AiCV.Infrastructure.Resources {
         public static string DangerZone {
             get {
                 return ResourceManager.GetString("DangerZone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data backup.
+        /// </summary>
+        public static string DataBackup {
+            get {
+                return ResourceManager.GetString("DataBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export or import a JSON backup for selected parts of your account..
+        /// </summary>
+        public static string DataBackupDescription {
+            get {
+                return ResourceManager.GetString("DataBackupDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data backup.
+        /// </summary>
+        public static string DataBackupTab {
+            get {
+                return ResourceManager.GetString("DataBackupTab", resourceCulture);
             }
         }
         
@@ -997,6 +1438,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Demo Account.
+        /// </summary>
+        public static string DemoAccountInfo {
+            get {
+                return ResourceManager.GetString("DemoAccountInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This is a default demo account and cannot be deleted. It serves as an example for all users..
         /// </summary>
         public static string DemoAccountProtected {
@@ -1024,6 +1474,42 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Discovery error.
+        /// </summary>
+        public static string DiscoveryError {
+            get {
+                return ResourceManager.GetString("DiscoveryError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discovery failed.
+        /// </summary>
+        public static string DiscoveryFailed {
+            get {
+                return ResourceManager.GetString("DiscoveryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display as Tags/Chips.
+        /// </summary>
+        public static string DisplayAsChips {
+            get {
+                return ResourceManager.GetString("DisplayAsChips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Done!.
+        /// </summary>
+        public static string Done {
+            get {
+                return ResourceManager.GetString("Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Don&apos;t have an account?.
         /// </summary>
         public static string DontHaveAccount {
@@ -1047,6 +1533,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string DraftCleared {
             get {
                 return ResourceManager.GetString("DraftCleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
             }
         }
         
@@ -1150,6 +1645,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email password enabled.
+        /// </summary>
+        public static string EmailPasswordEnabled {
+            get {
+                return ResourceManager.GetString("EmailPasswordEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End Date.
         /// </summary>
         public static string EndDate {
@@ -1195,6 +1699,294 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: API Key could not be decrypted. This usually happens after a system restart if keys weren&apos;t persisted, or if keys were rotated. Please re-enter it..
+        /// </summary>
+        public static string ErrorApiKeyDecryption {
+            get {
+                return ResourceManager.GetString("ErrorApiKeyDecryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error deleting.
+        /// </summary>
+        public static string ErrorDeleting {
+            get {
+                return ResourceManager.GetString("ErrorDeleting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string ErrorDiscoveryService {
+            get {
+                return ResourceManager.GetString("ErrorDiscoveryService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error fetching job.
+        /// </summary>
+        public static string ErrorFetchingJob {
+            get {
+                return ResourceManager.GetString("ErrorFetchingJob", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error generating PDF.
+        /// </summary>
+        public static string ErrorGeneratingPdf {
+            get {
+                return ResourceManager.GetString("ErrorGeneratingPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading admin dashboard.
+        /// </summary>
+        public static string ErrorLoadingAdminDashboard {
+            get {
+                return ResourceManager.GetString("ErrorLoadingAdminDashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading AI configurations.
+        /// </summary>
+        public static string ErrorLoadingAiConfigurations {
+            get {
+                return ResourceManager.GetString("ErrorLoadingAiConfigurations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading configurations.
+        /// </summary>
+        public static string ErrorLoadingConfigurations {
+            get {
+                return ResourceManager.GetString("ErrorLoadingConfigurations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading notes.
+        /// </summary>
+        public static string ErrorLoadingNotes {
+            get {
+                return ResourceManager.GetString("ErrorLoadingNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Access denied.
+        /// </summary>
+        public static string ErrorPageAccessDenied {
+            get {
+                return ResourceManager.GetString("ErrorPageAccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have permission to view this resource..
+        /// </summary>
+        public static string ErrorPageAccessDeniedMessage {
+            get {
+                return ResourceManager.GetString("ErrorPageAccessDeniedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contact support.
+        /// </summary>
+        public static string ErrorPageContactSupport {
+            get {
+                return ResourceManager.GetString("ErrorPageContactSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong.
+        /// </summary>
+        public static string ErrorPageGeneric {
+            get {
+                return ResourceManager.GetString("ErrorPageGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected condition was encountered..
+        /// </summary>
+        public static string ErrorPageGenericMessage {
+            get {
+                return ResourceManager.GetString("ErrorPageGenericMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go back.
+        /// </summary>
+        public static string ErrorPageGoBack {
+            get {
+                return ResourceManager.GetString("ErrorPageGoBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to homepage.
+        /// </summary>
+        public static string ErrorPageGoHome {
+            get {
+                return ResourceManager.GetString("ErrorPageGoHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page not found.
+        /// </summary>
+        public static string ErrorPageNotFound {
+            get {
+                return ResourceManager.GetString("ErrorPageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We couldn&apos;t find the page you&apos;re looking for..
+        /// </summary>
+        public static string ErrorPageNotFoundMessage {
+            get {
+                return ResourceManager.GetString("ErrorPageNotFoundMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Request ID:.
+        /// </summary>
+        public static string ErrorPageRequestId {
+            get {
+                return ResourceManager.GetString("ErrorPageRequestId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server error.
+        /// </summary>
+        public static string ErrorPageServerError {
+            get {
+                return ResourceManager.GetString("ErrorPageServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error occurred on the server..
+        /// </summary>
+        public static string ErrorPageServerErrorMessage {
+            get {
+                return ResourceManager.GetString("ErrorPageServerErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign in.
+        /// </summary>
+        public static string ErrorPageSignIn {
+            get {
+                return ResourceManager.GetString("ErrorPageSignIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tip: Try checking the URL for typos or return to the homepage..
+        /// </summary>
+        public static string ErrorPageTip404 {
+            get {
+                return ResourceManager.GetString("ErrorPageTip404", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unauthorized.
+        /// </summary>
+        public static string ErrorPageUnauthorized {
+            get {
+                return ResourceManager.GetString("ErrorPageUnauthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must be signed in to access this resource..
+        /// </summary>
+        public static string ErrorPageUnauthorizedMessage {
+            get {
+                return ResourceManager.GetString("ErrorPageUnauthorizedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong.
+        /// </summary>
+        public static string ErrorPageUnexpectedError {
+            get {
+                return ResourceManager.GetString("ErrorPageUnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing your request. Our team has been notified..
+        /// </summary>
+        public static string ErrorPageUnexpectedErrorMessage {
+            get {
+                return ResourceManager.GetString("ErrorPageUnexpectedErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error removing profile picture.
+        /// </summary>
+        public static string ErrorRemovingProfilePicture {
+            get {
+                return ResourceManager.GetString("ErrorRemovingProfilePicture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error saving.
+        /// </summary>
+        public static string ErrorSaving {
+            get {
+                return ResourceManager.GetString("ErrorSaving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error saving template.
+        /// </summary>
+        public static string ErrorSavingTemplate {
+            get {
+                return ResourceManager.GetString("ErrorSavingTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error updating.
+        /// </summary>
+        public static string ErrorUpdating {
+            get {
+                return ResourceManager.GetString("ErrorUpdating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error uploading file.
+        /// </summary>
+        public static string ErrorUploadingFile {
+            get {
+                return ResourceManager.GetString("ErrorUploadingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Experience.
         /// </summary>
         public static string Experience {
@@ -1213,11 +2005,38 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export backup.
+        /// </summary>
+        public static string ExportBackup {
+            get {
+                return ResourceManager.GetString("ExportBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export CSV.
         /// </summary>
         public static string ExportCsv {
             get {
                 return ResourceManager.GetString("ExportCsv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export failed.
+        /// </summary>
+        public static string ExportFailed {
+            get {
+                return ResourceManager.GetString("ExportFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Profile.
+        /// </summary>
+        public static string ExportProfile {
+            get {
+                return ResourceManager.GetString("ExportProfile", resourceCulture);
             }
         }
         
@@ -1240,6 +2059,42 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your account can currently sign in with an external provider. Add a password to also sign in with email and password..
+        /// </summary>
+        public static string ExternalOnlyPasswordDescription {
+            get {
+                return ResourceManager.GetString("ExternalOnlyPasswordDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to lock user account.
+        /// </summary>
+        public static string FailedToLockUserAccount {
+            get {
+                return ResourceManager.GetString("FailedToLockUserAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to unlock user account.
+        /// </summary>
+        public static string FailedToUnlockUserAccount {
+            get {
+                return ResourceManager.GetString("FailedToUnlockUserAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to validate API Key or fetch models..
+        /// </summary>
+        public static string FailedValidateApiKey {
+            get {
+                return ResourceManager.GetString("FailedValidateApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fetch.
         /// </summary>
         public static string Fetch {
@@ -1258,6 +2113,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fetching job details....
+        /// </summary>
+        public static string FetchingJobDetails {
+            get {
+                return ResourceManager.GetString("FetchingJobDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field.
         /// </summary>
         public static string Field {
@@ -1267,11 +2131,56 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fill Demo Credentials.
+        /// </summary>
+        public static string FillDemoCredentials {
+            get {
+                return ResourceManager.GetString("FillDemoCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finalize &amp; Sign Out.
         /// </summary>
         public static string FinalizeLogout {
             get {
                 return ResourceManager.GetString("FinalizeLogout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Footer Text.
+        /// </summary>
+        public static string FooterText {
+            get {
+                return ResourceManager.GetString("FooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forgot Password.
+        /// </summary>
+        public static string ForgotPassword {
+            get {
+                return ResourceManager.GetString("ForgotPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the email address associated with your account and we will generate a password reset link..
+        /// </summary>
+        public static string ForgotPasswordInstructions {
+            get {
+                return ResourceManager.GetString("ForgotPasswordInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If the email is registered in our system, you will receive a reset link shortly. Please check your spam or junk folder if you don&apos;t see it..
+        /// </summary>
+        public static string ForgotPasswordSuccessMessage {
+            get {
+                return ResourceManager.GetString("ForgotPasswordSuccessMessage", resourceCulture);
             }
         }
         
@@ -1303,11 +2212,29 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Found {0} models.
+        /// </summary>
+        public static string FoundModels {
+            get {
+                return ResourceManager.GetString("FoundModels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Full Name.
         /// </summary>
         public static string FullName {
             get {
                 return ResourceManager.GetString("FullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Free API key from AI Studio — linked to your Google account &amp; quota.
+        /// </summary>
+        public static string GeminiAIStudioDescription {
+            get {
+                return ResourceManager.GetString("GeminiAIStudioDescription", resourceCulture);
             }
         }
         
@@ -1366,11 +2293,47 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generating application....
+        /// </summary>
+        public static string GeneratingApplication {
+            get {
+                return ResourceManager.GetString("GeneratingApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generating cover letter....
+        /// </summary>
+        public static string GeneratingCoverLetter {
+            get {
+                return ResourceManager.GetString("GeneratingCoverLetter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generating PDF....
+        /// </summary>
+        public static string GeneratingPdf {
+            get {
+                return ResourceManager.GetString("GeneratingPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Generator.
         /// </summary>
         public static string Generator {
             get {
                 return ResourceManager.GetString("Generator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get Free API Key.
+        /// </summary>
+        public static string GetFreeApiKey {
+            get {
+                return ResourceManager.GetString("GetFreeApiKey", resourceCulture);
             }
         }
         
@@ -1474,7 +2437,70 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We are improving the system. Your work is saved locally. Brief restart in {0}..
+        ///   Looks up a localized string similar to Import backup.
+        /// </summary>
+        public static string ImportBackup {
+            get {
+                return ResourceManager.GetString("ImportBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing this valid backup JSON file will replace every selected data section in your account. This cannot be undone unless you have exported a backup first..
+        /// </summary>
+        public static string ImportBackupWarningContent {
+            get {
+                return ResourceManager.GetString("ImportBackupWarningContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace selected data?.
+        /// </summary>
+        public static string ImportBackupWarningTitle {
+            get {
+                return ResourceManager.GetString("ImportBackupWarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Profile.
+        /// </summary>
+        public static string ImportProfile {
+            get {
+                return ResourceManager.GetString("ImportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile import failed.
+        /// </summary>
+        public static string ImportProfileFailed {
+            get {
+                return ResourceManager.GetString("ImportProfileFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing this valid profile JSON file will replace all current profile data, including personal details, experience, education, skills, projects, languages, and interests. This cannot be undone unless you have exported a backup..
+        /// </summary>
+        public static string ImportProfileWarningContent {
+            get {
+                return ResourceManager.GetString("ImportProfileWarningContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace current profile?.
+        /// </summary>
+        public static string ImportProfileWarningTitle {
+            get {
+                return ResourceManager.GetString("ImportProfileWarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We are improving the system. Please save your changes manually! Brief restart in {0}..
         /// </summary>
         public static string ImprovingSystemWorkSavedRestart {
             get {
@@ -1510,7 +2536,7 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installing updates....
+        ///   Looks up a localized string similar to Applying updates....
         /// </summary>
         public static string InstallingUpdates {
             get {
@@ -1573,11 +2599,38 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid backup JSON file..
+        /// </summary>
+        public static string InvalidBackupJson {
+            get {
+                return ResourceManager.GetString("InvalidBackupJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid JSON.
+        /// </summary>
+        public static string InvalidJson {
+            get {
+                return ResourceManager.GetString("InvalidJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid login attempt..
         /// </summary>
         public static string InvalidLoginAttempt {
             get {
                 return ResourceManager.GetString("InvalidLoginAttempt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid profile JSON file..
+        /// </summary>
+        public static string InvalidProfileJson {
+            get {
+                return ResourceManager.GetString("InvalidProfileJson", resourceCulture);
             }
         }
         
@@ -1690,6 +2743,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Leave blank to use default &apos;{0}&apos; title.
+        /// </summary>
+        public static string LeaveBlankToUseDefault {
+            get {
+                return ResourceManager.GetString("LeaveBlankToUseDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Level.
         /// </summary>
         public static string Level {
@@ -1749,6 +2811,42 @@ namespace AiCV.Infrastructure.Resources {
         public static string LinkGitHubLive {
             get {
                 return ResourceManager.GetString("LinkGitHubLive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading admin dashboard....
+        /// </summary>
+        public static string LoadingAdminDashboard {
+            get {
+                return ResourceManager.GetString("LoadingAdminDashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading notes....
+        /// </summary>
+        public static string LoadingNotes {
+            get {
+                return ResourceManager.GetString("LoadingNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading profile....
+        /// </summary>
+        public static string LoadingProfile {
+            get {
+                return ResourceManager.GetString("LoadingProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading settings....
+        /// </summary>
+        public static string LoadingSettings {
+            get {
+                return ResourceManager.GetString("LoadingSettings", resourceCulture);
             }
         }
         
@@ -1897,6 +2995,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimalist.
+        /// </summary>
+        public static string Minimalist {
+            get {
+                return ResourceManager.GetString("Minimalist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Model.
         /// </summary>
         public static string Model {
@@ -1942,6 +3049,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modern.
+        /// </summary>
+        public static string Modern {
+            get {
+                return ResourceManager.GetString("Modern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to month.
         /// </summary>
         public static string Month {
@@ -1956,6 +3072,42 @@ namespace AiCV.Infrastructure.Resources {
         public static string Months {
             get {
                 return ResourceManager.GetString("Months", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Down.
+        /// </summary>
+        public static string MoveDown {
+            get {
+                return ResourceManager.GetString("MoveDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Left.
+        /// </summary>
+        public static string MoveLeft {
+            get {
+                return ResourceManager.GetString("MoveLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Right.
+        /// </summary>
+        public static string MoveRight {
+            get {
+                return ResourceManager.GetString("MoveRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Up.
+        /// </summary>
+        public static string MoveUp {
+            get {
+                return ResourceManager.GetString("MoveUp", resourceCulture);
             }
         }
         
@@ -1978,11 +3130,29 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New password.
+        /// </summary>
+        public static string NewPassword {
+            get {
+                return ResourceManager.GetString("NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         public static string No {
             get {
                 return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No AI configuration selected. Please configure a provider in Settings..
+        /// </summary>
+        public static string NoAiConfigurationSelected {
+            get {
+                return ResourceManager.GetString("NoAiConfigurationSelected", resourceCulture);
             }
         }
         
@@ -2239,6 +3409,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 100+ models incl. free GPT-4o, Claude &amp; Gemini tiers.
+        /// </summary>
+        public static string OpenRouterCardDescription {
+            get {
+                return ResourceManager.GetString("OpenRouterCardDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OpenRouter Model.
         /// </summary>
         public static string OpenRouterModel {
@@ -2266,11 +3445,56 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parsing content....
+        /// </summary>
+        public static string ParsingContent {
+            get {
+                return ResourceManager.GetString("ParsingContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password added. You can now sign in with email and password too..
+        /// </summary>
+        public static string PasswordAddedLocalLoginEnabled {
+            get {
+                return ResourceManager.GetString("PasswordAddedLocalLoginEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password changed successfully..
+        /// </summary>
+        public static string PasswordChangedSuccessfully {
+            get {
+                return ResourceManager.GetString("PasswordChangedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Minimum 6 characters, at least one uppercase, lowercase, and digit.
         /// </summary>
         public static string PasswordRequirementHelper {
             get {
                 return ResourceManager.GetString("PasswordRequirementHelper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your password has been successfully reset. Please log in with your new password..
+        /// </summary>
+        public static string PasswordResetSuccessMessage {
+            get {
+                return ResourceManager.GetString("PasswordResetSuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwords do not match..
+        /// </summary>
+        public static string PasswordsDoNotMatch {
+            get {
+                return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
             }
         }
         
@@ -2338,6 +3562,33 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please enter a URL first..
+        /// </summary>
+        public static string PleaseEnterUrlFirst {
+            get {
+                return ResourceManager.GetString("PleaseEnterUrlFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please generate a cover letter first..
+        /// </summary>
+        public static string PleaseGenerateCoverLetterFirst {
+            get {
+                return ResourceManager.GetString("PleaseGenerateCoverLetterFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please generate a tailored CV first..
+        /// </summary>
+        public static string PleaseGenerateTailoredCvFirst {
+            get {
+                return ResourceManager.GetString("PleaseGenerateTailoredCvFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Portfolio URL.
         /// </summary>
         public static string PortfolioUrl {
@@ -2383,6 +3634,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preview Template.
+        /// </summary>
+        public static string PreviewTemplate {
+            get {
+                return ResourceManager.GetString("PreviewTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preview will appear here....
         /// </summary>
         public static string PreviewWillAppearHere {
@@ -2406,6 +3666,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string PrintCv {
             get {
                 return ResourceManager.GetString("PrintCv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Professional.
+        /// </summary>
+        public static string Professional {
+            get {
+                return ResourceManager.GetString("Professional", resourceCulture);
             }
         }
         
@@ -2455,11 +3724,74 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hover a chip to reveal its arrows, and use them to reorder, edit, or remove it. Save the profile to keep your changes..
+        /// </summary>
+        public static string ProfileChipHelp {
+            get {
+                return ResourceManager.GetString("ProfileChipHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile data is missing. Please try generating again..
+        /// </summary>
+        public static string ProfileDataMissing {
+            get {
+                return ResourceManager.GetString("ProfileDataMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile exported successfully..
+        /// </summary>
+        public static string ProfileExported {
+            get {
+                return ResourceManager.GetString("ProfileExported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile imported successfully..
+        /// </summary>
+        public static string ProfileImported {
+            get {
+                return ResourceManager.GetString("ProfileImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile picture removed..
+        /// </summary>
+        public static string ProfilePictureRemoved {
+            get {
+                return ResourceManager.GetString("ProfilePictureRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile picture uploaded and saved!.
+        /// </summary>
+        public static string ProfilePictureUploadedAndSaved {
+            get {
+                return ResourceManager.GetString("ProfilePictureUploadedAndSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
         public static string Profiles {
             get {
                 return ResourceManager.GetString("Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile saved successfully!.
+        /// </summary>
+        public static string ProfileSavedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProfileSavedSuccessfully", resourceCulture);
             }
         }
         
@@ -2653,6 +3985,33 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset Password.
+        /// </summary>
+        public static string ResetPassword {
+            get {
+                return ResourceManager.GetString("ResetPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter and confirm your new password below..
+        /// </summary>
+        public static string ResetPasswordInstructions {
+            get {
+                return ResourceManager.GetString("ResetPasswordInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset to original generated version..
+        /// </summary>
+        public static string ResetToOriginalGeneratedVersion {
+            get {
+                return ResourceManager.GetString("ResetToOriginalGeneratedVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Result Preview.
         /// </summary>
         public static string ResultPreview {
@@ -2707,6 +4066,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save password.
+        /// </summary>
+        public static string SavePassword {
+            get {
+                return ResourceManager.GetString("SavePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save Settings.
         /// </summary>
         public static string SaveSettings {
@@ -2725,11 +4093,56 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search for an icon (e.g. briefcase, star)....
+        /// </summary>
+        public static string SearchIconPlaceholder {
+            get {
+                return ResourceManager.GetString("SearchIconPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Section Icon.
+        /// </summary>
+        public static string SectionIcon {
+            get {
+                return ResourceManager.GetString("SectionIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Section Title.
         /// </summary>
         public static string SectionTitle {
             get {
                 return ResourceManager.GetString("SectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select at least one backup section.
+        /// </summary>
+        public static string SelectAtLeastOneBackupSection {
+            get {
+                return ResourceManager.GetString("SelectAtLeastOneBackupSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Icon.
+        /// </summary>
+        public static string SelectIcon {
+            get {
+                return ResourceManager.GetString("SelectIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Reset Link.
+        /// </summary>
+        public static string SendResetLink {
+            get {
+                return ResourceManager.GetString("SendResetLink", resourceCulture);
             }
         }
         
@@ -2748,6 +4161,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string SetAsActive {
             get {
                 return ResourceManager.GetString("SetAsActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set password.
+        /// </summary>
+        public static string SetPassword {
+            get {
+                return ResourceManager.GetString("SetPassword", resourceCulture);
             }
         }
         
@@ -2806,7 +4228,7 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add skill categories and skills. Click the chip&apos;s X to remove a skill..
+        ///   Looks up a localized string similar to Move categories up/down to reorder. Hover a chip to reveal its arrows, and use them to reorder, edit, or remove it..
         /// </summary>
         public static string SkillsHelper {
             get {
@@ -2860,6 +4282,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Statistics exported successfully.
+        /// </summary>
+        public static string StatisticsExportedSuccessfully {
+            get {
+                return ResourceManager.GetString("StatisticsExportedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status.
         /// </summary>
         public static string Status {
@@ -2892,6 +4323,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string Step3 {
             get {
                 return ResourceManager.GetString("Step3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supports Markdown.
+        /// </summary>
+        public static string SupportsMarkdown {
+            get {
+                return ResourceManager.GetString("SupportsMarkdown", resourceCulture);
             }
         }
         
@@ -2932,6 +4372,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tailoring CV....
+        /// </summary>
+        public static string TailoringCv {
+            get {
+                return ResourceManager.GetString("TailoringCv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Technologies:.
         /// </summary>
         public static string TechnologiesLabel {
@@ -2950,11 +4399,38 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Template.
+        /// </summary>
+        public static string Template {
+            get {
+                return ResourceManager.GetString("Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Template updated successfully.
+        /// </summary>
+        public static string TemplateUpdated {
+            get {
+                return ResourceManager.GetString("TemplateUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Test Connection.
         /// </summary>
         public static string TestConnection {
             get {
                 return ResourceManager.GetString("TestConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test failed.
+        /// </summary>
+        public static string TestFailed {
+            get {
+                return ResourceManager.GetString("TestFailed", resourceCulture);
             }
         }
         
@@ -3076,6 +4552,15 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        public static string Update {
+            get {
+                return ResourceManager.GetString("Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Available.
         /// </summary>
         public static string UpdateAvailable {
@@ -3121,11 +4606,38 @@ namespace AiCV.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User ID not found. Please log in again..
+        /// </summary>
+        public static string UserIdNotFound {
+            get {
+                return ResourceManager.GetString("UserIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Management.
         /// </summary>
         public static string UserManagement {
             get {
                 return ResourceManager.GetString("UserManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User not logged in..
+        /// </summary>
+        public static string UserNotLoggedIn {
+            get {
+                return ResourceManager.GetString("UserNotLoggedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User profile not found. Please log in again..
+        /// </summary>
+        public static string UserProfileNotFound {
+            get {
+                return ResourceManager.GetString("UserProfileNotFound", resourceCulture);
             }
         }
         
@@ -3189,6 +4701,15 @@ namespace AiCV.Infrastructure.Resources {
         public static string Warning {
             get {
                 return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: API Key is missing. Please enter it..
+        /// </summary>
+        public static string WarningApiKeyMissing {
+            get {
+                return ResourceManager.GetString("WarningApiKeyMissing", resourceCulture);
             }
         }
         
@@ -3270,6 +4791,231 @@ namespace AiCV.Infrastructure.Resources {
         public static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your profile is empty! Please go to the Profile page and fill in your details first..
+        /// </summary>
+        public static string YourProfileIsEmpty {
+            get {
+                return ResourceManager.GetString("YourProfileIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account connected successfully!.
+        /// </summary>
+        public static string AccountConnectedSuccessfully {
+            get {
+                return ResourceManager.GetString("AccountConnectedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Company.
+        /// </summary>
+        public static string CompanyFallback {
+            get {
+                return ResourceManager.GetString("CompanyFallback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection failed ({0})..
+        /// </summary>
+        public static string ConnectionFailedWithCode {
+            get {
+                return ResourceManager.GetString("ConnectionFailedWithCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  Details: {0}.
+        /// </summary>
+        public static string ConnectionFailureDetails {
+            get {
+                return ResourceManager.GetString("ConnectionFailureDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cover Letter.
+        /// </summary>
+        public static string CoverLetterDocumentType {
+            get {
+                return ResourceManager.GetString("CoverLetterDocumentType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not exchange code with Google. Please try again..
+        /// </summary>
+        public static string CouldNotExchangeCodeWithGoogle {
+            get {
+                return ResourceManager.GetString("CouldNotExchangeCodeWithGoogle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not retrieve OpenRouter API key..
+        /// </summary>
+        public static string CouldNotRetrieveOpenRouterApiKey {
+            get {
+                return ResourceManager.GetString("CouldNotRetrieveOpenRouterApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleting account....
+        /// </summary>
+        public static string DeletingAccount {
+            get {
+                return ResourceManager.GetString("DeletingAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error deserializing tailored CV.
+        /// </summary>
+        public static string ErrorDeserializingTailoredCv {
+            get {
+                return ResourceManager.GetString("ErrorDeserializingTailoredCv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading application.
+        /// </summary>
+        public static string ErrorLoadingApplication {
+            get {
+                return ResourceManager.GetString("ErrorLoadingApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error loading profile.
+        /// </summary>
+        public static string ErrorLoadingProfile {
+            get {
+                return ResourceManager.GetString("ErrorLoadingProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Google Gemini account connected! Your existing plan will be used..
+        /// </summary>
+        public static string GoogleGeminiAccountConnected {
+            get {
+                return ResourceManager.GetString("GoogleGeminiAccountConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Google Gemini connection was cancelled..
+        /// </summary>
+        public static string GoogleGeminiConnectionCancelled {
+            get {
+                return ResourceManager.GetString("GoogleGeminiConnectionCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Google did not return a refresh token. Please revoke the app access in your Google account and try again..
+        /// </summary>
+        public static string GoogleNoRefreshToken {
+            get {
+                return ResourceManager.GetString("GoogleNoRefreshToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Google OAuth is not configured on this server..
+        /// </summary>
+        public static string GoogleOAuthNotConfigured {
+            get {
+                return ResourceManager.GetString("GoogleOAuthNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Job.
+        /// </summary>
+        public static string JobFallback {
+            get {
+                return ResourceManager.GetString("JobFallback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} at {1}.
+        /// </summary>
+        public static string JobAtCompanyTitle {
+            get {
+                return ResourceManager.GetString("JobAtCompanyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading application....
+        /// </summary>
+        public static string LoadingApplication {
+            get {
+                return ResourceManager.GetString("LoadingApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenRouter account connected! You can now use it from the Generate page..
+        /// </summary>
+        public static string OpenRouterAccountConnected {
+            get {
+                return ResourceManager.GetString("OpenRouterAccountConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenRouter connection was cancelled..
+        /// </summary>
+        public static string OpenRouterConnectionCancelled {
+            get {
+                return ResourceManager.GetString("OpenRouterConnectionCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenRouter session expired. Please try again..
+        /// </summary>
+        public static string OpenRouterSessionExpired {
+            get {
+                return ResourceManager.GetString("OpenRouterSessionExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume.
+        /// </summary>
+        public static string ResumeDocumentType {
+            get {
+                return ResourceManager.GetString("ResumeDocumentType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Session expired. Please try again..
+        /// </summary>
+        public static string SessionExpiredTryAgain {
+            get {
+                return ResourceManager.GetString("SessionExpiredTryAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: User profile not found. Cover letter preview may be incomplete..
+        /// </summary>
+        public static string WarningUserProfileNotFoundCoverPreviewIncomplete {
+            get {
+                return ResourceManager.GetString("WarningUserProfileNotFoundCoverPreviewIncomplete", resourceCulture);
             }
         }
     }

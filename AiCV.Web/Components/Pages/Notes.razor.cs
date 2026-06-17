@@ -32,7 +32,7 @@ public partial class Notes
             return;
 
         _isLoading = true;
-        LoadingService.Show("Loading notes...", 0);
+        LoadingService.Show(Localizer["LoadingNotes"], 0);
         await InvokeAsync(StateHasChanged);
 
         try
@@ -49,7 +49,7 @@ public partial class Notes
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Error loading notes", Severity.Error);
+            Snackbar.Add(Localizer["ErrorLoadingNotes"], Severity.Error);
             Logger.LogError(ex, "Error loading notes");
         }
         finally

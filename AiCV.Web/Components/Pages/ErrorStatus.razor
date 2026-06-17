@@ -1,0 +1,57 @@
+@page "/errors/{StatusCode:int}"
+
+@inject NavigationManager Navigation
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+
+@code {
+    [Parameter]
+    public int StatusCode { get; set; }
+
+    private string Title => StatusCode switch
+    {
+        404 => Localizer["ErrorPageNotFound"],
+        403 => Localizer["ErrorPageAccessDenied"],
+        401 => Localizer["ErrorPageUnauthorized"],
+        500 => Localizer["ErrorPageServerError"],
+        _ => Localizer["ErrorPageGeneric"]
+    };
+
+    private string Message => StatusCode switch
+    {
+        404 => Localizer["ErrorPageNotFoundMessage"],
+        403 => Localizer["ErrorPageAccessDeniedMessage"],
+        401 => Localizer["ErrorPageUnauthorizedMessage"],
+        500 => Localizer["ErrorPageServerErrorMessage"],
+        _ => Localizer["ErrorPageGenericMessage"]
+    };
+
+    private void GoHome() => Navigation.NavigateTo("/");
+    private void ContactSupport() => Navigation.NavigateTo("/");
+}
+
+<div class="error-page" style="display:flex;align-items:center;justify-content:center;height:75vh;padding:2rem;">
+    <MudPaper Elevation="4" Class="pa-6" Style="max-width:56.25rem;width:100%;">
+        <div style="display:flex;gap:2rem;align-items:center;">
+            <div style="flex:0 0 10rem;text-align:center;">
+                <div style="font-size:6rem;font-weight:800;color:var(--mud-palette-primary);">@StatusCode</div>
+            </div>
+            <div style="flex:1;">
+                <h1 style="margin:0 0 .5rem 0;font-size:2rem;">@Title</h1>
+                <p style="margin:0 0 1rem 0;color:var(--mud-palette-text-secondary);">@Message</p>
+
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GoHome">@Localizer["ErrorPageGoHome"]</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ContactSupport">@Localizer["ErrorPageContactSupport"]</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Default" Href="javascript:history.back()">@Localizer["ErrorPageGoBack"]</MudButton>
+                </div>
+
+                @if (StatusCode == 404)
+                {
+                    <div style="margin-top:1rem;color:var(--mud-palette-text-secondary);">
+                        @Localizer["ErrorPageTip404"]
+                    </div>
+                }
+            </div>
+        </div>
+    </MudPaper>
+</div>
