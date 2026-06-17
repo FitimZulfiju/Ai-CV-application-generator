@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.15.0] - 2026-06-17
+
+### Added
+- feat: Add localized MudBlazor error pages, responsive UI fixes, and service improvements
+
+### Fixed
+- fix(services): correct DangerousUnprotect usage and remove nullable init to satisfy analyzers
+- fix: avoid FormatException when decoding non-base64 API keys in Unprotect
+- fix: hide chip help alert on mobile; remove vertical gap in SectionHeaderCard on xs
+
 ## [1.14.1] - 2026-06-16
 
 ### Changed
