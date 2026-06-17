@@ -14,12 +14,14 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Variant="Variant.Outlined" OnClick="CancelInterestEdit" />
             </MudTooltip>
         }
-        @if (_showChipHelp)
-        {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
-                @Localizer["ProfileChipHelp"]
-            </MudAlert>
-        }
+        <div class="d-none d-sm-flex flex-grow-1">
+            @if (_showChipHelp)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Icon="@Icons.Material.Filled.Info" ShowCloseIcon="true" CloseIconClicked="() => _showChipHelp = false" Class="profile-chip-help-row">
+                    @Localizer["ProfileChipHelp"]
+                </MudAlert>
+            }
+        </div>
         <MudSwitch T="bool" @bind-Value="Profile.InterestsSection.DisplayAsChips" Size="Size.Small" Color="Color.Primary" Label="@Localizer["DisplayAsChips"]" Class="ml-auto" />
     </MudStack>
 

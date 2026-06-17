@@ -17,7 +17,7 @@ public partial class UserSettingsPage
     private string _userId = string.Empty;
     private string _userEmail = string.Empty;
     private bool _isLoading = true;
-    private bool _isProtected = false;
+    private bool _isProtected;
     private int _activeSettingsTabIndex;
 
     // List of saved configurations
@@ -90,7 +90,7 @@ public partial class UserSettingsPage
             // Mark as protected if it's the default demo account
             _isProtected = string.Equals(
                 _userEmail,
-                AiCV.Application.Common.DemoConstants.DemoUserEmail,
+                DemoConstants.DemoUserEmail,
                 StringComparison.OrdinalIgnoreCase
             );
 
@@ -419,7 +419,6 @@ public partial class UserSettingsPage
         }
     }
 
-    /// <summary>Adapter called by AiModelPicker after selection — syncs metadata to _newConfig.</summary>
     private Task OnModelPickerChanged(string? modelId)
     {
         _newConfig.ModelId = modelId ?? string.Empty;
@@ -1171,7 +1170,7 @@ public partial class UserSettingsPage
             && IsValidSectionConfig(profile.InterestsSection);
     }
 
-    private static bool IsValidSectionConfig(AiCV.Domain.SectionConfig? config)
+    private static bool IsValidSectionConfig(SectionConfig? config)
     {
         if (config == null) return true;
         return IsValidProfileText(config.Title) && IsValidProfileText(config.Icon);
@@ -1383,7 +1382,7 @@ public partial class UserSettingsPage
         public string? CoverLetterContent { get; set; }
         public string? TailoredResumeJson { get; set; }
         public string? ApplicationEmailContent { get; set; }
-        public string Template { get; set; } = AiCV.Domain.Constants.CvTemplates.Professional;
+        public string Template { get; set; } = Domain.Constants.CvTemplates.Professional;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 
@@ -1431,5 +1430,4 @@ public partial class UserSettingsPage
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
-
 }

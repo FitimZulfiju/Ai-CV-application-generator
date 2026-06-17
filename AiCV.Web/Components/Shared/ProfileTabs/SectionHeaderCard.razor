@@ -3,7 +3,7 @@
         @Localizer["CustomSectionHeader"]
     </div>
     <MudCardContent Class="pt-1 pb-0">
-        <MudGrid>
+        <MudGrid Spacing="2" Class="section-header-grid">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="Section.Title"
                               Label="@Localizer["SectionTitle"]"
@@ -26,12 +26,17 @@
         position: absolute;
         top: 0;
         left: 12px;
-
         transform: translateY(-50%);
         background: var(--mud-palette-background-grey);
         padding: 0 10px;
         font-size: 0.85rem;
         font-weight: 500;
         white-space: nowrap;
+    }
+
+    @@media (max-width: 599.98px) {
+        .section-header-grid > .mud-item:not(:first-child) {
+            padding-top: 0;
+        }
     }
 </style>
