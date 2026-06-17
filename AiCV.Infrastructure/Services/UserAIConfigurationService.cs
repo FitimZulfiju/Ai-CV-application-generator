@@ -170,9 +170,7 @@ ILogger<UserAIConfigurationService> logger
 
         if (_protector is IPersistedDataProtector persistedProtector)
         {
-            byte[]? protectedBytes = null;
-
-                        // Try Base64Url decode first (used by DataProtection), then fall back to standard Base64
+            byte[] protectedBytes;
 
             try
             {
@@ -223,7 +221,7 @@ ILogger<UserAIConfigurationService> logger
             _logger.LogWarning("IPersistedDataProtector not available; skipping DangerousUnprotect tier.");
         }
 
-_logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
+        _logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
         return input;
     }
 }
