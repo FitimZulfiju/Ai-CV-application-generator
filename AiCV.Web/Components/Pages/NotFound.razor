@@ -1,4 +1,24 @@
 @attribute [Microsoft.AspNetCore.Components.Route(NavUri.NotFoundPage)]
 
-<h3>Not Found</h3>
-<p>Sorry, the content you are looking for does not exist.</p>
+@inject NavigationManager Navigation
+@inject IStringLocalizer<AiCV.Infrastructure.Resources.AicvResources> Localizer
+
+<div style="display:flex;align-items:center;justify-content:center;height:65vh;padding:2rem;">
+    <MudPaper Elevation="3" Class="pa-6" Style="max-width:900px;width:100%;">
+        <div style="display:flex;gap:1.5rem;align-items:center;">
+            <div style="flex:0 0 120px;text-align:center;">
+                <div style="font-size:5rem;font-weight:700;color:var(--mud-palette-primary);">404</div>
+            </div>
+            <div style="flex:1;">
+                <h2 style="margin:0 0 .5rem 0;">@Localizer["ErrorPageNotFound"]</h2>
+                <p style="margin:0 0 1rem 0;color:var(--mud-palette-text-secondary);">@Localizer["ErrorPageNotFoundMessage"]</p>
+
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/">@Localizer["ErrorPageGoHome"]</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => Navigation.NavigateTo($"/{NavUri.LoginPage}"))">@Localizer["ErrorPageSignIn"]</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Default" Href="javascript:history.back()">@Localizer["ErrorPageGoBack"]</MudButton>
+                </div>
+            </div>
+        </div>
+    </MudPaper>
+</div>

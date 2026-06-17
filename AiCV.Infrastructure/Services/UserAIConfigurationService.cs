@@ -55,9 +55,7 @@ ILogger<UserAIConfigurationService> logger
     public async Task<UserAIConfiguration> SaveConfigurationAsync(UserAIConfiguration config)
     {
         var apiKeyToProtect = config.ApiKey;
-        // Avoid double protection if it's already encrypted?
-        // Logic: Input config always comes with plain key from UI. Reading from DB comes with plain key (unprotected).
-        // So we validly protect here.
+
         config.ApiKey = Protect(config.ApiKey);
 
         if (config.Id == 0)
@@ -84,14 +82,12 @@ ILogger<UserAIConfigurationService> logger
             existing.ModelId = config.ModelId;
             existing.CostType = config.CostType;
             existing.Notes = config.Notes;
-            // IsActive is handled via ActivateConfigurationAsync or if it was already active
 
             _context.Entry(existing).State = EntityState.Modified;
         }
 
         await _context.SaveChangesAsync();
 
-        // Return with unprotected key so UI doesn't break if it reuses the object
         config.ApiKey = apiKeyToProtect;
         return config;
     }
@@ -111,7 +107,6 @@ ILogger<UserAIConfigurationService> logger
 
         if (wasActive)
         {
-            // Activate another one if available
             var next = await _context
                 .UserAIConfigurations.Where(c => c.UserId == userId)
                 .OrderByDescending(c => c.Id)
@@ -136,7 +131,6 @@ ILogger<UserAIConfigurationService> logger
         if (config == null)
             return null;
 
-        // Deactivate others
         var others = await _context
             .UserAIConfigurations.Where(c => c.UserId == userId && c.Id != id && c.IsActive)
             .ToListAsync();
@@ -164,31 +158,50 @@ ILogger<UserAIConfigurationService> logger
     {
         if (string.IsNullOrEmpty(input))
             return input;
+
         try
         {
             return _protector.Unprotect(input);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to unprotect API Key.");
-
-            // Fail-safe: If the DB contained a plain key (e.g. from manual edit or failed protection),
-            // and it looks valid, return it instead of blocking.
-            if (
-                !string.IsNullOrEmpty(input)
-                && (
-                    input.StartsWith("sk-")
-                    || // OpenAI
-                    input.StartsWith("AIza")
-                    || // Google
-                    input.StartsWith("gsk_") // Groq
-                )
-            )
-            {
-                return input;
-            }
-
-            return "DECRYPTION_FAILED"; // Use token to distinguish in UI
+            _logger.LogWarning(ex, "Standard Unprotect failed, attempting DangerousUnprotect fallback.");
         }
+
+        if (_protector is IPersistedDataProtector persistedProtector)
+        {
+            try
+            {
+                var result = persistedProtector.DangerousUnprotect(
+                    Convert.FromBase64String(input),
+                    ignoreRevocationErrors: true,
+                    out bool requiresMigration,
+                    out bool wasRevoked
+                );
+
+                var decrypted = Encoding.UTF8.GetString(result);
+
+                if (wasRevoked || requiresMigration)
+                {
+                    _logger.LogWarning(
+                        "API key was decrypted with DangerousUnprotect (wasRevoked={WasRevoked}, requiresMigration={RequiresMigration}). Key should be re-saved to use current protection keys.",
+                        wasRevoked, requiresMigration
+                    );
+                }
+
+                return decrypted;
+            }
+            catch (Exception ex2)
+            {
+                _logger.LogWarning(ex2, "DangerousUnprotect also failed. Returning raw value as fallback.");
+            }
+        }
+        else
+        {
+            _logger.LogWarning("IPersistedDataProtector not available; skipping DangerousUnprotect tier.");
+        }
+
+        _logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
+        return input;
     }
 }

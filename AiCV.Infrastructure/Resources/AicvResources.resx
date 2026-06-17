@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -424,7 +483,6 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
-  <!-- Home Page -->
   <data name="WelcomeTo" xml:space="preserve">
     <value>Welcome to</value>
   </data>
@@ -440,7 +498,6 @@
   <data name="DevelopedBy" xml:space="preserve">
     <value>Developed by</value>
   </data>
-  <!-- Generate Page -->
   <data name="EnterJobDetailsForCoverLetter" xml:space="preserve">
     <value>Enter job details and click Generate to create a cover letter.</value>
   </data>
@@ -450,7 +507,6 @@
   <data name="EnterJobDetailsForEmail" xml:space="preserve">
     <value>Enter job details and click Generate to create an application email.</value>
   </data>
-  <!-- My Applications Page -->
   <data name="NoApplicationsYet" xml:space="preserve">
     <value>You haven't generated any applications yet. Go to</value>
   </data>
@@ -463,7 +519,6 @@
   <data name="View" xml:space="preserve">
     <value>View</value>
   </data>
-  <!-- Admin Dashboard Page -->
   <data name="AdminDashboard" xml:space="preserve">
     <value>Admin Dashboard</value>
   </data>
@@ -479,7 +534,6 @@
   <data name="ApplicationsGenerated" xml:space="preserve">
     <value>Applications Generated</value>
   </data>
-  <!-- System Logs Page -->
   <data name="SystemLogs" xml:space="preserve">
     <value>System Logs</value>
   </data>
@@ -525,7 +579,6 @@
   <data name="Anonymous" xml:space="preserve">
     <value>Anonymous</value>
   </data>
-  <!-- NavMenu -->
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -544,7 +597,6 @@
   <data name="Register" xml:space="preserve">
     <value>Register</value>
   </data>
-  <!-- Home Card Descriptions -->
   <data name="ProfileCardDescription" xml:space="preserve">
     <value>Update your Master CV, experience, education, and skills. This is the source of truth for all your applications.</value>
   </data>
@@ -1097,7 +1149,6 @@
   <data name="WriteEmailInstruction" xml:space="preserve">
     <value>Write a brief professional email to accompany this application.</value>
   </data>
-  <!-- Notes Feature -->
   <data name="AddNote" xml:space="preserve">
     <value>Add Note</value>
   </data>
@@ -1403,5 +1454,62 @@
   </data>
   <data name="MoveRight" xml:space="preserve">
     <value>Move Right</value>
+  </data>
+  <data name="CopyAsJson" xml:space="preserve">
+    <value>Copy as JSON</value>
+  </data>
+  <data name="ErrorPageNotFound" xml:space="preserve">
+    <value>Page not found</value>
+  </data>
+  <data name="ErrorPageNotFoundMessage" xml:space="preserve">
+    <value>We couldn't find the page you're looking for.</value>
+  </data>
+  <data name="ErrorPageAccessDenied" xml:space="preserve">
+    <value>Access denied</value>
+  </data>
+  <data name="ErrorPageAccessDeniedMessage" xml:space="preserve">
+    <value>You don't have permission to view this resource.</value>
+  </data>
+  <data name="ErrorPageUnauthorized" xml:space="preserve">
+    <value>Unauthorized</value>
+  </data>
+  <data name="ErrorPageUnauthorizedMessage" xml:space="preserve">
+    <value>You must be signed in to access this resource.</value>
+  </data>
+  <data name="ErrorPageServerError" xml:space="preserve">
+    <value>Server error</value>
+  </data>
+  <data name="ErrorPageServerErrorMessage" xml:space="preserve">
+    <value>An unexpected error occurred on the server.</value>
+  </data>
+  <data name="ErrorPageGeneric" xml:space="preserve">
+    <value>Something went wrong</value>
+  </data>
+  <data name="ErrorPageGenericMessage" xml:space="preserve">
+    <value>An unexpected condition was encountered.</value>
+  </data>
+  <data name="ErrorPageUnexpectedError" xml:space="preserve">
+    <value>Something went wrong</value>
+  </data>
+  <data name="ErrorPageUnexpectedErrorMessage" xml:space="preserve">
+    <value>An error occurred while processing your request. Our team has been notified.</value>
+  </data>
+  <data name="ErrorPageGoHome" xml:space="preserve">
+    <value>Go to homepage</value>
+  </data>
+  <data name="ErrorPageContactSupport" xml:space="preserve">
+    <value>Contact support</value>
+  </data>
+  <data name="ErrorPageGoBack" xml:space="preserve">
+    <value>Go back</value>
+  </data>
+  <data name="ErrorPageSignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="ErrorPageTip404" xml:space="preserve">
+    <value>Tip: Try checking the URL for typos or return to the homepage.</value>
+  </data>
+  <data name="ErrorPageRequestId" xml:space="preserve">
+    <value>Request ID:</value>
   </data>
 </root>

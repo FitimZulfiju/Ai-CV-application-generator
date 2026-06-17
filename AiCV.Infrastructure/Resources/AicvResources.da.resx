@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -348,6 +407,30 @@
   </data>
   <data name="AddConfiguration" xml:space="preserve">
     <value>Tilføj konfiguration</value>
+  </data>
+  <data name="ConnectYourAccount" xml:space="preserve">
+    <value>Tilslut din konto</value>
+  </data>
+  <data name="ConnectAccountDescription" xml:space="preserve">
+    <value>Log ind med din eksisterende AI-udbyders konto — ingen API-nøgle kopiering nødvendig.</value>
+  </data>
+  <data name="OpenRouterCardDescription" xml:space="preserve">
+    <value>100+ modeller inkl. gratis GPT-4o, Claude &amp; Gemini niveauer</value>
+  </data>
+  <data name="ConnectOpenRouter" xml:space="preserve">
+    <value>Tilslut OpenRouter</value>
+  </data>
+  <data name="GeminiAIStudioDescription" xml:space="preserve">
+    <value>Gratis API-nøgle fra AI Studio — knyttet til din Google-konto &amp; kvote</value>
+  </data>
+  <data name="GetFreeApiKey" xml:space="preserve">
+    <value>Få gratis API-nøgle</value>
+  </data>
+  <data name="ApiKeyProviders" xml:space="preserve">
+    <value>API-nøgle udbydere</value>
+  </data>
+  <data name="ApiKeyProvidersHint" xml:space="preserve">
+    <value>Brug formularen nedenfor til at tilføje disse manuelt.</value>
   </data>
   <data name="Provider" xml:space="preserve">
     <value>Udbyder</value>
@@ -1006,6 +1089,18 @@
   <data name="RateLimitReached" xml:space="preserve">
     <value>{0} hastighedsbegrænsning nået. Vent venligst før du prøver igen.</value>
   </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>Kontoen er låst. Prøv venligst igen senere.</value>
+  </data>
+  <data name="InvalidLoginAttempt" xml:space="preserve">
+    <value>Ugyldigt loginforsøg.</value>
+  </data>
+  <data name="ExternalLoginFailed" xml:space="preserve">
+    <value>Ekstern login mislykkedes.</value>
+  </data>
+  <data name="ExternalEmailNotProvided" xml:space="preserve">
+    <value>Ekstern udbyder leverede ikke en e-mailadresse.</value>
+  </data>
   <data name="ClearDraft" xml:space="preserve">
     <value>Ryd kladde og genindlæs</value>
   </data>
@@ -1054,7 +1149,6 @@
   <data name="WriteEmailInstruction" xml:space="preserve">
     <value>Skriv en kort professionel e-mail til at ledsage denne ansøgning.</value>
   </data>
-  <!-- Notes Feature -->
   <data name="AddNote" xml:space="preserve">
     <value>Tilfoej note</value>
   </data>
@@ -1163,47 +1257,11 @@
   <data name="FinalizeLogout" xml:space="preserve">
     <value>Afslut og log ud</value>
   </data>
-  <data name="AccountLocked" xml:space="preserve">
-    <value>Kontoen er låst. Prøv venligst igen senere.</value>
-  </data>
-  <data name="ExternalEmailNotProvided" xml:space="preserve">
-    <value>Ekstern udbyder leverede ikke en e-mailadresse.</value>
-  </data>
-  <data name="ExternalLoginFailed" xml:space="preserve">
-    <value>Ekstern login mislykkedes.</value>
-  </data>
-  <data name="InvalidLoginAttempt" xml:space="preserve">
-    <value>Ugyldigt loginforsøg.</value>
-  </data>
   <data name="DemoAccountProtected" xml:space="preserve">
     <value>Dette er en standard demokonto og kan ikke slettes. Den fungerer som et eksempel for alle brugere.</value>
   </data>
   <data name="ProtectedAccount" xml:space="preserve">
     <value>Beskyttet konto</value>
-  </data>
-  <data name="ConnectYourAccount" xml:space="preserve">
-    <value>Tilslut din konto</value>
-  </data>
-  <data name="ConnectAccountDescription" xml:space="preserve">
-    <value>Log ind med din eksisterende AI-udbyders konto — ingen API-nøgle kopiering nødvendig.</value>
-  </data>
-  <data name="OpenRouterCardDescription" xml:space="preserve">
-    <value>100+ modeller inkl. gratis GPT-4o, Claude &amp; Gemini niveauer</value>
-  </data>
-  <data name="ConnectOpenRouter" xml:space="preserve">
-    <value>Tilslut OpenRouter</value>
-  </data>
-  <data name="GeminiAIStudioDescription" xml:space="preserve">
-    <value>Gratis API-nøgle fra AI Studio — knyttet til din Google-konto &amp; kvote</value>
-  </data>
-  <data name="GetFreeApiKey" xml:space="preserve">
-    <value>Få gratis API-nøgle</value>
-  </data>
-  <data name="ApiKeyProviders" xml:space="preserve">
-    <value>API-nøgle udbydere</value>
-  </data>
-  <data name="ApiKeyProvidersHint" xml:space="preserve">
-    <value>Brug formularen nedenfor til at tilføje disse manuelt.</value>
   </data>
   <data name="AISettingsTab" xml:space="preserve">
     <value>AI-indstillinger</value>
@@ -1316,24 +1374,6 @@
   <data name="BackupMissingSelectedSections" xml:space="preserve">
     <value>Backupfilen indeholder ikke alle valgte sektioner.</value>
   </data>
-  <data name="CustomSectionHeader" xml:space="preserve">
-    <value>Brugerdefineret Sektionsoverskrift</value>
-  </data>
-  <data name="SectionIcon" xml:space="preserve">
-    <value>Sektionsikon</value>
-  </data>
-  <data name="LeaveBlankToUseDefault" xml:space="preserve">
-    <value>Lad stå tom for at bruge standardtitlen '{0}'</value>
-  </data>
-  <data name="SearchIconPlaceholder" xml:space="preserve">
-    <value>Søg efter et ikon (f.eks. stjerne, mappe)...</value>
-  </data>
-  <data name="CustomIcon" xml:space="preserve">
-    <value>Brugerdefineret ikon</value>
-  </data>
-  <data name="SelectIcon" xml:space="preserve">
-    <value>Vælg Ikon</value>
-  </data>
   <data name="CustomFooter" xml:space="preserve">
     <value>Brugerdefineret Sidefod</value>
   </data>
@@ -1351,6 +1391,24 @@
   </data>
   <data name="Continue" xml:space="preserve">
     <value>Fortsæt</value>
+  </data>
+  <data name="CustomSectionHeader" xml:space="preserve">
+    <value>Brugerdefineret Sektionsoverskrift</value>
+  </data>
+  <data name="SectionIcon" xml:space="preserve">
+    <value>Sektionsikon</value>
+  </data>
+  <data name="LeaveBlankToUseDefault" xml:space="preserve">
+    <value>Lad stå tom for at bruge standardtitlen '{0}'</value>
+  </data>
+  <data name="SearchIconPlaceholder" xml:space="preserve">
+    <value>Søg efter et ikon (f.eks. stjerne, mappe)...</value>
+  </data>
+  <data name="CustomIcon" xml:space="preserve">
+    <value>Brugerdefineret ikon</value>
+  </data>
+  <data name="SelectIcon" xml:space="preserve">
+    <value>Vælg Ikon</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Glemt adgangskode</value>
@@ -1387,5 +1445,8 @@
   </data>
   <data name="MoveRight" xml:space="preserve">
     <value>Flyt til højre</value>
+  </data>
+  <data name="CopyAsJson" xml:space="preserve">
+    <value>Kopiér som JSON</value>
   </data>
 </root>

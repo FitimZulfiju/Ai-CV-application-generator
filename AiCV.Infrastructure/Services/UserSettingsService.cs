@@ -1,38 +1,28 @@
 namespace AiCV.Infrastructure.Services;
 
-using Microsoft.AspNetCore.DataProtection;
-
-public class UserSettingsService : IUserSettingsService
+public class UserSettingsService(
+    IDbContextFactory<ApplicationDbContext> contextFactory,
+    IDataProtectionProvider dataProtectionProvider,
+    ILogger<UserSettingsService> logger
+    ) : IUserSettingsService
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly IDataProtector _protector;
-
-    private readonly ILogger<UserSettingsService> _logger;
-
-    public UserSettingsService(
-        IDbContextFactory<ApplicationDbContext> contextFactory,
-        IDataProtectionProvider dataProtectionProvider,
-        ILogger<UserSettingsService> logger
-    )
-    {
-        _contextFactory = contextFactory;
-        _protector = dataProtectionProvider.CreateProtector(
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
+    private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(
             "AiCV.Infrastructure.Services.UserSettingsService"
         );
-        _logger = logger;
-    }
+
+    private readonly ILogger<UserSettingsService> _logger = logger;
 
     public async Task<UserSettings?> GetUserSettingsAsync(string userId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        _logger.LogInformation("Getting settings for userId: {UserId}", userId);
+
         var settings = await context
             .UserSettings.AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == userId);
 
         if (settings == null)
         {
-            _logger.LogInformation("No settings found for userId: {UserId}", userId);
             return null;
         }
 
@@ -67,7 +57,6 @@ public class UserSettingsService : IUserSettingsService
             settings.OpenRouterApiKey = Decrypt(settings.OpenRouterApiKey);
         }
 
-        _logger.LogInformation("Settings retrieved for userId: {UserId}", userId);
         return settings;
     }
 
@@ -84,12 +73,11 @@ public class UserSettingsService : IUserSettingsService
     )
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        _logger.LogInformation("Saving settings for userId: {UserId}", userId);
+
         var settings = await context.UserSettings.FirstOrDefaultAsync(s => s.UserId == userId);
 
         if (settings == null)
         {
-            // Check if user actually exists to avoid FK error
             var userExists = await context.Users.AnyAsync(u => u.Id == userId);
             if (!userExists)
             {
@@ -119,7 +107,6 @@ public class UserSettingsService : IUserSettingsService
         settings.UpdatedDate = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
-        _logger.LogInformation("Settings saved to database for userId: {UserId}", userId);
     }
 
     private string Encrypt(string clearText)
@@ -143,8 +130,43 @@ public class UserSettingsService : IUserSettingsService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Decryption failed");
-            return string.Empty;
+            _logger.LogWarning(ex, "Standard Unprotect failed, attempting DangerousUnprotect fallback.");
         }
+
+        if (_protector is IPersistedDataProtector persistedProtector)
+        {
+            try
+            {
+                var result = persistedProtector.DangerousUnprotect(
+                    Convert.FromBase64String(cipherText),
+                    ignoreRevocationErrors: true,
+                    out bool requiresMigration,
+                    out bool wasRevoked
+                );
+
+                var decrypted = Encoding.UTF8.GetString(result);
+
+                if (wasRevoked || requiresMigration)
+                {
+                    _logger.LogWarning(
+                        "API key was decrypted with DangerousUnprotect (wasRevoked={WasRevoked}, requiresMigration={RequiresMigration}). Key should be re-saved to use current protection keys.",
+                        wasRevoked, requiresMigration
+                    );
+                }
+
+                return decrypted;
+            }
+            catch (Exception ex2)
+            {
+                _logger.LogWarning(ex2, "DangerousUnprotect also failed. Returning raw value as fallback.");
+            }
+        }
+        else
+        {
+            _logger.LogWarning("IPersistedDataProtector not available; skipping DangerousUnprotect tier.");
+        }
+
+        _logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
+        return cipherText;
     }
 }

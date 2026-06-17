@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -349,6 +408,30 @@
   <data name="AddConfiguration" xml:space="preserve">
     <value>Shto Konfigurim</value>
   </data>
+  <data name="ConnectYourAccount" xml:space="preserve">
+    <value>Lidhni Llogarinë Tuaj</value>
+  </data>
+  <data name="ConnectAccountDescription" xml:space="preserve">
+    <value>Kyçuni me llogarinë tuaj ekzistuese të ofruesit të AI — pa kopjuar çelësa API.</value>
+  </data>
+  <data name="OpenRouterCardDescription" xml:space="preserve">
+    <value>100+ modele incl. GPT-4o, Claude &amp; Gemini falas</value>
+  </data>
+  <data name="ConnectOpenRouter" xml:space="preserve">
+    <value>Lidhu me OpenRouter</value>
+  </data>
+  <data name="GeminiAIStudioDescription" xml:space="preserve">
+    <value>Çelës API falas nga AI Studio — i lidhur me llogarinë tuaj Google &amp; kuotën</value>
+  </data>
+  <data name="GetFreeApiKey" xml:space="preserve">
+    <value>Merr Çelës API Falas</value>
+  </data>
+  <data name="ApiKeyProviders" xml:space="preserve">
+    <value>Ofruesit me Çelës API</value>
+  </data>
+  <data name="ApiKeyProvidersHint" xml:space="preserve">
+    <value>Përdorni formularin më poshtë për t'i shtuar manualisht.</value>
+  </data>
   <data name="Provider" xml:space="preserve">
     <value>Ofruesi</value>
   </data>
@@ -400,7 +483,6 @@
   <data name="Name" xml:space="preserve">
     <value>Emri</value>
   </data>
-  <!-- Home Page -->
   <data name="WelcomeTo" xml:space="preserve">
     <value>Mirë se vini në</value>
   </data>
@@ -416,7 +498,6 @@
   <data name="DevelopedBy" xml:space="preserve">
     <value>Zhvilluar nga</value>
   </data>
-  <!-- Generate Page -->
   <data name="EnterJobDetailsForCoverLetter" xml:space="preserve">
     <value>Vendosni detajet e punës dhe klikoni Gjenero për të krijuar një letër motivimi.</value>
   </data>
@@ -426,7 +507,6 @@
   <data name="EnterJobDetailsForEmail" xml:space="preserve">
     <value>Vendosni detajet e punës dhe klikoni Gjenero për të krijuar një email aplikimi.</value>
   </data>
-  <!-- My Applications Page -->
   <data name="NoApplicationsYet" xml:space="preserve">
     <value>Nuk keni krijuar ende asnjë aplikim. Shkoni te</value>
   </data>
@@ -439,7 +519,6 @@
   <data name="View" xml:space="preserve">
     <value>Shiko</value>
   </data>
-  <!-- Admin Dashboard Page -->
   <data name="AdminDashboard" xml:space="preserve">
     <value>Paneli i Administratorit</value>
   </data>
@@ -455,7 +534,6 @@
   <data name="ApplicationsGenerated" xml:space="preserve">
     <value>Aplikime të Gjeneruara</value>
   </data>
-  <!-- System Logs Page -->
   <data name="SystemLogs" xml:space="preserve">
     <value>Regjistrat e Sistemit</value>
   </data>
@@ -501,7 +579,6 @@
   <data name="Anonymous" xml:space="preserve">
     <value>Anonim</value>
   </data>
-  <!-- NavMenu -->
   <data name="Home" xml:space="preserve">
     <value>Kryefaqja</value>
   </data>
@@ -520,7 +597,6 @@
   <data name="Register" xml:space="preserve">
     <value>Regjistrohu</value>
   </data>
-  <!-- Home Card Descriptions -->
   <data name="ProfileCardDescription" xml:space="preserve">
     <value>Përditësoni CV-në tuaj kryesore, përvojën, arsimin dhe aftësitë. Kjo është burimi i vërtetë për të gjitha aplikimet tuaja.</value>
   </data>
@@ -551,7 +627,7 @@
   <data name="Field" xml:space="preserve">
     <value>Fusha</value>
   </data>
-  <data name="FormattingHelpDescription" xml:space="preserve" >
+  <data name="FormattingHelpDescription" xml:space="preserve">
     <value>Fusha të ndryshme mbështesin formatime të ndryshme. Shihni detajet më poshtë.</value>
   </data>
   <data name="LineBreaksDescription" xml:space="preserve">
@@ -1013,6 +1089,18 @@
   <data name="RateLimitReached" xml:space="preserve">
     <value>Limit i shpejtësisë së {0} është arritur. Ju lutemi prisni përpara se të provoni përsëri.</value>
   </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>Llogaria është bllokuar. Ju lutem provoni përsëri më vonë.</value>
+  </data>
+  <data name="InvalidLoginAttempt" xml:space="preserve">
+    <value>Përpjekje e pavlefshme për hyrje.</value>
+  </data>
+  <data name="ExternalLoginFailed" xml:space="preserve">
+    <value>Hyrja e jashtme dështoi.</value>
+  </data>
+  <data name="ExternalEmailNotProvided" xml:space="preserve">
+    <value>Ofruesi i jashtëm nuk dha një adresë email.</value>
+  </data>
   <data name="ClearDraft" xml:space="preserve">
     <value>Pastro draftin dhe rifresko</value>
   </data>
@@ -1061,7 +1149,6 @@
   <data name="WriteEmailInstruction" xml:space="preserve">
     <value>Shkruani një email të shkurtër profesional për t'i bashkangjitur këtij aplikimi.</value>
   </data>
-  <!-- Notes Feature -->
   <data name="AddNote" xml:space="preserve">
     <value>Shto Shënim</value>
   </data>
@@ -1164,53 +1251,17 @@
   <data name="AccountDeletedExplainer" xml:space="preserve">
     <value>Llogaria juaj dhe të gjitha të dhënat e lidhura janë hequr përgjithmonë nga sistemi ynë.</value>
   </data>
-  <data name="AccountLocked" xml:space="preserve">
-    <value>Llogaria është bllokuar. Ju lutem provoni përsëri më vonë.</value>
-  </data>
   <data name="DeletionWipeConfirm" xml:space="preserve">
     <value>Konfirmim: Profili juaj, aplikimet e gjeneruara dhe konfigurimet e AI (përfshirë çelësat API) janë fshirë. Asnjë regjistrim i llogarisë suaj nuk mbetet në bazat tona kryesore të të dhënave.</value>
   </data>
-  <data name="ExternalEmailNotProvided" xml:space="preserve">
-    <value>Ofruesi i jashtëm nuk dha një adresë email.</value>
-  </data>
-  <data name="ExternalLoginFailed" xml:space="preserve">
-    <value>Hyrja e jashtme dështoi.</value>
-  </data>
   <data name="FinalizeLogout" xml:space="preserve">
     <value>Përfundo &amp; Dil</value>
-  </data>
-  <data name="InvalidLoginAttempt" xml:space="preserve">
-    <value>Përpjekje e pavlefshme për hyrje.</value>
   </data>
   <data name="DemoAccountProtected" xml:space="preserve">
     <value>Kjo është një llogari demo e parazgjedhur dhe nuk mund të fshihet. Ajo shërben si një shembull për të gjithë përdoruesit.</value>
   </data>
   <data name="ProtectedAccount" xml:space="preserve">
     <value>Llogari e mbrojtur</value>
-  </data>
-  <data name="ConnectYourAccount" xml:space="preserve">
-    <value>Lidhni Llogarinë Tuaj</value>
-  </data>
-  <data name="ConnectAccountDescription" xml:space="preserve">
-    <value>Kyçuni me llogarinë tuaj ekzistuese të ofruesit të AI — pa kopjuar çelësa API.</value>
-  </data>
-  <data name="OpenRouterCardDescription" xml:space="preserve">
-    <value>100+ modele incl. GPT-4o, Claude &amp; Gemini falas</value>
-  </data>
-  <data name="ConnectOpenRouter" xml:space="preserve">
-    <value>Lidhu me OpenRouter</value>
-  </data>
-  <data name="GeminiAIStudioDescription" xml:space="preserve">
-    <value>Çelës API falas nga AI Studio — i lidhur me llogarinë tuaj Google &amp; kuotën</value>
-  </data>
-  <data name="GetFreeApiKey" xml:space="preserve">
-    <value>Merr Çelës API Falas</value>
-  </data>
-  <data name="ApiKeyProviders" xml:space="preserve">
-    <value>Ofruesit me Çelës API</value>
-  </data>
-  <data name="ApiKeyProvidersHint" xml:space="preserve">
-    <value>Përdorni formularin më poshtë për t'i shtuar manualisht.</value>
   </data>
   <data name="AISettingsTab" xml:space="preserve">
     <value>Cilësimet e AI</value>
@@ -1323,24 +1374,6 @@
   <data name="BackupMissingSelectedSections" xml:space="preserve">
     <value>Skedari i kopjes rezervë nuk përmban çdo seksion të zgjedhur.</value>
   </data>
-  <data name="CustomSectionHeader" xml:space="preserve">
-    <value>Titulli i Seksionit të Personalizuar</value>
-  </data>
-  <data name="SectionIcon" xml:space="preserve">
-    <value>Ikona e Seksionit</value>
-  </data>
-  <data name="LeaveBlankToUseDefault" xml:space="preserve">
-    <value>Lëreni bosh për të përdorur titullin e paracaktuar '{0}'</value>
-  </data>
-  <data name="SearchIconPlaceholder" xml:space="preserve">
-    <value>Kërkoni për një ikonë (p.sh. yll, valixhe)...</value>
-  </data>
-  <data name="CustomIcon" xml:space="preserve">
-    <value>Ikonë e personalizuar</value>
-  </data>
-  <data name="SelectIcon" xml:space="preserve">
-    <value>Zgjidhni Ikonën</value>
-  </data>
   <data name="CustomFooter" xml:space="preserve">
     <value>Fundori i Personalizuar</value>
   </data>
@@ -1358,6 +1391,24 @@
   </data>
   <data name="Continue" xml:space="preserve">
     <value>Vazhdo</value>
+  </data>
+  <data name="CustomSectionHeader" xml:space="preserve">
+    <value>Titulli i Seksionit të Personalizuar</value>
+  </data>
+  <data name="SectionIcon" xml:space="preserve">
+    <value>Ikona e Seksionit</value>
+  </data>
+  <data name="LeaveBlankToUseDefault" xml:space="preserve">
+    <value>Lëreni bosh për të përdorur titullin e paracaktuar '{0}'</value>
+  </data>
+  <data name="SearchIconPlaceholder" xml:space="preserve">
+    <value>Kërkoni për një ikonë (p.sh. yll, valixhe)...</value>
+  </data>
+  <data name="CustomIcon" xml:space="preserve">
+    <value>Ikonë e personalizuar</value>
+  </data>
+  <data name="SelectIcon" xml:space="preserve">
+    <value>Zgjidhni Ikonën</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Keni harruar fjalëkalimin</value>
@@ -1394,5 +1445,8 @@
   </data>
   <data name="MoveRight" xml:space="preserve">
     <value>Lëviz Djathtas</value>
+  </data>
+  <data name="CopyAsJson" xml:space="preserve">
+    <value>Kopjo si JSON</value>
   </data>
 </root>

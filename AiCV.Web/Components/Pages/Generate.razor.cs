@@ -35,13 +35,13 @@ public partial class Generate : IDisposable
     private bool _showAdvancedEditor;
     private int _splitterSize = 30;
     private int _activeTabIndex;
-    private string _selectedTemplateInPreview = AiCV.Domain.Constants.CvTemplates.Professional;
+    private string _selectedTemplateInPreview = Domain.Constants.CvTemplates.Professional;
     private string _previewHtml = string.Empty;
     private string _customPrompt = string.Empty;
     private string _userId = string.Empty;
     private string _draftSnapshot = string.Empty;
     private Timer? _draftSaveTimer;
-    private static readonly System.Text.Json.JsonSerializerOptions _jsonOptions = new()
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
     };
@@ -51,27 +51,25 @@ public partial class Generate : IDisposable
         _previewResume = value;
         if (_previewResume)
         {
-            // Switch to Preview: Deserialize JSON back to Object
             try
             {
                 if (!string.IsNullOrEmpty(_resumeJson))
                 {
                     _generatedResume =
-                        System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(_resumeJson);
+                        JsonSerializer.Deserialize<CandidateProfile>(_resumeJson);
                 }
             }
             catch (Exception ex)
             {
                 Snackbar.Add($"Invalid JSON: {ex.Message}", Severity.Error);
-                _previewResume = false; // Stay in edit mode
+                _previewResume = false;
             }
         }
         else
         {
-            // Switch to Edit: Serialize Object to JSON
             if (_generatedResume != null)
             {
-                _resumeJson = System.Text.Json.JsonSerializer.Serialize(
+                _resumeJson = JsonSerializer.Serialize(
                     _generatedResume,
                     _jsonOptions
                 );
@@ -89,26 +87,18 @@ public partial class Generate : IDisposable
     {
         _includeProfilePicture = value;
 
-        // Update the generated resume immediately if it exists
         if (_generatedResume != null && _cachedProfile != null)
         {
-            // Ensure the profile picture URL is always copied from the master profile
             _generatedResume.ProfilePictureUrl = _cachedProfile.ProfilePictureUrl;
             _generatedResume.ShowProfilePicture =
                 _includeProfilePicture && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
-
-            // Serialize and deserialize to create a new object reference
-            // This forces Blazor to detect the change and re-render the CvPreview component
-            _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
-            _generatedResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(
+            _resumeJson = JsonSerializer.Serialize(_generatedResume, _jsonOptions);
+            _generatedResume = JsonSerializer.Deserialize<CandidateProfile>(
                 _resumeJson
             );
         }
 
-        // Mark as unsaved since we changed something
         _isAlreadySaved = false;
-
-        // Force UI refresh
         StateHasChanged();
     }
 
@@ -189,13 +179,12 @@ public partial class Generate : IDisposable
         _isFetching = true;
         LoadingService.Show("Fetching job details...", 0);
 
-        // Clear all previous data to prevent mixing cached content
         ClearPreviousJobData();
 
         try
         {
             LoadingService.Update(20, "Connecting to job site...");
-            await Task.Delay(300); // Simulate network delay
+            await Task.Delay(300);
 
             var fetchedJob = await JobOrchestrator.FetchJobDetailsAsync(_job.Url);
 
@@ -224,31 +213,20 @@ public partial class Generate : IDisposable
 
     private void ClearPreviousJobData()
     {
-        // Clear job details (except URL which is being used for fetch)
         _job.Description = string.Empty;
         _job.CompanyName = string.Empty;
         _job.Title = string.Empty;
-
-        // Clear generated content
         _generatedCoverLetter = string.Empty;
         _generatedResume = null;
         _resumeJson = string.Empty;
         _originalResumeJson = string.Empty;
-
-        // Clear detected values
         _detectedCompanyName = null;
         _detectedJobTitle = null;
-
-        // Reset preview states
         _previewCoverLetter = false;
         _previewResume = true;
         _previewHtml = string.Empty;
         _customPrompt = string.Empty;
-
-        // Reset to first tab
         _activeTabIndex = 0;
-
-        // Reset saved state and snapshots
         _isAlreadySaved = false;
         _savedCoverLetter = string.Empty;
         _savedResumeJson = string.Empty;
@@ -297,7 +275,7 @@ public partial class Generate : IDisposable
         };
 
     private string ComputeDraftSnapshot() =>
-        System.Text.Json.JsonSerializer.Serialize(BuildDraft(), _jsonOptions);
+        JsonSerializer.Serialize(BuildDraft(), _jsonOptions);
 
     private static bool IsDraftEmpty(GenerateDraft draft) =>
         string.IsNullOrWhiteSpace(draft.JobUrl)
@@ -354,7 +332,7 @@ public partial class Generate : IDisposable
             {
                 try
                 {
-                    _generatedResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(
+                    _generatedResume = JsonSerializer.Deserialize<CandidateProfile>(
                         _resumeJson
                     );
                 }
@@ -468,18 +446,16 @@ public partial class Generate : IDisposable
             _generatedResume = ResumeResult.Profile;
             _generatedEmail = ApplicationEmail;
 
-            // Copy profile picture settings from the master profile to the tailored CV
-            // Use the switch value to determine if the picture should be shown
             if (_generatedResume != null && _cachedProfile != null)
             {
                 _generatedResume.ProfilePictureUrl = _cachedProfile.ProfilePictureUrl;
                 _generatedResume.ShowProfilePicture =
                     _includeProfilePicture
                     && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
-                
+
                 _generatedResume.Tagline = _cachedProfile.Tagline;
                 _generatedResume.FooterText = _cachedProfile.FooterText;
-                
+
                 _generatedResume.SummarySection = _cachedProfile.SummarySection;
                 _generatedResume.ExperienceSection = _cachedProfile.ExperienceSection;
                 _generatedResume.EducationSection = _cachedProfile.EducationSection;
@@ -488,12 +464,11 @@ public partial class Generate : IDisposable
                 _generatedResume.LanguagesSection = _cachedProfile.LanguagesSection;
                 _generatedResume.InterestsSection = _cachedProfile.InterestsSection;
             }
-            _resumeJson = System.Text.Json.JsonSerializer.Serialize(_generatedResume, _jsonOptions);
+            _resumeJson = JsonSerializer.Serialize(_generatedResume, _jsonOptions);
             _originalResumeJson = _resumeJson;
             _detectedCompanyName = ResumeResult.DetectedCompanyName;
             _detectedJobTitle = ResumeResult.DetectedJobTitle;
 
-            // Fallback & Correction: Use AI-detected values if missing OR if they differ (AI is usually smarter)
             if (
                 !string.IsNullOrWhiteSpace(_detectedCompanyName)
                 && (
@@ -534,9 +509,8 @@ public partial class Generate : IDisposable
             await Task.Delay(300);
 
             Snackbar.Add("Application Generated!", Severity.Success);
-            _previewCoverLetter = true; // Auto-switch to preview
+            _previewCoverLetter = true;
 
-            // Only allow saving if content is different from what was previously saved
             if (
                 _isAlreadySaved
                 && _generatedCoverLetter == _savedCoverLetter
@@ -544,11 +518,11 @@ public partial class Generate : IDisposable
                 && _generatedEmail == _savedEmail
             )
             {
-                // Content is the same as saved, keep saved state
+                //
             }
             else
             {
-                _isAlreadySaved = false; // Allow saving new/different content
+                _isAlreadySaved = false;
             }
         }
         catch (Exception ex)
@@ -569,7 +543,6 @@ public partial class Generate : IDisposable
         StateHasChanged();
         await Task.Yield();
 
-        // Check if already saved
         if (_isAlreadySaved)
         {
             Snackbar.Add(
@@ -621,15 +594,12 @@ public partial class Generate : IDisposable
                 _selectedTemplateInPreview
             );
             _isAlreadySaved = true;
-            // Store what was saved to compare with future generations
             _savedCoverLetter = _generatedCoverLetter;
             _savedResumeJson = _resumeJson;
             _savedEmail = _generatedEmail;
             await Task.Yield();
             Snackbar.Add("Application saved successfully!", Severity.Success);
 
-            // The application is now safely stored in "My Applications" -
-            // clear the draft and reset the screen for the next task.
             await PersistenceService.ClearDraftAsync(GetDraftKey());
             ResetForNewApplication();
         }
@@ -654,7 +624,7 @@ public partial class Generate : IDisposable
     {
         if (_generatedResume == null)
             return;
-        var json = System.Text.Json.JsonSerializer.Serialize(_generatedResume);
+        var json = JsonSerializer.Serialize(_generatedResume);
         await ClipboardService.CopyToClipboardAsync(json);
         Snackbar.Add("Copied JSON to clipboard!", Severity.Success);
     }
@@ -745,7 +715,7 @@ public partial class Generate : IDisposable
         public bool PreviewResume { get; set; } = true;
         public bool IncludeProfilePicture { get; set; }
         public string SelectedTemplateInPreview { get; set; } =
-            AiCV.Domain.Constants.CvTemplates.Professional;
+            Domain.Constants.CvTemplates.Professional;
         public bool IsAlreadySaved { get; set; }
         public string SavedCoverLetter { get; set; } = string.Empty;
         public string SavedResumeJson { get; set; } = string.Empty;
@@ -770,6 +740,7 @@ public partial class Generate : IDisposable
     public void Dispose()
     {
         _draftSaveTimer?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private static Color GetProviderColor(AIProvider provider) =>
