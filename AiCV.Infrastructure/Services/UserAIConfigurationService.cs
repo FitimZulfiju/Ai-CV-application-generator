@@ -172,7 +172,8 @@ ILogger<UserAIConfigurationService> logger
         {
             byte[]? protectedBytes = null;
 
-n            // Try Base64Url decode first (used by DataProtection), then fall back to standard Base64
+                        // Try Base64Url decode first (used by DataProtection), then fall back to standard Base64
+
             try
             {
                 protectedBytes = Microsoft.AspNetCore.WebUtilities.WebEncoders.Base64UrlDecode(input);
@@ -200,7 +201,7 @@ n            // Try Base64Url decode first (used by DataProtection), then fall b
                     out bool wasRevoked
                 );
 
-n                var decrypted = Encoding.UTF8.GetString(result);
+                var decrypted = Encoding.UTF8.GetString(result);
 
                 if (wasRevoked || requiresMigration)
                 {
@@ -222,7 +223,7 @@ n                var decrypted = Encoding.UTF8.GetString(result);
             _logger.LogWarning("IPersistedDataProtector not available; skipping DangerousUnprotect tier.");
         }
 
-n        _logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
+_logger.LogWarning("All decryption attempts failed. Returning raw stored value as API key.");
         return input;
     }
 }
