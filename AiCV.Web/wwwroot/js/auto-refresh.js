@@ -91,7 +91,7 @@ export function startAutoRefresh() {
 
         // 2. Create Banner (MudBlazor "Filled Warning" Style)
         const banner = document.createElement('div');
-        banner.style.boxShadow = '0px -2px 10px rgba(0,0,0,0.3)';
+        banner.style.boxShadow = '0rem -0.125rem 0.625rem rgba(0,0,0,0.3)';
         banner.style.position = 'fixed';
         banner.style.bottom = '0'; // Moved to bottom
         banner.style.left = '0';
@@ -101,7 +101,7 @@ export function startAutoRefresh() {
         banner.style.color = '#ffffff';
         banner.style.display = 'flex';
         banner.style.alignItems = 'center';
-        banner.style.padding = '12px 24px';
+        banner.style.padding = '0.75rem 1.5rem';
         banner.style.fontFamily = 'Roboto, Helvetica, Arial, sans-serif';
         banner.style.fontSize = '1rem';
         banner.style.lineHeight = '1.5';
@@ -109,10 +109,10 @@ export function startAutoRefresh() {
 
         // Icon
         const iconDiv = document.createElement('div');
-        iconDiv.style.marginRight = '20px';
+        iconDiv.style.marginRight = '1.25rem';
         iconDiv.style.display = 'flex';
         iconDiv.style.alignItems = 'center';
-        iconDiv.innerHTML = `<svg style="width: 24px; height: 24px; fill: white;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>`;
+        iconDiv.innerHTML = `<svg style="width: 1.5rem; height: 1.5rem; fill: white;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>`;
         banner.appendChild(iconDiv);
 
         // Message
