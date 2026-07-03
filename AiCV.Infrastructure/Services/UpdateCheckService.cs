@@ -359,7 +359,12 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
             }
 
             using var client = _httpClientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromSeconds(20);
+            // Set a long timeout. Watchtower's /v1/update endpoint blocks until ALL containers are updated.
+            // If we timeout early, the HTTP connection drops, which cancels Watchtower's request context
+            // and causes the image pull to abort. We must wait long enough for the pull to finish.
+            // When Watchtower stops this container, the connection will naturally break, but by then
+            // the pull is complete and Watchtower will proceed to start the new container.
+            client.Timeout = TimeSpan.FromMinutes(10);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Bearer",
                 _watchtowerToken
