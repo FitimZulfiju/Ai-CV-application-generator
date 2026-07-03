@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.15.2] - 2026-07-03
+
+### Fixed
+- fix: increase watchtower HTTP request timeout to 10 minutes to prevent premature cancellation during image pull
+
 ## [1.15.1] - 2026-07-03
 
 ### Changed
