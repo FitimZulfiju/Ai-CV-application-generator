@@ -1,0 +1,19 @@
+.application-details-page .summary p {
+    margin-bottom: 1rem;
+}
+
+.application-details-page .summary p:last-child {
+    margin-bottom: 0;
+}
+
+::deep .summary {
+    white-space: pre-wrap;
+}
+
+::deep .summary p {
+    margin-bottom: 1rem;
+}
+
+::deep .summary p:last-child {
+    margin-bottom: 0;
+}

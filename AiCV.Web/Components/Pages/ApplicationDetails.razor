@@ -3,7 +3,7 @@
 
 <PageTitle>@Localizer["AiCvApplications"]</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4 application-details-page">
     @if (_isLoading)
     {
     }
@@ -102,7 +102,7 @@
                 {
 
                     <MudPaper Elevation="1" Class="pa-4">
-                        <div class="summary">
+                        <div class="summary" style="white-space: pre-wrap;">
                             <FormattedText Text="@_application.ApplicationEmailContent" />
                         </div>
                     </MudPaper>
@@ -125,7 +125,7 @@
                         </MudStack>
                         <MudDivider Class="mb-4" />
                     }
-                    <div class="summary">
+                    <div class="summary" style="white-space: pre-wrap;">
                         <FormattedText Text="@_application.JobPosting?.Description" />
                     </div>
                 </MudPaper>
