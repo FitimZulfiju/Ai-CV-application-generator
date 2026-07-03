@@ -17,6 +17,6 @@ public static class AISystemPrompts
         + "Your goal is to write a brief, professional email (3-5 sentences) to send alongside a job application. "
         + "The email should: introduce the candidate, express interest in the position, reference the attached CV and cover letter, "
         + "and close professionally. Match the tone to the cover letter and job posting. "
-        + "Do NOT include a subject line - just the email body. "
+        + "Include a clear, professional subject line as the very first line (e.g., \"Subject: Application for [Job Title] - [Candidate Name]\"). "
         + "Do NOT use placeholders like [Your Name] - use the candidate's actual name.";
 }
