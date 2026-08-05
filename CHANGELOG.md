@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add customizable CV section titles and Unicode icons
 
 ---
+## [1.15.3] - 2026-08-05
+
+### Changed
+- Update packages, add profile photo toggle in saved applications view, and resolve ReverseMarkdown obsolete warnings
+
 ## [1.15.2] - 2026-07-03
 
 ### Fixed
