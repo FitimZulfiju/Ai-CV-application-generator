@@ -15,6 +15,7 @@ public partial class ApplicationDetails
     private bool _isPrintingResume = false;
     private int _activeTabIndex = 0;
     private int _previousId;
+    private bool _includeProfilePicture;
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,6 +79,10 @@ public partial class ApplicationDetails
                     _tailoredResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(
                         _application.TailoredResumeJson
                     );
+                    if (_tailoredResume != null)
+                    {
+                        _includeProfilePicture = _tailoredResume.ShowProfilePicture;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -176,6 +181,38 @@ public partial class ApplicationDetails
     {
         await ClipboardService.CopyToClipboardAsync(text);
         Snackbar.Add(Localizer["CopiedToClipboard"], Severity.Success);
+    }
+
+    private bool HasProfilePicture()
+    {
+        return _cachedProfile != null && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
+    }
+
+    private async Task OnIncludeProfilePictureToggled(bool value)
+    {
+        _includeProfilePicture = value;
+
+        if (_tailoredResume != null && _cachedProfile != null)
+        {
+            _tailoredResume.ProfilePictureUrl = _cachedProfile.ProfilePictureUrl;
+            _tailoredResume.ShowProfilePicture =
+                _includeProfilePicture && !string.IsNullOrEmpty(_cachedProfile.ProfilePictureUrl);
+
+            if (_application != null)
+            {
+                _application.TailoredResumeJson = System.Text.Json.JsonSerializer.Serialize(_tailoredResume);
+                try
+                {
+                    await CVService.SaveApplicationAsync(_application);
+                }
+                catch (Exception ex)
+                {
+                    Snackbar.Add($"{Localizer["ErrorSavingTemplate"]}: {ex.Message}", Severity.Error);
+                }
+            }
+        }
+
+        StateHasChanged();
     }
 
     private async Task OnTemplateSelected()

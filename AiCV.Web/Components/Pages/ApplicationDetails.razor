@@ -33,6 +33,16 @@
                         </MudSelect>
                     </div>
                 }
+                @if (_activeTabIndex == 1 && _tailoredResume != null)
+                {
+                    <div style="flex: 1 1 auto; max-width: 12.5rem;" class="d-flex align-center justify-center">
+                        <MudTooltip Text="@(HasProfilePicture() ? Localizer["IncludePhotoInCv"] : Localizer["NoProfilePictureUploadOne"])">
+                            <MudSwitch T="bool" Value="_includeProfilePicture" ValueChanged="OnIncludeProfilePictureToggled"
+                                       Color="Color.Secondary" Label="@Localizer["IncludePhoto"]"
+                                       Disabled="@(!HasProfilePicture())" Size="Size.Small" Style="white-space: nowrap;" />
+                        </MudTooltip>
+                    </div>
+                }
                 @if (_activeTabIndex == 0 && _application != null && !string.IsNullOrEmpty(_application.CoverLetterContent) && _cachedProfile != null)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="PrintCoverLetter" Disabled="_isPrintingCoverLetter" FullWidth="true" Style="max-width: 12.5rem;">

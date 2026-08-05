@@ -22,7 +22,7 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
 
             var html = await httpClient.GetStringAsync(url);
-            
+
             // Use SmartReader to extract main content
             var reader = new SmartReader.Reader(url, html);
             var article = await reader.GetArticleAsync();
@@ -30,11 +30,11 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
             // Convert to Markdown
             var config = new ReverseMarkdown.Config
             {
-                UnknownTags = ReverseMarkdown.Config.UnknownTagsOption.Bypass,
-                GithubFlavored = true,
-                RemoveComments = true,
-                SmartHrefHandling = true
+                GithubFlavored = true
             };
+            config.Tags.Unknown = ReverseMarkdown.Config.UnknownTagsOption.Bypass;
+            config.Formatting.RemoveComments = true;
+            config.Links.SmartHref = true;
 
             var converter = new ReverseMarkdown.Converter(config);
             string markdown;
@@ -48,7 +48,7 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
                 // Fallback: Convert the entire body if SmartReader fails
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
-                
+
                 // Remove script and style tags manually for fallback
                 var nodesToRemove = doc.DocumentNode.SelectNodes("//script|//style|//noscript|//iframe|//svg|//nav|//footer");
                 if (nodesToRemove != null)
@@ -58,7 +58,7 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
                         node.Remove();
                     }
                 }
-                
+
                 markdown = converter.Convert(doc.DocumentNode.OuterHtml);
             }
 
@@ -118,12 +118,12 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
 
         // Pick the best candidate (prefer OG, then Meta, then HTML)
         var fullTitle = !string.IsNullOrWhiteSpace(ogTitle) ? ogTitle :
-                        (!string.IsNullOrWhiteSpace(metaTitle) ? metaTitle : 
+                        (!string.IsNullOrWhiteSpace(metaTitle) ? metaTitle :
                         System.Net.WebUtility.HtmlDecode(htmlTitle ?? string.Empty).Trim());
 
         if (!string.IsNullOrWhiteSpace(fullTitle))
         {
-            // We used to split by separators ("-", "|") but that often cut off the actual job title 
+            // We used to split by separators ("-", "|") but that often cut off the actual job title
             // if the format was "Department | Job Title | Location".
             // It's safer to return the full title and let the user or AI clean it up.
             title = fullTitle;
@@ -131,6 +131,6 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
 
         return (title, company);
     }
-    
+
     // ExtractTextFromHtml is no longer needed as we use SmartReader + ReverseMarkdown directly
 }
