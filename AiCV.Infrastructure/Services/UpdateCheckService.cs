@@ -370,10 +370,11 @@ public class UpdateCheckService : BackgroundService, IUpdateCheckService
                 _watchtowerToken
             );
 
-            // Use the Compose service name so Docker DNS resolves it consistently.
+            // Use the Compose service name so Docker DNS resolves it consistently, or override via env var.
+            var watchtowerUrl = _configuration["WATCHTOWER_HTTP_API_URL"] ?? "http://watchtower:8080/v1/update";
             using var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                "http://watchtower:8080/v1/update"
+                watchtowerUrl
             );
             var response = await client.SendAsync(
                 request,
