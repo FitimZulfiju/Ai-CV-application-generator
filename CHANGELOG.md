@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.17.3] - 2026-09-10
+
+### Changed
+- Add Immediate property to Description field in ExperienceTab for instant updates
+
 ## [1.17.2] - 2026-09-10
 
 ### Changed
