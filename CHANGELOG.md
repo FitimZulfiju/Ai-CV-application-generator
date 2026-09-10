@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.17.2] - 2026-09-10
+
+### Changed
+- Allow header text to fill available space in Modern and Professional PDF templates when photo is shown
+
 ## [1.17.1] - 2026-09-10
 
 ### Changed
