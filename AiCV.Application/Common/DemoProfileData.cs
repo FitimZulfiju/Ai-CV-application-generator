@@ -1,9 +1,5 @@
 namespace AiCV.Application.Common;
 
-/// <summary>
-/// Static demo profile data for the "View Sample CV" feature.
-/// This is a read-only reference that all users can view.
-/// </summary>
 public static class DemoProfileData
 {
     public static CandidateProfile GetSampleProfile() =>
@@ -141,7 +137,7 @@ public static class DemoProfileData
                         + "Multi-language support with resource localization and real-time SignalR notifications.\n"
                         + "Automated Google Drive backup integration with OAuth 2.0 authentication, scheduling, and Docker containerization.",
                     Technologies =
-                        ".NET 9, Blazor Server, MudBlazor, Entity Framework Core, SQL Server, Docker, SignalR.",
+                        "<chip>.NET 9</chip> <chip>Blazor Server</chip> <chip>MudBlazor</chip> <chip>Entity Framework Core</chip> <chip>SQL Server</chip> <chip>Docker</chip> <chip>SignalR</chip>",
                     Link = "Private Repository (Available upon request).",
                 },
             ],

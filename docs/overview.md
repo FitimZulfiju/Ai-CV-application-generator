@@ -58,6 +58,8 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
 
   * High-fidelity PDF generation with theme-specific styling
   * Interactive HTML preview with smart Markdown rendering
+  * Custom `<chip>` / `<badge>` tags for inline pill-shaped technology badges
+  * Full HTML tag parity between browser preview and PDF output (bold, italic, underline, strikethrough, links, colors, highlights)
   * Export as Markdown or JSON for external use
 * Premium CV Templates:
 

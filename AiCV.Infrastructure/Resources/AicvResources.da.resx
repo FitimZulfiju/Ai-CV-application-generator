@@ -637,7 +637,7 @@
     <value>Start linjer med - eller * for at oprette punkttegn.</value>
   </data>
 	<data name="HtmlTagsDescription" xml:space="preserve">
-    <value>Du kan bruge HTML direkte til styling.</value>
+    <value>Du kan bruge Markdown og HTML til styling, herunder brugerdefinerede tags som chip og badge.</value>
   </data>
 	<data name="WhereEachFormatWorks" xml:space="preserve">
     <value>Hvor hvert format virker</value>
@@ -829,10 +829,10 @@
     <value>Gå til Generer, indsæt en job-URL eller beskrivelse. AI vil læse dit Master CV og jobbeskrivelsen for at oprette et perfekt skræddersyet CV og følgebrev.</value>
   </data>
 	<data name="HtmlFormatting" xml:space="preserve">
-    <value>HTML-formatering</value>
+    <value>Tekstformatering</value>
   </data>
 	<data name="HtmlFormattingDescription" xml:space="preserve">
-    <value>Du kan bruge HTML-tags i beskrivelsesfelter (resumé, erhvervserfaring osv.) til at formatere din tekst.</value>
+    <value>Du kan bruge Markdown og HTML-tags i tekstfelter (resumé, erhvervserfaring osv.) til at formatere din tekst. Brugerdefinerede tags som chip og badge understøttes også.</value>
   </data>
 	<data name="CodeToWrite" xml:space="preserve">
     <value>Kode at skrive</value>
@@ -866,6 +866,21 @@
   </data>
 	<data name="LineBreak" xml:space="preserve">
     <value>Linjeskift</value>
+  </data>
+	<data name="UnderlineText" xml:space="preserve">
+    <value>Understregning</value>
+  </data>
+	<data name="StrikethroughText" xml:space="preserve">
+    <value>Gennemstregning</value>
+  </data>
+	<data name="ChipBadgeText" xml:space="preserve">
+    <value>Chip / Badge</value>
+  </data>
+	<data name="Strikethrough" xml:space="preserve">
+    <value>Gennemstregning</value>
+  </data>
+	<data name="ChipBadge" xml:space="preserve">
+    <value>Chip / Badge</value>
   </data>
 	<data name="BetaWarning" xml:space="preserve">
     <value>Beta - Data kan blive nulstillet under opdateringer</value>
@@ -1381,7 +1396,7 @@
     <value>Sidefodstekst</value>
   </data>
 	<data name="SupportsMarkdown" xml:space="preserve">
-    <value>Understøtter Markdown</value>
+    <value>Understøtter Markdown &amp; HTML</value>
   </data>
 	<data name="BackupMissingSectionsWarningTitle" xml:space="preserve">
     <value>Manglende Sektioner</value>
