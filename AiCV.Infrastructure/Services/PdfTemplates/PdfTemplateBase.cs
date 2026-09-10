@@ -1145,17 +1145,23 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 else
                 {
                     var chipText = part.Trim();
+                    var pb = 1.5f;
                     t.Element()
-                        .Layers(layers =>
+                        .PaddingHorizontal(2)
+                        .OffsetY(fontSize * 0.22f + pb)
+                        .Background(Style.BackgroundLight)
+                        .Border(1)
+                        .BorderColor(Style.BorderColor)
+                        .CornerRadius(10)
+                        .PaddingHorizontal(6)
+                        .PaddingTop(1.5f)
+                        .PaddingBottom(pb)
+                        .Text(ct =>
                         {
-                            layers.Layer().OffsetY(1f).Background("#EEEEEE").CornerRadius(8);
-                            layers.PrimaryLayer().PaddingHorizontal(3).Text(ct =>
-                            {
-                                ct.DefaultTextStyle(s =>
-                                    s.FontSize(fontSize - 1).FontColor(Style.TextDark)
-                                );
-                                ct.Span(chipText);
-                            });
+                            ct.DefaultTextStyle(s =>
+                                s.FontSize(fontSize).FontColor(Style.TextDark)
+                            );
+                            ct.Span(chipText);
                         });
                 }
             }
