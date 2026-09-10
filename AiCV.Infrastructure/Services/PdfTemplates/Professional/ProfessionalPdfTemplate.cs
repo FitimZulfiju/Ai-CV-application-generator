@@ -53,9 +53,6 @@ public class ProfessionalPdfTemplate(
                             ComposeHeaderLinkRow(col, profile, showPhoto ? 8f : 9f, headerTextCol);
                             ComposeHeaderTagline(col, profile.Tagline ?? "", showPhoto ? 8.5f : 9.5f, headerTextCol, titleTextCol);
                         });
-
-                    if (showPhoto)
-                        row.ConstantItem(sideWidth, Unit.Centimetre).Element(_ => { });
                 });
         });
     }
