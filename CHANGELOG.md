@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.17.1] - 2026-09-10
+
+### Changed
+- Fix chip text alignment and size in PDF generation to match HTML preview
+
 ## [1.17.0] - 2026-09-10
 
 ### Added
