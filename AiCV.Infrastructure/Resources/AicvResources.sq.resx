@@ -637,7 +637,7 @@
     <value>Filloni linjat me - ose * për të krijuar pika (bullet points).</value>
   </data>
   <data name="HtmlTagsDescription" xml:space="preserve">
-    <value>Ju mund të përdorni HTML direkt për stilim.</value>
+    <value>Ju mund të përdorni Markdown dhe HTML për stilim, përfshirë etiketat e personalizuara si chip dhe badge.</value>
   </data>
   <data name="WhereEachFormatWorks" xml:space="preserve">
     <value>Ku Funksionon Çdo Format</value>
@@ -829,10 +829,10 @@
     <value>Shkoni te Gjenero, ngjitni një URL të punës ose përshkrimin. AI do të lexojë CV-në tuaj Master dhe Përshkrimin e Punës për të krijuar një CV dhe Letër Motivimi të përshtatur në mënyrë perfektë.</value>
   </data>
   <data name="HtmlFormatting" xml:space="preserve">
-    <value>Formatimi HTML</value>
+    <value>Formatimi i Tekstit</value>
   </data>
   <data name="HtmlFormattingDescription" xml:space="preserve">
-    <value>Ju mund të përdorni etiketat HTML në fushat e Përshkrimit (Përmbledhja, Përvoja e Punës, etj.) për të formatuar tekstin tuaj.</value>
+    <value>Ju mund të përdorni Markdown dhe etiketa HTML në fushat e tekstit (Përmbledhja, Përvoja e Punës, etj.) për të formatuar tekstin tuaj. Etiketat e personalizuara si chip dhe badge mbështeten gjithashtu.</value>
   </data>
   <data name="CodeToWrite" xml:space="preserve">
     <value>Kodi Për të Shkruar</value>
@@ -865,7 +865,22 @@
     <value>Listë me Pika</value>
   </data>
   <data name="LineBreak" xml:space="preserve">
-    <value>Ndërprerje e Rreshtit</value>
+    <value>Ndërprerja e rreshtit</value>
+  </data>
+  <data name="UnderlineText" xml:space="preserve">
+    <value>Nënvizim</value>
+  </data>
+  <data name="StrikethroughText" xml:space="preserve">
+    <value>Tekst i fshirë</value>
+  </data>
+  <data name="ChipBadgeText" xml:space="preserve">
+    <value>Etiketë / Chip</value>
+  </data>
+  <data name="Strikethrough" xml:space="preserve">
+    <value>Tekst i fshirë</value>
+  </data>
+  <data name="ChipBadge" xml:space="preserve">
+    <value>Etiketë / Chip</value>
   </data>
   <data name="BetaWarning" xml:space="preserve">
     <value>Beta - Të dhënat mund të fshihen gjatë përditësimeve</value>
@@ -1381,7 +1396,7 @@
     <value>Teksti i Fundorit</value>
   </data>
   <data name="SupportsMarkdown" xml:space="preserve">
-    <value>Mundëson Markdown</value>
+    <value>Mundëson Markdown &amp; HTML</value>
   </data>
   <data name="BackupMissingSectionsWarningTitle" xml:space="preserve">
     <value>Seksione që Mungojnë</value>

@@ -2,6 +2,11 @@ namespace AiCV.Web.Components.Shared;
 
 public static partial class CvTextFormatter
 {
+    private const string ChipSpanStyle =
+        "display:inline-block;padding:0.15rem 0.5rem;border-radius:1rem;"
+        + "background-color:var(--bg-light);border:1px solid var(--border-color);"
+        + "font-size:0.9em;color:var(--text-dark);";
+
     public static string FormatSummary(string? summary)
     {
         if (string.IsNullOrEmpty(summary))
@@ -27,6 +32,10 @@ public static partial class CvTextFormatter
         }
 
         formatted = MissingHexHashRegex().Replace(formatted, "$1#$2");
+        formatted = ChipBadgeTagRegex().Replace(
+            formatted,
+            $"<span style=\"{ChipSpanStyle}\">$1</span>"
+        );
         return UnderlineRegex().Replace(formatted, "<u>$1</u>");
     }
 
@@ -47,13 +56,17 @@ public static partial class CvTextFormatter
             formatted = LiWithNestedPRegex().Replace(formatted, "<li>$1</li>");
         }
 
-        return MissingHexHashRegex().Replace(formatted, "$1#$2");
+        formatted = MissingHexHashRegex().Replace(formatted, "$1#$2");
+        formatted = ChipBadgeTagRegex().Replace(
+            formatted,
+            $"<span style=\"{ChipSpanStyle}\">$1</span>"
+        );
+        return formatted;
     }
 
     [System.Text.RegularExpressions.GeneratedRegex(@"<u>(.*?)</u>")]
     private static partial System.Text.RegularExpressions.Regex UnderlineRegex();
 
-    // Browsers ignore "color: 2980b9" (no leading #), while the PDF normalizes it — add the missing # so HTML matches PDF output
     [System.Text.RegularExpressions.GeneratedRegex(
         @"(color\s*:\s*)(?!#)([0-9a-fA-F]{3,8})\b",
         System.Text.RegularExpressions.RegexOptions.IgnoreCase
@@ -66,4 +79,11 @@ public static partial class CvTextFormatter
             | System.Text.RegularExpressions.RegexOptions.Singleline
     )]
     private static partial System.Text.RegularExpressions.Regex LiWithNestedPRegex();
+
+    [System.Text.RegularExpressions.GeneratedRegex(
+        @"<(?:chip|badge)\s*>(.*?)</(?:chip|badge)>",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            | System.Text.RegularExpressions.RegexOptions.Singleline
+    )]
+    private static partial System.Text.RegularExpressions.Regex ChipBadgeTagRegex();
 }

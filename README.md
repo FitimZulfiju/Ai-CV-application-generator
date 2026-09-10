@@ -75,7 +75,7 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
   Personalize your CV with custom section titles, Unicode icons, and toggleable layout styles (such as modern chips for languages and interests).
 
 * **Smart Markdown Rendering**
-  Context-aware formatting engine that balances full Markdown support (bold, italic, links) with perfect document alignment, preventing line breaks and trailing whitespace.
+  Context-aware formatting engine that balances full Markdown support (bold, italic, links, strikethrough) with perfect document alignment. Supports custom `<chip>` / `<badge>` tags for inline pill-shaped technology badges. Full HTML tag parity between browser preview and PDF output.
 
 * **Export Options**
   High-fidelity PDF generation via QuestPDF and structured Markdown/JSON exports for external use.

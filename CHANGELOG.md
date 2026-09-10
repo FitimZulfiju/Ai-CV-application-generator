@@ -10,8 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - feat: add customizable CV section titles and Unicode icons
+- feat: add `<chip>` / `<badge>` custom tags for inline pill-shaped badges in CV text fields (rendered in both browser preview and PDF)
+- feat: add `<s>` / `<del>` strikethrough support in PDF documents
+- feat: add `<mark>` highlight support in PDF documents (bold + dark-gold text)
+- feat: add `<sub>` / `<sup>` subscript/superscript support in PDF documents
+- feat: extend named CSS color dictionary from 17 to 65 entries for PDF rendering
+
+### Fixed
+- fix: `<br>` tags now correctly produce visual line breaks in generated PDF documents
+- fix: `font-style: italic` from inline `style=` attributes is now applied in PDF documents
+- fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.17.0] - 2026-09-10
+
+### Added
+- feat: Add support for u, s, mark, and chip tags in PDF and HTML generation, fix Windows line breaks and text alignment
+
+### Fixed
+- fix: Update Description field in ExperienceTab for improved styling and layout
+
 ## [1.16.1] - 2026-08-12
 
 ### Fixed

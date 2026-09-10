@@ -835,7 +835,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         return File.Exists(photoPath);
     }
 
-    protected void ComposeProfilePhoto(
+    protected static void ComposeProfilePhoto(
         IContainer container,
         string photoPath,
         float sizeCm,
@@ -1069,7 +1069,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         }
     }
 
-    private static void ComposeTextSegment(
+    private void ComposeTextSegment(
         ColumnDescriptor column,
         string segment,
         float fontSize,
@@ -1096,17 +1096,70 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             if (preserveParagraphBreaks && paragraphIndex < paragraphs.Length - 1)
                 item = item.PaddingBottom(paragraphSpacing, Unit.Point);
 
-            item.Text(t =>
+            if (paragraph.Contains("[[CHIP:"))
             {
-                t.DefaultTextStyle(s =>
-                    s.FontSize(fontSize)
-                        .FontColor(fontColor)
-                        .LineHeight(lineHeight)
-                );
-                t.ParagraphSpacing(paragraphSpacing);
-                FormatHtmlToText(t, paragraph, isBlock: true, fallbackColor: fontColor);
-            });
+                ComposeChipContent(item, paragraph, fontSize, fontColor, lineHeight);
+            }
+            else
+            {
+                item.Text(t =>
+                {
+                    t.DefaultTextStyle(s =>
+                        s.FontSize(fontSize)
+                            .FontColor(fontColor)
+                            .LineHeight(lineHeight)
+                    );
+                    t.ParagraphSpacing(paragraphSpacing);
+                    FormatHtmlToText(t, paragraph, isBlock: true, fallbackColor: fontColor);
+                });
+            }
         }
+    }
+
+    private void ComposeChipContent(
+        IContainer container,
+        string content,
+        float fontSize,
+        string fontColor,
+        float lineHeight
+    )
+    {
+        var parts = ChipPlaceholderRegex().Split(content);
+
+        container.Text(t =>
+        {
+            t.DefaultTextStyle(s =>
+                s.FontSize(fontSize).FontColor(fontColor).LineHeight(lineHeight)
+            );
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var part = parts[i];
+                if (string.IsNullOrEmpty(part))
+                    continue;
+
+                if (i % 2 == 0)
+                {
+                    FormatHtmlToText(t, part, isBlock: true, fallbackColor: fontColor);
+                }
+                else
+                {
+                    var chipText = part.Trim();
+                    t.Element()
+                        .Layers(layers =>
+                        {
+                            layers.Layer().OffsetY(1f).Background("#EEEEEE").CornerRadius(8);
+                            layers.PrimaryLayer().PaddingHorizontal(3).Text(ct =>
+                            {
+                                ct.DefaultTextStyle(s =>
+                                    s.FontSize(fontSize - 1).FontColor(Style.TextDark)
+                                );
+                                ct.Span(chipText);
+                            });
+                        });
+                }
+            }
+        });
     }
 
     protected static void FormatHtmlToText(
@@ -1118,7 +1171,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         bool isItalic = false,
         bool isUnderline = false,
         string? color = null,
-        string? linkUrl = null
+        string? linkUrl = null,
+        bool isStrikethrough = false,
+        float? fontSizeOverride = null
     )
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -1134,20 +1189,19 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 var cleanBefore = WebUtility.HtmlDecode(
                     HtmlTagRegex().Replace(beforeText, string.Empty)
                 );
-                if (
-                    !string.IsNullOrWhiteSpace(cleanBefore)
-                    || (isBlock && !string.IsNullOrEmpty(cleanBefore))
-                )
+                if (!string.IsNullOrEmpty(cleanBefore))
                 {
-                    var span = !string.IsNullOrEmpty(linkUrl)
-                        ? textDescriptor.Hyperlink(linkUrl, cleanBefore)
-                        : textDescriptor.Span(cleanBefore);
-                    ApplyStyle(
-                        span,
+                    EmitTextWithNewlines(
+                        textDescriptor,
+                        cleanBefore,
                         isBold,
                         isItalic,
                         isUnderline,
-                        color ?? (string.IsNullOrEmpty(linkUrl) ? null : fallbackColor)
+                        isStrikethrough,
+                        color,
+                        linkUrl,
+                        fallbackColor,
+                        fontSizeOverride
                     );
                 }
             }
@@ -1166,8 +1220,22 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             bool currentItalic =
                 isItalic || tagName == "em" || tagName == "i" || tagName == "blockquote";
             bool currentUnderline = isUnderline || tagName == "u";
+            bool currentStrikethrough =
+                isStrikethrough || tagName == "s" || tagName == "del";
             string? currentColor = color;
             string? currentLink = linkUrl;
+            float? currentFontSizeOverride = fontSizeOverride;
+
+            if (tagName == "mark")
+            {
+                currentBold = true;
+                currentColor ??= "#B8860B";
+            }
+
+            if (tagName == "sub" || tagName == "sup")
+            {
+                currentFontSizeOverride = (fontSizeOverride ?? 10f) * 0.7f;
+            }
 
             if (tagName == "a")
             {
@@ -1197,10 +1265,29 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                     if (weightMatch.Success)
                     {
                         var weight = weightMatch.Groups[1].Value.Trim().ToLower();
-                        if (weight == "bold" || weight == "700" || weight == "800")
+                        if (
+                            weight == "bold"
+                            || weight == "600"
+                            || weight == "700"
+                            || weight == "800"
+                            || weight == "900"
+                        )
+                        {
                             currentBold = true;
+                        }
                         else if (weight == "normal" || weight == "400")
+                        {
                             currentBold = false;
+                        }
+                    }
+                    var fontStyleMatch = FontStyleStyleRegex().Match(styleAttr);
+                    if (fontStyleMatch.Success)
+                    {
+                        var fs = fontStyleMatch.Groups[1].Value.Trim().ToLower();
+                        if (fs == "italic" || fs == "oblique")
+                            currentItalic = true;
+                        else if (fs == "normal")
+                            currentItalic = false;
                     }
                 }
             }
@@ -1214,7 +1301,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
                 currentItalic,
                 currentUnderline,
                 currentColor,
-                currentLink
+                currentLink,
+                currentStrikethrough,
+                currentFontSizeOverride
             );
             lastIndex = match.Index + match.Length;
         }
@@ -1225,23 +1314,42 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             var cleanRemaining = WebUtility.HtmlDecode(
                 HtmlTagRegex().Replace(remainingText, string.Empty)
             );
-            if (
-                !string.IsNullOrWhiteSpace(cleanRemaining)
-                || (isBlock && !string.IsNullOrEmpty(cleanRemaining))
-            )
+            if (!string.IsNullOrEmpty(cleanRemaining))
             {
-                var span = !string.IsNullOrEmpty(linkUrl)
-                    ? textDescriptor.Hyperlink(linkUrl, cleanRemaining)
-                    : textDescriptor.Span(cleanRemaining);
-                ApplyStyle(
-                    span,
+                EmitTextWithNewlines(
+                    textDescriptor,
+                    cleanRemaining,
                     isBold,
                     isItalic,
                     isUnderline,
-                    color ?? (string.IsNullOrEmpty(linkUrl) ? null : fallbackColor)
+                    isStrikethrough,
+                    color,
+                    linkUrl,
+                    fallbackColor,
+                    fontSizeOverride
                 );
             }
         }
+    }
+
+    private static void EmitTextWithNewlines(
+        TextDescriptor textDescriptor,
+        string text,
+        bool isBold,
+        bool isItalic,
+        bool isUnderline,
+        bool isStrikethrough,
+        string? color,
+        string? linkUrl,
+        string? fallbackColor,
+        float? fontSizeOverride
+    )
+    {
+        var resolvedColor = color ?? (string.IsNullOrEmpty(linkUrl) ? null : fallbackColor);
+        var span = !string.IsNullOrEmpty(linkUrl)
+            ? textDescriptor.Hyperlink(linkUrl, text)
+            : textDescriptor.Span(text);
+        ApplyStyle(span, isBold, isItalic, isUnderline, resolvedColor, isStrikethrough, fontSizeOverride);
     }
 
     protected string PreprocessHtml(
@@ -1258,6 +1366,11 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
 
         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
         pText = Markdown.ToHtml(pText, pipeline);
+
+        if (isBlock)
+            pText = ChipBadgeTagRegex().Replace(pText, "[[CHIP:$1]]");
+        else
+            pText = ChipBadgeTagRegex().Replace(pText, "$1");
 
         if (!isBlock)
         {
@@ -1293,15 +1406,26 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             pText = pText.Replace("\u2713", checkmarkPlaceholder);
         }
 
-        pText = BrTagRegex().Replace(pText, "\n");
-        pText = preserveParagraphBreaks
-            ? ParagraphBreakRegex().Replace(pText, "$1[[PARAGRAPH]]$2")
-            : BlockGapsRegex().Replace(pText, "$1$2");
+        pText = BrTagRegex().Replace(pText, "[[BR]]");
+        if (preserveParagraphBreaks)
+        {
+            pText = ParagraphBreakRegex().Replace(pText, "$1[[PARAGRAPH]]$2");
+        }
+        else
+        {
+            pText = ParagraphBreakRegex().Replace(pText, "$1[[BR]][[BR]]$2");
+        }
+        pText = BlockGapsRegex().Replace(pText, "$1$2");
         pText = preserveParagraphBreaks
             ? MultipleParagraphBreakRegex().Replace(pText, "[[PARAGRAPH]]")
-            : MultipleNewlineRegex().Replace(pText, "\n");
+            : pText;
+        pText = MultipleNewlineRegex().Replace(pText, Environment.NewLine);
         pText = pText.Replace("\u2713", checkmarkPlaceholder);
         pText = pText.Replace("\u25B8", $"<span style='color:{Style.PrimaryColor}'>\u25B8</span>");
+
+        pText = pText.Replace("[[BR]]\r\n", Environment.NewLine);
+        pText = pText.Replace("[[BR]]\n", Environment.NewLine);
+        pText = pText.Replace("[[BR]]", Environment.NewLine);
 
         return pText.Trim();
     }
@@ -1311,7 +1435,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         bool bold,
         bool italic,
         bool underline,
-        string? color
+        string? color,
+        bool strikethrough = false,
+        float? fontSizeOverride = null
     )
     {
         if (bold)
@@ -1320,6 +1446,10 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
             span.Italic();
         if (underline)
             span.Underline();
+        if (strikethrough)
+            span.Strikethrough();
+        if (fontSizeOverride.HasValue)
+            span.FontSize(fontSizeOverride.Value);
         if (!string.IsNullOrEmpty(color))
             span.FontColor(color);
     }
@@ -1352,7 +1482,9 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         { "blue", "#0000FF" },
         { "yellow", "#FFFF00" },
         { "cyan", "#00FFFF" },
+        { "aqua", "#00FFFF" },
         { "magenta", "#FF00FF" },
+        { "fuchsia", "#FF00FF" },
         { "silver", "#C0C0C0" },
         { "gray", "#808080" },
         { "grey", "#808080" },
@@ -1363,6 +1495,50 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         { "teal", "#008080" },
         { "navy", "#000080" },
         { "orange", "#FFA500" },
+        { "coral", "#FF7F50" },
+        { "salmon", "#FA8072" },
+        { "tomato", "#FF6347" },
+        { "crimson", "#DC143C" },
+        { "firebrick", "#B22222" },
+        { "darkred", "#8B0000" },
+        { "pink", "#FFC0CB" },
+        { "hotpink", "#FF69B4" },
+        { "deeppink", "#FF1493" },
+        { "orchid", "#DA70D6" },
+        { "violet", "#EE82EE" },
+        { "indigo", "#4B0082" },
+        { "gold", "#FFD700" },
+        { "khaki", "#F0E68C" },
+        { "chocolate", "#D2691E" },
+        { "tan", "#D2B48C" },
+        { "beige", "#F5F5DC" },
+        { "darkblue", "#00008B" },
+        { "mediumblue", "#0000CD" },
+        { "royalblue", "#4169E1" },
+        { "steelblue", "#4682B4" },
+        { "deepskyblue", "#00BFFF" },
+        { "dodgerblue", "#1E90FF" },
+        { "lightblue", "#ADD8E6" },
+        { "turquoise", "#40E0D0" },
+        { "darkgreen", "#006400" },
+        { "forestgreen", "#228B22" },
+        { "seagreen", "#2E8B57" },
+        { "limegreen", "#32CD32" },
+        { "lightgreen", "#90EE90" },
+        { "darkorange", "#FF8C00" },
+        { "orangered", "#FF4500" },
+        { "rosybrown", "#BC8F8F" },
+        { "darkgray", "#A9A9A9" },
+        { "darkgrey", "#A9A9A9" },
+        { "lightgray", "#D3D3D3" },
+        { "lightgrey", "#D3D3D3" },
+        { "dimgray", "#696969" },
+        { "dimgrey", "#696969" },
+        { "whitesmoke", "#F5F5F5" },
+        { "lavender", "#E6E6FA" },
+        { "slategray", "#708090" },
+        { "slategrey", "#708090" },
+        { "brown", "#A52A2A" },
     };
 
     [GeneratedRegex(@"<[a-zA-Z/][^>]*>", RegexOptions.IgnoreCase)]
@@ -1419,7 +1595,7 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
     )]
     protected static partial Regex LiWithNestedPRegex();
 
-    [GeneratedRegex(@"\n{2,}")]
+    [GeneratedRegex(@"(?:\r?\n){2,}")]
     protected static partial Regex MultipleNewlineRegex();
 
     [GeneratedRegex(@"(\[\[PARAGRAPH\]\]){2,}")]
@@ -1443,9 +1619,18 @@ public abstract partial class PdfTemplateBase(IWebHostEnvironment env, IStringLo
         Justification = "GeneratedRegex cannot fully generate this pattern because it uses a backreference in the closing tag."
     )]
     private static readonly Regex HtmlTagWithStyleRegexInstance = new(
-        @"<(strong|b|em|i|u|span|div|p|h1|h2|h3|h4|h5|h6|a|blockquote|code|pre)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
+        @"<(strong|b|em|i|u|s|del|mark|sub|sup|span|div|p|h1|h2|h3|h4|h5|h6|a|blockquote|code|pre)(?:\s+([^>]*?))?\s*>(.+?)</\1>",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline
     );
 
     protected static Regex HtmlTagWithStyleRegex() => HtmlTagWithStyleRegexInstance;
+
+    [GeneratedRegex(
+        @"<(?:chip|badge)\s*>(.*?)</(?:chip|badge)>",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline
+    )]
+    protected static partial Regex ChipBadgeTagRegex();
+
+    [GeneratedRegex(@"\[\[CHIP:(.*?)\]\]", RegexOptions.Singleline)]
+    private static partial Regex ChipPlaceholderRegex();
 }

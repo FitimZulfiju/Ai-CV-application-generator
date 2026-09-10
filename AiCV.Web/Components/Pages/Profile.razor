@@ -160,7 +160,7 @@ else
             <MudText Typo="Typo.subtitle1"><strong>@Localizer["HtmlTags"]</strong></MudText>
             <MudText Typo="Typo.body2">@Localizer["HtmlTagsDescription"]</MudText>
             <MudPaper Class="pa-2 mud-theme-secondary" Elevation="0">
-                <code>&lt;strong&gt;Bold text&lt;/strong&gt;<br />&lt;em&gt;Italic text&lt;/em&gt;</code>
+                <code>&lt;strong&gt;Bold text&lt;/strong&gt;<br />&lt;em&gt;Italic text&lt;/em&gt;<br />&lt;u&gt;Underlined text&lt;/u&gt;<br />&lt;s&gt;Strikethrough text&lt;/s&gt;<br />&lt;mark&gt;Highlighted text&lt;/mark&gt;<br />&lt;chip&gt;Technology&lt;/chip&gt;</code>
             </MudPaper>
 
             <MudDivider />
@@ -197,6 +197,16 @@ else
                     <MudTr>
                         <MudTd><strong>@Localizer["BulletPoints"]</strong></MudTd>
                         <MudTd><code>- @Localizer["or"] *</code></MudTd>
+                        <MudTd>@Localizer["DescriptionsOnly"]</MudTd>
+                    </MudTr>
+                    <MudTr>
+                        <MudTd><strong>@Localizer["Strikethrough"]</strong></MudTd>
+                        <MudTd><code>&lt;s&gt;text&lt;/s&gt;</code></MudTd>
+                        <MudTd>@Localizer["AllFields"]</MudTd>
+                    </MudTr>
+                    <MudTr>
+                        <MudTd><strong>@Localizer["ChipBadge"]</strong></MudTd>
+                        <MudTd><code>&lt;chip&gt;text&lt;/chip&gt;</code></MudTd>
                         <MudTd>@Localizer["DescriptionsOnly"]</MudTd>
                     </MudTr>
                 </tbody>
