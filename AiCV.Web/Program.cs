@@ -281,6 +281,7 @@ builder.Services.AddScoped<ICVService, CVService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IJobPostScraper, JobPostScraper>();
 builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
+builder.Services.AddScoped<IUserSmtpSettingsService, UserSmtpSettingsService>();
 builder.Services.AddScoped<IUserAIConfigurationService, UserAIConfigurationService>();
 
 // Configure Forwarded Headers for Docker/Proxy scenarios
@@ -371,6 +372,38 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 // Email Sender for Password Reset
 builder.Services.AddTransient<IEmailSender<User>, SmtpEmailSender>();
+
+// ─── Job Automation (Daily Search & Application Generation) ────────────────
+builder.Services.Configure<AutomationOptions>(options =>
+{
+    options.DefaultCron = builder.Configuration["AUTOMATION_CRON"] ?? "0 6 * * *";
+    options.DefaultMaxApplicationsPerRun = builder.Configuration.GetValue("AUTOMATION_MAX_PER_RUN", 10);
+    options.PollIntervalSeconds = builder.Configuration.GetValue("AUTOMATION_POLL_INTERVAL_SECONDS", 60);
+    options.Jobindex.BaseUrl = builder.Configuration["AUTOMATION_JOBINDEX_BASE_URL"] ?? "https://www.jobindex.dk/jobsoegning.json";
+    options.Jobindex.SearchPageUrl = builder.Configuration["AUTOMATION_JOBINDEX_SEARCH_URL"] ?? "https://www.jobindex.dk/jobsoegning";
+    options.Jobindex.RateLimitPerSecond = builder.Configuration.GetValue("AUTOMATION_JOBINDEX_RATE_LIMIT", 1.0);
+});
+
+builder.Services.AddHttpClient("Jobindex", client =>
+{
+    client.BaseAddress = new Uri("https://www.jobindex.dk/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36");
+    client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("da-DK,da;q=0.9,en;q=0.8,en-US;q=0.7");
+    client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+});
+
+builder.Services.AddScoped<JobSearchProviderFactory>();
+builder.Services.AddScoped<IJobSearchProvider, JobindexSearchProvider>();
+builder.Services.AddScoped<IJobMatcher, KeywordJobMatcher>();
+builder.Services.AddScoped<IAutomationSettingsService, AutomationSettingsService>();
+builder.Services.AddScoped<ISmtpEmailSender, SmtpEmailSender>();
+
+builder.Services.AddSingleton<DailyJobApplicationService>();
+builder.Services.AddSingleton<IDailyJobApplicationService>(sp =>
+    sp.GetRequiredService<DailyJobApplicationService>()
+);
+builder.Services.AddHostedService(sp => sp.GetRequiredService<DailyJobApplicationService>());
 
 var app = builder.Build();
 

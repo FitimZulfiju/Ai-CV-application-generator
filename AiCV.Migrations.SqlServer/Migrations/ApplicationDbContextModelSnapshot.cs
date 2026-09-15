@@ -17,10 +17,94 @@ namespace AiCV.Migrations.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AiCV.Domain.AutomationQuery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AutomationSettingsId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("JobAgeDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxResults")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Query")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AutomationSettingsId");
+
+                    b.ToTable("AutomationQueries");
+                });
+
+            modelBuilder.Entity("AiCV.Domain.AutomationSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CronExpression")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastRunUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaxApplicationsPerRun")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("NextRunUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Providers")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("AutomationSettings");
+                });
 
             modelBuilder.Entity("AiCV.Domain.CandidateProfile", b =>
                 {
@@ -275,6 +359,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.Property<int>("JobPostingId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TailoredResumeJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -327,6 +415,10 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplyUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
@@ -615,6 +707,53 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.ToTable("UserSettings");
                 });
 
+            modelBuilder.Entity("AiCV.Domain.UserSmtpSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("EnableSsl")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FromEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FromName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SmtpHost")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SmtpPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SmtpPort")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SmtpUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSmtpSettings");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -746,6 +885,28 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AiCV.Domain.AutomationQuery", b =>
+                {
+                    b.HasOne("AiCV.Domain.AutomationSettings", "AutomationSettings")
+                        .WithMany("Queries")
+                        .HasForeignKey("AutomationSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AutomationSettings");
+                });
+
+            modelBuilder.Entity("AiCV.Domain.AutomationSettings", b =>
+                {
+                    b.HasOne("AiCV.Domain.User", "User")
+                        .WithOne("AutomationSettings")
+                        .HasForeignKey("AiCV.Domain.AutomationSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AiCV.Domain.CandidateProfile", b =>
@@ -1072,6 +1233,17 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("AiCV.Domain.UserSmtpSettings", b =>
+                {
+                    b.HasOne("AiCV.Domain.User", "User")
+                        .WithOne("UserSmtpSettings")
+                        .HasForeignKey("AiCV.Domain.UserSmtpSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1123,6 +1295,11 @@ namespace AiCV.Migrations.SqlServer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AiCV.Domain.AutomationSettings", b =>
+                {
+                    b.Navigation("Queries");
+                });
+
             modelBuilder.Entity("AiCV.Domain.CandidateProfile", b =>
                 {
                     b.Navigation("Educations");
@@ -1140,6 +1317,8 @@ namespace AiCV.Migrations.SqlServer.Migrations
 
             modelBuilder.Entity("AiCV.Domain.User", b =>
                 {
+                    b.Navigation("AutomationSettings");
+
                     b.Navigation("CandidateProfile");
 
                     b.Navigation("GeneratedApplications");
@@ -1149,6 +1328,8 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.Navigation("UserAIConfigurations");
 
                     b.Navigation("UserSettings");
+
+                    b.Navigation("UserSmtpSettings");
                 });
 #pragma warning restore 612, 618
         }

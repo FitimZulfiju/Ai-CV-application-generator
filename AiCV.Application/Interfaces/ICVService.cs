@@ -9,4 +9,5 @@ public interface ICVService
     Task<GeneratedApplication?> GetApplicationAsync(int id);
     Task SaveApplicationAsync(GeneratedApplication application);
     Task DeleteApplicationAsync(int id);
+    Task DeleteApplicationsAsync(IEnumerable<int> ids);
 }

@@ -1,0 +1,148 @@
+@attribute [Microsoft.AspNetCore.Components.Route(NavUri.AutomationSettingsPage)]
+@attribute [Authorize]
+
+<PageTitle>@Localizer["JobAutomation"]</PageTitle>
+
+<div class="d-flex flex-column" style="min-height: 100%;">
+    <MudContainer MaxWidth="MaxWidth.False" Class="pa-4 d-flex flex-column flex-grow-1">
+        <div class="flex-grow-1">
+            <div class="d-flex align-center justify-space-between pb-3">
+                <MudText Typo="Typo.h5" Class="settings-title-nowrap d-flex align-center gap-2">
+                    <MudIcon Icon="@Icons.Material.Filled.Schedule" /> @Localizer["AutomationSettings"]
+                </MudText>
+            </div>
+
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">
+                @Localizer["AutomationSettingsSubtitle"]
+            </MudText>
+
+            @if (_isLoading)
+            {
+                <div class="d-flex justify-center align-center pa-8">
+                    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+                </div>
+            }
+            else if (_settings is not null)
+            {
+                <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">General Configuration</MudText>
+
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudSwitch T="bool" @bind-Value="_settings.IsEnabled" Color="Color.Primary"
+                                       Label="@Localizer["EnableAutomation"]" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="4" sm="6">
+                            <MudSelect T="string" Label="@Localizer["CronPresets"]" @bind-Value="_selectedPreset"
+                                       @bind-Value:after="ApplyPreset" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                <MudSelectItem Value="@PresetDaily6">@Localizer["Daily6AM"]</MudSelectItem>
+                                <MudSelectItem Value="@PresetDaily8">@Localizer["Daily8AM"]</MudSelectItem>
+                                <MudSelectItem Value="@PresetWeekdays7">@Localizer["Weekdays7AM"]</MudSelectItem>
+                                <MudSelectItem Value="@PresetCustom">@Localizer["Custom"]</MudSelectItem>
+                            </MudSelect>
+                        </MudItem>
+
+                        <MudItem xs="12" md="4" sm="6">
+                            <MudTextField T="string" @bind-Value="_settings.CronExpression"
+                                          Label="@Localizer["CronExpression"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                          HelperText="@Localizer["CronExpressionHelper"]" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="4" sm="6">
+                            <MudNumericField T="int" @bind-Value="_settings.MaxApplicationsPerRun" Min="1" Max="50"
+                                             Label="@Localizer["MaxApplicationsPerRun"]" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+
+                <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <div class="d-flex align-center justify-space-between mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">
+                        <MudText Typo="Typo.h6">@Localizer["Queries"]</MudText>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                                   OnClick="AddQuery" Size="Size.Small">
+                            @Localizer["AddQuery"]
+                        </MudButton>
+                    </div>
+
+                    <MudTable Items="_settings.Queries" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                        <HeaderContent>
+                            <MudTh>@Localizer["Query"]</MudTh>
+                            <MudTh>@Localizer["Provider"]</MudTh>
+                            <MudTh>@Localizer["Location"]</MudTh>
+                            <MudTh>@Localizer["MaxResults"]</MudTh>
+                            <MudTh>@Localizer["JobAge"]</MudTh>
+                            <MudTh>@Localizer["Active"]</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="@Localizer["Query"]">
+                                <MudTextField T="string" @bind-Value="context.Query" Placeholder="@Localizer["QueryPlaceholder"]" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                            </MudTd>
+                            <MudTd DataLabel="@Localizer["Provider"]">
+                                <MudText Typo="Typo.body2" Class="pt-2">Jobindex</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="@Localizer["Location"]">
+                                <MudTextField T="string" @bind-Value="context.Location" Placeholder="@Localizer["LocationPlaceholder"]" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                            </MudTd>
+                            <MudTd DataLabel="@Localizer["MaxResults"]">
+                                <MudNumericField T="int" @bind-Value="context.MaxResults" Min="1" Max="100" Margin="Margin.Dense" Variant="Variant.Outlined" HideSpinButtons="false" />
+                            </MudTd>
+                            <MudTd DataLabel="@Localizer["JobAge"]">
+                                <MudNumericField T="int" @bind-Value="context.JobAgeDays" Min="1" Max="90" Margin="Margin.Dense" Variant="Variant.Outlined" HideSpinButtons="false" />
+                            </MudTd>
+                            <MudTd DataLabel="@Localizer["Active"]">
+                                <MudSwitch T="bool" @bind-Value="context.IsActive" Color="Color.Success" />
+                            </MudTd>
+                            <MudTd>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                               OnClick="() => RemoveQuery(context)" aria-label="delete" />
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+
+                <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <MudGrid>
+                        <MudItem xs="12" sm="6">
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                @Localizer["LastRun"]:
+                                <strong class="ms-1" style="color: var(--mud-palette-text-primary)">@(_settings.LastRunUtc?.ToLocalTime().ToString("g") ?? "—")</strong>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                @Localizer["NextRun"]:
+                                <strong class="ms-1" style="color: var(--mud-palette-text-primary)">@(_settings.NextRunUtc?.ToLocalTime().ToString("g") ?? "—")</strong>
+                            </MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+
+                <div class="d-flex justify-end gap-3 mb-6">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Default"
+                               OnClick="RunTestNow" StartIcon="@(_isRunning ? null : Icons.Material.Filled.PlayArrow)" Disabled="_isRunning">
+                        @if (_isRunning)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        }
+                        @Localizer["TestRunNow"]
+                    </MudButton>
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="SaveSettings" StartIcon="@(_isRunning ? null : Icons.Material.Filled.Save)" Disabled="_isRunning">
+                        @Localizer["SaveSettings"]
+                    </MudButton>
+                </div>
+
+                @if (!string.IsNullOrEmpty(_testDebugLog))
+                {
+                    <MudPaper Elevation="2" Class="pa-4 mb-6 bg-dark text-white" Style="background-color: #1e1e1e; color: #d4d4d4;">
+                        <MudText Typo="Typo.subtitle2" Class="mb-2" Style="color: #569cd6;">Test Run Debug Log</MudText>
+                        <pre style="white-space: pre-wrap; word-break: break-all; font-family: Consolas, monospace; font-size: 13px;">@_testDebugLog</pre>
+                    </MudPaper>
+                }
+            }
+        </div>
+    </MudContainer>
+</div>

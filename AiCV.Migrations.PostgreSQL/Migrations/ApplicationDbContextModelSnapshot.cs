@@ -17,10 +17,94 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AiCV.Domain.AutomationQuery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AutomationSettingsId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("JobAgeDays")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxResults")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Query")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AutomationSettingsId");
+
+                    b.ToTable("AutomationQueries");
+                });
+
+            modelBuilder.Entity("AiCV.Domain.AutomationSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CronExpression")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastRunUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MaxApplicationsPerRun")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("NextRunUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Providers")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("AutomationSettings");
+                });
 
             modelBuilder.Entity("AiCV.Domain.CandidateProfile", b =>
                 {
@@ -275,6 +359,10 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.Property<int>("JobPostingId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("TailoredResumeJson")
                         .IsRequired()
                         .HasColumnType("text");
@@ -327,6 +415,10 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplyUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
@@ -614,6 +706,53 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.ToTable("UserSettings");
                 });
 
+            modelBuilder.Entity("AiCV.Domain.UserSmtpSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("EnableSsl")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FromEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FromName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SmtpHost")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SmtpPassword")
+                        .HasColumnType("text");
+
+                    b.Property<int>("SmtpPort")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SmtpUser")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSmtpSettings");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -744,6 +883,28 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AiCV.Domain.AutomationQuery", b =>
+                {
+                    b.HasOne("AiCV.Domain.AutomationSettings", "AutomationSettings")
+                        .WithMany("Queries")
+                        .HasForeignKey("AutomationSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AutomationSettings");
+                });
+
+            modelBuilder.Entity("AiCV.Domain.AutomationSettings", b =>
+                {
+                    b.HasOne("AiCV.Domain.User", "User")
+                        .WithOne("AutomationSettings")
+                        .HasForeignKey("AiCV.Domain.AutomationSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AiCV.Domain.CandidateProfile", b =>
@@ -1070,6 +1231,17 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("AiCV.Domain.UserSmtpSettings", b =>
+                {
+                    b.HasOne("AiCV.Domain.User", "User")
+                        .WithOne("UserSmtpSettings")
+                        .HasForeignKey("AiCV.Domain.UserSmtpSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1121,6 +1293,11 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AiCV.Domain.AutomationSettings", b =>
+                {
+                    b.Navigation("Queries");
+                });
+
             modelBuilder.Entity("AiCV.Domain.CandidateProfile", b =>
                 {
                     b.Navigation("Educations");
@@ -1138,6 +1315,8 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
 
             modelBuilder.Entity("AiCV.Domain.User", b =>
                 {
+                    b.Navigation("AutomationSettings");
+
                     b.Navigation("CandidateProfile");
 
                     b.Navigation("GeneratedApplications");
@@ -1147,6 +1326,8 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.Navigation("UserAIConfigurations");
 
                     b.Navigation("UserSettings");
+
+                    b.Navigation("UserSmtpSettings");
                 });
 #pragma warning restore 612, 618
         }

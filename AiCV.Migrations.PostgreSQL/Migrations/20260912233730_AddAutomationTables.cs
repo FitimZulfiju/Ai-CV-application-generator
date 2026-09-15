@@ -1,0 +1,102 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
+#nullable disable
+
+namespace AiCV.Migrations.PostgreSQL.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddAutomationTables : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            // Existing rows predate the status workflow and are treated as pending review.
+            // An empty string is not a valid ApplicationStatus value.
+            migrationBuilder.AddColumn<string>(
+                name: "Status",
+                table: "GeneratedApplications",
+                type: "text",
+                nullable: false,
+                defaultValue: "PendingReview");
+
+            migrationBuilder.CreateTable(
+                name: "AutomationSettings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    CronExpression = table.Column<string>(type: "text", nullable: false),
+                    MaxApplicationsPerRun = table.Column<int>(type: "integer", nullable: false),
+                    Providers = table.Column<string>(type: "text", nullable: false),
+                    LastRunUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    NextRunUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AutomationSettings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AutomationSettings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AutomationQueries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AutomationSettingsId = table.Column<int>(type: "integer", nullable: false),
+                    Query = table.Column<string>(type: "text", nullable: false),
+                    Provider = table.Column<string>(type: "text", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: true),
+                    Region = table.Column<string>(type: "text", nullable: true),
+                    JobAgeDays = table.Column<int>(type: "integer", nullable: false),
+                    MaxResults = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AutomationQueries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AutomationQueries_AutomationSettings_AutomationSettingsId",
+                        column: x => x.AutomationSettingsId,
+                        principalTable: "AutomationSettings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AutomationQueries_AutomationSettingsId",
+                table: "AutomationQueries",
+                column: "AutomationSettingsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AutomationSettings_UserId",
+                table: "AutomationSettings",
+                column: "UserId",
+                unique: true);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "AutomationQueries");
+
+            migrationBuilder.DropTable(
+                name: "AutomationSettings");
+
+            migrationBuilder.DropColumn(
+                name: "Status",
+                table: "GeneratedApplications");
+        }
+    }
+}

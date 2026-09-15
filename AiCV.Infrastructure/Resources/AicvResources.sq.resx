@@ -1785,4 +1785,109 @@
   <data name="DeletingAccount" xml:space="preserve">
     <value>Duke fshirë llogarinë...</value>
   </data>
+  <data name="JobAutomation" xml:space="preserve">
+    <value>Automatizimi i Punës</value>
+  </data>
+  <data name="AutomationSettings" xml:space="preserve">
+    <value>Cilësimet e Automatizimit</value>
+  </data>
+  <data name="AutomationSettingsSubtitle" xml:space="preserve">
+    <value>Kërkim ditor i punëve dhe gjenerim automatik i aplikimeve.</value>
+  </data>
+  <data name="EnableAutomation" xml:space="preserve">
+    <value>Aktivizo automatizimin ditor</value>
+  </data>
+  <data name="CronExpression" xml:space="preserve">
+    <value>Shprehja cron</value>
+  </data>
+  <data name="CronExpressionHelper" xml:space="preserve">
+    <value>Kur të ekzekutohet (koha lokale e serverit). Shembull: 0 6 * * * = çdo ditë në orën 06:00.</value>
+  </data>
+  <data name="CronPresets" xml:space="preserve">
+    <value>Paracaktimi cron</value>
+  </data>
+  <data name="Daily6AM" xml:space="preserve">
+    <value>Çdo ditë në 6 të mëngjesit</value>
+  </data>
+  <data name="Daily8AM" xml:space="preserve">
+    <value>Çdo ditë në 8 të mëngjesit</value>
+  </data>
+  <data name="Weekdays7AM" xml:space="preserve">
+    <value>Ditëve të javës në 7 të mëngjesit</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Përshtatur</value>
+  </data>
+  <data name="MaxApplicationsPerRun" xml:space="preserve">
+    <value>Maks aplikime për ekzekutim</value>
+  </data>
+  <data name="Queries" xml:space="preserve">
+    <value>Kërkimet</value>
+  </data>
+  <data name="Query" xml:space="preserve">
+    <value>Kërkesa</value>
+  </data>
+  <data name="MaxResults" xml:space="preserve">
+    <value>Maks rezultate</value>
+  </data>
+  <data name="JobAge" xml:space="preserve">
+    <value>Mosha e punës (ditë)</value>
+  </data>
+  <data name="QueryPlaceholder" xml:space="preserve">
+    <value>p.sh. Zhvillues .NET</value>
+  </data>
+  <data name="LocationPlaceholder" xml:space="preserve">
+    <value>p.sh. Kopenhagë</value>
+  </data>
+  <data name="AddQuery" xml:space="preserve">
+    <value>Shto kërkesë</value>
+  </data>
+  <data name="LastRun" xml:space="preserve">
+    <value>Ekzekutimi i fundit</value>
+  </data>
+  <data name="NextRun" xml:space="preserve">
+    <value>Ekzekutimi tjetër</value>
+  </data>
+  <data name="TestRunNow" xml:space="preserve">
+    <value>Provo Tani</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Cilësimet u ruajtën.</value>
+  </data>
+  <data name="TestRunComplete" xml:space="preserve">
+    <value>Testi u përfundua me sukses.</value>
+  </data>
+  <data name="TestRunCompleteWithErrors" xml:space="preserve">
+    <value>Testi u përfundua me {0} aplikime të gjeneruara, {1} gabime.</value>
+  </data>
+  <data name="AppStatus_PendingReview" xml:space="preserve">
+    <value>Në Pritje të Shqyrtimit</value>
+  </data>
+  <data name="AppStatus_Applied" xml:space="preserve">
+    <value>Aplikuar</value>
+  </data>
+  <data name="AppStatus_Rejected" xml:space="preserve">
+    <value>Refuzuar</value>
+  </data>
+  <data name="AppStatus_Archived" xml:space="preserve">
+    <value>Arkivuar</value>
+  </data>
+  <data name="LoadingApplications" xml:space="preserve">
+    <value>Po ngarkohen aplikimet...</value>
+  </data>
+  <data name="ErrorLoadingApplications" xml:space="preserve">
+    <value>Gabim në ngarkimin e aplikimeve: {0}</value>
+  </data>
+  <data name="ErrorDeletingApplication" xml:space="preserve">
+    <value>Gabim në fshirjen e aplikimit: {0}</value>
+  </data>
+  <data name="DeleteApplicationTitle" xml:space="preserve">
+    <value>Fshi aplikimin</value>
+  </data>
+  <data name="DeleteApplicationConfirm" xml:space="preserve">
+    <value>Jeni i sigurt që doni të fshini aplikimin për {0}?</value>
+  </data>
+  <data name="DeleteAriaLabel" xml:space="preserve">
+    <value>Fshi</value>
+  </data>
 </root>

@@ -40,7 +40,7 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
 
     public async Task SaveProfileAsync(CandidateProfile profile)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
         if (profile.Id == 0)
         {
@@ -49,9 +49,6 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
         }
         else
         {
-            // Delete existing child collections that will be replaced
-            // This prevents duplication when skills/experiences/etc are recreated with Id=0
-            // Using RemoveRange instead of ExecuteDeleteAsync for in-memory database compatibility
             var existingSkills = await context
                 .Skills.Where(s => s.CandidateProfileId == profile.Id)
                 .ToListAsync();
@@ -82,7 +79,6 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
                 .ToListAsync();
             context.Interests.RemoveRange(existingInterests);
 
-            // Ensure all child entities have correct profile ID and are new (Id=0)
             foreach (var skill in profile.Skills)
             {
                 skill.Id = 0;
@@ -114,8 +110,6 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
                 interest.CandidateProfileId = profile.Id;
             }
 
-            // Ensure we don't try to update the Identity User table
-            // This prevents issues with detached entities and specialized column types
             profile.User = null;
 
             context.CandidateProfiles.Update(profile);
@@ -126,7 +120,7 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
 
     public async Task UpdateProfilePictureAsync(int profileId, string imageUrl)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         await context
             .CandidateProfiles.Where(p => p.Id == profileId)
             .ExecuteUpdateAsync(setters =>
@@ -136,7 +130,7 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
 
     public async Task<List<GeneratedApplication>> GetApplicationsAsync(string userId)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         return await context
             .GeneratedApplications.Include(a => a.JobPosting)
             .Where(a => a.UserId == userId)
@@ -146,7 +140,7 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
 
     public async Task<GeneratedApplication?> GetApplicationAsync(int id)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         return await context
             .GeneratedApplications.Include(a => a.JobPosting)
             .Include(a => a.CandidateProfile)
@@ -155,7 +149,7 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
 
     public async Task SaveApplicationAsync(GeneratedApplication application)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
         if (application.Id == 0)
         {
@@ -171,11 +165,22 @@ public class CVService(IDbContextFactory<ApplicationDbContext> contextFactory) :
 
     public async Task DeleteApplicationAsync(int id)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var app = await context.GeneratedApplications.FindAsync(id);
         if (app != null)
         {
             context.GeneratedApplications.Remove(app);
+            await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteApplicationsAsync(IEnumerable<int> ids)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var apps = await context.GeneratedApplications.Where(a => ids.Contains(a.Id)).ToListAsync();
+        if (apps.Count != 0)
+        {
+            context.GeneratedApplications.RemoveRange(apps);
             await context.SaveChangesAsync();
         }
     }

@@ -22,6 +22,7 @@ public interface IJobApplicationOrchestrator
         string coverLetter,
         CandidateProfile tailoredResume,
         string applicationEmail,
-        string template
+        string template,
+        string status = ApplicationStatus.PendingReview
     );
 }

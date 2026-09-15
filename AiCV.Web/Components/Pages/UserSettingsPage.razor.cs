@@ -19,13 +19,8 @@ public partial class UserSettingsPage
     private bool _isLoading = true;
     private bool _isProtected;
     private int _activeSettingsTabIndex;
-
-    // List of saved configurations
     private List<UserAIConfiguration> _configurations = [];
-
-    // Form model for adding NEW configuration
     private UserAIConfiguration _newConfig = new();
-
     private List<AIModelDto> _availableModels = [];
     private AIModelDto? _selectedModelMetadata;
     private bool _modelsLoaded;
@@ -46,22 +41,23 @@ public partial class UserSettingsPage
     private bool _backupProfile = true;
     private bool _backupApplications = true;
     private bool _backupSettings = true;
+    private bool _backupSmtpSettings = true;
     private bool _backupNotes = true;
 
-    // Available providers for dropdown
     private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
 
     private bool HasSelectedBackupSections =>
-        _backupProfile || _backupApplications || _backupSettings || _backupNotes;
+        _backupProfile || _backupApplications || _backupSettings || _backupSmtpSettings || _backupNotes;
 
     private bool AllBackupSectionsSelected
     {
-        get => _backupProfile && _backupApplications && _backupSettings && _backupNotes;
+        get => _backupProfile && _backupApplications && _backupSettings && _backupSmtpSettings && _backupNotes;
         set
         {
             _backupProfile = value;
             _backupApplications = value;
             _backupSettings = value;
+            _backupSmtpSettings = value;
             _backupNotes = value;
         }
     }
@@ -83,11 +79,9 @@ public partial class UserSettingsPage
         {
             _userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
-            // Try to get email from claims first, then fallback to Identity.Name
             _userEmail =
                 user.FindFirst(ClaimTypes.Email)?.Value ?? user.Identity?.Name ?? string.Empty;
 
-            // Mark as protected if it's the default demo account
             _isProtected = string.Equals(
                 _userEmail,
                 DemoConstants.DemoUserEmail,
@@ -152,7 +146,6 @@ public partial class UserSettingsPage
                 _ => string.Format(Localizer["ConnectionFailedWithCode"].Value, errorCode.ToString()),
             };
 
-            // Append raw provider error detail if present
             if (query.TryGetValue("detail", out var detail) && !string.IsNullOrWhiteSpace(detail))
                 msg += string.Format(Localizer["ConnectionFailureDetails"].Value, detail.ToString());
 
@@ -614,6 +607,7 @@ public partial class UserSettingsPage
                     Profile = _backupProfile,
                     Applications = _backupApplications,
                     Settings = _backupSettings,
+                    SmtpSettings = _backupSmtpSettings,
                     Notes = _backupNotes,
                 },
             };
@@ -647,6 +641,7 @@ public partial class UserSettingsPage
                                 CompanyName = a.JobPosting.CompanyName,
                                 Description = a.JobPosting.Description,
                                 Url = a.JobPosting.Url,
+                                ApplyUrl = a.JobPosting.ApplyUrl,
                                 DatePosted = a.JobPosting.DatePosted,
                             },
                         CoverLetterContent = a.CoverLetterContent,
@@ -674,6 +669,24 @@ public partial class UserSettingsPage
                         DefaultProvider = settings.DefaultProvider,
                         DefaultModelId = settings.DefaultModelId,
                     };
+                }
+
+                if (_backupSmtpSettings)
+                {
+                    var smtp = await SmtpSettingsService.GetForUserAsync(_userId);
+                    if (smtp is not null)
+                    {
+                        backup.SmtpSettings = new UserSmtpSettingsBackup
+                        {
+                            SmtpHost = smtp.SmtpHost,
+                            SmtpPort = smtp.SmtpPort,
+                            SmtpUser = smtp.SmtpUser,
+                            SmtpPassword = smtp.SmtpPassword,
+                            EnableSsl = smtp.EnableSsl,
+                            FromEmail = smtp.FromEmail,
+                            FromName = smtp.FromName
+                        };
+                    }
                 }
 
                 var configurations = await ConfigurationService.GetConfigurationsAsync(_userId);
@@ -816,11 +829,8 @@ public partial class UserSettingsPage
 
             await transaction.CommitAsync();
 
-            if (_backupSettings && backup.Sections.Settings)
-            {
-                await ReplaceSettings(backup);
-                await LoadConfigurations();
-            }
+            await ReplaceSettings(backup);
+            await LoadConfigurations();
 
             Snackbar.Add(Localizer["BackupImported"], Severity.Success);
         }
@@ -864,18 +874,14 @@ public partial class UserSettingsPage
             && (backup.Profile is null || IsValidImportedProfile(backup.Profile))
             && backup.Applications.All(IsValidApplicationBackup)
             && (backup.Settings is null || IsValidSettingsBackup(backup.Settings))
+            && (backup.SmtpSettings is null || IsValidSmtpSettingsBackup(backup.SmtpSettings))
             && backup.AIConfigurations.All(IsValidAIConfigurationBackup)
             && backup.Notes.All(IsValidNoteBackup);
     }
 
     private async Task ImportProfileBackup(CandidateProfile importedProfile)
     {
-        var currentProfile = await CVService.GetProfileAsync(_userId);
-        if (currentProfile is null)
-        {
-            throw new InvalidOperationException("Current profile not found.");
-        }
-
+        var currentProfile = await CVService.GetProfileAsync(_userId) ?? throw new InvalidOperationException("Current profile not found.");
         NormalizeImportedProfile(importedProfile, currentProfile);
         await CVService.SaveProfileAsync(importedProfile);
     }
@@ -884,13 +890,7 @@ public partial class UserSettingsPage
     {
         var profile = await context.CandidateProfiles.AsNoTracking().FirstOrDefaultAsync(p =>
             p.UserId == _userId
-        );
-
-        if (profile is null)
-        {
-            throw new InvalidOperationException("Current profile not found.");
-        }
-
+        ) ?? throw new InvalidOperationException("Current profile not found.");
         var existingApplications = await context
             .GeneratedApplications.Where(a => a.UserId == _userId)
             .ToListAsync();
@@ -915,6 +915,7 @@ public partial class UserSettingsPage
                 CompanyName = application.JobPosting.CompanyName ?? string.Empty,
                 Description = application.JobPosting.Description ?? string.Empty,
                 Url = application.JobPosting.Url ?? string.Empty,
+                ApplyUrl = application.JobPosting.ApplyUrl ?? string.Empty,
                 DatePosted = application.JobPosting.DatePosted,
             };
 
@@ -965,7 +966,7 @@ public partial class UserSettingsPage
 
     private async Task ReplaceSettings(UserDataBackup backup)
     {
-        if (backup.Settings is not null)
+        if (_backupSettings && backup.Sections.Settings && backup.Settings is not null)
         {
             await UserSettingsService.SaveUserSettingsAsync(
                 _userId,
@@ -980,29 +981,47 @@ public partial class UserSettingsPage
             );
         }
 
-        await using var context = await DbContextFactory.CreateDbContextAsync();
-        var existingConfigurations = await context
-            .UserAIConfigurations.Where(c => c.UserId == _userId)
-            .ToListAsync();
-        context.UserAIConfigurations.RemoveRange(existingConfigurations);
-        await context.SaveChangesAsync();
-
-        foreach (var configuration in backup.AIConfigurations)
+        if (_backupSmtpSettings && backup.Sections.SmtpSettings && backup.SmtpSettings is not null)
         {
-            await ConfigurationService.SaveConfigurationAsync(
-                new UserAIConfiguration
-                {
-                    UserId = _userId,
-                    Provider = configuration.Provider,
-                    Name = configuration.Name ?? string.Empty,
-                    ApiKey = configuration.ApiKey,
-                    ModelId = configuration.ModelId,
-                    CostType = configuration.CostType,
-                    Notes = configuration.Notes,
-                    IsActive = configuration.IsActive,
-                    CreatedAt = configuration.CreatedAt,
-                }
-            );
+            var smtp = new UserSmtpSettings
+            {
+                SmtpHost = backup.SmtpSettings.SmtpHost,
+                SmtpPort = backup.SmtpSettings.SmtpPort,
+                SmtpUser = backup.SmtpSettings.SmtpUser,
+                SmtpPassword = backup.SmtpSettings.SmtpPassword,
+                EnableSsl = backup.SmtpSettings.EnableSsl,
+                FromEmail = backup.SmtpSettings.FromEmail,
+                FromName = backup.SmtpSettings.FromName
+            };
+            await SmtpSettingsService.UpdateAsync(_userId, smtp);
+        }
+
+        if (_backupSettings && backup.Sections.Settings)
+        {
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            var existingConfigurations = await context
+                .UserAIConfigurations.Where(c => c.UserId == _userId)
+                .ToListAsync();
+            context.UserAIConfigurations.RemoveRange(existingConfigurations);
+            await context.SaveChangesAsync();
+
+            foreach (var configuration in backup.AIConfigurations)
+            {
+                await ConfigurationService.SaveConfigurationAsync(
+                    new UserAIConfiguration
+                    {
+                        UserId = _userId,
+                        Provider = configuration.Provider,
+                        Name = configuration.Name ?? string.Empty,
+                        ApiKey = configuration.ApiKey ?? string.Empty,
+                        ModelId = configuration.ModelId ?? string.Empty,
+                        CostType = configuration.CostType ?? string.Empty,
+                        Notes = configuration.Notes,
+                        IsActive = configuration.IsActive,
+                        CreatedAt = configuration.CreatedAt,
+                    }
+                );
+            }
         }
     }
 
@@ -1106,6 +1125,15 @@ public partial class UserSettingsPage
             && IsValidBackupText(settings.DeepSeekApiKey)
             && IsValidBackupText(settings.OpenRouterApiKey)
             && IsValidBackupText(settings.DefaultModelId);
+    }
+
+    private static bool IsValidSmtpSettingsBackup(UserSmtpSettingsBackup smtp)
+    {
+        return IsValidBackupText(smtp.SmtpHost)
+            && IsValidBackupText(smtp.SmtpUser)
+            && IsValidBackupText(smtp.SmtpPassword)
+            && IsValidBackupText(smtp.FromEmail)
+            && IsValidBackupText(smtp.FromName);
     }
 
     private static bool IsValidAIConfigurationBackup(UserAIConfigurationBackup configuration)
@@ -1294,7 +1322,6 @@ public partial class UserSettingsPage
         importedProfile.ProfessionalSummary ??= string.Empty;
         importedProfile.ProfilePictureUrl ??= string.Empty;
         importedProfile.Tagline ??= string.Empty;
-
         importedProfile.SummarySection ??= new();
         importedProfile.ExperienceSection ??= new();
         importedProfile.EducationSection ??= new();
@@ -1364,6 +1391,7 @@ public partial class UserSettingsPage
         public CandidateProfile? Profile { get; set; }
         public List<ApplicationBackup> Applications { get; set; } = [];
         public UserSettingsBackup? Settings { get; set; }
+        public UserSmtpSettingsBackup? SmtpSettings { get; set; }
         public List<UserAIConfigurationBackup> AIConfigurations { get; set; } = [];
         public List<NoteBackup> Notes { get; set; } = [];
     }
@@ -1373,6 +1401,7 @@ public partial class UserSettingsPage
         public bool Profile { get; set; }
         public bool Applications { get; set; }
         public bool Settings { get; set; }
+        public bool SmtpSettings { get; set; }
         public bool Notes { get; set; }
     }
 
@@ -1392,6 +1421,7 @@ public partial class UserSettingsPage
         public string? CompanyName { get; set; }
         public string? Description { get; set; }
         public string? Url { get; set; }
+        public string? ApplyUrl { get; set; }
         public DateTime DatePosted { get; set; } = DateTime.Now;
     }
 
@@ -1405,6 +1435,17 @@ public partial class UserSettingsPage
         public string? OpenRouterApiKey { get; set; }
         public AIProvider DefaultProvider { get; set; } = AIProvider.OpenAI;
         public string? DefaultModelId { get; set; }
+    }
+
+    private sealed class UserSmtpSettingsBackup
+    {
+        public string? SmtpHost { get; set; }
+        public int SmtpPort { get; set; } = 587;
+        public string? SmtpUser { get; set; }
+        public string? SmtpPassword { get; set; }
+        public bool EnableSsl { get; set; } = true;
+        public string? FromEmail { get; set; }
+        public string? FromName { get; set; }
     }
 
     private sealed class UserAIConfigurationBackup

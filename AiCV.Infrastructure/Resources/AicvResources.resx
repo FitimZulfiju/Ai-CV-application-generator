@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -119,6 +119,7 @@
   </resheader>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
+    <value>Automation Settings</value>
   </data>
   <data name="Tagline" xml:space="preserve">
     <value>Tagline</value>
@@ -1784,5 +1785,131 @@
   </data>
   <data name="DeletingAccount" xml:space="preserve">
     <value>Deleting account...</value>
+  </data>
+  <data name="JobAutomation" xml:space="preserve">
+    <value>Job Automation</value>
+  </data>
+  <data name="AutomationSettings" xml:space="preserve">
+    <value>Automation Settings</value>
+  </data>
+  <data name="AutomationSettingsSubtitle" xml:space="preserve">
+    <value>Daily job search and automated application generation.</value>
+  </data>
+  <data name="EnableAutomation" xml:space="preserve">
+    <value>Enable daily automation</value>
+  </data>
+  <data name="CronExpression" xml:space="preserve">
+    <value>Cron expression</value>
+  </data>
+  <data name="CronExpressionHelper" xml:space="preserve">
+    <value>When to run (server local time). Example: 0 6 * * * = daily at 06:00.</value>
+  </data>
+  <data name="CronPresets" xml:space="preserve">
+    <value>Cron preset</value>
+  </data>
+  <data name="Daily6AM" xml:space="preserve">
+    <value>Daily 6 AM</value>
+  </data>
+  <data name="Daily8AM" xml:space="preserve">
+    <value>Daily 8 AM</value>
+  </data>
+  <data name="Weekdays7AM" xml:space="preserve">
+    <value>Weekdays 7 AM</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="MaxApplicationsPerRun" xml:space="preserve">
+    <value>Max applications per run</value>
+  </data>
+  <data name="Queries" xml:space="preserve">
+    <value>Search Queries</value>
+  </data>
+  <data name="Query" xml:space="preserve">
+    <value>Query</value>
+  </data>
+  <data name="MaxResults" xml:space="preserve">
+    <value>Max results</value>
+  </data>
+  <data name="JobAge" xml:space="preserve">
+    <value>Job age (days)</value>
+  </data>
+  <data name="QueryPlaceholder" xml:space="preserve">
+    <value>e.g. .NET developer</value>
+  </data>
+  <data name="LocationPlaceholder" xml:space="preserve">
+    <value>e.g. Copenhagen</value>
+  </data>
+  <data name="AddQuery" xml:space="preserve">
+    <value>Add query</value>
+  </data>
+  <data name="LastRun" xml:space="preserve">
+    <value>Last run</value>
+  </data>
+  <data name="NextRun" xml:space="preserve">
+    <value>Next run</value>
+  </data>
+  <data name="TestRunNow" xml:space="preserve">
+    <value>Test Run Now</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Settings saved.</value>
+  </data>
+  <data name="TestRunComplete" xml:space="preserve">
+    <value>Test run completed successfully.</value>
+  </data>
+  <data name="TestRunCompleteWithErrors" xml:space="preserve">
+    <value>Test run completed with {0} applications generated, {1} errors.</value>
+  </data>
+  <data name="AppStatus_PendingReview" xml:space="preserve">
+    <value>Pending Review</value>
+  </data>
+  <data name="AppStatus_Applied" xml:space="preserve">
+    <value>Applied</value>
+  </data>
+  <data name="AppStatus_Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="AppStatus_Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="LoadingApplications" xml:space="preserve">
+    <value>Loading applications...</value>
+  </data>
+  <data name="ErrorLoadingApplications" xml:space="preserve">
+    <value>Error loading applications: {0}</value>
+  </data>
+  <data name="ErrorDeletingApplication" xml:space="preserve">
+    <value>Error deleting application: {0}</value>
+  </data>
+  <data name="DeleteApplicationTitle" xml:space="preserve">
+    <value>Delete Application</value>
+  </data>
+  <data name="DeleteApplicationConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete the application for {0}?</value>
+  </data>
+  <data name="DeleteAriaLabel" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AppStatus_Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="AppStatus_AutoApplied" xml:space="preserve">
+    <value>Auto-Applied</value>
+  </data>
+  <data name="ConfirmDeleteMultipleApps" xml:space="preserve">
+    <value>Are you sure you want to delete {0} selected applications?</value>
+  </data>
+  <data name="DeleteSelected" xml:space="preserve">
+    <value>Delete Selected</value>
+  </data>
+  <data name="MultipleApplicationsDeleted" xml:space="preserve">
+    <value>Successfully deleted {0} applications.</value>
+  </data>
+  <data name="DeleteApplications" xml:space="preserve">
+    <value>Delete Applications</value>
+  </data>
+  <data name="BackupSmtpSettings" xml:space="preserve">
+    <value>SMTP Email Settings</value>
   </data>
 </root>
