@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.18.0] - 2026-09-15
 
 ### Added
+- feat: Include Base64 profile picture in user data JSON backups
 - feat: Add job search automation, SMTP settings, grid upgrades, and code analyzer fixes
 
 ## [1.17.3] - 2026-09-10
