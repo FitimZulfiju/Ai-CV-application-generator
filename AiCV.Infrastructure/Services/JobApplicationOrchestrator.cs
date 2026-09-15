@@ -3,12 +3,18 @@ namespace AiCV.Infrastructure.Services;
 public class JobApplicationOrchestrator(
     IJobPostScraper jobScraper,
     IAIServiceFactory aiServiceFactory,
-    ICVService cvService
+    ICVService cvService,
+    IUserAIConfigurationService configService,
+    IModelDiscoveryService discoveryService,
+    ILogger<JobApplicationOrchestrator> logger
 ) : IJobApplicationOrchestrator
 {
     private readonly IJobPostScraper _jobScraper = jobScraper;
     private readonly IAIServiceFactory _aiServiceFactory = aiServiceFactory;
     private readonly ICVService _cvService = cvService;
+    private readonly IUserAIConfigurationService _configService = configService;
+    private readonly IModelDiscoveryService _discoveryService = discoveryService;
+    private readonly ILogger<JobApplicationOrchestrator> _logger = logger;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -34,27 +40,78 @@ public class JobApplicationOrchestrator(
         string? customPrompt = null
     )
     {
-        // Get the AI service for the selected model
-        var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, modelId);
+        var modelsToTry = new List<string?>
+        {
+            modelId
+        };
 
-        // Run cover letter and resume in parallel
-        var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job, customPrompt);
-        var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job, customPrompt);
+        Exception? lastException = null;
 
-        await Task.WhenAll(coverLetterTask, resumeTask);
+        for (int i = 0; i < modelsToTry.Count; i++)
+        {
+            var currentModelId = modelsToTry[i];
+            try
+            {
+                var aiService = await _aiServiceFactory.GetServiceAsync(provider, userId, currentModelId);
 
-        var coverLetter = await coverLetterTask;
-        var resumeResult = await resumeTask;
+                var coverLetterTask = aiService.GenerateCoverLetterAsync(profile, job, customPrompt);
+                var resumeTask = aiService.GenerateTailoredResumeAsync(profile, job, customPrompt);
 
-        // Generate email after cover letter is ready (needs cover letter content)
-        var email = await aiService.GenerateApplicationEmailAsync(
-            profile,
-            job,
-            coverLetter,
-            customPrompt
-        );
+                await Task.WhenAll(coverLetterTask, resumeTask);
 
-        return (coverLetter, resumeResult, email);
+                var coverLetter = await coverLetterTask;
+                var resumeResult = await resumeTask;
+
+                var email = await aiService.GenerateApplicationEmailAsync(
+                    profile,
+                    job,
+                    coverLetter,
+                    customPrompt
+                );
+
+                return (coverLetter, resumeResult, email);
+            }
+            catch (Exception ex)
+            {
+                lastException = ex;
+                if (currentModelId == modelId && modelsToTry.Count == 1)
+                {
+                    try
+                    {
+                        var aiConfig = await _configService.GetActiveConfigurationAsync(userId);
+                        if (aiConfig != null && !string.IsNullOrWhiteSpace(aiConfig.ApiKey))
+                        {
+                            var discoveryResult = await _discoveryService.DiscoverModelsAsync(provider, aiConfig.ApiKey);
+                            if (discoveryResult.Success && discoveryResult.Models != null)
+                            {
+                                var dynamicModels = discoveryResult.Models
+                                    .Select(m => m.ModelId)
+                                    .Where(m => m != modelId)
+                                    .ToList();
+
+                                if (dynamicModels.Count > 0)
+                                {
+                                    modelsToTry.AddRange(dynamicModels);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception discoveryEx)
+                    {
+                        _logger.LogWarning(discoveryEx, "Failed to discover fallback models.");
+                    }
+                }
+
+                if (currentModelId == modelsToTry.LastOrDefault())
+                {
+                    _logger.LogError("All available models failed to generate the application.");
+                    throw;
+                }
+            }
+        }
+
+        throw lastException ?? new InvalidOperationException("Failed to generate application using any available model.");
     }
 
     public async Task SaveApplicationAsync(
@@ -64,18 +121,18 @@ public class JobApplicationOrchestrator(
         string coverLetter,
         CandidateProfile tailoredResume,
         string applicationEmail,
-        string template
+        string template,
+        string status = ApplicationStatus.PendingReview
     )
     {
-        // Create a fresh JobPosting entity to avoid EF Core tracking issues
-        // when saving multiple applications with the same job details
         var freshJobPosting = new JobPosting
         {
-            Id = 0, // Ensure it's treated as a new entity
+            Id = 0,
             Title = job.Title,
             CompanyName = job.CompanyName,
             Description = job.Description,
             Url = job.Url,
+            ApplyUrl = job.ApplyUrl,
             DatePosted = DateTime.UtcNow,
         };
 
@@ -88,6 +145,7 @@ public class JobApplicationOrchestrator(
             TailoredResumeJson = JsonSerializer.Serialize(tailoredResume, JsonOptions),
             ApplicationEmailContent = applicationEmail,
             Template = template,
+            Status = status,
             CreatedDate = DateTime.UtcNow,
         };
 

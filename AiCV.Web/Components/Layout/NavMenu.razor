@@ -15,7 +15,12 @@
                 <MudNavLink Href=@($"/{NavUri.MyApplicationsPage}") Icon="@Icons.Material.Filled.List">
                     @Localizer["MyApplications"]
                 </MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.AutomationSettingsPage}") Icon="@Icons.Material.Filled.Schedule">
+                    @Localizer["JobAutomation"]
+                </MudNavLink>
                 <MudNavLink Href=@($"/{NavUri.SettingsPage}") Icon="@Icons.Material.Filled.Settings">@Localizer["Settings"]
+                </MudNavLink>
+                <MudNavLink Href=@($"/{NavUri.UserSmtpSettingsPage}") Icon="@Icons.Material.Filled.Email">Email Settings
                 </MudNavLink>
                 <MudNavLink Href=@($"/{NavUri.NotesPage}") Icon="@Icons.Material.Filled.StickyNote2">@Localizer["Notes"]
                 </MudNavLink>
