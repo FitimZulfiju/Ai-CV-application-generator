@@ -616,6 +616,25 @@ public partial class UserSettingsPage
             {
                 var profile = await CVService.GetProfileAsync(_userId);
                 backup.Profile = profile is null ? null : CloneProfileForExport(profile);
+
+                if (backup.Profile is not null && !string.IsNullOrWhiteSpace(backup.Profile.ProfilePictureUrl))
+                {
+                    try
+                    {
+                        var webRootPath = Environment.WebRootPath ?? Path.Combine(Environment.ContentRootPath, "wwwroot");
+                        var relativePath = backup.Profile.ProfilePictureUrl.TrimStart('/');
+                        var physicalPath = Path.Combine(webRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar));
+                        if (File.Exists(physicalPath))
+                        {
+                            var pictureBytes = await File.ReadAllBytesAsync(physicalPath);
+                            backup.ProfilePictureBase64 = Convert.ToBase64String(pictureBytes);
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore if we can't read the picture file
+                    }
+                }
             }
 
             await using var context = await DbContextFactory.CreateDbContextAsync();
@@ -733,10 +752,10 @@ public partial class UserSettingsPage
             }
 
             var json = JsonSerializer.Serialize(backup, BackupJsonOptions);
-            var bytes = Encoding.UTF8.GetBytes(json);
+            var imgBytes = Encoding.UTF8.GetBytes(json);
             var fileName = $"aicv-backup-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json";
 
-            await using var stream = new MemoryStream(bytes);
+            await using var stream = new MemoryStream(imgBytes);
             using var streamReference = new DotNetStreamReference(stream);
             await JSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamReference);
 
@@ -811,7 +830,7 @@ public partial class UserSettingsPage
 
             if (_backupProfile && backup.Profile is not null && backup.Sections.Profile)
             {
-                await ImportProfileBackup(backup.Profile);
+                await ImportProfileBackup(backup.Profile, backup.ProfilePictureBase64);
             }
 
             await using var context = await DbContextFactory.CreateDbContextAsync();
@@ -879,10 +898,42 @@ public partial class UserSettingsPage
             && backup.Notes.All(IsValidNoteBackup);
     }
 
-    private async Task ImportProfileBackup(CandidateProfile importedProfile)
+    private async Task ImportProfileBackup(CandidateProfile importedProfile, string? base64Picture)
     {
         var currentProfile = await CVService.GetProfileAsync(_userId) ?? throw new InvalidOperationException("Current profile not found.");
         NormalizeImportedProfile(importedProfile, currentProfile);
+
+        if (!string.IsNullOrWhiteSpace(base64Picture))
+        {
+            try
+            {
+                var webRootPath = Environment.WebRootPath ?? Path.Combine(Environment.ContentRootPath, "wwwroot");
+                var uploadPath = Path.Combine(webRootPath, "uploads", _userId);
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                var ext = ".jpg";
+                if (!string.IsNullOrWhiteSpace(importedProfile.ProfilePictureUrl))
+                {
+                    var existingExt = Path.GetExtension(importedProfile.ProfilePictureUrl);
+                    if (!string.IsNullOrWhiteSpace(existingExt)) ext = existingExt;
+                }
+                var fileName = $"{Guid.NewGuid()}{ext}";
+                var filePath = Path.Combine(uploadPath, fileName);
+
+                var imgBytes = Convert.FromBase64String(base64Picture);
+                await File.WriteAllBytesAsync(filePath, imgBytes);
+                
+                importedProfile.ProfilePictureUrl = $"/uploads/{_userId}/{fileName}";
+            }
+            catch
+            {
+                // Ignore if we can't restore the picture
+            }
+        }
+
         await CVService.SaveProfileAsync(importedProfile);
     }
 
@@ -1389,6 +1440,7 @@ public partial class UserSettingsPage
         public DateTime ExportedAtUtc { get; set; }
         public BackupSections Sections { get; set; } = new();
         public CandidateProfile? Profile { get; set; }
+        public string? ProfilePictureBase64 { get; set; }
         public List<ApplicationBackup> Applications { get; set; } = [];
         public UserSettingsBackup? Settings { get; set; }
         public UserSmtpSettingsBackup? SmtpSettings { get; set; }
