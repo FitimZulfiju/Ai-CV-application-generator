@@ -225,11 +225,28 @@ public partial class ApplicationDetails
         try
         {
             await CVService.SaveApplicationAsync(_application);
-
         }
         catch (Exception ex)
         {
             Snackbar.Add($"{Localizer["ErrorSavingTemplate"]}: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task OnStatusSelected(string status)
+    {
+        if (_application == null)
+            return;
+
+        _application.Status = status;
+
+        try
+        {
+            await CVService.SaveApplicationAsync(_application);
+            Snackbar.Add(Localizer["StatusUpdated"], Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"{Localizer["ErrorSavingStatus"]}: {ex.Message}", Severity.Error);
         }
     }
 }

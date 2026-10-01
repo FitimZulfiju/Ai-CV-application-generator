@@ -51,6 +51,9 @@
 @inject IConfiguration Configuration
 @inject INoteService NoteService
 @inject IDbContextFactory<ApplicationDbContext> DbContextFactory
+@inject IAutomationSettingsService AutomationSettingsService
+@inject IDailyJobApplicationService DailyJobApplicationService
+@inject IUserSmtpSettingsService SmtpSettingsService
 
 @using AiCV.Web.Features.CvRendering.Preview
 @using AiCV.Web.Features.CvRendering.Templates.Professional

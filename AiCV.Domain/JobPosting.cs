@@ -7,5 +7,6 @@ public class JobPosting
     public string CompanyName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
+    public string ApplyUrl { get; set; } = string.Empty;
     public DateTime DatePosted { get; set; } = DateTime.Now;
 }

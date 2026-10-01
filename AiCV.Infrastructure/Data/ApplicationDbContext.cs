@@ -15,7 +15,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<UserSettings> UserSettings { get; set; } = default!;
     public DbSet<UserAIConfiguration> UserAIConfigurations { get; set; } = default!;
     public DbSet<SystemLog> SystemLogs { get; set; } = default!;
-    public DbSet<Note> Notes { get; set; } = default!;
+        public DbSet<Note> Notes { get; set; } = default!;
+    public DbSet<AutomationSettings> AutomationSettings { get; set; } = default!;
+    public DbSet<AutomationQuery> AutomationQueries { get; set; } = default!;
+    public DbSet<UserSmtpSettings> UserSmtpSettings { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,13 +40,37 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey<UserSettings>(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // User -> GeneratedApplications (One-to-Many)
+                // User -> GeneratedApplications (One-to-Many)
         modelBuilder
             .Entity<User>()
             .HasMany(u => u.GeneratedApplications)
             .WithOne(a => a.User)
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // User -> AutomationSettings (One-to-One)
+        modelBuilder
+            .Entity<User>()
+            .HasOne(u => u.AutomationSettings)
+            .WithOne(s => s.User)
+            .HasForeignKey<AutomationSettings>(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // AutomationSettings -> AutomationQueries (One-to-Many)
+        modelBuilder
+            .Entity<AutomationSettings>()
+            .HasMany(s => s.Queries)
+            .WithOne(q => q.AutomationSettings)
+            .HasForeignKey(q => q.AutomationSettingsId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // User -> UserSmtpSettings (One-to-One)
+        modelBuilder
+            .Entity<User>()
+            .HasOne(u => u.UserSmtpSettings)
+            .WithOne(s => s.User)
+            .HasForeignKey<UserSmtpSettings>(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // User -> UserAIConfigurations (One-to-Many)
         modelBuilder
@@ -115,3 +142,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         });
     }
 }
+
+

@@ -1,0 +1,119 @@
+@page "/user-smtp-settings"
+@attribute [Authorize]
+
+<PageTitle>User SMTP Settings - AiCV</PageTitle>
+
+<div class="d-flex flex-column" style="min-height: 100%;">
+    <MudContainer MaxWidth="MaxWidth.False" Class="pa-4 d-flex flex-column flex-grow-1">
+        <div class="flex-grow-1">
+            <div class="d-flex align-center justify-space-between pb-3">
+                <MudText Typo="Typo.h5" Class="settings-title-nowrap d-flex align-center gap-2">
+                    <MudIcon Icon="@Icons.Material.Filled.Email" /> Email Sending Settings
+                </MudText>
+            </div>
+
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">
+                Configure your personal SMTP credentials. This will be used to send job applications directly to employers from your own email address.
+            </MudText>
+
+            @if (_isLoading)
+            {
+                <div class="d-flex justify-center align-center pa-8">
+                    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+                </div>
+            }
+            else
+            {
+                @if (_isSaved)
+                {
+                    <MudAlert Severity="Severity.Success" Variant="Variant.Filled" ShowCloseIcon="true" CloseIconClicked="() => _isSaved = false" Class="mb-4">
+                        Settings saved successfully!
+                    </MudAlert>
+                }
+
+                <MudForm Model="@_settings" @ref="_form">
+                    <MudPaper Elevation="4" Class="pa-4 mb-6">
+                        <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">SMTP Server Configuration</MudText>
+                        <MudGrid>
+                            <MudItem xs="12" md="8">
+                                <MudTextField @bind-Value="_settings.SmtpHost" Label="Host / Server Address"
+                                              Placeholder="e.g. smtp.gmail.com" Variant="Variant.Outlined"
+                                              Required="true" RequiredError="Host is required." />
+                            </MudItem>
+                            <MudItem xs="12" md="4">
+                                <MudNumericField @bind-Value="_settings.SmtpPort" Label="Port"
+                                                 Variant="Variant.Outlined" Required="true" Min="1" Max="65535" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudCheckBox @bind-Value="_settings.EnableSsl" Label="Enable SSL/TLS" Color="Color.Primary" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                    <MudPaper Elevation="4" Class="pa-4 mb-6">
+                        <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">Authentication</MudText>
+                        <MudGrid>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="_settings.SmtpUser" Label="Username / Email"
+                                              Variant="Variant.Outlined" Required="true" RequiredError="Username is required." />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="_settings.SmtpPassword" Label="Password / App Password"
+                                              Variant="Variant.Outlined" InputType="InputType.Password"
+                                              Required="true" RequiredError="Password is required."
+                                              HelperText="If using Gmail or 2FA, generate an App Password." />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                    <MudPaper Elevation="4" Class="pa-4 mb-6">
+                        <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">Sender Information</MudText>
+                        <MudGrid>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="_settings.FromName" Label="From Name"
+                                              Placeholder="e.g. John Doe" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField @bind-Value="_settings.FromEmail" Label="From Email Address"
+                                              Placeholder="e.g. john@example.com" Variant="Variant.Outlined" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                    <div class="d-flex justify-end gap-3 mb-6">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Default"
+                                   Disabled="@_isTestingConnection" OnClick="TestConnection"
+                                   StartIcon="@(_isTestingConnection ? null : Icons.Material.Filled.BugReport)">
+                            @if (_isTestingConnection)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            }
+                            Test Connection
+                        </MudButton>
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                   Disabled="@_isSaving" OnClick="SaveSettings"
+                                   StartIcon="@(_isSaving ? null : Icons.Material.Filled.Save)">
+                            @if (_isSaving)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            }
+                            Save Settings
+                        </MudButton>
+                    </div>
+                </MudForm>
+
+                @if (!string.IsNullOrEmpty(_testResult))
+                {
+                    <MudAlert Severity="@(_testSuccess ? Severity.Success : Severity.Error)" Variant="Variant.Filled" Class="mt-4">
+                        <MudText Typo="Typo.subtitle2">@_testResult</MudText>
+                        @if (!_testSuccess && !string.IsNullOrEmpty(_testErrorDetails))
+                        {
+                            <MudText Typo="Typo.caption" Style="font-family: monospace; word-break: break-all;">@_testErrorDetails</MudText>
+                        }
+                    </MudAlert>
+                }
+            }
+        </div>
+    </MudContainer>
+</div>

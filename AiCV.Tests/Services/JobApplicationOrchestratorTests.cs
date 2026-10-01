@@ -18,7 +18,10 @@ public class JobApplicationOrchestratorTests
         _orchestrator = new JobApplicationOrchestrator(
             _mockScraper.Object,
             _mockAiFactory.Object,
-            _mockCvService.Object
+            _mockCvService.Object,
+            new Mock<IUserAIConfigurationService>().Object,
+            new Mock<IModelDiscoveryService>().Object,
+            new Mock<ILogger<JobApplicationOrchestrator>>().Object
         );
     }
 

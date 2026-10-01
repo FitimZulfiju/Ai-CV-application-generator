@@ -13,5 +13,6 @@ public class GeneratedApplication
     public string TailoredResumeJson { get; set; } = string.Empty;
     public string ApplicationEmailContent { get; set; } = string.Empty;
     public string Template { get; set; } = Constants.CvTemplates.Professional;
+    public string Status { get; set; } = Constants.ApplicationStatus.PendingReview;
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 }

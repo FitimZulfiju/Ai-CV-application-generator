@@ -5,6 +5,7 @@ public static class NavUri
     public const string AdminDashboardPage = "admindashboard";
     public const string AdminLogsPage = "adminlogs";
     public const string ApplicationPage = "application";
+    public const string AutomationSettingsPage = "jobautomation";
     public const string ErrorPage = "error";
     public const string GeneratePage = "generate";
     public const string LoginPage = "login";
@@ -16,6 +17,7 @@ public static class NavUri
     public const string ForgotPasswordPage = "forgot-password";
     public const string ResetPasswordPage = "reset-password";
     public const string SettingsPage = "settings";
+    public const string UserSmtpSettingsPage = "user-smtp-settings";
     public const string NotesPage = "notes";
     public const string AccessDeniedPage = "accessdenied";
 }

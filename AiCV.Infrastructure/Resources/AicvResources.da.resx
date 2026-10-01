@@ -1785,4 +1785,109 @@
 	<data name="DeletingAccount" xml:space="preserve">
 <value>Sletter konto...</value>
  </data>
+  <data name="JobAutomation" xml:space="preserve">
+    <value>Job Automatisering</value>
+  </data>
+  <data name="AutomationSettings" xml:space="preserve">
+    <value>Automatiseringsindstillinger</value>
+  </data>
+  <data name="AutomationSettingsSubtitle" xml:space="preserve">
+    <value>Daglig jobsøgning og automatisk generering af ansøgninger.</value>
+  </data>
+  <data name="EnableAutomation" xml:space="preserve">
+    <value>Aktivér daglig automatisering</value>
+  </data>
+  <data name="CronExpression" xml:space="preserve">
+    <value>Cron-udtryk</value>
+  </data>
+  <data name="CronExpressionHelper" xml:space="preserve">
+    <value>Hvornår det skal køre (serverens lokale tid). Eksempel: 0 6 * * * = dagligt kl. 06:00.</value>
+  </data>
+  <data name="CronPresets" xml:space="preserve">
+    <value>Cron-forudindstilling</value>
+  </data>
+  <data name="Daily6AM" xml:space="preserve">
+    <value>Dagligt kl. 6</value>
+  </data>
+  <data name="Daily8AM" xml:space="preserve">
+    <value>Dagligt kl. 8</value>
+  </data>
+  <data name="Weekdays7AM" xml:space="preserve">
+    <value>Hverdage kl. 7</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Tilpasset</value>
+  </data>
+  <data name="MaxApplicationsPerRun" xml:space="preserve">
+    <value>Maks. ansøgninger pr. kørsel</value>
+  </data>
+  <data name="Queries" xml:space="preserve">
+    <value>Søgeforespørgsler</value>
+  </data>
+  <data name="Query" xml:space="preserve">
+    <value>Forespørgsel</value>
+  </data>
+  <data name="MaxResults" xml:space="preserve">
+    <value>Maks. resultater</value>
+  </data>
+  <data name="JobAge" xml:space="preserve">
+    <value>Job-alder (dage)</value>
+  </data>
+  <data name="QueryPlaceholder" xml:space="preserve">
+    <value>f.eks. .NET udvikler</value>
+  </data>
+  <data name="LocationPlaceholder" xml:space="preserve">
+    <value>f.eks. København</value>
+  </data>
+  <data name="AddQuery" xml:space="preserve">
+    <value>Tilføj forespørgsel</value>
+  </data>
+  <data name="LastRun" xml:space="preserve">
+    <value>Sidste kørsel</value>
+  </data>
+  <data name="NextRun" xml:space="preserve">
+    <value>Næste kørsel</value>
+  </data>
+  <data name="TestRunNow" xml:space="preserve">
+    <value>Test Kør Nu</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Indstillinger gemt.</value>
+  </data>
+  <data name="TestRunComplete" xml:space="preserve">
+    <value>Testkørsel gennemført.</value>
+  </data>
+  <data name="TestRunCompleteWithErrors" xml:space="preserve">
+    <value>Testkørsel gennemført med {0} ansøgninger genereret, {1} fejl.</value>
+  </data>
+  <data name="AppStatus_PendingReview" xml:space="preserve">
+    <value>Afventer gennemgang</value>
+  </data>
+  <data name="AppStatus_Applied" xml:space="preserve">
+    <value>Ansøgt</value>
+  </data>
+  <data name="AppStatus_Rejected" xml:space="preserve">
+    <value>Afvist</value>
+  </data>
+  <data name="AppStatus_Archived" xml:space="preserve">
+    <value>Arkiveret</value>
+  </data>
+  <data name="LoadingApplications" xml:space="preserve">
+    <value>Indlæser ansøgninger...</value>
+  </data>
+  <data name="ErrorLoadingApplications" xml:space="preserve">
+    <value>Fejl ved indlæsning af ansøgninger: {0}</value>
+  </data>
+  <data name="ErrorDeletingApplication" xml:space="preserve">
+    <value>Fejl ved sletning af ansøgning: {0}</value>
+  </data>
+  <data name="DeleteApplicationTitle" xml:space="preserve">
+    <value>Slet ansøgning</value>
+  </data>
+  <data name="DeleteApplicationConfirm" xml:space="preserve">
+    <value>Er du sikker på, at du vil slette ansøgningen til {0}?</value>
+  </data>
+  <data name="DeleteAriaLabel" xml:space="preserve">
+    <value>Slet</value>
+  </data>
 </root>
