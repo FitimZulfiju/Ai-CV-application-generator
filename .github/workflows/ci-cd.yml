@@ -30,7 +30,7 @@ jobs:
         run: dotnet build AiCV.slnx --no-restore
 
       - name: Test
-        run: dotnet test AiCV.slnx --no-build --verbosity normal
+        run: dotnet run --project AiCV.Tests/AiCV.Tests.csproj --no-build
 
   staging:
     name: 🏗️ Staging (Version & PR)
