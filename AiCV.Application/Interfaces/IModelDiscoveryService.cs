@@ -2,7 +2,7 @@ namespace AiCV.Application.Interfaces;
 
 public interface IModelDiscoveryService
 {
-    Task<ModelDiscoveryResult> DiscoverModelsAsync(AIProvider provider, string apiKey);
+    Task<ModelDiscoveryResult> DiscoverModelsAsync(AIProvider provider, string apiKey, string? baseUrl = null);
     List<AIModelDto> GetFallbackModels(AIProvider provider);
 }
 

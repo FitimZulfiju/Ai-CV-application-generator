@@ -126,8 +126,12 @@
                                     </MudAlert>
                                 }
                             </div>
-                            <MudGrid Spacing="2">
-                                <MudItem xs="12" md="4" sm="4">
+                                                        <MudGrid Spacing="2">
+                                @{
+                                    var hasBaseUrl = _newConfig.Provider == AIProvider.Custom || _newConfig.Provider == AIProvider.OmniRouter;
+                                    var row1Cols = hasBaseUrl ? 3 : 4;
+                                }
+                                <MudItem xs="12" md="@row1Cols" sm="@row1Cols">
                                     <MudSelect T="AIProvider" Label="@Localizer["Provider"]" @bind-Value="_newConfig.Provider"
                                                Variant="Variant.Outlined" Margin="Margin.Dense">
                                         @foreach (var provider in _availableProviders)
@@ -143,7 +147,14 @@
                                     </MudSelect>
                                 </MudItem>
 
-                                <MudItem xs="12" md="4" sm="4">
+                                @if (hasBaseUrl)
+                                {
+                                    <MudItem xs="12" md="3" sm="3">
+                                        <MudTextField Label="@Localizer["BaseUrl"]" @bind-Value="_newConfig.BaseUrl" Variant="Variant.Outlined" Clearable="true" Margin="Margin.Dense" Placeholder="https://api.custom.com/v1" />
+                                    </MudItem>
+                                }
+
+                                <MudItem xs="12" md="@row1Cols" sm="@row1Cols">
                                     <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="_newConfig.ApiKey" Variant="Variant.Outlined"
                                                   Clearable="true" Margin="Margin.Dense"
                                                   InputType="@(_showNewApiKey? InputType.Text: InputType.Password)" Adornment="Adornment.End"
@@ -151,7 +162,7 @@
                                                   OnAdornmentClick="() => _showNewApiKey = !_showNewApiKey" Immediate="true" />
                                 </MudItem>
 
-                                <MudItem xs="12" md="4" sm="4" Class="d-flex align-end pb-1">
+                                <MudItem xs="12" md="@row1Cols" sm="@row1Cols" Class="d-flex align-end pb-1">
                                     <MudButton Variant="Variant.Outlined" Color="Color.Primary"
                                                StartIcon="@(_isValidating ? null : Icons.Material.Filled.CloudSync)"
                                                OnClick="ValidateAndLoadModels"
@@ -541,3 +552,4 @@
         </div>
     </MudContainer>
 </div>
+

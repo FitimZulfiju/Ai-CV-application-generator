@@ -10,6 +10,7 @@ public class UserAIConfiguration
     public string? ModelId { get; set; }
     public string? CostType { get; set; }
     public string? Notes { get; set; }
+    public string? BaseUrl { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

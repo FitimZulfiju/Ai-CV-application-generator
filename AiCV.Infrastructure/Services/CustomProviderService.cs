@@ -1,11 +1,11 @@
 namespace AiCV.Infrastructure.Services;
 
-public class OpenAIService(string apiKey, string modelId, IStringLocalizer<AicvResources> localizer, string? baseUrl = null)
+public class CustomProviderService(string apiKey, string modelId, string baseUrl, IStringLocalizer<AicvResources> localizer)
     : AiServiceBase(localizer)
 {
     private readonly ChatClient _chatClient = string.IsNullOrWhiteSpace(baseUrl) ? new(modelId, new System.ClientModel.ApiKeyCredential(apiKey)) : new(modelId, new System.ClientModel.ApiKeyCredential(apiKey), new OpenAI.OpenAIClientOptions { Endpoint = new Uri(baseUrl) });
 
-    protected override AIProvider Provider => AIProvider.OpenAI;
+    protected override AIProvider Provider => AIProvider.Custom;
     protected override bool UseHttpProbing => false;
 
     protected override async Task SendProbeActionAsync()

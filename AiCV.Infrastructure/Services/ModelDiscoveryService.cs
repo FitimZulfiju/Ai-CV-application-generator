@@ -10,7 +10,7 @@ public class ModelDiscoveryService(
     private readonly ILogger<ModelDiscoveryService> _logger = logger;
     private readonly IStringLocalizer<AicvResources> _localizer = localizer;
 
-    public async Task<ModelDiscoveryResult> DiscoverModelsAsync(AIProvider provider, string apiKey)
+    public async Task<ModelDiscoveryResult> DiscoverModelsAsync(AIProvider provider, string apiKey, string? baseUrl = null)
     {
         if (string.IsNullOrWhiteSpace(apiKey))
         {
@@ -31,6 +31,8 @@ public class ModelDiscoveryService(
                 AIProvider.DeepSeek => await DiscoverDeepSeekModelsAsync(apiKey),
                 AIProvider.OpenRouter => await DiscoverOpenRouterModelsAsync(apiKey),
                 AIProvider.Claude => await DiscoverClaudeModelsAsync(apiKey),
+                AIProvider.OmniRouter => await DiscoverOmniRouterModelsAsync(apiKey, baseUrl),
+                AIProvider.Custom => new ModelDiscoveryResult { Success = true, Models = GetFallbackModels(AIProvider.Custom) },
                 _ => new ModelDiscoveryResult
                 {
                     Success = false,
@@ -337,6 +339,66 @@ public class ModelDiscoveryService(
         };
     }
 
+    private async Task<ModelDiscoveryResult> DiscoverOmniRouterModelsAsync(string apiKey, string? baseUrl)
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            apiKey
+        );
+
+        client.DefaultRequestHeaders.Add("HTTP-Referer", "https://github.com/FitimZulfiju/AiCV");
+        client.DefaultRequestHeaders.Add("X-Title", "AiCV Application Generator");
+
+        var response = await client.GetAsync(string.IsNullOrWhiteSpace(baseUrl) ? "http://localhost:20128/v1/models" : baseUrl.TrimEnd('/') + "/models");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            return new ModelDiscoveryResult
+            {
+                Success = false,
+                ErrorMessage = AIErrorMapper.MapError(
+                    AIProvider.OmniRouter,
+                    error,
+                    response.StatusCode,
+                    _localizer
+                ),
+                Models = GetFallbackModels(AIProvider.OmniRouter),
+            };
+        }
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var models = new List<AIModelDto>();
+
+        if (json.TryGetProperty("data", out var dataElement) && dataElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var element in dataElement.EnumerateArray())
+            {
+                if (element.TryGetProperty("id", out var idElement))
+                {
+                    string id = idElement.GetString() ?? "";
+                    string name = element.TryGetProperty("name", out var nameElement)
+                        ? nameElement.GetString() ?? id
+                        : id;
+
+                    models.Add(new AIModelDto
+                    {
+                        ModelId = id,
+                        Name = name,
+                        CostType = "Unknown",
+                        Notes = []
+                    });
+                }
+            }
+        }
+
+        return new ModelDiscoveryResult
+        {
+            Success = true,
+            Models = models.Count > 0 ? models : GetFallbackModels(AIProvider.OmniRouter),
+        };
+    }
     private async Task<ModelDiscoveryResult> DiscoverClaudeModelsAsync(string apiKey)
     {
         var client = _httpClientFactory.CreateClient();
@@ -402,6 +464,16 @@ public class ModelDiscoveryService(
                 "Paid",
                 ["Requires DeepSeek API balance"]
             ),
+            AIProvider.OmniRouter => (
+                ["google/gemini-2.0-flash-exp:free", "openai/gpt-4o", "anthropic/claude-3-5-sonnet"],
+                "Paid",
+                ["OpenAI compatible endpoint"]
+            ),
+            AIProvider.Custom => (
+                [],
+                "Unknown",
+                ["Enter your model ID manually"]
+            ),
             _ => (Array.Empty<string>(), "Paid", new List<string>()),
         };
 
@@ -417,3 +489,4 @@ public class ModelDiscoveryService(
         ];
     }
 }
+

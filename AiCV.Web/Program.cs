@@ -264,7 +264,7 @@ builder.Services.ConfigureExternalCookie(options =>
 // Register Application Services
 builder.Services.AddScoped<IPdfService, PdfService>();
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-QuestPDF.Settings.EnableDebugging = true;
+QuestPDF.Settings.EnableDetailedLayoutErrors = true;
 
 // Register Lato Fonts
 var fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LatoFont");
@@ -272,7 +272,7 @@ if (Directory.Exists(fontPath))
 {
     foreach (var file in Directory.GetFiles(fontPath, "*.ttf"))
     {
-        QuestPDF.Drawing.FontManager.RegisterFont(File.OpenRead(file));
+        QuestPDF.Drawing.FontManager.RegisterFontFromStream(File.OpenRead(file));
     }
 }
 

@@ -624,6 +624,9 @@ namespace AiCV.Migrations.SqlServer.Migrations
                     b.Property<string>("ApiKey")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BaseUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CostType")
                         .HasColumnType("nvarchar(max)");
 

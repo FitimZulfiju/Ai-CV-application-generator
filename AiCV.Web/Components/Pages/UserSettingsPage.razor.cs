@@ -301,7 +301,8 @@ public partial class UserSettingsPage
         {
             var result = await DiscoveryService.DiscoverModelsAsync(
                 _newConfig.Provider,
-                _newConfig.ApiKey
+                _newConfig.ApiKey,
+                _newConfig.BaseUrl
             );
 
             if (result?.Success == true)
@@ -385,7 +386,8 @@ public partial class UserSettingsPage
                 _newConfig.ApiKey,
                 _newConfig.ModelId,
                 Localizer,
-                new HttpClient()
+                new HttpClient(),
+                _newConfig.BaseUrl
             );
 
             var result = await aiService.TestAccessAsync();
@@ -478,6 +480,7 @@ public partial class UserSettingsPage
             ModelId = config.ModelId,
             IsActive = config.IsActive,
             CostType = config.CostType,
+            BaseUrl = config.BaseUrl,
             Notes = config.Notes,
             CreatedAt = config.CreatedAt,
         };
@@ -502,7 +505,8 @@ public partial class UserSettingsPage
             {
                 var discoveryResult = await DiscoveryService.DiscoverModelsAsync(
                     config.Provider,
-                    config.ApiKey
+                    config.ApiKey,
+                    config.BaseUrl
                 );
                 if (discoveryResult.Success && discoveryResult.Models.Count > 0)
                 {
@@ -925,7 +929,7 @@ public partial class UserSettingsPage
 
                 var imgBytes = Convert.FromBase64String(base64Picture);
                 await File.WriteAllBytesAsync(filePath, imgBytes);
-                
+
                 importedProfile.ProfilePictureUrl = $"/uploads/{_userId}/{fileName}";
             }
             catch
@@ -1092,6 +1096,9 @@ public partial class UserSettingsPage
             AIProvider.Claude => Color.Warning,
             AIProvider.Groq => Color.Info,
             AIProvider.DeepSeek => Color.Secondary,
+            AIProvider.OpenRouter => Color.Dark,
+            AIProvider.OmniRouter => Color.Dark,
+            AIProvider.Custom => Color.Surface,
             _ => Color.Default,
         };
 
@@ -1152,6 +1159,9 @@ public partial class UserSettingsPage
             AIProvider.Claude => Icons.Material.Filled.SmartToy,
             AIProvider.Groq => Icons.Material.Filled.Speed,
             AIProvider.DeepSeek => Icons.Material.Filled.Explore,
+            AIProvider.OpenRouter => Icons.Material.Filled.Hub,
+            AIProvider.OmniRouter => Icons.Material.Filled.Hub,
+            AIProvider.Custom => Icons.Material.Filled.Build,
             _ => Icons.Material.Filled.Memory,
         };
 
