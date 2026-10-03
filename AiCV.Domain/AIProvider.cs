@@ -8,4 +8,6 @@ public enum AIProvider
     Groq,
     DeepSeek,
     OpenRouter,
+    OmniRouter,
+    Custom
 }

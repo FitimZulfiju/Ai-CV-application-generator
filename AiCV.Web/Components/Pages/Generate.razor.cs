@@ -751,6 +751,9 @@ public partial class Generate : IDisposable
             AIProvider.Claude => Color.Warning,
             AIProvider.Groq => Color.Info,
             AIProvider.DeepSeek => Color.Secondary,
+            AIProvider.OpenRouter => Color.Dark,
+            AIProvider.OmniRouter => Color.Dark,
+            AIProvider.Custom => Color.Surface,
             _ => Color.Default,
         };
 
@@ -762,6 +765,9 @@ public partial class Generate : IDisposable
             AIProvider.Claude => Icons.Material.Filled.SmartToy,
             AIProvider.Groq => Icons.Material.Filled.Speed,
             AIProvider.DeepSeek => Icons.Material.Filled.Explore,
+            AIProvider.OpenRouter => Icons.Material.Filled.Hub,
+            AIProvider.OmniRouter => Icons.Material.Filled.Hub,
+            AIProvider.Custom => Icons.Material.Filled.Build,
             _ => Icons.Material.Filled.Memory,
         };
 }

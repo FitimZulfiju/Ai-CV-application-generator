@@ -84,6 +84,7 @@ ILogger<UserAIConfigurationService> logger
             existing.ModelId = config.ModelId;
             existing.CostType = config.CostType;
             existing.Notes = config.Notes;
+            existing.BaseUrl = config.BaseUrl;
 
             _context.Entry(existing).State = EntityState.Modified;
         }

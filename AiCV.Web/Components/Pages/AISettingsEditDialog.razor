@@ -33,6 +33,7 @@
                 </div>
             }
 
+            @if (UserConfiguration.Provider == AIProvider.Custom || UserConfiguration.Provider == AIProvider.OmniRouter) { <MudTextField Label="@Localizer["BaseUrl"]" @bind-Value="UserConfiguration.BaseUrl" Variant="Variant.Outlined" Margin="Margin.Dense" /> }
             <MudTextField Label="@Localizer["ApiKey"]" @bind-Value="UserConfiguration.ApiKey" Variant="Variant.Outlined"
                 Margin="Margin.Dense" InputType="@(_showApiKey ? InputType.Text : InputType.Password)"
                 Adornment="Adornment.End"

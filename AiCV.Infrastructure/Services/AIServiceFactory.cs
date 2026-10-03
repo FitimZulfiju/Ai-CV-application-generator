@@ -98,6 +98,19 @@ public class AIServiceFactory(
                 selectedModelId ?? "google/gemini-2.0-flash-exp:free",
                 _localizer
             ),
+            AIProvider.OmniRouter => new OmniRouterService(
+                _httpClientFactory.CreateClient(),
+                config.ApiKey ?? "",
+                selectedModelId ?? "google/gemini-2.0-flash-exp:free",
+                config.BaseUrl,
+                _localizer
+            ),
+            AIProvider.Custom => new CustomProviderService(
+                config.ApiKey ?? "",
+                selectedModelId ?? "gpt-4o",
+                config.BaseUrl ?? "",
+                _localizer
+            ),
             _ => throw new ArgumentException("Invalid AI Provider", nameof(provider)),
         };
     }
@@ -157,7 +170,8 @@ public class AIServiceFactory(
         string apiKey,
         string modelId,
         IStringLocalizer<AicvResources> localizer,
-        HttpClient? httpClient = null
+        HttpClient? httpClient = null,
+        string? baseUrl = null
     )
     {
         httpClient ??= new HttpClient();
@@ -178,6 +192,19 @@ public class AIServiceFactory(
                 httpClient,
                 apiKey,
                 modelId,
+                localizer
+            ),
+            AIProvider.OmniRouter => new OmniRouterService(
+                httpClient,
+                apiKey,
+                modelId,
+                baseUrl,
+                localizer
+            ),
+            AIProvider.Custom => new CustomProviderService(
+                apiKey,
+                modelId,
+                baseUrl ?? "",
                 localizer
             ),
             _ => throw new ArgumentException("Invalid AI Provider", nameof(provider)),

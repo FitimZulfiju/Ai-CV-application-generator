@@ -22,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.19.0] - 2026-10-03
+
+### Added
+- feat: Add Custom and OmniRouter AI providers with BaseUrl support, update QuestPDF deprecations
+
+### Fixed
+- fix: Update GitHub Action test command for xUnit v3 and .NET 10
+
 ## [1.18.0] - 2026-09-15
 
 ### Added
