@@ -180,3 +180,4 @@ MIT License
 * [Live Demo](https://aicv.fitim.it.com)
 * [Docker Hub](https://hub.docker.com/r/timi74/aicv)
 * [GitHub](https://github.com/FitimZulfiju/Web-CV-application-generator)
+
