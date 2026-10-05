@@ -222,7 +222,7 @@ public class SmtpEmailSender(IConfiguration configuration, ILogger<SmtpEmailSend
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {To} with subject '{Subject}'. BodyLength={BodyLength}", MaskEmailForLog(to), subject, htmlMessage?.Length ?? 0);
+            _logger.LogError(ex, "Failed to send email with subject '{Subject}'. BodyLength={BodyLength}", subject, htmlMessage?.Length ?? 0);
             throw;
         }
     }
