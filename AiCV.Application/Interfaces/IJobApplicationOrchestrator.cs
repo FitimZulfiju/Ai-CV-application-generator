@@ -15,7 +15,7 @@ public interface IJobApplicationOrchestrator
         string? modelId = null,
         string? customPrompt = null
     );
-    Task SaveApplicationAsync(
+    Task<GeneratedApplication> SaveApplicationAsync(
         string userId,
         JobPosting job,
         CandidateProfile profile,
@@ -25,4 +25,10 @@ public interface IJobApplicationOrchestrator
         string template,
         string status = ApplicationStatus.PendingReview
     );
+    Task SendPostRunEmailDigestAsync(
+        string userId,
+        string userEmail,
+        int totalJobsScanned,
+        List<(GeneratedApplication App, double MatchScore)> generatedMatches,
+        string baseUrl);
 }

@@ -163,6 +163,30 @@ public class DailyJobApplicationService(
                     continue;
                 }
 
+                var customProperties = new Dictionary<string, string>();
+                if (!string.IsNullOrEmpty(settings.SearchProviderSettingsJson))
+                {
+                    try
+                    {
+                        var parsed = System.Text.Json.JsonSerializer.Deserialize<List<SearchProviderConfig>>(settings.SearchProviderSettingsJson);
+                        if (parsed != null)
+                        {
+                            var providerConfig = parsed.FirstOrDefault(p => string.Equals(p.Provider, query.Provider, StringComparison.OrdinalIgnoreCase));
+                            if (providerConfig != null)
+                            {
+                                if (!string.IsNullOrEmpty(providerConfig.ApiKey))
+                                    customProperties[$"{query.Provider}ApiKey"] = providerConfig.ApiKey;
+                                if (!string.IsNullOrEmpty(providerConfig.ApiHost))
+                                    customProperties[$"{query.Provider}ApiHost"] = providerConfig.ApiHost;
+                            }
+                        }
+                    }
+                    catch (System.Text.Json.JsonException ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to parse SearchProviderSettingsJson for user {UserId}", settings.UserId);
+                    }
+                }
+
                 var results = await provider.SearchAsync(
                     new JobSearchQuery(
                         query.Query,
@@ -170,7 +194,8 @@ public class DailyJobApplicationService(
                         query.Location,
                         query.Region,
                         Math.Max(1, query.MaxResults),
-                        Math.Clamp(query.JobAgeDays, 1, 365)),
+                        Math.Clamp(query.JobAgeDays, 1, 365),
+                        customProperties),
                     cancellationToken);
 
                 allJobs.AddRange(results);
@@ -209,6 +234,7 @@ public class DailyJobApplicationService(
         }
 
         var generated = 0;
+        var generatedMatches = new List<(GeneratedApplication App, double MatchScore)>();
         foreach (var matchedJob in matched)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -229,7 +255,7 @@ public class DailyJobApplicationService(
                         jobPosting,
                         aiConfig.ModelId);
 
-                await orchestrator.SaveApplicationAsync(
+                var generatedApp = await orchestrator.SaveApplicationAsync(
                     userId,
                     jobPosting,
                     profile,
@@ -239,6 +265,7 @@ public class DailyJobApplicationService(
                     CvTemplates.Professional,
                     ApplicationStatus.PendingReview);
 
+                generatedMatches.Add((generatedApp, matchedJob.Score));
                 generated++;
             }
             catch (Exception ex)
@@ -249,6 +276,11 @@ public class DailyJobApplicationService(
         }
 
         await AdvanceScheduleAsync(contextFactory, userId, startedAt, cancellationToken);
+
+        var config = sp.GetService<IConfiguration>();
+        var baseUrl = config?["BaseUrl"] ?? "https://localhost:7198";
+        await orchestrator.SendPostRunEmailDigestAsync(userId, profile.Email, distinctJobs.Count, generatedMatches, baseUrl);
+
         await SendSummaryEmailAsync(emailSender, profile, distinctJobs.Count, matched.Count, generated, errors, _logger);
 
         return new AutomationRunResult(

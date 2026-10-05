@@ -12,6 +12,33 @@ public partial class AutomationSettingsPage
     private bool _isRunning;
     private string _userId = string.Empty;
     private string _selectedPreset = "0 6 * * *";
+    private List<SearchProviderConfig> _providerConfigs = [];
+
+    private Task<IEnumerable<string>> SearchProviders(string value, CancellationToken _)
+    {
+        var providers = SearchProvidersList.Select(p => p.ProviderName).ToList();
+        providers.AddRange(_providerConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Provider)).Select(p => p.Provider).Distinct());
+        var uniqueProviders = providers.Distinct().ToList();
+
+        if (string.IsNullOrWhiteSpace(value))
+            return Task.FromResult<IEnumerable<string>>(uniqueProviders);
+
+        return Task.FromResult<IEnumerable<string>>(
+            uniqueProviders.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+    private Task<IEnumerable<string>> SearchConfiguredProviders(string value, CancellationToken _)
+    {
+        var configured = SearchProvidersList.Select(p => p.ProviderName).ToList();
+        configured.AddRange(_providerConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Provider)).Select(p => p.Provider).Distinct());
+        var uniqueConfigured = configured.Distinct().ToList();
+
+        if (string.IsNullOrWhiteSpace(value))
+            return Task.FromResult<IEnumerable<string>>(uniqueConfigured);
+
+        return Task.FromResult<IEnumerable<string>>(
+            uniqueConfigured.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,6 +54,17 @@ public partial class AutomationSettingsPage
                 if (_settings is not null)
                 {
                     _selectedPreset = _settings.CronExpression;
+                    if (!string.IsNullOrEmpty(_settings.SearchProviderSettingsJson))
+                    {
+                        try
+                        {
+                            _providerConfigs = System.Text.Json.JsonSerializer.Deserialize<List<SearchProviderConfig>>(_settings.SearchProviderSettingsJson) ?? [];
+                        }
+                        catch
+                        {
+                            _providerConfigs = [];
+                        }
+                    }
                 }
             }
         }
@@ -65,6 +103,62 @@ public partial class AutomationSettingsPage
         _settings?.Queries.Remove(query);
     }
 
+    private SearchProviderConfig _newProviderConfig = new() { Provider = "LinkedIn" };
+    private SearchProviderConfig? _editingConfig = null;
+
+    private bool CanAddProvider => !string.IsNullOrWhiteSpace(_newProviderConfig.Provider)
+                                   && !string.IsNullOrWhiteSpace(_newProviderConfig.ApiKey);
+
+    private void EditProviderConfig(SearchProviderConfig config)
+    {
+        _editingConfig = config;
+        _newProviderConfig = new SearchProviderConfig
+        {
+            Provider = config.Provider,
+            ApiKey = config.ApiKey,
+            ApiHost = config.ApiHost
+        };
+    }
+
+    private void CancelEdit()
+    {
+        _editingConfig = null;
+        _newProviderConfig = new SearchProviderConfig { Provider = "LinkedIn" };
+    }
+
+    private async Task AddProviderConfig()
+    {
+        if (!CanAddProvider) return;
+
+        if (_editingConfig != null)
+        {
+            _editingConfig.Provider = _newProviderConfig.Provider;
+            _editingConfig.ApiKey = _newProviderConfig.ApiKey;
+            _editingConfig.ApiHost = _newProviderConfig.ApiHost;
+            _editingConfig = null;
+        }
+        else
+        {
+            _providerConfigs.Add(new SearchProviderConfig
+            {
+                Provider = _newProviderConfig.Provider,
+                ApiKey = _newProviderConfig.ApiKey,
+                ApiHost = _newProviderConfig.ApiHost
+            });
+        }
+
+        _newProviderConfig = new SearchProviderConfig { Provider = "LinkedIn" };
+
+        await SaveSettings();
+    }
+
+    private async Task RemoveProviderConfig(SearchProviderConfig config)
+    {
+        if (_editingConfig == config) CancelEdit();
+        _providerConfigs.Remove(config);
+        await SaveSettings();
+    }
+
     private async Task SaveSettings()
     {
         if (_settings is null)
@@ -74,6 +168,7 @@ public partial class AutomationSettingsPage
 
         try
         {
+            _settings.SearchProviderSettingsJson = System.Text.Json.JsonSerializer.Serialize(_providerConfigs);
             _settings = await AutomationSettingsService.UpdateAsync(_settings, _userId);
             _selectedPreset = _settings.CronExpression;
             Snackbar.Add(Localizer["SettingsSaved"], Severity.Success);
@@ -100,6 +195,7 @@ public partial class AutomationSettingsPage
         try
         {
             // Persist current edits first so the test run uses them.
+            _settings.SearchProviderSettingsJson = System.Text.Json.JsonSerializer.Serialize(_providerConfigs);
             _settings = await AutomationSettingsService.UpdateAsync(_settings, _userId);
             _testDebugLog += "Settings saved.\n";
 

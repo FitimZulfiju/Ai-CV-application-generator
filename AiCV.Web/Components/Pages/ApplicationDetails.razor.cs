@@ -249,4 +249,26 @@ public partial class ApplicationDetails
             Snackbar.Add($"{Localizer["ErrorSavingStatus"]}: {ex.Message}", Severity.Error);
         }
     }
+
+    private async Task ApplyAndMarkAsAppliedAsync()
+    {
+        if (_application == null || string.IsNullOrEmpty(_application.JobPosting?.ApplyUrl)) return;
+
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("window.open", _application.JobPosting.ApplyUrl, "_blank");
+
+            _application.Status = AiCV.Domain.Constants.ApplicationStatus.Applied;
+            _application.AppliedDate = DateTime.UtcNow;
+
+            await CVService.SaveApplicationAsync(_application);
+
+            Snackbar.Add(Localizer["ApplicationMarkedAsApplied"], Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"{Localizer["ErrorMarkingAsApplied"]}: {ex.Message}", Severity.Error);
+        }
+    }
 }

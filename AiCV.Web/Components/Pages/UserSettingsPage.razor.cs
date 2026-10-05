@@ -43,15 +43,16 @@ public partial class UserSettingsPage
     private bool _backupSettings = true;
     private bool _backupSmtpSettings = true;
     private bool _backupNotes = true;
+    private bool _backupAutomationSettings = true;
 
     private readonly List<AIProvider> _availableProviders = [.. Enum.GetValues<AIProvider>()];
 
     private bool HasSelectedBackupSections =>
-        _backupProfile || _backupApplications || _backupSettings || _backupSmtpSettings || _backupNotes;
+        _backupProfile || _backupApplications || _backupSettings || _backupSmtpSettings || _backupNotes || _backupAutomationSettings;
 
     private bool AllBackupSectionsSelected
     {
-        get => _backupProfile && _backupApplications && _backupSettings && _backupSmtpSettings && _backupNotes;
+        get => _backupProfile && _backupApplications && _backupSettings && _backupSmtpSettings && _backupNotes && _backupAutomationSettings;
         set
         {
             _backupProfile = value;
@@ -59,6 +60,7 @@ public partial class UserSettingsPage
             _backupSettings = value;
             _backupSmtpSettings = value;
             _backupNotes = value;
+            _backupAutomationSettings = value;
         }
     }
 
@@ -613,6 +615,7 @@ public partial class UserSettingsPage
                     Settings = _backupSettings,
                     SmtpSettings = _backupSmtpSettings,
                     Notes = _backupNotes,
+                    AutomationSettings = _backupAutomationSettings,
                 },
             };
 
@@ -727,6 +730,22 @@ public partial class UserSettingsPage
                         CreatedAt = c.CreatedAt,
                     }),
                 ];
+            }
+
+            if (_backupAutomationSettings)
+            {
+                var automationSettings = await AutomationSettingsService.GetForUserAsync(_userId);
+                if (automationSettings is not null)
+                {
+                    backup.AutomationSettings = new AutomationSettingsBackup
+                    {
+                        IsEnabled = automationSettings.IsEnabled,
+                        CronExpression = automationSettings.CronExpression,
+                        MaxApplicationsPerRun = automationSettings.MaxApplicationsPerRun,
+                        Providers = automationSettings.Providers,
+                        SearchProviderSettingsJson = automationSettings.SearchProviderSettingsJson
+                    };
+                }
             }
 
             if (_backupNotes)
@@ -1076,6 +1095,21 @@ public partial class UserSettingsPage
                         CreatedAt = configuration.CreatedAt,
                     }
                 );
+            }
+        }
+
+        if (_backupAutomationSettings && backup.Sections.AutomationSettings && backup.AutomationSettings is not null)
+        {
+            var existingSettings = await AutomationSettingsService.GetOrCreateAsync(_userId);
+            if (existingSettings is not null)
+            {
+                existingSettings.IsEnabled = backup.AutomationSettings.IsEnabled;
+                existingSettings.CronExpression = backup.AutomationSettings.CronExpression;
+                existingSettings.MaxApplicationsPerRun = backup.AutomationSettings.MaxApplicationsPerRun;
+                existingSettings.Providers = backup.AutomationSettings.Providers;
+                existingSettings.SearchProviderSettingsJson = backup.AutomationSettings.SearchProviderSettingsJson;
+
+                await AutomationSettingsService.UpdateAsync(existingSettings, _userId);
             }
         }
     }
@@ -1456,6 +1490,16 @@ public partial class UserSettingsPage
         public UserSmtpSettingsBackup? SmtpSettings { get; set; }
         public List<UserAIConfigurationBackup> AIConfigurations { get; set; } = [];
         public List<NoteBackup> Notes { get; set; } = [];
+        public AutomationSettingsBackup? AutomationSettings { get; set; }
+    }
+
+    private sealed class AutomationSettingsBackup
+    {
+        public bool IsEnabled { get; set; }
+        public string CronExpression { get; set; } = "0 6 * * *";
+        public int MaxApplicationsPerRun { get; set; } = 10;
+        public string Providers { get; set; } = "Jobindex";
+        public string? SearchProviderSettingsJson { get; set; }
     }
 
     private sealed class BackupSections
@@ -1465,6 +1509,7 @@ public partial class UserSettingsPage
         public bool Settings { get; set; }
         public bool SmtpSettings { get; set; }
         public bool Notes { get; set; }
+        public bool AutomationSettings { get; set; }
     }
 
     private sealed class ApplicationBackup

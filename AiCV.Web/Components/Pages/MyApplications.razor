@@ -19,12 +19,22 @@
     {
         <MudDataGrid T="GeneratedApplication" Items="@_applications" Hover="true" Dense="true"
                      QuickFilter="@FilterFunc1" Hideable="true" ShowMenuIcon="true" Filterable="true" SortMode="SortMode.Multiple"
-                     MultiSelection="true" @bind-SelectedItems="_selectedItems">
+                     MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="_selectedItems">
             <ToolBarContent>
                 <MudText Typo="Typo.h5" Class="d-flex align-center">
                     <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="mr-2" />
                     @Localizer["MyApplications"]
                 </MudText>
+
+                @if (_applications.Count(a => a.Status == ApplicationStatus.PendingReview) > 0)
+                {
+                    <MudBadge Content="@_applications.Count(a => a.Status == ApplicationStatus.PendingReview)" Color="Color.Error" Overlap="true" Class="ml-4 mr-2">
+                        <MudChip T="string" Color="Color.Warning" Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => searchString1 = ApplicationStatus.PendingReview)">
+                            @Localizer[$"AppStatus_{ApplicationStatus.PendingReview}"]
+                        </MudChip>
+                    </MudBadge>
+                }
+
                 <MudSpacer />
 
                 @if (_selectedItems.Any())
@@ -89,20 +99,28 @@
                 </PropertyColumn>
                 <TemplateColumn Title="@Localizer["Actions"]" Filterable="false" Sortable="false">
                     <CellTemplate>
-                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
-                                   OnClick="@(() => ViewApplication(context.Item.Id))" Class="mr-10" Disabled="@(_deletingId == context.Item.Id)"
-                                   StartIcon="@Icons.Material.Filled.Visibility">@Localizer["View"]</MudButton>
+                        <MudStack Row="true" Spacing="1">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                                       OnClick="@(() => ViewApplication(context.Item.Id))" Disabled="@(_deletingId == context.Item.Id)"
+                                       StartIcon="@Icons.Material.Filled.Visibility">@Localizer["Review"]</MudButton>
 
-                        @if (_deletingId == context.Item.Id)
-                        {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Error" />
-                        }
-                        else
-                        {
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                                           OnClick="@(() => DeleteApplication(context.Item))" aria-label="@Localizer["DeleteAriaLabel"]" Disabled="@(_deletingId != null)">
-                            </MudIconButton>
-                        }
+                            @if (!string.IsNullOrEmpty(context.Item.JobPosting?.ApplyUrl))
+                            {
+                                <MudButton Href="@context.Item.JobPosting.ApplyUrl" Target="_blank" Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small"
+                                           StartIcon="@Icons.Material.Filled.OpenInNew">@Localizer["OpenApplyLink"]</MudButton>
+                            }
+
+                            @if (_deletingId == context.Item.Id)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Error" />
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                               OnClick="@(() => DeleteApplication(context.Item))" aria-label="@Localizer["DeleteAriaLabel"]" Disabled="@(_deletingId != null)">
+                                </MudIconButton>
+                            }
+                        </MudStack>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>

@@ -30,6 +30,13 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
 
 ## Features
 
+* **Job Search Automation & Scheduling:**
+  * **Cron-Scheduled Background Service:** Runs unattended periodic job discovery based on user cron expressions.
+  * **Multi-Provider Search:** Supports Jobindex (Danish IT market scraping), LinkedIn, and JSearch via RapidAPI.
+  * **Smart Matching Engine:** Evaluates candidate profiles against posting text, computing relevance scores based on skills, job titles, and location bonuses/penalties.
+  * **Review & Apply Queue:** Auto-generates tailored CVs and cover letters into a `PendingReview` state with direct external apply links.
+  * **One-Click Apply Tracking:** Instant "Apply & Mark as Applied" action tracking applied dates and status transitions.
+  * **SMTP Email Summaries:** Sends run completion digests via per-user SMTP settings.
 * Web interface for creating/managing user profiles
 * Multi-user support with optional OAuth (Google, Microsoft, GitHub)
 * User profile includes:
@@ -83,8 +90,9 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
 * Google Gemini
 * OpenRouter
 * Groq
-* Deepseek
-* Claude
+* DeepSeek
+* Claude (Anthropic)
+* Custom / OmniRouter endpoints (via custom `BaseUrl`)
 
 **Notes:**
 

@@ -15,4 +15,5 @@ public class GeneratedApplication
     public string Template { get; set; } = Constants.CvTemplates.Professional;
     public string Status { get; set; } = Constants.ApplicationStatus.PendingReview;
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public DateTime? AppliedDate { get; set; }
 }

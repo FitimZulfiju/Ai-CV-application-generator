@@ -21,7 +21,8 @@ public class JobApplicationOrchestratorTests
             _mockCvService.Object,
             new Mock<IUserAIConfigurationService>().Object,
             new Mock<IModelDiscoveryService>().Object,
-            new Mock<ILogger<JobApplicationOrchestrator>>().Object
+            new Mock<ILogger<JobApplicationOrchestrator>>().Object,
+            new ServiceCollection().BuildServiceProvider()
         );
     }
 
@@ -177,5 +178,48 @@ public class JobApplicationOrchestratorTests
                 ),
             Times.Once
         );
+    }
+
+    [Fact]
+    public async Task SendPostRunEmailDigestAsync_Should_SendEmail_When_SmtpIsEnabled()
+    {
+        // Arrange
+        var smtpSettingsServiceMock = new Mock<IUserSmtpSettingsService>();
+        smtpSettingsServiceMock
+            .Setup(s => s.GetForUserAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new UserSmtpSettings { SmtpHost = "smtp.test.com" });
+
+        var emailSenderMock = new Mock<ISmtpEmailSender>();
+
+        var services = new ServiceCollection();
+        services.AddSingleton(smtpSettingsServiceMock.Object);
+        services.AddSingleton(emailSenderMock.Object);
+        var serviceProvider = services.BuildServiceProvider();
+
+        var orchestrator = new JobApplicationOrchestrator(
+            _mockScraper.Object,
+            _mockAiFactory.Object,
+            _mockCvService.Object,
+            new Mock<IUserAIConfigurationService>().Object,
+            new Mock<IModelDiscoveryService>().Object,
+            new Mock<ILogger<JobApplicationOrchestrator>>().Object,
+            serviceProvider
+        );
+
+        var matches = new List<(GeneratedApplication, double)>
+        {
+            (new GeneratedApplication { Id = 1, JobPosting = new JobPosting { Title = "Dev", CompanyName = "Test" } }, 8.5)
+        };
+
+        // Act
+        await orchestrator.SendPostRunEmailDigestAsync("user1", "test@test.com", 10, matches, "https://localhost");
+
+        // Assert
+        emailSenderMock.Verify(s => s.SendAutomationSummaryAsync(
+            "test@test.com",
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.Is<string>(b => b.Contains("Dev") && b.Contains("Test") && b.Contains("applications/1"))
+        ), Times.Once);
     }
 }

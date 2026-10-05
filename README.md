@@ -45,7 +45,22 @@ Parts of the codebase were built rapidly with **heavy AI assistance during early
 ## 🚀 Current Capabilities
 
 * **Multi‑Provider AI Support**
-  Bring your own API keys for OpenAI, Google Gemini, Claude (Anthropic), Groq, DeepSeek, or OpenRouter.
+  Bring your own API keys for OpenAI, Google Gemini, Claude (Anthropic), Groq, DeepSeek, OpenRouter, or Custom / OmniRouter endpoints with custom BaseUrl support.
+
+* **Automated Job Search & Scheduled Discovery**
+  Background worker service (`DailyJobApplicationService`) running on user-defined cron schedules (e.g., daily at 6 AM) to automatically discover and process matching job postings.
+
+* **Multi-Source Job Search Providers**
+  Native support for **Jobindex.dk** (Danish tech market scraper with location heuristics) alongside **LinkedIn** and **JSearch** via RapidAPI key integration.
+
+* **Intelligent Keyword & Location Matching**
+  Automatically parses candidate profiles, evaluates skill overlap against job postings, and applies customizable regional scoring bonuses (such as Copenhagen / Storkøbenhavn bonuses and out-of-scope penalties).
+
+* **Semi-Automated "Pending Review" Apply Workflow**
+  Discovers jobs and generates tailored CVs, cover letters, and email intros automatically in the background. Saves applications in a `PendingReview` state with direct external apply links, ensuring full human control before submitting.
+
+* **Email Notification Digests**
+  Sends an automated HTML summary to the user's configured SMTP inbox upon batch completion, detailing matches found, scores, and direct links to review them.
 
 * **Job Description Ingestion**
   Paste a job URL (LinkedIn, Indeed, etc.) or manually enter details. Basic extraction is used to derive requirements.
@@ -180,3 +195,4 @@ MIT License
 * [Live Demo](https://aicv.fitim.it.com)
 * [Docker Hub](https://hub.docker.com/r/timi74/aicv)
 * [GitHub](https://github.com/FitimZulfiju/Web-CV-application-generator)
+

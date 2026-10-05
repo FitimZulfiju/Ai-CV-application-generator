@@ -85,6 +85,7 @@ public class AutomationSettingsService(
         existing.CronExpression = settings.CronExpression;
         existing.MaxApplicationsPerRun = Math.Clamp(settings.MaxApplicationsPerRun, 1, 100);
         existing.Providers = settings.Providers;
+        existing.SearchProviderSettingsJson = settings.SearchProviderSettingsJson;
 
         var incoming = settings.Queries ?? [];
         var existingById = existing.Queries.ToDictionary(q => q.Id);

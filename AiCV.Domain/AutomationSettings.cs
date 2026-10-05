@@ -12,5 +12,13 @@ public class AutomationSettings
     public DateTime? LastRunUtc { get; set; }
     public DateTime? NextRunUtc { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string? SearchProviderSettingsJson { get; set; }
     public List<AutomationQuery> Queries { get; set; } = [];
+}
+
+public class SearchProviderConfig
+{
+    public string Provider { get; set; } = string.Empty;
+    public string? ApiKey { get; set; }
+    public string? ApiHost { get; set; }
 }

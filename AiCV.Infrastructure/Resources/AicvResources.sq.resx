@@ -1890,4 +1890,20 @@
   <data name="DeleteAriaLabel" xml:space="preserve">
     <value>Fshi</value>
   </data>
+  <data name="Review" xml:space="preserve">
+    <value>Shqyrto</value>
+  </data>
+  <data name="OpenApplyLink" xml:space="preserve">
+    <value>Hap lidhjen e aplikimit</value>
+  </data>
+  <data name="ApplyMarkAsApplied" xml:space="preserve">
+    <value>Apliko &amp; Shëno si të aplikuar</value>
+  </data>
+  <data name="ApplicationMarkedAsApplied" xml:space="preserve">
+    <value>Aplikimi u shënua si i aplikuar!</value>
+  </data>
+  <data name="ErrorMarkingAsApplied" xml:space="preserve">
+    <value>Gabim gjatë shënimit të aplikimit</value>
+  </data>
 </root>
+

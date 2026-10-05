@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -1911,5 +1911,20 @@
   </data>
   <data name="BackupSmtpSettings" xml:space="preserve">
     <value>SMTP Email Settings</value>
+  </data>
+  <data name="Review" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="OpenApplyLink" xml:space="preserve">
+    <value>Open Apply Link</value>
+  </data>
+  <data name="ApplyMarkAsApplied" xml:space="preserve">
+    <value>Apply &amp; Mark as Applied</value>
+  </data>
+  <data name="ApplicationMarkedAsApplied" xml:space="preserve">
+    <value>Application marked as applied!</value>
+  </data>
+  <data name="ErrorMarkingAsApplied" xml:space="preserve">
+    <value>Error marking application as applied</value>
   </data>
 </root>

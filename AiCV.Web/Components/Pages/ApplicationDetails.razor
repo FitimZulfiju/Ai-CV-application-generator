@@ -37,8 +37,16 @@
                         </MudSelect>
                     </div>
                 }
+                @if (_application != null && !string.IsNullOrEmpty(_application.JobPosting?.ApplyUrl))
+                {
+                    <div style="flex: 1 1 auto; max-width: 15rem;">
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" FullWidth="true" OnClick="ApplyAndMarkAsAppliedAsync" StartIcon="@Icons.Material.Filled.CheckCircle">
+                            @Localizer["ApplyMarkAsApplied"]
+                        </MudButton>
+                    </div>
+                }
                 <div style="flex: 1 1 auto; max-width: 12.5rem;">
-                    <MudSelect T="string" Value="_application.Status" ValueChanged="OnStatusSelected" Label="@Localizer["Status"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
+                    <MudSelect T="string" Value="_application?.Status" ValueChanged="OnStatusSelected" Label="@Localizer["Status"]" Dense="true" Margin="Margin.Dense" Variant="Variant.Outlined">
                         <MudSelectItem Value="@AiCV.Domain.Constants.ApplicationStatus.PendingReview">@Localizer[$"AppStatus_{AiCV.Domain.Constants.ApplicationStatus.PendingReview}"]</MudSelectItem>
                         <MudSelectItem Value="@AiCV.Domain.Constants.ApplicationStatus.Approved">@Localizer["Approved"]</MudSelectItem>
                         <MudSelectItem Value="@AiCV.Domain.Constants.ApplicationStatus.AutoApplied">@Localizer["Auto-Applied"]</MudSelectItem>
