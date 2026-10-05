@@ -35,10 +35,27 @@
 * Sends structured profile/job data to AI
 * Returns JSON outputs for rendering
 
-### Job Scraper / Input Processor
+### Background Automation Worker (`DailyJobApplicationService`)
 
-* Scrapes job postings or accepts manual input
-* Normalizes text for AI consumption
+* Hosted background service (`IHostedService`) running on periodic evaluation loops.
+* Monitors `AutomationSettings`, calculates cron schedule triggers (`NextRunUtc`), and coordinates unattended job searching.
+* Queries job search providers (`JobSearchProviderFactory`), matches candidate profiles (`KeywordJobMatcher`), and triggers batch generation into `PendingReview`.
+* Dispatches email digests via `ISmtpEmailSender`.
+
+### Job Search Providers & Ingestion Layer
+
+* Modular provider factory pattern (`IJobSearchProvider` / `JobSearchProviderFactory`):
+  * `JobindexSearchProvider`: Scrapes Danish IT listings with location-aware extraction.
+  * `LinkedInSearchProvider`: Queries RapidAPI LinkedIn job endpoints for structured listings.
+  * `JSearchProvider`: Alternative RapidAPI aggregator provider.
+* Scrapes full job descriptions or accepts manual user input.
+* Normalizes text for matching and AI consumption.
+
+### Matching & Scoring Engine (`KeywordJobMatcher`)
+
+* Dynamically extracts candidate skills and technologies from profiles.
+* Applies weighted scoring (Skills: 3x, Title: 2x, Description: 1x).
+* Enforces geographic bonuses and penalties (e.g., Copenhagen & Storkøbenhavn bonus vs. out-of-scope penalties).
 
 ### Output Renderer
 
@@ -95,8 +112,12 @@ graph TD
 
     subgraph "Docker Host"
         WebUI -->|Read/Write| SQL(SQL Database - Container)
-        WebUI -->|Scrape| JobSites(External Job Sites)
-        WebUI -->|API Call| AI(AI Providers - OpenAI, Gemini, etc.)
+        Worker(Daily Job Automation Worker) -->|Read/Write| SQL
+        Worker -->|Scrape / API| JobSites(Job Providers: Jobindex, LinkedIn, JSearch)
+        Worker -->|Dispatch| SMTP(SMTP Email Server)
+        WebUI -->|Scrape| JobSites
+        WebUI -->|API Call| AI(AI Providers: OpenAI, Gemini, Claude, Groq, OmniRouter, Custom)
+        Worker -->|Generate| AI
 
         FileSys(File System)
         WebUI -->|Persist Keys/Logs| FileSys
@@ -106,6 +127,7 @@ graph TD
     subgraph "External Services"
         AI
         JobSites
+        SMTP
         OAuth(OAuth Providers - Google, MS, GitHub)
         WebUI -->|Auth| OAuth
     end
