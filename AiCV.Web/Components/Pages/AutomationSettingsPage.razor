@@ -1,5 +1,6 @@
 @attribute [Microsoft.AspNetCore.Components.Route(NavUri.AutomationSettingsPage)]
 @attribute [Authorize]
+@inject IEnumerable<AiCV.Application.Interfaces.IJobSearchProvider> SearchProvidersList
 
 <PageTitle>@Localizer["JobAutomation"]</PageTitle>
 
@@ -56,6 +57,82 @@
                     </MudGrid>
                 </MudPaper>
 
+                @* Add New Provider Configuration Panel *@
+                <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <MudText Style="display:inline; white-space:nowrap;" Class="pr-2" Typo="Typo.h6">@(_editingConfig == null ? "Add Provider Configuration" : "Edit Provider Configuration")</MudText>
+                        <div>
+                            @if (_editingConfig != null)
+                            {
+                                <MudButton Variant="Variant.Text" Color="Color.Default" Class="mr-2" OnClick="CancelEdit" Size="Size.Small">
+                                    Cancel
+                                </MudButton>
+                            }
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@(_editingConfig == null ? Icons.Material.Filled.Add : Icons.Material.Filled.Save)"
+                                       Size="Size.Small" OnClick="AddProviderConfig" Disabled="@(!CanAddProvider)">
+                                @Localizer["Save"]
+                            </MudButton>
+                        </div>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary">Configure API keys for external job search providers (e.g., from RapidAPI).</MudText>
+
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" md="4" sm="4">
+                            <MudAutocomplete T="string" @bind-Value="_newProviderConfig.Provider" SearchFunc="@SearchProviders"
+                                             Label="Provider Name" Margin="Margin.Dense" Variant="Variant.Outlined" Placeholder="e.g. LinkedIn"
+                                             ResetValueOnEmptyText="false" CoerceValue="true" CoerceText="true" />
+                        </MudItem>
+                        <MudItem xs="12" md="4" sm="4">
+                            <MudTextField T="string" @bind-Value="_newProviderConfig.ApiKey" Label="API Key (RapidAPI Key)" 
+                                          Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
+                        </MudItem>
+                        <MudItem xs="12" md="4" sm="4">
+                            <MudTextField T="string" @bind-Value="_newProviderConfig.ApiHost" Label="API Host (RapidAPI Host)" 
+                                          Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+
+                @* Grid of Configured Providers *@
+                <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <MudText Typo="Typo.h6" GutterBottom="true">Configured Providers</MudText>
+
+                    @if (_providerConfigs.Count == 0)
+                    {
+                        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                            No providers configured yet.
+                        </MudAlert>
+                    }
+                    else
+                    {
+                        <MudTable Items="_providerConfigs" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                            <HeaderContent>
+                                <MudTh>Provider</MudTh>
+                                <MudTh>API Key</MudTh>
+                                <MudTh>API Host</MudTh>
+                                <MudTh>Actions</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Provider Name">
+                                    <MudText Typo="Typo.body2">@context.Provider</MudText>
+                                </MudTd>
+                                <MudTd DataLabel="API Key">
+                                    <MudText Typo="Typo.body2">@(!string.IsNullOrEmpty(context.ApiKey) ? new string('*', Math.Min(context.ApiKey.Length, 8)) + "..." : "")</MudText>
+                                </MudTd>
+                                <MudTd DataLabel="API Host">
+                                    <MudText Typo="Typo.body2">@context.ApiHost</MudText>
+                                </MudTd>
+                                <MudTd DataLabel="Actions">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
+                                                   OnClick="() => EditProviderConfig(context)" aria-label="edit" Class="mr-1" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                                   OnClick="() => RemoveProviderConfig(context)" aria-label="delete" />
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    }
+                </MudPaper>
+
                 <MudPaper Elevation="4" Class="pa-4 mb-6">
                     <div class="d-flex align-center justify-space-between mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">
                         <MudText Typo="Typo.h6">@Localizer["Queries"]</MudText>
@@ -80,7 +157,9 @@
                                 <MudTextField T="string" @bind-Value="context.Query" Placeholder="@Localizer["QueryPlaceholder"]" Margin="Margin.Dense" Variant="Variant.Outlined" />
                             </MudTd>
                             <MudTd DataLabel="@Localizer["Provider"]">
-                                <MudText Typo="Typo.body2" Class="pt-2">Jobindex</MudText>
+                                <MudAutocomplete T="string" @bind-Value="context.Provider" SearchFunc="@SearchConfiguredProviders"
+                                                 Margin="Margin.Dense" Variant="Variant.Outlined" Placeholder="Select Provider"
+                                                 ResetValueOnEmptyText="false" CoerceValue="true" CoerceText="true" />
                             </MudTd>
                             <MudTd DataLabel="@Localizer["Location"]">
                                 <MudTextField T="string" @bind-Value="context.Location" Placeholder="@Localizer["LocationPlaceholder"]" Margin="Margin.Dense" Variant="Variant.Outlined" />

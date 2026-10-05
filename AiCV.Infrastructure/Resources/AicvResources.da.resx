@@ -1890,4 +1890,20 @@
   <data name="DeleteAriaLabel" xml:space="preserve">
     <value>Slet</value>
   </data>
+  <data name="Review" xml:space="preserve">
+    <value>Gennemgå</value>
+  </data>
+  <data name="OpenApplyLink" xml:space="preserve">
+    <value>Åbn ansøgningslink</value>
+  </data>
+  <data name="ApplyMarkAsApplied" xml:space="preserve">
+    <value>Ansøg &amp; marker som ansøgt</value>
+  </data>
+  <data name="ApplicationMarkedAsApplied" xml:space="preserve">
+    <value>Ansøgning markeret som ansøgt!</value>
+  </data>
+  <data name="ErrorMarkingAsApplied" xml:space="preserve">
+    <value>Fejl ved markering som ansøgt</value>
+  </data>
 </root>
+

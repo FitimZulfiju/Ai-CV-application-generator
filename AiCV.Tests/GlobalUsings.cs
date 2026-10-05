@@ -26,3 +26,4 @@ global using AiCV.Infrastructure.Services.Automation;
 global using Microsoft.Extensions.Options;
 global using Microsoft.Extensions.Http;
 global using System.Net.Http;
+global using Microsoft.Extensions.Configuration;

@@ -6,7 +6,8 @@ public class JobApplicationOrchestrator(
     ICVService cvService,
     IUserAIConfigurationService configService,
     IModelDiscoveryService discoveryService,
-    ILogger<JobApplicationOrchestrator> logger
+    ILogger<JobApplicationOrchestrator> logger,
+    IServiceProvider serviceProvider
 ) : IJobApplicationOrchestrator
 {
     private readonly IJobPostScraper _jobScraper = jobScraper;
@@ -15,6 +16,7 @@ public class JobApplicationOrchestrator(
     private readonly IUserAIConfigurationService _configService = configService;
     private readonly IModelDiscoveryService _discoveryService = discoveryService;
     private readonly ILogger<JobApplicationOrchestrator> _logger = logger;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -114,7 +116,7 @@ public class JobApplicationOrchestrator(
         throw lastException ?? new InvalidOperationException("Failed to generate application using any available model.");
     }
 
-    public async Task SaveApplicationAsync(
+    public async Task<GeneratedApplication> SaveApplicationAsync(
         string userId,
         JobPosting job,
         CandidateProfile profile,
@@ -150,5 +152,54 @@ public class JobApplicationOrchestrator(
         };
 
         await _cvService.SaveApplicationAsync(app);
+        return app;
+    }
+
+    public async Task SendPostRunEmailDigestAsync(
+        string userId,
+        string userEmail,
+        int totalJobsScanned,
+        List<(GeneratedApplication App, double MatchScore)> generatedMatches,
+        string baseUrl)
+    {
+        var smtpService = _serviceProvider.GetService<IUserSmtpSettingsService>();
+        if (smtpService == null) return;
+
+        var smtpSettings = await smtpService.GetForUserAsync(userId);
+        if (smtpSettings == null || string.IsNullOrWhiteSpace(smtpSettings.SmtpHost))
+            return;
+
+        var emailSender = _serviceProvider.GetService<ISmtpEmailSender>();
+        if (emailSender == null) return;
+
+        var sb = new StringBuilder();
+        sb.AppendLine("<h2>AiCV Daily Automation Digest</h2>");
+        sb.AppendLine($"<p>Total jobs scanned: {totalJobsScanned}</p>");
+        sb.AppendLine($"<p>Matches generated for review: {generatedMatches.Count}</p>");
+
+        if (generatedMatches.Count > 0)
+        {
+            sb.AppendLine("<h3>Applications to Review:</h3>");
+            sb.AppendLine("<ul>");
+            foreach (var (App, MatchScore) in generatedMatches)
+            {
+                var reviewLink = $"{baseUrl.TrimEnd('/')}/applications/{App.Id}";
+                sb.AppendLine("<li>");
+                sb.AppendLine($"<strong>{System.Net.WebUtility.HtmlEncode(App.JobPosting?.Title)}</strong> at {System.Net.WebUtility.HtmlEncode(App.JobPosting?.CompanyName)} (Score: {MatchScore:F1})<br/>");
+                sb.AppendLine($"<a href=\"{reviewLink}\">Review Application</a> | ");
+                sb.AppendLine($"<a href=\"{App.JobPosting?.ApplyUrl}\">Direct Apply Link</a>");
+                sb.AppendLine("</li>");
+            }
+            sb.AppendLine("</ul>");
+        }
+
+        try
+        {
+            await emailSender.SendAutomationSummaryAsync(userEmail, "Your AiCV Daily Match Digest", "AiCV Applications", sb.ToString());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send SMTP email digest for user {UserId}", userId);
+        }
     }
 }

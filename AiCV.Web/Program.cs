@@ -395,6 +395,8 @@ builder.Services.AddHttpClient("Jobindex", client =>
 
 builder.Services.AddScoped<JobSearchProviderFactory>();
 builder.Services.AddScoped<IJobSearchProvider, JobindexSearchProvider>();
+builder.Services.AddScoped<IJobSearchProvider, LinkedInSearchProvider>();
+builder.Services.AddScoped<IJobSearchProvider, JSearchProvider>();
 builder.Services.AddScoped<IJobMatcher, KeywordJobMatcher>();
 builder.Services.AddScoped<IAutomationSettingsService, AutomationSettingsService>();
 builder.Services.AddScoped<ISmtpEmailSender, SmtpEmailSender>();

@@ -6,5 +6,6 @@ public record JobSearchQuery(
     string? Location = null,
     string? Region = null,
     int MaxResults = 20,
-    int JobAgeDays = 7
+    int JobAgeDays = 7,
+    Dictionary<string, string>? CustomProperties = null
 );

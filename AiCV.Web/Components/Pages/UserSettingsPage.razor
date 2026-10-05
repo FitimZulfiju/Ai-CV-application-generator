@@ -353,6 +353,7 @@
                                     <MudCheckBox T="bool" @bind-Value="_backupProfile" Label="@Localizer["BackupProfile"]" Color="Color.Primary" />
                                     <MudCheckBox T="bool" @bind-Value="_backupApplications" Label="@Localizer["BackupApplications"]" Color="Color.Primary" />
                                     <MudCheckBox T="bool" @bind-Value="_backupSettings" Label="@Localizer["BackupSettings"]" Color="Color.Primary" />
+                                    <MudCheckBox T="bool" @bind-Value="_backupAutomationSettings" Label="@Localizer["JobAutomation"]" Color="Color.Primary" />
                                     <MudCheckBox T="bool" @bind-Value="_backupSmtpSettings" Label="@Localizer["BackupSmtpSettings"]" Color="Color.Primary" />
                                     <MudCheckBox T="bool" @bind-Value="_backupNotes" Label="@Localizer["BackupNotes"]" Color="Color.Primary" />
                                 </MudStack>
@@ -364,7 +365,7 @@
                                     </MudAlert>
                                 }
 
-                                @if (_backupSettings)
+                                @if (_backupSettings || _backupAutomationSettings || _backupSmtpSettings)
                                 {
                                     <MudAlert Severity="Severity.Warning" Dense="true" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.VpnKey">
                                         @Localizer["BackupSettingsSensitiveWarning"]

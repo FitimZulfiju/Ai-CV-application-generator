@@ -17,7 +17,7 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -92,6 +92,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
 
                     b.Property<string>("Providers")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SearchProviderSettingsJson")
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
@@ -345,6 +348,9 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                     b.Property<string>("ApplicationEmailContent")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("AppliedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CandidateProfileId")
                         .HasColumnType("integer");
