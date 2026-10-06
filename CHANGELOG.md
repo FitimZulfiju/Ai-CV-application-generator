@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.20.2] - 2026-10-06
+
+### Fixed
+- fix(jobindex): support jobsearch/result_app/list in Stash JSON schema
+
 ## [1.20.1] - 2026-10-05
 
 ### Fixed

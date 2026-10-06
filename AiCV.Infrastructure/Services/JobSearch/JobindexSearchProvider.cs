@@ -213,7 +213,13 @@ public partial class JobindexSearchProvider(
                 using var doc = JsonDocument.Parse(stashJson);
                 var root = doc.RootElement;
 
-                if (root.TryGetProperty("jobsearch/result_app", out var app) &&
+                JsonElement app;
+                if (!root.TryGetProperty("jobsearch/result_app/list", out app))
+                {
+                    root.TryGetProperty("jobsearch/result_app", out app);
+                }
+
+                if (app.ValueKind != JsonValueKind.Undefined &&
                     app.TryGetProperty("storeData", out var storeData) &&
                     storeData.TryGetProperty("searchResponse", out var searchResponse) &&
                     searchResponse.TryGetProperty("results", out var resultsArray))
