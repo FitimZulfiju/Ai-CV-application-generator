@@ -68,6 +68,16 @@
                         <MudHighlighter Text="@context.Item.JobPosting?.CompanyName" HighlightedText="@searchString1" />
                     </CellTemplate>
                 </PropertyColumn>
+                <PropertyColumn Property="x => x.JobPosting != null ? x.JobPosting.Source : string.Empty" Title="@Localizer["Source"]">
+                    <CellTemplate>
+                        @if (!string.IsNullOrWhiteSpace(context.Item.JobPosting?.Source))
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Default">
+                                <MudHighlighter Text="@context.Item.JobPosting.Source" HighlightedText="@searchString1" />
+                            </MudChip>
+                        }
+                    </CellTemplate>
+                </PropertyColumn>
                 <TemplateColumn Title="@Localizer["JobTitle"]" SortBy="x => x.JobPosting != null ? x.JobPosting.Title : string.Empty">
                     <CellTemplate>
                         @if (!string.IsNullOrEmpty(context.Item.JobPosting?.ApplyUrl) || !string.IsNullOrEmpty(context.Item.JobPosting?.Url))

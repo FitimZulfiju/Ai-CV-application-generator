@@ -665,6 +665,7 @@ public partial class UserSettingsPage
                             {
                                 Title = a.JobPosting.Title,
                                 CompanyName = a.JobPosting.CompanyName,
+                                Source = a.JobPosting.Source,
                                 Description = a.JobPosting.Description,
                                 Url = a.JobPosting.Url,
                                 ApplyUrl = a.JobPosting.ApplyUrl,
@@ -987,6 +988,7 @@ public partial class UserSettingsPage
             {
                 Title = application.JobPosting.Title ?? string.Empty,
                 CompanyName = application.JobPosting.CompanyName ?? string.Empty,
+                Source = application.JobPosting.Source ?? string.Empty,
                 Description = application.JobPosting.Description ?? string.Empty,
                 Url = application.JobPosting.Url ?? string.Empty,
                 ApplyUrl = application.JobPosting.ApplyUrl ?? string.Empty,
@@ -1526,6 +1528,7 @@ public partial class UserSettingsPage
     {
         public string? Title { get; set; }
         public string? CompanyName { get; set; }
+        public string? Source { get; set; }
         public string? Description { get; set; }
         public string? Url { get; set; }
         public string? ApplyUrl { get; set; }

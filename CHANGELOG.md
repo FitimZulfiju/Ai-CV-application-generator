@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.21.0] - 2026-10-07
+
+### Added
+- feat(applications): add source column next to company name in my applications
+
 ## [1.20.3] - 2026-10-07
 
 ### Fixed

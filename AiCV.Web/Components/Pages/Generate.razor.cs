@@ -193,6 +193,7 @@ public partial class Generate : IDisposable
             _job.Description = fetchedJob.Description;
             _job.CompanyName = fetchedJob.CompanyName;
             _job.Title = fetchedJob.Title;
+            _job.Source = fetchedJob.Source;
             _showAdvancedEditor = true;
             UpdatePreview(_job.Description);
 
@@ -216,6 +217,7 @@ public partial class Generate : IDisposable
         _job.Description = string.Empty;
         _job.CompanyName = string.Empty;
         _job.Title = string.Empty;
+        _job.Source = string.Empty;
         _generatedCoverLetter = string.Empty;
         _generatedResume = null;
         _resumeJson = string.Empty;
@@ -252,6 +254,7 @@ public partial class Generate : IDisposable
             JobUrl = _job.Url,
             JobTitle = _job.Title,
             JobCompanyName = _job.CompanyName,
+            JobSource = _job.Source,
             JobDescription = _job.Description,
             CustomPrompt = _customPrompt,
             ManualEntry = _manualEntry,
@@ -294,6 +297,7 @@ public partial class Generate : IDisposable
         _job.Url = draft.JobUrl;
         _job.Title = draft.JobTitle;
         _job.CompanyName = draft.JobCompanyName;
+        _job.Source = draft.JobSource;
         _job.Description = draft.JobDescription;
         _customPrompt = draft.CustomPrompt;
         _manualEntry = draft.ManualEntry;
@@ -699,6 +703,7 @@ public partial class Generate : IDisposable
         public string JobUrl { get; set; } = string.Empty;
         public string JobTitle { get; set; } = string.Empty;
         public string JobCompanyName { get; set; } = string.Empty;
+        public string JobSource { get; set; } = string.Empty;
         public string JobDescription { get; set; } = string.Empty;
         public string CustomPrompt { get; set; } = string.Empty;
         public bool ManualEntry { get; set; }

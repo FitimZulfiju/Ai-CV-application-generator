@@ -247,6 +247,10 @@ public class DailyJobApplicationService(
             {
                 var jobPosting = await orchestrator.FetchJobDetailsAsync(matchedJob.Job.Url);
                 jobPosting.ApplyUrl = matchedJob.Job.ApplyUrl;
+                if (!string.IsNullOrWhiteSpace(matchedJob.Job.Provider))
+                {
+                    jobPosting.Source = matchedJob.Job.Provider;
+                }
                 if (string.IsNullOrWhiteSpace(jobPosting.CompanyName) || jobPosting.CompanyName.Equals("Jobindex", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!string.IsNullOrWhiteSpace(matchedJob.Job.Company))

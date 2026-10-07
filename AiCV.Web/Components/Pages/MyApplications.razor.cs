@@ -135,6 +135,11 @@ public partial class MyApplications
             return true;
         }
 
+        if (element.JobPosting?.Source?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+
         if (element.JobPosting?.Title?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
         {
             return true;

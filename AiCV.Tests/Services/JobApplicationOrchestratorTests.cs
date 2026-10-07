@@ -137,6 +137,7 @@ public class JobApplicationOrchestratorTests
         {
             Title = "Job Title",
             CompanyName = "Test Company",
+            Source = "LinkedIn",
             Description = "Job Description",
             Url = "https://example.com/job",
         };
@@ -208,7 +209,7 @@ public class JobApplicationOrchestratorTests
 
         var matches = new List<(GeneratedApplication, double)>
         {
-            (new GeneratedApplication { Id = 1, JobPosting = new JobPosting { Title = "Dev", CompanyName = "Test" } }, 8.5)
+            (new GeneratedApplication { Id = 1, JobPosting = new JobPosting { Title = "Dev", CompanyName = "Test", Source = "LinkedIn" } }, 8.5)
         };
 
         // Act

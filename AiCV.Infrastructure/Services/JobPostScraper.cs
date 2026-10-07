@@ -88,6 +88,7 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
                 Description = markdown.Trim(),
                 Title = !string.IsNullOrWhiteSpace(title) ? title : "Imported Job",
                 CompanyName = !string.IsNullOrWhiteSpace(company) ? company : string.Empty,
+                Source = ExtractSource(url),
                 DatePosted = DateTime.Now
             };
         }
@@ -130,6 +131,21 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
         }
 
         return (title, company);
+    }
+
+    private static string ExtractSource(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return string.Empty;
+        if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            var host = uri.Host.ToLowerInvariant();
+            if (host.Contains("linkedin.com")) return "LinkedIn";
+            if (host.Contains("jobindex.dk")) return "Jobindex";
+            if (host.Contains("indeed.com")) return "Indeed";
+            if (host.Contains("glassdoor.com")) return "Glassdoor";
+            return uri.Host.StartsWith("www.") ? uri.Host[4..] : uri.Host;
+        }
+        return string.Empty;
     }
 
     // ExtractTextFromHtml is no longer needed as we use SmartReader + ReverseMarkdown directly
