@@ -113,6 +113,7 @@ public class LinkedInSearchProvider(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error searching LinkedIn jobs via RapidAPI");
+            throw;
         }
 
         return results;

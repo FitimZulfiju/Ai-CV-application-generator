@@ -198,12 +198,13 @@ public class DailyJobApplicationService(
                         customProperties),
                     cancellationToken);
 
+                _logger.LogInformation("Provider '{Provider}' returned {Count} jobs for query '{Query}'.", query.Provider, results.Count, query.Query);
                 allJobs.AddRange(results);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Search failed for query '{Query}' (user {UserId})", query.Query, userId);
-                errors.Add($"Search '{query.Query}' failed: {ex.Message}");
+                _logger.LogWarning(ex, "Search failed for query '{Query}' (provider {Provider}, user {UserId})", query.Query, query.Provider, userId);
+                errors.Add($"Search '{query.Query}' via {query.Provider} failed: {ex.Message}");
             }
         }
 
@@ -246,6 +247,13 @@ public class DailyJobApplicationService(
             {
                 var jobPosting = await orchestrator.FetchJobDetailsAsync(matchedJob.Job.Url);
                 jobPosting.ApplyUrl = matchedJob.Job.ApplyUrl;
+                if (string.IsNullOrWhiteSpace(jobPosting.CompanyName) || jobPosting.CompanyName.Equals("Jobindex", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!string.IsNullOrWhiteSpace(matchedJob.Job.Company))
+                    {
+                        jobPosting.CompanyName = matchedJob.Job.Company;
+                    }
+                }
 
                 var (coverLetter, resumeResult, applicationEmail) =
                     await orchestrator.GenerateApplicationAsync(

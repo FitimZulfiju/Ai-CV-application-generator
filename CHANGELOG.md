@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.20.3] - 2026-10-07
+
+### Fixed
+- fix(automation): preserve real employer name in job posting and propagate search errors
+
 ## [1.20.2] - 2026-10-06
 
 ### Fixed
