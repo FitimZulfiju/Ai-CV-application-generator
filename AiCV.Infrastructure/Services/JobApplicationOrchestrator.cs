@@ -132,6 +132,7 @@ public class JobApplicationOrchestrator(
             Id = 0,
             Title = job.Title,
             CompanyName = job.CompanyName,
+            Source = job.Source,
             Description = job.Description,
             Url = job.Url,
             ApplyUrl = job.ApplyUrl,

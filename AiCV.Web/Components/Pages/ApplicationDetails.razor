@@ -18,6 +18,10 @@
             <div class="d-flex align-center">
                 <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => Navigation.NavigateTo($"/{NavUri.MyApplicationsPage}"))" />
                 <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title @Localizer["at"] @_application.JobPosting?.CompanyName</MudText>
+                @if (!string.IsNullOrWhiteSpace(_application.JobPosting?.Source))
+                {
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="ml-2">@_application.JobPosting.Source</MudChip>
+                }
                 @if (!string.IsNullOrEmpty(_application.JobPosting?.ApplyUrl) || !string.IsNullOrEmpty(_application.JobPosting?.Url))
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Href="@(!string.IsNullOrEmpty(_application.JobPosting?.ApplyUrl) ? _application.JobPosting.ApplyUrl : _application.JobPosting?.Url)" Target="_blank" Color="Color.Primary" Class="ml-2" Size="Size.Small" title="@Localizer["ViewJob"]" />

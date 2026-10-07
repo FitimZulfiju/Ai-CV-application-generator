@@ -22,7 +22,8 @@ public class AIPromptBuilderTests
             Title = "Senior Developer",
             CompanyName = "MegaCorp",
             Url = "https://example.com/job",
-            Description = "We need a senior dev."
+            Description = "We need a senior dev.",
+            Source = "LinkedIn"
         };
 
         // Act
@@ -61,7 +62,8 @@ public class AIPromptBuilderTests
             Title = "Project Manager",
             CompanyName = "Global Inc.",
             Url = "https://example.com/pm",
-            Description = "Lead projects."
+            Description = "Lead projects.",
+            Source = "Indeed"
         };
 
         // Act
