@@ -97,7 +97,8 @@ public class JSearchProvider(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error searching jobs via JSearch RapidAPI");
+            _logger.LogError(ex, "Error searching JSearch jobs via RapidAPI");
+            throw;
         }
 
         return results;
