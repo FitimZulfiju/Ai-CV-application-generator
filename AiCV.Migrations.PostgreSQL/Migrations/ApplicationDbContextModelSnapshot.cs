@@ -430,14 +430,14 @@ namespace AiCV.Migrations.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("DatePosted")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Source")
                         .IsRequired()
                         .HasColumnType("text");
 

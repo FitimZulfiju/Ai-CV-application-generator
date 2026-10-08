@@ -93,9 +93,12 @@ public static class AIPromptBuilder
         if (isResume)
         {
             sb.AppendLine("IMPORTANT: DO NOT USE EM-DASHES (—) IN THE JSON. ONLY USE HYPHENS (-).");
-            sb.AppendLine(
-                "CRITICAL: Return the result as a valid JSON object matching the following structure."
-            );
+            sb.AppendLine("CRITICAL JSON ESCAPING RULES:");
+            sb.AppendLine("- You MUST properly escape all internal double quotes using a backslash (\\\") inside any JSON string values.");
+            sb.AppendLine("- Alternatively, use SINGLE QUOTES (') for all HTML attributes (e.g. style='color:red;') instead of double quotes.");
+            sb.AppendLine("- Any failure to escape double quotes correctly will break the JSON parser.");
+            sb.AppendLine("CRITICAL: Return the result as a valid JSON object matching exactly the following structure. DO NOT add any other properties.");
+            sb.AppendLine("DO NOT include 'ProfessionalSummary', 'WorkExperience', 'Educations', or 'Projects' in the JSON. They are handled separately.");
             sb.AppendLine(
                 "Do NOT include personal contact details (Name, Email, Phone, etc.) in the JSON. Only return the tailored content."
             );
@@ -113,7 +116,7 @@ public static class AIPromptBuilder
                 "  \"TailoredProfile\": { \"Title\": \"...\", \"Tagline\": \"...\", \"Skills\": [ { \"Category\": \"...\", \"Names\": [\"...\"] } ] }"
             );
             sb.AppendLine("}");
-            sb.AppendLine("Ensure 'Description' fields use HTML <li> tags for bullet points.");
+            sb.AppendLine("Ensure 'Description' fields use HTML <li> tags for bullet points and ONLY use single quotes for any HTML attributes.");
         }
         else
         {
