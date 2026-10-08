@@ -156,7 +156,7 @@ public class DailyJobApplicationService(
 
             try
             {
-                var provider = providerFactory.GetProvider(query.Provider) ?? providerFactory.GetProvider("Jobindex");
+                var provider = providerFactory.GetProvider(query.Provider);
                 if (provider is null)
                 {
                     errors.Add($"No search provider available for '{query.Provider}'.");
@@ -198,7 +198,6 @@ public class DailyJobApplicationService(
                         customProperties),
                     cancellationToken);
 
-                _logger.LogInformation("Provider '{Provider}' returned {Count} jobs for query '{Query}'.", query.Provider, results.Count, query.Query);
                 allJobs.AddRange(results);
             }
             catch (Exception ex)

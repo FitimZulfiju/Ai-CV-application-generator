@@ -5,20 +5,20 @@ public class LinkedInSearchProviderTests
     [Fact]
     public async Task SearchAsync_Should_ParseJobsFromJson()
     {
-        const string json = """
-
-        {
-            "data": [
-                {
-                    "id": "12345",
-                    "title": "Software Engineer",
-                    "company": "Tech Corp",
-                    "location": "Copenhagen",
-                    "applyUrl": "https://linkedin.com/apply/12345",
-                    "postedDate": "2023-10-01T00:00:00Z"
-                }
-            ]
-        }
+        const string html = """
+        <li class="result-card">
+            <div class="base-card relative w-full hover:no-underline focus:no-underline base-card--link base-search-card base-search-card--link job-search-card" data-entity-urn="urn:li:jobPosting:12345">
+                <a class="base-card__full-link" href="https://linkedin.com/apply/12345"></a>
+                <div class="base-search-card__info">
+                    <h3 class="base-search-card__title">Software Engineer</h3>
+                    <h4 class="base-search-card__subtitle">Tech Corp</h4>
+                    <div class="base-search-card__metadata">
+                        <span class="job-search-card__location">Copenhagen</span>
+                        <time class="job-search-card__listdate" datetime="2023-10-01"></time>
+                    </div>
+                </div>
+            </div>
+        </li>
 """;
 
         var handlerMock = new Mock<HttpMessageHandler>();
@@ -31,7 +31,7 @@ public class LinkedInSearchProviderTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(json)
+                Content = new StringContent(html)
             });
 
         var client = new HttpClient(handlerMock.Object);
@@ -44,7 +44,7 @@ public class LinkedInSearchProviderTests
 
         var loggerMock = new Mock<ILogger<LinkedInSearchProvider>>();
 
-        var provider = new LinkedInSearchProvider(factoryMock.Object, configMock.Object, loggerMock.Object);
+        var provider = new LinkedInSearchProvider(factoryMock.Object, loggerMock.Object);
 
         var query = new JobSearchQuery("test");
         var results = await provider.SearchAsync(query, CancellationToken.None);
@@ -59,3 +59,4 @@ public class LinkedInSearchProviderTests
         Assert.Equal(new DateTime(2023, 10, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime(), job.DatePosted?.ToLocalTime());
     }
 }
+

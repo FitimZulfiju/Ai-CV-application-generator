@@ -3,7 +3,7 @@ namespace AiCV.Infrastructure.Services;
 public class CustomProviderService(string apiKey, string modelId, string baseUrl, IStringLocalizer<AicvResources> localizer)
     : AiServiceBase(localizer)
 {
-    private readonly ChatClient _chatClient = string.IsNullOrWhiteSpace(baseUrl) ? new(modelId, new System.ClientModel.ApiKeyCredential(apiKey)) : new(modelId, new System.ClientModel.ApiKeyCredential(apiKey), new OpenAI.OpenAIClientOptions { Endpoint = new Uri(baseUrl) });
+    private readonly ChatClient _chatClient = string.IsNullOrWhiteSpace(baseUrl) ? new(modelId, new System.ClientModel.ApiKeyCredential(apiKey), new OpenAI.OpenAIClientOptions { NetworkTimeout = TimeSpan.FromMinutes(5) }) : new(modelId, new System.ClientModel.ApiKeyCredential(apiKey), new OpenAI.OpenAIClientOptions { Endpoint = new Uri(baseUrl), NetworkTimeout = TimeSpan.FromMinutes(5) });
 
     protected override AIProvider Provider => AIProvider.Custom;
     protected override bool UseHttpProbing => false;

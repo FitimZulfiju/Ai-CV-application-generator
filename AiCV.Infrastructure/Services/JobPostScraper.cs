@@ -112,7 +112,7 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
 
         // 4. Try Open Graph Site Name for Company
         var ogSiteName = doc.DocumentNode.SelectSingleNode("//meta[@property='og:site_name']")?.GetAttributeValue("content", "").Trim();
-        if (!string.IsNullOrWhiteSpace(ogSiteName))
+        if (!string.IsNullOrWhiteSpace(ogSiteName) && !IsKnownJobBoard(ogSiteName))
         {
             company = ogSiteName;
         }
@@ -148,5 +148,15 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
         return string.Empty;
     }
 
-    // ExtractTextFromHtml is no longer needed as we use SmartReader + ReverseMarkdown directly
+    private static bool IsKnownJobBoard(string name)
+    {
+        var lower = name.ToLowerInvariant();
+        return lower.Contains("jobindex") ||
+               lower.Contains("linkedin") ||
+               lower.Contains("indeed") ||
+               lower.Contains("glassdoor") ||
+               lower.Contains("the hub") ||
+               lower.Contains("ofir") ||
+               lower.Contains("jobnet");
+    }
 }

@@ -31,28 +31,62 @@ public class JSearchProvider(
 
         try
         {
-            var keywords = Uri.EscapeDataString(query.Query ?? "");
-            var location = Uri.EscapeDataString(query.Location ?? query.Region ?? "");
+            var keywords = query.Query ?? "";
+            var location = query.Location ?? query.Region ?? "";
 
             // If location is provided, append it to the query as JSearch expects everything in the single "query" parameter
-            var searchQuery = string.IsNullOrWhiteSpace(location) ? keywords : $"{keywords} in {location}";
+            var searchQueryRaw = string.IsNullOrWhiteSpace(location) ? keywords : $"{keywords} in {location}";
+            var searchQuery = Uri.EscapeDataString(searchQueryRaw);
 
-            var url = $"https://{apiHost}/search?query={searchQuery}&page=1&num_pages=1&date_posted=week";
+            // Ensure the ApiHost does not contain http:// or https:// or trailing slashes or /search
+            var cleanApiHost = apiHost.Replace("https://", "")
+                                      .Replace("http://", "")
+                                      .Replace("/search-v2", "")
+                                      .Replace("/search", "")
+                                      .TrimEnd('/');
+
+            var url = $"https://{cleanApiHost}/search-v2?query={searchQuery}&page=1&num_pages=1&date_posted=week";
 
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Add("x-rapidapi-key", apiKey);
-            client.DefaultRequestHeaders.Add("x-rapidapi-host", apiHost);
+            client.DefaultRequestHeaders.Add("x-rapidapi-host", cleanApiHost);
 
             using var response = await client.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    throw new Exception($"JSearch 404. Body: {body}. URL: {url}");
+                }
+                throw new Exception($"JSearch Error {response.StatusCode}. Body: {body}");
+            }
 
             var jsonStream = await response.Content.ReadAsStreamAsync(cancellationToken);
             using var document = await JsonDocument.ParseAsync(jsonStream, cancellationToken: cancellationToken);
 
-            // JSearch returns data in a "data" array
-            if (document.RootElement.TryGetProperty("data", out var dataElement) && dataElement.ValueKind == JsonValueKind.Array)
+            // JSearch v2 returns an object with a "jobs" array inside "data". Older v1 returned an array directly.
+            JsonElement jobsArray = default;
+            bool foundJobs = false;
+
+            if (document.RootElement.TryGetProperty("data", out var dataElement))
             {
-                foreach (var item in dataElement.EnumerateArray())
+                if (dataElement.ValueKind == JsonValueKind.Array)
+                {
+                    jobsArray = dataElement;
+                    foundJobs = true;
+                }
+                else if (dataElement.ValueKind == JsonValueKind.Object && dataElement.TryGetProperty("jobs", out var innerJobsArray) && innerJobsArray.ValueKind == JsonValueKind.Array)
+                {
+                    jobsArray = innerJobsArray;
+                    foundJobs = true;
+                }
+            }
+
+            if (foundJobs)
+            {
+                foreach (var item in jobsArray.EnumerateArray())
                 {
                     if (results.Count >= query.MaxResults)
                         break;

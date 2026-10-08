@@ -61,6 +61,9 @@ public class AIServiceFactory(
             );
         }
 
+        var httpClient = _httpClientFactory.CreateClient();
+        httpClient.Timeout = TimeSpan.FromMinutes(5);
+
         return provider switch
         {
             AIProvider.OpenAI => new OpenAIService(
@@ -69,37 +72,37 @@ public class AIServiceFactory(
                 _localizer
             ),
             AIProvider.GoogleGemini => new GoogleGeminiService(
-                _httpClientFactory.CreateClient(),
+                httpClient,
                 config.ApiKey ?? "",
                 selectedModelId ?? "gemini-2.0-flash-exp",
                 _localizer
             ),
             AIProvider.Claude => new ClaudeService(
-                _httpClientFactory.CreateClient(),
+                httpClient,
                 config.ApiKey ?? "",
                 selectedModelId ?? "claude-3-5-haiku-20241022",
                 _localizer
             ),
             AIProvider.Groq => new GroqService(
-                _httpClientFactory.CreateClient(),
+                httpClient,
                 config.ApiKey ?? "",
                 selectedModelId ?? "llama-3.3-70b-versatile",
                 _localizer
             ),
             AIProvider.DeepSeek => new DeepSeekService(
-                _httpClientFactory.CreateClient(),
+                httpClient,
                 config.ApiKey ?? "",
                 selectedModelId ?? "deepseek-chat",
                 _localizer
             ),
             AIProvider.OpenRouter => CreateOpenRouterService(
                 config.ApiKey ?? "",
-                _httpClientFactory,
+                httpClient,
                 selectedModelId ?? "google/gemini-2.0-flash-exp:free",
                 _localizer
             ),
             AIProvider.OmniRouter => new OmniRouterService(
-                _httpClientFactory.CreateClient(),
+                httpClient,
                 config.ApiKey ?? "",
                 selectedModelId ?? "google/gemini-2.0-flash-exp:free",
                 config.BaseUrl,
@@ -156,12 +159,11 @@ public class AIServiceFactory(
 
     private static OpenRouterService CreateOpenRouterService(
         string apiKey,
-        IHttpClientFactory httpClientFactory,
+        HttpClient httpClient,
         string modelId,
         IStringLocalizer<AicvResources> localizer
     )
     {
-        var httpClient = httpClientFactory.CreateClient();
         return new OpenRouterService(httpClient, apiKey, modelId, localizer);
     }
 

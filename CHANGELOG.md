@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.21.1] - 2026-10-08
+
+### Changed
+- Fix LinkedIn Search Provider to use public native API instead of RapidAPI, fix silent fallback bug in DailyJobApplicationService, and add missing DB migrations
+
 ## [1.21.0] - 2026-10-07
 
 ### Added

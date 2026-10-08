@@ -1,12 +1,10 @@
 namespace AiCV.Infrastructure.Services.JobSearch;
 
-public class LinkedInSearchProvider(
+public partial class LinkedInSearchProvider(
     IHttpClientFactory httpClientFactory,
-    IConfiguration configuration,
     ILogger<LinkedInSearchProvider> logger) : IJobSearchProvider
 {
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-    private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<LinkedInSearchProvider> _logger = logger;
 
     public string ProviderName => "LinkedIn";
@@ -15,86 +13,77 @@ public class LinkedInSearchProvider(
     {
         var results = new List<JobSearchResult>();
 
-        var apiKey = query.CustomProperties?.GetValueOrDefault("LinkedInApiKey")
-            ?? _configuration["JobSearch:LinkedIn:ApiKey"]
-            ?? Environment.GetEnvironmentVariable("AUTOMATION_LINKEDIN_API_KEY");
-
-        var apiHost = query.CustomProperties?.GetValueOrDefault("LinkedInApiHost")
-            ?? _configuration["JobSearch:LinkedIn:ApiHost"]
-            ?? "linkedin-jobs-search.p.rapidapi.com";
-
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            _logger.LogWarning("LinkedIn API key not configured. Skipping LinkedIn search.");
-            return results;
-        }
-
         try
         {
             var keywords = Uri.EscapeDataString(query.Query ?? "");
             var location = Uri.EscapeDataString(query.Location ?? query.Region ?? "Denmark");
-            var url = $"https://{apiHost}/search?keywords={keywords}&location={location}&datePosted=anyTime&sort=mostRecent";
+            var url = $"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={keywords}&location={location}&start=0";
 
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("x-rapidapi-key", apiKey);
-            client.DefaultRequestHeaders.Add("x-rapidapi-host", apiHost);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
             using var response = await client.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            var jsonStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-            using var document = await JsonDocument.ParseAsync(jsonStream, cancellationToken: cancellationToken);
+            var html = await response.Content.ReadAsStringAsync(cancellationToken);
+            var document = new HtmlDocument();
+            document.LoadHtml(html);
 
-            // Structure depends on RapidAPI exact response, but assume an array or array inside "data"
-            JsonElement elements;
-            if (document.RootElement.ValueKind == JsonValueKind.Array)
+            var nodes = document.DocumentNode.SelectNodes("//li[.//div[contains(@class, 'job-search-card')]]");
+            if (nodes == null)
             {
-                elements = document.RootElement;
-            }
-            else if (document.RootElement.TryGetProperty("data", out var dataElement) && dataElement.ValueKind == JsonValueKind.Array)
-            {
-                elements = dataElement;
-            }
-            else
-            {
-                _logger.LogWarning("Unexpected JSON structure from LinkedIn RapidAPI");
+                _logger.LogWarning("No job cards found in LinkedIn HTML response.");
                 return results;
             }
 
-            foreach (var item in elements.EnumerateArray())
+            foreach (var node in nodes)
             {
                 if (results.Count >= query.MaxResults)
                     break;
 
-                var id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : null;
-                // Sometimes IDs come back as externalId or something similar
-                if (string.IsNullOrEmpty(id) && item.TryGetProperty("externalId", out var extIdProp))
-                    id = extIdProp.GetString();
+                var cardNode = node.SelectSingleNode(".//div[contains(@class, 'job-search-card')]");
+                if (cardNode == null) continue;
 
+                var urn = cardNode.GetAttributeValue("data-entity-urn", "");
+                var id = urn.Split(':').LastOrDefault();
                 if (string.IsNullOrEmpty(id)) continue;
 
-                var title = item.TryGetProperty("title", out var titleProp) ? titleProp.GetString() ?? "" : "";
-                var company = item.TryGetProperty("company", out var companyProp) ? companyProp.GetString() ?? "" : "";
-                var itemLocation = item.TryGetProperty("location", out var locProp) ? locProp.GetString() ?? "" : "";
-                var snippet = item.TryGetProperty("snippet", out var snipProp) ? snipProp.GetString() ?? "" : "";
+                var titleNode = cardNode.SelectSingleNode(".//h3[contains(@class, 'base-search-card__title')] | .//span[contains(@class, 'sr-only')]");
+                var title = titleNode?.InnerText?.Trim() ?? "";
 
-                if (string.IsNullOrEmpty(snippet) && item.TryGetProperty("description", out var descProp))
-                    snippet = descProp.GetString() ?? "";
-
-                var applyUrl = $"https://www.linkedin.com/jobs/view/{id}";
-                if (item.TryGetProperty("applyUrl", out var auProp))
+                if (string.IsNullOrWhiteSpace(title))
                 {
-                    applyUrl = auProp.GetString() ?? applyUrl;
+                    titleNode = cardNode.SelectSingleNode(".//span[contains(@class, 'sr-only')]");
+                    title = titleNode?.InnerText?.Trim() ?? "";
                 }
 
+                title = _htmlTagsRegex.Replace(title, "").Trim();
+
+                var companyNode = cardNode.SelectSingleNode(".//h4[contains(@class, 'base-search-card__subtitle')]");
+                var company = companyNode?.InnerText?.Trim() ?? "";
+                company = _htmlTagsRegex.Replace(company, "").Trim();
+
+                var locNode = cardNode.SelectSingleNode(".//span[contains(@class, 'job-search-card__location')]");
+                var itemLocation = locNode?.InnerText?.Trim() ?? "";
+
+                var urlNode = cardNode.SelectSingleNode(".//a[contains(@class, 'base-card__full-link')]");
+                var jobUrl = urlNode?.GetAttributeValue("href", "");
+
+                if (!string.IsNullOrEmpty(jobUrl) && jobUrl.Contains('?'))
+                {
+                    jobUrl = jobUrl[..jobUrl.IndexOf('?')];
+                }
+                else if (string.IsNullOrEmpty(jobUrl))
+                {
+                    jobUrl = $"https://www.linkedin.com/jobs/view/{id}";
+                }
+
+                var dateNode = cardNode.SelectSingleNode(".//time[contains(@class, 'job-search-card__listdate')]");
                 DateTime? datePosted = null;
-                if (item.TryGetProperty("postedDate", out var pdProp) && pdProp.TryGetDateTime(out var pd))
+                if (dateNode != null)
                 {
-                    datePosted = pd;
-                }
-                else if (item.TryGetProperty("date", out var dProp) && dProp.TryGetDateTime(out var d))
-                {
-                    datePosted = d;
+                    var datetimeStr = dateNode.GetAttributeValue("datetime", "");
+                    if (DateTime.TryParse(datetimeStr, out var d)) datePosted = d;
                 }
 
                 results.Add(new JobSearchResult(
@@ -104,15 +93,15 @@ public class LinkedInSearchProvider(
                     Company: company,
                     Location: itemLocation,
                     DatePosted: datePosted,
-                    Url: applyUrl,
-                    ApplyUrl: applyUrl,
-                    DescriptionSnippet: snippet
+                    Url: jobUrl,
+                    ApplyUrl: jobUrl,
+                    DescriptionSnippet: ""
                 ));
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error searching LinkedIn jobs via RapidAPI");
+            _logger.LogError(ex, "Error searching LinkedIn jobs via public guest API");
             throw;
         }
 
@@ -121,12 +110,6 @@ public class LinkedInSearchProvider(
 
     public Task<JobDetail?> GetDetailAsync(string jobId, CancellationToken cancellationToken = default)
     {
-        // For LinkedIn via this RapidAPI setup, GetDetailAsync isn't requested in the spec,
-        // but it's part of the IJobSearchProvider interface. We'll return a placeholder or
-        // rely on the scraping method here.
-        // Assuming the orchestration gets most details from SearchAsync (like Jobindex does).
-        // A full implementation might hit a different RapidAPI endpoint.
-
         var applyUrl = $"https://www.linkedin.com/jobs/view/{jobId}/";
         return Task.FromResult<JobDetail?>(new JobDetail
         {
@@ -136,7 +119,11 @@ public class LinkedInSearchProvider(
             Location = "",
             ApplyUrl = applyUrl,
             Url = applyUrl,
-            FullDescription = "Detailed view not fully implemented via RapidAPI."
+            FullDescription = "Detailed view fetched via scraper."
         });
     }
+
+#pragma warning disable SYSLIB1045 // Use 'GeneratedRegexAttribute'
+    private static readonly Regex _htmlTagsRegex = new("<[^>]+>|&nbsp;", RegexOptions.Compiled);
+#pragma warning restore SYSLIB1045
 }
