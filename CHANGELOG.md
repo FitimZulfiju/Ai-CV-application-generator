@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
 
 ---
+## [1.22.0] - 2026-10-10
+
+### Added
+- feat: refine Automation Settings UI layout, abstract TagInputContainer and fix input state bug
+
 ## [1.21.1] - 2026-10-08
 
 ### Changed

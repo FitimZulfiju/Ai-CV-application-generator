@@ -4,224 +4,254 @@
 
 <PageTitle>@Localizer["JobAutomation"]</PageTitle>
 
-<div class="d-flex flex-column" style="min-height: 100%;">
-    <MudContainer MaxWidth="MaxWidth.False" Class="pa-4 d-flex flex-column flex-grow-1">
-        <div class="flex-grow-1">
-            <div class="d-flex align-center justify-space-between pb-3">
-                <MudText Typo="Typo.h5" Class="settings-title-nowrap d-flex align-center gap-2">
-                    <MudIcon Icon="@Icons.Material.Filled.Schedule" /> @Localizer["AutomationSettings"]
-                </MudText>
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+
+    <div class="d-flex align-baseline justify-space-between pb-3">
+        <MudText Typo="Typo.h5" Class="settings-title-nowrap d-flex align-center gap-2 ma-0">
+            <MudIcon Icon="@Icons.Material.Filled.Schedule" /> @Localizer["AutomationSettings"]
+        </MudText>
+        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-end ma-0">
+            @Localizer["AutomationSettingsSubtitle"]
+        </MudText>
+    </div>
+
+    @if (_isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (_settings is not null)
+    {
+        <MudPaper Elevation="4" Class="pa-4 mb-2">
+            <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">General Configuration</MudText>
+
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudSwitch T="bool" @bind-Value="_settings.IsEnabled" Color="Color.Primary"
+                               Label="@Localizer["EnableAutomation"]" />
+                </MudItem>
+
+                <MudItem xs="12" md="4" sm="6">
+                    <MudSelect T="string" Label="@Localizer["CronPresets"]" @bind-Value="_selectedPreset"
+                               @bind-Value:after="ApplyPreset" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        <MudSelectItem Value="@PresetDaily6">@Localizer["Daily6AM"]</MudSelectItem>
+                        <MudSelectItem Value="@PresetDaily8">@Localizer["Daily8AM"]</MudSelectItem>
+                        <MudSelectItem Value="@PresetWeekdays7">@Localizer["Weekdays7AM"]</MudSelectItem>
+                        <MudSelectItem Value="@PresetCustom">@Localizer["Custom"]</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4" sm="6">
+                    <MudTextField T="string" @bind-Value="_settings.CronExpression"
+                                  Label="@Localizer["CronExpression"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  HelperText="@Localizer["CronExpressionHelper"]" />
+                </MudItem>
+
+                <MudItem xs="12" md="4" sm="6">
+                    <MudNumericField T="int" @bind-Value="_settings.MaxApplicationsPerRun" Min="1" Max="50"
+                                     Label="@Localizer["MaxApplicationsPerRun"]" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* Add New Provider Configuration Panel *@
+        <MudPaper Elevation="4" Class="pa-4 mb-2">
+            <div class="d-flex align-center justify-space-between mb-4">
+                <div class="d-flex align-baseline gap-3 flex-wrap">
+                    <MudText Class="ma-0" Style="white-space:nowrap;" Typo="Typo.h6">@(_editingConfig == null ? "Add Provider Configuration" : "Edit Provider Configuration")</MudText>
+                    <MudText Class="ma-0" Typo="Typo.body2" Color="Color.Secondary">Configure API keys for external job search providers (e.g., from RapidAPI).</MudText>
+                </div>
+                <div class="d-flex align-center">
+                    @if (_editingConfig != null)
+                    {
+                        <MudButton Variant="Variant.Text" Color="Color.Default" Class="mr-2" OnClick="CancelEdit" Size="Size.Small">
+                            Cancel
+                        </MudButton>
+                    }
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@(_editingConfig == null ? Icons.Material.Filled.Add : Icons.Material.Filled.Save)"
+                               Size="Size.Small" OnClick="AddProviderConfig" Disabled="@(!CanAddProvider)">
+                        @Localizer["Save"]
+                    </MudButton>
+                </div>
             </div>
 
-            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">
-                @Localizer["AutomationSettingsSubtitle"]
-            </MudText>
+            <MudGrid Spacing="2">
+                <MudItem xs="12" md="4" sm="4">
+                    <MudAutocomplete T="string" @bind-Value="_newProviderConfig.Provider" SearchFunc="@SearchProviders"
+                                     Label="Provider Name" Margin="Margin.Dense" Variant="Variant.Outlined" Placeholder="e.g. LinkedIn"
+                                     ResetValueOnEmptyText="false" CoerceValue="true" CoerceText="true" />
+                </MudItem>
+                <MudItem xs="12" md="4" sm="4">
+                    <MudTextField T="string" @bind-Value="_newProviderConfig.ApiKey" Label="API Key (RapidAPI Key)"
+                                  Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
+                </MudItem>
+                <MudItem xs="12" md="4" sm="4">
+                    <MudTextField T="string" @bind-Value="_newProviderConfig.ApiHost" Label="API Host (RapidAPI Host)"
+                                  Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
 
-            @if (_isLoading)
+        @* Grid of Configured Providers *@
+        <MudPaper Elevation="4" Class="pa-4 mb-2">
+            <MudText Typo="Typo.h6" GutterBottom="true">Configured Providers</MudText>
+
+            @if (_providerConfigs.Count == 0)
             {
-                <div class="d-flex justify-center align-center pa-8">
-                    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-                </div>
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                    No providers configured yet.
+                </MudAlert>
             }
-            else if (_settings is not null)
+            else
             {
-                <MudPaper Elevation="4" Class="pa-4 mb-6">
-                    <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">General Configuration</MudText>
+                <MudTable Items="_providerConfigs" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>Provider</MudTh>
+                        <MudTh>API Key</MudTh>
+                        <MudTh>API Host</MudTh>
+                        <MudTh>Actions</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Provider Name">
+                            <MudText Typo="Typo.body2">@context.Provider</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="API Key">
+                            <MudText Typo="Typo.body2">@(!string.IsNullOrEmpty(context.ApiKey) ? new string('*', Math.Min(context.ApiKey.Length, 8)) + "..." : "")</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="API Host">
+                            <MudText Typo="Typo.body2">@context.ApiHost</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="Actions">
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
+                                           OnClick="() => EditProviderConfig(context)" aria-label="edit" Class="mr-1" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                           OnClick="() => RemoveProviderConfig(context)" aria-label="delete" />
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
+        </MudPaper>
 
-                    <MudGrid>
-                        <MudItem xs="12">
-                            <MudSwitch T="bool" @bind-Value="_settings.IsEnabled" Color="Color.Primary"
-                                       Label="@Localizer["EnableAutomation"]" />
-                        </MudItem>
+        <MudPaper Elevation="4" Class="pa-4 mb-2">
+            <div class="d-flex align-center justify-space-between mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">
+                <MudText Typo="Typo.h6">@Localizer["Queries"]</MudText>
+            </div>
 
-                        <MudItem xs="12" md="4" sm="6">
-                            <MudSelect T="string" Label="@Localizer["CronPresets"]" @bind-Value="_selectedPreset"
-                                       @bind-Value:after="ApplyPreset" Variant="Variant.Outlined" Margin="Margin.Dense">
-                                <MudSelectItem Value="@PresetDaily6">@Localizer["Daily6AM"]</MudSelectItem>
-                                <MudSelectItem Value="@PresetDaily8">@Localizer["Daily8AM"]</MudSelectItem>
-                                <MudSelectItem Value="@PresetWeekdays7">@Localizer["Weekdays7AM"]</MudSelectItem>
-                                <MudSelectItem Value="@PresetCustom">@Localizer["Custom"]</MudSelectItem>
-                            </MudSelect>
-                        </MudItem>
+            @* Add Search Query Form *@
+            <MudGrid Spacing="1" Class="mb-4 align-end">
+                <MudItem xs="12" md="3">
+                    <TagInputContainer Label="@Localizer["Role"]"
+                                       @bind-Tags="_newQueryTexts"
+                                       Placeholder="@Localizer["QueryPlaceholder"]"
+                                       SearchFunc="SearchQueries" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <TagInputContainer Label="@Localizer["Provider"]"
+                                       @bind-Tags="_newQueryProviders"
+                                       Placeholder="@Localizer["ProviderPlaceholder"]"
+                                       SearchFunc="SearchConfiguredProviders" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <TagInputContainer Label="@Localizer["Location"]"
+                                       @bind-Tags="_newQueryLocations"
+                                       Placeholder="@Localizer["LocationPlaceholder"]"
+                                       SearchFunc="SearchLocations" />
+                </MudItem>
+                <MudItem xs="6" md="1">
+                    <MudNumericField T="int" @bind-Value="_newQueryMaxResults" Label="@Localizer["MaxResults"]" Min="1" Max="100" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="6" md="1">
+                    <MudNumericField T="int" @bind-Value="_newQueryJobAgeDays" Label="@Localizer["JobAge"]" Min="1" Max="90" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" md="1" Class="d-flex justify-end pb-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddQueryFromForm" Size="Size.Small" FullWidth="true">
+                        Add
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
 
-                        <MudItem xs="12" md="4" sm="6">
-                            <MudTextField T="string" @bind-Value="_settings.CronExpression"
-                                          Label="@Localizer["CronExpression"]" Variant="Variant.Outlined" Margin="Margin.Dense"
-                                          HelperText="@Localizer["CronExpressionHelper"]" />
-                        </MudItem>
+            <MudDivider Class="my-2" />
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Configured Search Queries</MudText>
 
-                        <MudItem xs="12" md="4" sm="6">
-                            <MudNumericField T="int" @bind-Value="_settings.MaxApplicationsPerRun" Min="1" Max="50"
-                                             Label="@Localizer["MaxApplicationsPerRun"]" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-
-                @* Add New Provider Configuration Panel *@
-                <MudPaper Elevation="4" Class="pa-4 mb-6">
-                    <div class="d-flex align-center justify-space-between mb-2">
-                        <MudText Style="display:inline; white-space:nowrap;" Class="pr-2" Typo="Typo.h6">@(_editingConfig == null ? "Add Provider Configuration" : "Edit Provider Configuration")</MudText>
-                        <div>
-                            @if (_editingConfig != null)
-                            {
-                                <MudButton Variant="Variant.Text" Color="Color.Default" Class="mr-2" OnClick="CancelEdit" Size="Size.Small">
-                                    Cancel
-                                </MudButton>
-                            }
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@(_editingConfig == null ? Icons.Material.Filled.Add : Icons.Material.Filled.Save)"
-                                       Size="Size.Small" OnClick="AddProviderConfig" Disabled="@(!CanAddProvider)">
-                                @Localizer["Save"]
-                            </MudButton>
-                        </div>
-                    </div>
-                    <MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary">Configure API keys for external job search providers (e.g., from RapidAPI).</MudText>
-
-                    <MudGrid Spacing="2">
-                        <MudItem xs="12" md="4" sm="4">
-                            <MudAutocomplete T="string" @bind-Value="_newProviderConfig.Provider" SearchFunc="@SearchProviders"
-                                             Label="Provider Name" Margin="Margin.Dense" Variant="Variant.Outlined" Placeholder="e.g. LinkedIn"
-                                             ResetValueOnEmptyText="false" CoerceValue="true" CoerceText="true" />
-                        </MudItem>
-                        <MudItem xs="12" md="4" sm="4">
-                            <MudTextField T="string" @bind-Value="_newProviderConfig.ApiKey" Label="API Key (RapidAPI Key)" 
-                                          Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
-                        </MudItem>
-                        <MudItem xs="12" md="4" sm="4">
-                            <MudTextField T="string" @bind-Value="_newProviderConfig.ApiHost" Label="API Host (RapidAPI Host)" 
-                                          Margin="Margin.Dense" Variant="Variant.Outlined" Clearable="true" />
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-
-                @* Grid of Configured Providers *@
-                <MudPaper Elevation="4" Class="pa-4 mb-6">
-                    <MudText Typo="Typo.h6" GutterBottom="true">Configured Providers</MudText>
-
-                    @if (_providerConfigs.Count == 0)
-                    {
-                        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
-                            No providers configured yet.
-                        </MudAlert>
-                    }
-                    else
-                    {
-                        <MudTable Items="_providerConfigs" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
-                            <HeaderContent>
-                                <MudTh>Provider</MudTh>
-                                <MudTh>API Key</MudTh>
-                                <MudTh>API Host</MudTh>
-                                <MudTh>Actions</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd DataLabel="Provider Name">
-                                    <MudText Typo="Typo.body2">@context.Provider</MudText>
-                                </MudTd>
-                                <MudTd DataLabel="API Key">
-                                    <MudText Typo="Typo.body2">@(!string.IsNullOrEmpty(context.ApiKey) ? new string('*', Math.Min(context.ApiKey.Length, 8)) + "..." : "")</MudText>
-                                </MudTd>
-                                <MudTd DataLabel="API Host">
-                                    <MudText Typo="Typo.body2">@context.ApiHost</MudText>
-                                </MudTd>
-                                <MudTd DataLabel="Actions">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
-                                                   OnClick="() => EditProviderConfig(context)" aria-label="edit" Class="mr-1" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                                                   OnClick="() => RemoveProviderConfig(context)" aria-label="delete" />
-                                </MudTd>
-                            </RowTemplate>
-                        </MudTable>
-                    }
-                </MudPaper>
-
-                <MudPaper Elevation="4" Class="pa-4 mb-6">
-                    <div class="d-flex align-center justify-space-between mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">
-                        <MudText Typo="Typo.h6">@Localizer["Queries"]</MudText>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
-                                   OnClick="AddQuery" Size="Size.Small">
-                            @Localizer["AddQuery"]
-                        </MudButton>
-                    </div>
-
-                    <MudTable Items="_settings.Queries" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
-                        <HeaderContent>
-                            <MudTh>@Localizer["Query"]</MudTh>
-                            <MudTh>@Localizer["Provider"]</MudTh>
-                            <MudTh>@Localizer["Location"]</MudTh>
-                            <MudTh>@Localizer["MaxResults"]</MudTh>
-                            <MudTh>@Localizer["JobAge"]</MudTh>
-                            <MudTh>@Localizer["Active"]</MudTh>
-                            <MudTh></MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="@Localizer["Query"]">
-                                <MudTextField T="string" @bind-Value="context.Query" Placeholder="@Localizer["QueryPlaceholder"]" Margin="Margin.Dense" Variant="Variant.Outlined" />
-                            </MudTd>
-                            <MudTd DataLabel="@Localizer["Provider"]">
-                                <MudAutocomplete T="string" @bind-Value="context.Provider" SearchFunc="@SearchConfiguredProviders"
-                                                 Margin="Margin.Dense" Variant="Variant.Outlined" Placeholder="Select Provider"
-                                                 ResetValueOnEmptyText="false" CoerceValue="true" CoerceText="true" />
-                            </MudTd>
-                            <MudTd DataLabel="@Localizer["Location"]">
-                                <MudTextField T="string" @bind-Value="context.Location" Placeholder="@Localizer["LocationPlaceholder"]" Margin="Margin.Dense" Variant="Variant.Outlined" />
-                            </MudTd>
-                            <MudTd DataLabel="@Localizer["MaxResults"]">
-                                <MudNumericField T="int" @bind-Value="context.MaxResults" Min="1" Max="100" Margin="Margin.Dense" Variant="Variant.Outlined" HideSpinButtons="false" />
-                            </MudTd>
-                            <MudTd DataLabel="@Localizer["JobAge"]">
-                                <MudNumericField T="int" @bind-Value="context.JobAgeDays" Min="1" Max="90" Margin="Margin.Dense" Variant="Variant.Outlined" HideSpinButtons="false" />
-                            </MudTd>
-                            <MudTd DataLabel="@Localizer["Active"]">
-                                <MudSwitch T="bool" @bind-Value="context.IsActive" Color="Color.Success" />
-                            </MudTd>
-                            <MudTd>
+            @if (_settings.Queries.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                    No queries configured yet.
+                </MudAlert>
+            }
+            else
+            {
+                <MudTable Items="_settings.Queries" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>@Localizer["Query"]</MudTh>
+                        <MudTh>@Localizer["Provider"]</MudTh>
+                        <MudTh>@Localizer["Location"]</MudTh>
+                        <MudTh>@Localizer["MaxResults"]</MudTh>
+                        <MudTh>@Localizer["JobAge"]</MudTh>
+                        <MudTh>@Localizer["Active"]</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="@Localizer["Query"]">
+                            <MudText Typo="Typo.body2">@context.Query</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="@Localizer["Provider"]">
+                            <MudText Typo="Typo.body2">@context.Provider</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="@Localizer["Location"]">
+                            <MudText Typo="Typo.body2">@context.Location</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="@Localizer["MaxResults"]">
+                            <MudText Typo="Typo.body2">@context.MaxResults</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="@Localizer["JobAge"]">
+                            <MudText Typo="Typo.body2">@context.JobAgeDays</MudText>
+                        </MudTd>
+                        <MudTd DataLabel="@Localizer["Active"]">
+                            <div class="d-flex align-center gap-2">
+                                <MudSwitch T="bool" @bind-Value="context.IsActive" Color="Color.Success" Class="ma-0" />
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
                                                OnClick="() => RemoveQuery(context)" aria-label="delete" />
-                            </MudTd>
-                        </RowTemplate>
-                    </MudTable>
-                </MudPaper>
-
-                <MudPaper Elevation="4" Class="pa-4 mb-6">
-                    <MudGrid>
-                        <MudItem xs="12" sm="6">
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                @Localizer["LastRun"]:
-                                <strong class="ms-1" style="color: var(--mud-palette-text-primary)">@(_settings.LastRunUtc?.ToLocalTime().ToString("g") ?? "—")</strong>
-                            </MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="6">
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                @Localizer["NextRun"]:
-                                <strong class="ms-1" style="color: var(--mud-palette-text-primary)">@(_settings.NextRunUtc?.ToLocalTime().ToString("g") ?? "—")</strong>
-                            </MudText>
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-
-                <div class="d-flex justify-end gap-3 mb-6">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Default"
-                               OnClick="RunTestNow" StartIcon="@(_isRunning ? null : Icons.Material.Filled.PlayArrow)" Disabled="_isRunning">
-                        @if (_isRunning)
-                        {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                        }
-                        @Localizer["TestRunNow"]
-                    </MudButton>
-
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                               OnClick="SaveSettings" StartIcon="@(_isRunning ? null : Icons.Material.Filled.Save)" Disabled="_isRunning">
-                        @Localizer["SaveSettings"]
-                    </MudButton>
-                </div>
-
-                @if (!string.IsNullOrEmpty(_testDebugLog))
-                {
-                    <MudPaper Elevation="2" Class="pa-4 mb-6 bg-dark text-white" Style="background-color: #1e1e1e; color: #d4d4d4;">
-                        <MudText Typo="Typo.subtitle2" Class="mb-2" Style="color: #569cd6;">Test Run Debug Log</MudText>
-                        <pre style="white-space: pre-wrap; word-break: break-all; font-family: Consolas, monospace; font-size: 13px;">@_testDebugLog</pre>
-                    </MudPaper>
-                }
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
             }
-        </div>
-    </MudContainer>
-</div>
+        </MudPaper>
+
+        <MudGrid Class="pt-4 align-center">
+            <MudItem xs="6" sm="4">
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    @Localizer["LastRun"]:
+                    <strong class="ms-1" style="color: var(--mud-palette-text-primary)">@(_settings.LastRunUtc?.ToLocalTime().ToString("g") ?? "—")</strong>
+                </MudText>
+            </MudItem>
+            <MudItem xs="6" sm="4">
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    @Localizer["NextRun"]:
+                    <strong class="ms-1" style="color: var(--mud-palette-text-primary)">@(_settings.NextRunUtc?.ToLocalTime().ToString("g") ?? "—")</strong>
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" sm="4" Class="d-flex justify-end gap-2">
+                <MudButton Variant="Variant.Outlined" Color="Color.Default"
+                           OnClick="RunTestNow" StartIcon="@(_isRunning ? null : Icons.Material.Filled.PlayArrow)" Disabled="_isRunning">
+                    @if (_isRunning)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                    }
+                    @Localizer["TestRunNow"]
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           OnClick="SaveSettings" StartIcon="@(_isRunning ? null : Icons.Material.Filled.Save)" Disabled="_isRunning">
+                    @Localizer["SaveSettings"]
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+
+        @if (!string.IsNullOrEmpty(_testDebugLog))
+        {
+            <MudPaper Elevation="2" Class="pa-4 mb-6 bg-dark text-white" Style="background-color: #1e1e1e; color: #d4d4d4;">
+                <MudText Typo="Typo.subtitle2" Class="mb-2" Style="color: #569cd6;">Test Run Debug Log</MudText>
+                <pre style="white-space: pre-wrap; word-break: break-all; font-family: Consolas, monospace; font-size: 13px;">@_testDebugLog</pre>
+            </MudPaper>
+        }
+    }
+</MudContainer>
