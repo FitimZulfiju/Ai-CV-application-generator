@@ -313,3 +313,9 @@ body {
 .admin-logs-table .mud-table-loading {
     display: none !important;
 }
+
+/* Fix for TagInputContainer autocomplete dropdown overlapping the border */
+.tag-input-popover {
+    margin-top: 12px !important;
+    min-width: 160px !important;
+}

@@ -1,0 +1,46 @@
+.mud-tag-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 14px;
+    border: 1px solid var(--mud-palette-lines-inputs);
+    border-radius: var(--mud-default-borderradius);
+    background-color: transparent;
+    min-height: 40px;
+    transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: text;
+}
+
+.mud-tag-input-container:focus-within {
+    border-color: var(--mud-palette-primary);
+    border-width: 2px;
+    padding: 2px 13px;
+}
+
+::deep .mud-tag-input-container .mud-input-control {
+    margin-top: 0 !important;
+    flex-grow: 1;
+    min-width: 60px;
+}
+
+::deep .mud-tag-input-container .mud-input-slot {
+    padding: 0 !important;
+}
+
+.tag-input-wrapper {
+    position: relative;
+    margin-bottom: 4px;
+}
+
+.tag-input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(14px, -8px) scale(0.75);
+    transform-origin: top left;
+    background-color: var(--mud-palette-surface);
+    padding: 0 5px;
+    z-index: 2;
+    pointer-events: none;
+}

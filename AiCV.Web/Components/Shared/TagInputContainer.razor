@@ -1,0 +1,32 @@
+<div class="tag-input-wrapper">
+    <div class="mud-tag-input-container">
+        @foreach (var item in Tags)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Default" OnClose="@( _ => RemoveTag(item))" Class="ma-0">@item</MudChip>
+        }
+        <MudAutocomplete T="string"
+                         @ref="_autocomplete"
+                         Value="null"
+                         ValueChanged="OnItemSelected"
+                         Text="@_searchText"
+                         TextChanged="OnTextChanged"
+                         SearchFunc="SearchFuncWrapper"
+                         Placeholder="@Placeholder"
+                         Underline="false"
+                         Margin="Margin.None"
+                         ResetValueOnEmptyText="true"
+                         CoerceValue="false"
+                         CoerceText="false"
+                         Clearable="false"
+                         Adornment="Adornment.None"
+                         AnchorOrigin="Origin.BottomLeft"
+                         TransformOrigin="Origin.TopLeft"
+                         PopoverClass="tag-input-popover"
+                         OnKeyUp="OnKeyUp" />
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="tag-input-label">@Label</label>
+    }
+</div>
+

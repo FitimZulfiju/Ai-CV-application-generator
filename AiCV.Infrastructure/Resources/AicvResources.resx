@@ -1927,4 +1927,7 @@
   <data name="ErrorMarkingAsApplied" xml:space="preserve">
     <value>Error marking application as applied</value>
   </data>
+  <data name="ProviderPlaceholder" xml:space="preserve">
+    <value>e.g. LinkedIn</value>
+  </data>
 </root>

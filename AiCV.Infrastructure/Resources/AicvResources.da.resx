@@ -1905,5 +1905,9 @@
   <data name="ErrorMarkingAsApplied" xml:space="preserve">
     <value>Fejl ved markering som ansøgt</value>
   </data>
+  <data name="ProviderPlaceholder" xml:space="preserve">
+    <value>f.eks. LinkedIn</value>
+  </data>
 </root>
+
 

@@ -82,20 +82,98 @@ public partial class AutomationSettingsPage
         StateHasChanged();
     }
 
-    private void AddQuery()
+    private List<string> _newQueryTexts = [];
+    private List<string> _newQueryLocations = [];
+    private int _newQueryJobAgeDays = 7;
+    private int _newQueryMaxResults = 20;
+    private List<string> _newQueryProviders = [];
+
+    private Task<IEnumerable<string>> SearchQueries(string value, CancellationToken _)
     {
-        if (_settings is null)
+        var existingTags = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        if (_settings?.Queries != null)
         {
+            foreach (var q in _settings.Queries)
+            {
+                if (!string.IsNullOrWhiteSpace(q.Query))
+                {
+                    foreach (var part in q.Query.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                    {
+                        existingTags.Add(part);
+                    }
+                }
+            }
+        }
+
+        existingTags.ExceptWith(_newQueryTexts);
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult<IEnumerable<string>>(existingTags);
+        }
+
+        var matches = existingTags.Where(t => t.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        return Task.FromResult<IEnumerable<string>>(matches);
+    }
+
+    private Task<IEnumerable<string>> SearchLocations(string value, CancellationToken _)
+    {
+        var existingTags = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        if (_settings?.Queries != null)
+        {
+            foreach (var q in _settings.Queries)
+            {
+                if (!string.IsNullOrWhiteSpace(q.Location))
+                {
+                    foreach (var part in q.Location.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                    {
+                        existingTags.Add(part);
+                    }
+                }
+            }
+        }
+
+        existingTags.ExceptWith(_newQueryLocations);
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult<IEnumerable<string>>(existingTags);
+        }
+
+        var matches = existingTags.Where(t => t.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        return Task.FromResult<IEnumerable<string>>(matches);
+    }
+
+    private void AddQueryFromForm()
+    {
+        if (_settings is null) return;
+
+        if (_newQueryTexts.Count == 0)
+        {
+            Snackbar.Add(Localizer["Please enter at least one query keyword."], Severity.Warning);
             return;
         }
+
+        string combinedQuery = string.Join(", ", _newQueryTexts);
+        string combinedLocation = string.Join(", ", _newQueryLocations);
+        string combinedProvider = _newQueryProviders.Count != 0 ? string.Join(", ", _newQueryProviders) : "Jobindex";
+
         _settings.Queries.Add(new AutomationQuery
         {
-            Query = string.Empty,
-            Provider = "Jobindex",
-            IsActive = true,
-            JobAgeDays = 7,
-            MaxResults = 20
+            Query = combinedQuery,
+            Provider = combinedProvider,
+            Location = combinedLocation,
+            MaxResults = _newQueryMaxResults,
+            JobAgeDays = _newQueryJobAgeDays,
+            IsActive = true
         });
+
+        // Reset the form
+        _newQueryTexts.Clear();
+        _newQueryLocations.Clear();
+        _newQueryProviders.Clear();
     }
 
     private void RemoveQuery(AutomationQuery query)

@@ -1905,5 +1905,9 @@
   <data name="ErrorMarkingAsApplied" xml:space="preserve">
     <value>Gabim gjatë shënimit të aplikimit</value>
   </data>
+  <data name="ProviderPlaceholder" xml:space="preserve">
+    <value>p.sh. LinkedIn</value>
+  </data>
 </root>
+
 
