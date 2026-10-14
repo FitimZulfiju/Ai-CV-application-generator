@@ -1974,6 +1974,15 @@
   <data name="QueryDuplicated" xml:space="preserve">
     <value>Kërkesa e kërkimit u duplikua me sukses.</value>
   </data>
+  <data name="RoleOrKeywords" xml:space="preserve">
+    <value>Roli / Fjalët kyçe</value>
+  </data>
+  <data name="ExportingBackup" xml:space="preserve">
+    <value>Duke eksportuar kopjen rezervë...</value>
+  </data>
+  <data name="ImportingBackup" xml:space="preserve">
+    <value>Duke importuar kopjen rezervë...</value>
+  </data>
 </root>
 
 

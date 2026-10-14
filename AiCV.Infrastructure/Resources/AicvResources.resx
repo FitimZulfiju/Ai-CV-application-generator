@@ -1996,4 +1996,13 @@
   <data name="QueryDuplicated" xml:space="preserve">
     <value>Search query duplicated successfully.</value>
   </data>
+  <data name="RoleOrKeywords" xml:space="preserve">
+    <value>Role / Keywords</value>
+  </data>
+  <data name="ExportingBackup" xml:space="preserve">
+    <value>Exporting backup...</value>
+  </data>
+  <data name="ImportingBackup" xml:space="preserve">
+    <value>Importing backup...</value>
+  </data>
 </root>

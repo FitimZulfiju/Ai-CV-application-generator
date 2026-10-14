@@ -325,18 +325,26 @@
 
                                     <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="flex-wrap">
                                         <MudButton Variant="Variant.Outlined" Color="Color.Primary"
-                                                   StartIcon="@Icons.Material.Filled.Download"
-                                                   Disabled="@(_isBackupBusy || !HasSelectedBackupSections)"
+                                                   StartIcon="@(_isExporting ? null : Icons.Material.Filled.Download)"
+                                                   Disabled="@(IsBackupBusy || !HasSelectedBackupSections)"
                                                    OnClick="ExportSelectedBackup">
+                                            @if (_isExporting)
+                                            {
+                                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                            }
                                             @Localizer["ExportBackup"]
                                         </MudButton>
 
-                                        <MudFileUpload T="IBrowserFile" OnFilesChanged="ImportSelectedBackup" Disabled="@(_isBackupBusy || !HasSelectedBackupSections)">
+                                        <MudFileUpload T="IBrowserFile" OnFilesChanged="ImportSelectedBackup" Disabled="@(IsBackupBusy || !HasSelectedBackupSections)">
                                             <CustomContent>
                                                 <MudButton Variant="Variant.Outlined" Color="Color.Warning"
-                                                           StartIcon="@Icons.Material.Filled.UploadFile"
-                                                           Disabled="@(_isBackupBusy || !HasSelectedBackupSections)"
+                                                           StartIcon="@(_isImporting ? null : Icons.Material.Filled.UploadFile)"
+                                                           Disabled="@(IsBackupBusy || !HasSelectedBackupSections)"
                                                            OnClick="@context.OpenFilePickerAsync">
+                                                    @if (_isImporting)
+                                                    {
+                                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                                    }
                                                     @Localizer["ImportBackup"]
                                                 </MudButton>
                                             </CustomContent>

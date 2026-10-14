@@ -37,7 +37,9 @@ public partial class UserSettingsPage
     private string _currentPassword = string.Empty;
     private string _newPassword = string.Empty;
     private string _confirmNewPassword = string.Empty;
-    private bool _isBackupBusy;
+    private bool _isExporting;
+    private bool _isImporting;
+    private bool IsBackupBusy => _isExporting || _isImporting;
     private bool _backupProfile = true;
     private bool _backupApplications = true;
     private bool _backupSettings = true;
@@ -602,7 +604,8 @@ public partial class UserSettingsPage
             return;
         }
 
-        _isBackupBusy = true;
+        _isExporting = true;
+        LoadingService.Show(Localizer["ExportingBackup"], 0);
         try
         {
             var backup = new UserDataBackup
@@ -801,7 +804,8 @@ public partial class UserSettingsPage
         }
         finally
         {
-            _isBackupBusy = false;
+            _isExporting = false;
+            LoadingService.Hide();
         }
     }
 
@@ -825,7 +829,8 @@ public partial class UserSettingsPage
             return;
         }
 
-        _isBackupBusy = true;
+        _isImporting = true;
+        LoadingService.Show(Localizer["ImportingBackup"], 0);
         try
         {
             var file = fileChange.File;
@@ -897,7 +902,8 @@ public partial class UserSettingsPage
         }
         finally
         {
-            _isBackupBusy = false;
+            _isImporting = false;
+            LoadingService.Hide();
         }
     }
 
