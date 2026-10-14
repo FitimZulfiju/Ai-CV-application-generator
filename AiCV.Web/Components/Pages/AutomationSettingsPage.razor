@@ -158,7 +158,7 @@
                                        Placeholder="@Localizer["QueryPlaceholder"]"
                                        SearchFunc="SearchQueries" />
                 </MudItem>
-                <MudItem xs="12" md="2">
+                <MudItem xs="12" md="3">
                     <TagInputContainer Label="@Localizer["Provider"]"
                                        @bind-Tags="_newQueryProviders"
                                        Placeholder="@Localizer["ProviderPlaceholder"]"
@@ -176,7 +176,7 @@
                 <MudItem xs="6" md="1">
                     <MudNumericField T="int" @bind-Value="_newQueryJobAgeDays" Label="@Localizer["JobAge"]" Min="1" Max="90" Margin="Margin.Dense" Variant="Variant.Outlined" />
                 </MudItem>
-                <MudItem xs="12" md="2" Class="d-flex justify-end pb-2 gap-2">
+                <MudItem xs="12" md="1" Class="d-flex justify-end pb-2 gap-2">
                     @if (_editingQuery != null)
                     {
                         <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEditQuery" Size="Size.Small">
