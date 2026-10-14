@@ -139,7 +139,7 @@
             @* Search Query Form *@
             <MudGrid Spacing="2" Class="mb-4 align-end">
                 <MudItem xs="12" md="3">
-                    <TagInputContainer Label="@Localizer["Role"]"
+                    <TagInputContainer Label="@Localizer["RoleOrKeywords"]"
                                        @bind-Tags="_newQueryTexts"
                                        Placeholder="@Localizer["QueryPlaceholder"]"
                                        SearchFunc="SearchQueries" />
@@ -196,7 +196,7 @@
             {
                 <MudTable Items="_settings.Queries" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0" RowClassFunc="GetQueryRowClass">
                     <HeaderContent>
-                        <MudTh>@Localizer["Query"]</MudTh>
+                        <MudTh>@Localizer["RoleOrKeywords"]</MudTh>
                         <MudTh>@Localizer["Provider"]</MudTh>
                         <MudTh>@Localizer["Location"]</MudTh>
                         <MudTh>@Localizer["MaxResults"]</MudTh>
@@ -205,7 +205,7 @@
                         <MudTh>@Localizer["Actions"]</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd DataLabel="@Localizer["Query"]">
+                        <MudTd DataLabel="@Localizer["RoleOrKeywords"]">
                             <MudText Typo="Typo.body2">@context.Query</MudText>
                         </MudTd>
                         <MudTd DataLabel="@Localizer["Provider"]">

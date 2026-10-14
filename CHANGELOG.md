@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: include automation search queries in user settings data backup export and restore
 
 ---
+## [1.24.0] - 2026-10-14
+
+### Added
+- feat: add loading indicators for backup export/import and label query column as Role / Keywords
+
 ## [1.23.1] - 2026-10-14
 
 ### Fixed
