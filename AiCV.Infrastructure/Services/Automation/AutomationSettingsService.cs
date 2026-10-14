@@ -90,7 +90,12 @@ public class AutomationSettingsService(
         var incoming = settings.Queries ?? [];
         var existingById = existing.Queries.ToDictionary(q => q.Id);
 
-        context.AutomationQueries.RemoveRange(existing.Queries.Where(q => !incoming.Any(i => i.Id == q.Id)));
+        var toRemove = existing.Queries.Where(q => !incoming.Any(i => i.Id == q.Id)).ToList();
+        foreach (var item in toRemove)
+        {
+            existing.Queries.Remove(item);
+            context.AutomationQueries.Remove(item);
+        }
 
         foreach (var query in incoming)
         {
