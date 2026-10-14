@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: include automation search queries in user settings data backup export and restore
 
 ---
+## [1.23.1] - 2026-10-14
+
+### Fixed
+- fix: resolve DbUpdateConcurrencyException during user backup import
+
 ## [1.23.0] - 2026-10-14
 
 ### Added

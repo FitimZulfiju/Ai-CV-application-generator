@@ -1,13 +1,13 @@
 namespace AiCV.Infrastructure.Services;
 
 public class UserAIConfigurationService(
-ApplicationDbContext context,
-IDataProtectionProvider dataProtectionProvider,
-IKeyManager keyManager,
-ILogger<UserAIConfigurationService> logger
+    IDbContextFactory<ApplicationDbContext> contextFactory,
+    IDataProtectionProvider dataProtectionProvider,
+    IKeyManager keyManager,
+    ILogger<UserAIConfigurationService> logger
 ) : IUserAIConfigurationService
 {
-    private readonly ApplicationDbContext _context = context;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
     private readonly IKeyManager _keyManager = keyManager;
     private readonly ILogger<UserAIConfigurationService> _logger = logger;
     private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(
@@ -16,8 +16,10 @@ ILogger<UserAIConfigurationService> logger
 
     public async Task<List<UserAIConfiguration>> GetConfigurationsAsync(string userId)
     {
-        var configs = await _context
-            .UserAIConfigurations.Where(c => c.UserId == userId)
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var configs = await context
+            .UserAIConfigurations.AsNoTracking()
+            .Where(c => c.UserId == userId)
             .OrderByDescending(c => c.IsActive) // Active first
             .ThenByDescending(c => c.Id)
             .ToListAsync();
@@ -32,9 +34,12 @@ ILogger<UserAIConfigurationService> logger
 
     public async Task<UserAIConfiguration?> GetActiveConfigurationAsync(string userId)
     {
-        var config = await _context.UserAIConfigurations.FirstOrDefaultAsync(c =>
-            c.UserId == userId && c.IsActive
-        );
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var config = await context.UserAIConfigurations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c =>
+                c.UserId == userId && c.IsActive
+            );
 
         if (config is null)
             return null;
@@ -44,9 +49,12 @@ ILogger<UserAIConfigurationService> logger
 
     public async Task<UserAIConfiguration?> GetConfigurationAsync(int id, string userId)
     {
-        var config = await _context.UserAIConfigurations.FirstOrDefaultAsync(c =>
-            c.Id == id && c.UserId == userId
-        );
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var config = await context.UserAIConfigurations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c =>
+                c.Id == id && c.UserId == userId
+            );
 
         if (config is null)
             return null;
@@ -56,6 +64,7 @@ ILogger<UserAIConfigurationService> logger
 
     public async Task<UserAIConfiguration> SaveConfigurationAsync(UserAIConfiguration config)
     {
+        await using var context = await _contextFactory.CreateDbContextAsync();
         var apiKeyToProtect = config.ApiKey;
 
         config.ApiKey = Protect(config.ApiKey);
@@ -63,16 +72,16 @@ ILogger<UserAIConfigurationService> logger
         if (config.Id == 0)
         {
             // If first config, make it active
-            if (!await _context.UserAIConfigurations.AnyAsync(c => c.UserId == config.UserId))
+            if (!await context.UserAIConfigurations.AnyAsync(c => c.UserId == config.UserId))
             {
                 config.IsActive = true;
             }
 
-            _context.UserAIConfigurations.Add(config);
+            context.UserAIConfigurations.Add(config);
         }
         else
         {
-            var existing = await _context.UserAIConfigurations.FindAsync(config.Id);
+            var existing = await context.UserAIConfigurations.FindAsync(config.Id);
             if (existing == null || existing.UserId != config.UserId)
             {
                 throw new KeyNotFoundException("Configuration not found");
@@ -86,10 +95,10 @@ ILogger<UserAIConfigurationService> logger
             existing.Notes = config.Notes;
             existing.BaseUrl = config.BaseUrl;
 
-            _context.Entry(existing).State = EntityState.Modified;
+            context.Entry(existing).State = EntityState.Modified;
         }
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         config.ApiKey = apiKeyToProtect;
         return config;
@@ -97,7 +106,8 @@ ILogger<UserAIConfigurationService> logger
 
     public async Task<bool> DeleteConfigurationAsync(int id, string userId)
     {
-        var config = await _context.UserAIConfigurations.FirstOrDefaultAsync(c =>
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var config = await context.UserAIConfigurations.FirstOrDefaultAsync(c =>
             c.Id == id && c.UserId == userId
         );
 
@@ -105,12 +115,12 @@ ILogger<UserAIConfigurationService> logger
             return false;
 
         bool wasActive = config.IsActive;
-        _context.UserAIConfigurations.Remove(config);
-        await _context.SaveChangesAsync();
+        context.UserAIConfigurations.Remove(config);
+        await context.SaveChangesAsync();
 
         if (wasActive)
         {
-            var next = await _context
+            var next = await context
                 .UserAIConfigurations.Where(c => c.UserId == userId)
                 .OrderByDescending(c => c.Id)
                 .FirstOrDefaultAsync();
@@ -118,7 +128,7 @@ ILogger<UserAIConfigurationService> logger
             if (next != null)
             {
                 next.IsActive = true;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -127,14 +137,15 @@ ILogger<UserAIConfigurationService> logger
 
     public async Task<UserAIConfiguration?> ActivateConfigurationAsync(int id, string userId)
     {
-        var config = await _context.UserAIConfigurations.FirstOrDefaultAsync(c =>
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var config = await context.UserAIConfigurations.FirstOrDefaultAsync(c =>
             c.Id == id && c.UserId == userId
         );
 
         if (config == null)
             return null;
 
-        var others = await _context
+        var others = await context
             .UserAIConfigurations.Where(c => c.UserId == userId && c.Id != id && c.IsActive)
             .ToListAsync();
 
@@ -144,7 +155,7 @@ ILogger<UserAIConfigurationService> logger
         }
 
         config.IsActive = true;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         config.ApiKey = Unprotect(config.ApiKey);
         return config;
