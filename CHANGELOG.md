@@ -15,13 +15,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add `<mark>` highlight support in PDF documents (bold + dark-gold text)
 - feat: add `<sub>` / `<sup>` subscript/superscript support in PDF documents
 - feat: extend named CSS color dictionary from 17 to 65 entries for PDF rendering
+- feat: add editing and duplication of search queries in Job Automation settings
 
 ### Fixed
 - fix: `<br>` tags now correctly produce visual line breaks in generated PDF documents
 - fix: `font-style: italic` from inline `style=` attributes is now applied in PDF documents
 - fix: `font-weight: 600` and `900` values now correctly trigger bold in PDF documents
+- fix: include automation search queries in user settings data backup export and restore
 
 ---
+## [1.23.0] - 2026-10-14
+
+### Added
+- feat: add search query editing, duplication, and backup support in job automation
+
+### Fixed
+- fix: remove duplicate search query edit buttons and use compact icons in edit mode
+- fix: adjust layout of query input fields in Automation Settings page
+
 ## [1.22.0] - 2026-10-10
 
 ### Added

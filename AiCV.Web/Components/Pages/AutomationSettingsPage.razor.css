@@ -1,0 +1,39 @@
+.section-header-divider {
+    border-bottom: 1px solid var(--mud-palette-divider);
+    padding-bottom: 8px;
+}
+
+.settings-title-nowrap {
+    white-space: nowrap;
+}
+
+.timestamp-text {
+    color: var(--mud-palette-text-primary);
+}
+
+::deep tr.query-row-editing {
+    background-color: var(--mud-palette-action-default-hover) !important;
+    border-left: 4px solid var(--mud-palette-primary) !important;
+}
+
+::deep tr.provider-row-editing {
+    background-color: var(--mud-palette-action-default-hover) !important;
+    border-left: 4px solid var(--mud-palette-primary) !important;
+}
+
+.debug-log-paper {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+}
+
+.debug-log-title {
+    color: #569cd6;
+}
+
+.debug-log-pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: Consolas, monospace;
+    font-size: 13px;
+}
+

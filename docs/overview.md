@@ -36,6 +36,7 @@ Tailoring CVs and cover letters for each job is repetitive and time-consuming. M
   * **Smart Matching Engine:** Evaluates candidate profiles against posting text, computing relevance scores based on skills, job titles, and location bonuses/penalties.
   * **Review & Apply Queue:** Auto-generates tailored CVs and cover letters into a `PendingReview` state with direct external apply links.
   * **One-Click Apply Tracking:** Instant "Apply & Mark as Applied" action tracking applied dates and status transitions.
+  * **Search Query Management:** Add, edit, remove, and toggle custom search queries with role keywords, locations, provider selection, max results, and job age filters.
   * **SMTP Email Summaries:** Sends run completion digests via per-user SMTP settings.
 * Web interface for creating/managing user profiles
 * Multi-user support with optional OAuth (Google, Microsoft, GitHub)
