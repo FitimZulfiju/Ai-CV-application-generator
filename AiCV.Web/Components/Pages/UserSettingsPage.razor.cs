@@ -744,7 +744,17 @@ public partial class UserSettingsPage
                         CronExpression = automationSettings.CronExpression,
                         MaxApplicationsPerRun = automationSettings.MaxApplicationsPerRun,
                         Providers = automationSettings.Providers,
-                        SearchProviderSettingsJson = automationSettings.SearchProviderSettingsJson
+                        SearchProviderSettingsJson = automationSettings.SearchProviderSettingsJson,
+                        Queries = automationSettings.Queries.ConvertAll(q => new AutomationQueryBackup
+                        {
+                            Query = q.Query,
+                            Provider = q.Provider,
+                            Location = q.Location,
+                            Region = q.Region,
+                            JobAgeDays = q.JobAgeDays,
+                            MaxResults = q.MaxResults,
+                            IsActive = q.IsActive
+                        })
                     };
                 }
             }
@@ -1110,6 +1120,20 @@ public partial class UserSettingsPage
                 existingSettings.MaxApplicationsPerRun = backup.AutomationSettings.MaxApplicationsPerRun;
                 existingSettings.Providers = backup.AutomationSettings.Providers;
                 existingSettings.SearchProviderSettingsJson = backup.AutomationSettings.SearchProviderSettingsJson;
+
+                if (backup.AutomationSettings.Queries is { Count: > 0 })
+                {
+                    existingSettings.Queries = [.. backup.AutomationSettings.Queries.ConvertAll(q => new AutomationQuery
+                    {
+                        Query = q.Query,
+                        Provider = q.Provider,
+                        Location = q.Location,
+                        Region = q.Region,
+                        JobAgeDays = q.JobAgeDays,
+                        MaxResults = q.MaxResults,
+                        IsActive = q.IsActive
+                    })];
+                }
 
                 await AutomationSettingsService.UpdateAsync(existingSettings, _userId);
             }
@@ -1502,6 +1526,18 @@ public partial class UserSettingsPage
         public int MaxApplicationsPerRun { get; set; } = 10;
         public string Providers { get; set; } = "Jobindex";
         public string? SearchProviderSettingsJson { get; set; }
+        public List<AutomationQueryBackup> Queries { get; set; } = [];
+    }
+
+    private sealed class AutomationQueryBackup
+    {
+        public string Query { get; set; } = string.Empty;
+        public string Provider { get; set; } = "Jobindex";
+        public string? Location { get; set; }
+        public string? Region { get; set; }
+        public int JobAgeDays { get; set; } = 7;
+        public int MaxResults { get; set; } = 20;
+        public bool IsActive { get; set; } = true;
     }
 
     private sealed class BackupSections

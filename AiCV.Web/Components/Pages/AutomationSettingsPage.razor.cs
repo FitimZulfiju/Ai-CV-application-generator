@@ -146,13 +146,58 @@ public partial class AutomationSettingsPage
         return Task.FromResult<IEnumerable<string>>(matches);
     }
 
-    private void AddQueryFromForm()
+    private AutomationQuery? _editingQuery;
+
+    private async Task EditQuery(AutomationQuery query)
+    {
+        _editingQuery = query;
+        _newQueryTexts = string.IsNullOrWhiteSpace(query.Query)
+            ? []
+            : [.. query.Query.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
+
+        _newQueryLocations = string.IsNullOrWhiteSpace(query.Location)
+            ? []
+            : [.. query.Location.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
+
+        _newQueryProviders = string.IsNullOrWhiteSpace(query.Provider)
+            ? []
+            : [.. query.Provider.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
+
+        _newQueryMaxResults = query.MaxResults;
+        _newQueryJobAgeDays = query.JobAgeDays;
+
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('queries-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })");
+        }
+        catch
+        {
+            // Ignore JS error during prerendering or unattached DOM
+        }
+    }
+
+    private void CancelEditQuery()
+    {
+        ResetQueryForm();
+    }
+
+    private void ResetQueryForm()
+    {
+        _editingQuery = null;
+        _newQueryTexts.Clear();
+        _newQueryLocations.Clear();
+        _newQueryProviders.Clear();
+        _newQueryJobAgeDays = 7;
+        _newQueryMaxResults = 20;
+    }
+
+    private async Task SaveQueryFromForm()
     {
         if (_settings is null) return;
 
         if (_newQueryTexts.Count == 0)
         {
-            Snackbar.Add(Localizer["Please enter at least one query keyword."], Severity.Warning);
+            Snackbar.Add(Localizer["QueryKeywordRequired"], Severity.Warning);
             return;
         }
 
@@ -160,25 +205,81 @@ public partial class AutomationSettingsPage
         string combinedLocation = string.Join(", ", _newQueryLocations);
         string combinedProvider = _newQueryProviders.Count != 0 ? string.Join(", ", _newQueryProviders) : "Jobindex";
 
-        _settings.Queries.Add(new AutomationQuery
+        if (_editingQuery != null)
         {
-            Query = combinedQuery,
-            Provider = combinedProvider,
-            Location = combinedLocation,
-            MaxResults = _newQueryMaxResults,
-            JobAgeDays = _newQueryJobAgeDays,
-            IsActive = true
-        });
+            _editingQuery.Query = combinedQuery;
+            _editingQuery.Provider = combinedProvider;
+            _editingQuery.Location = combinedLocation;
+            _editingQuery.MaxResults = _newQueryMaxResults;
+            _editingQuery.JobAgeDays = _newQueryJobAgeDays;
+            Snackbar.Add(Localizer["QueryUpdated"], Severity.Success);
+        }
+        else
+        {
+            _settings.Queries.Add(new AutomationQuery
+            {
+                Query = combinedQuery,
+                Provider = combinedProvider,
+                Location = combinedLocation,
+                MaxResults = _newQueryMaxResults,
+                JobAgeDays = _newQueryJobAgeDays,
+                IsActive = true
+            });
+            Snackbar.Add(Localizer["QueryAdded"], Severity.Success);
+        }
 
-        // Reset the form
-        _newQueryTexts.Clear();
-        _newQueryLocations.Clear();
-        _newQueryProviders.Clear();
+        ResetQueryForm();
+        await SaveSettings();
     }
 
-    private void RemoveQuery(AutomationQuery query)
+    private async Task RemoveQuery(AutomationQuery query)
     {
+        if (_editingQuery == query)
+        {
+            CancelEditQuery();
+        }
         _settings?.Queries.Remove(query);
+        await SaveSettings();
+        Snackbar.Add(Localizer["QueryDeleted"], Severity.Info);
+    }
+
+    private async Task DuplicateQuery(AutomationQuery query)
+    {
+        if (_settings is null) return;
+
+        var duplicated = new AutomationQuery
+        {
+            Query = query.Query,
+            Provider = query.Provider,
+            Location = query.Location,
+            Region = query.Region,
+            MaxResults = query.MaxResults,
+            JobAgeDays = query.JobAgeDays,
+            IsActive = query.IsActive
+        };
+
+        int index = _settings.Queries.IndexOf(query);
+        if (index >= 0 && index < _settings.Queries.Count)
+        {
+            _settings.Queries.Insert(index + 1, duplicated);
+        }
+        else
+        {
+            _settings.Queries.Add(duplicated);
+        }
+
+        await SaveSettings();
+        Snackbar.Add(Localizer["QueryDuplicated"], Severity.Success);
+    }
+
+    private string GetQueryRowClass(AutomationQuery query, int _)
+    {
+        return _editingQuery == query ? "query-row-editing" : string.Empty;
+    }
+
+    private string GetProviderRowClass(SearchProviderConfig config, int _)
+    {
+        return _editingConfig == config ? "provider-row-editing" : string.Empty;
     }
 
     private SearchProviderConfig _newProviderConfig = new() { Provider = "LinkedIn" };

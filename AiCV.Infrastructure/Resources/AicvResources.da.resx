@@ -1908,6 +1908,72 @@
   <data name="ProviderPlaceholder" xml:space="preserve">
     <value>f.eks. LinkedIn</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Tilføj</value>
+  </data>
+  <data name="AddSearchQuery" xml:space="preserve">
+    <value>Tilføj søgeforespørgsel</value>
+  </data>
+  <data name="EditSearchQuery" xml:space="preserve">
+    <value>Rediger søgeforespørgsel</value>
+  </data>
+  <data name="SearchQueriesSubtitle" xml:space="preserve">
+    <value>Definer roller, placeringer og søgemaskiner til automatisk jobmatchning.</value>
+  </data>
+  <data name="ConfiguredSearchQueries" xml:space="preserve">
+    <value>Konfigurerede søgeforespørgsler</value>
+  </data>
+  <data name="NoQueriesConfigured" xml:space="preserve">
+    <value>Ingen forespørgsler konfigureret endnu.</value>
+  </data>
+  <data name="QueryKeywordRequired" xml:space="preserve">
+    <value>Indtast mindst ét søgeord.</value>
+  </data>
+  <data name="QueryUpdated" xml:space="preserve">
+    <value>Søgeforespørgsel opdateret.</value>
+  </data>
+  <data name="QueryAdded" xml:space="preserve">
+    <value>Søgeforespørgsel tilføjet.</value>
+  </data>
+  <data name="QueryDeleted" xml:space="preserve">
+    <value>Søgeforespørgsel slettet.</value>
+  </data>
+  <data name="GeneralConfiguration" xml:space="preserve">
+    <value>Generel konfiguration</value>
+  </data>
+  <data name="AddProviderConfiguration" xml:space="preserve">
+    <value>Tilføj udbyderkonfiguration</value>
+  </data>
+  <data name="EditProviderConfiguration" xml:space="preserve">
+    <value>Rediger udbyderkonfiguration</value>
+  </data>
+  <data name="ProviderConfigurationSubtitle" xml:space="preserve">
+    <value>Konfigurer API-nøgler til eksterne jobsøgemaskiner (f.eks. fra RapidAPI).</value>
+  </data>
+  <data name="ConfiguredProviders" xml:space="preserve">
+    <value>Konfigurerede udbydere</value>
+  </data>
+  <data name="NoProvidersConfigured" xml:space="preserve">
+    <value>Ingen udbydere konfigureret endnu.</value>
+  </data>
+  <data name="ProviderName" xml:space="preserve">
+    <value>Udbydernavn</value>
+  </data>
+  <data name="RapidApiKey" xml:space="preserve">
+    <value>API-nøgle (RapidAPI Key)</value>
+  </data>
+  <data name="ApiHost" xml:space="preserve">
+    <value>API-vært (RapidAPI Host)</value>
+  </data>
+  <data name="TestRunDebugLog" xml:space="preserve">
+    <value>Testkørsel fejlfindingslog</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Dupliker</value>
+  </data>
+  <data name="QueryDuplicated" xml:space="preserve">
+    <value>Søgeforespørgsel duplikeret.</value>
+  </data>
 </root>
 
 
