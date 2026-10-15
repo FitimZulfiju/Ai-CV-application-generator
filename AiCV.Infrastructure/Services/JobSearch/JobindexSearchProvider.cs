@@ -128,11 +128,19 @@ public partial class JobindexSearchProvider(
             url += "&jobage=" + jobAge.Value.ToString(CultureInfo.InvariantCulture);
         }
 
-        url += "&sort=date";
-
         if (!string.IsNullOrWhiteSpace(location))
         {
-            url += "&location=" + Uri.EscapeDataString(location);
+            var cleanLocation = location;
+            if (cleanLocation.Contains(','))
+            {
+                var parts = cleanLocation.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                cleanLocation = parts.Length > 0 ? parts[0] : cleanLocation;
+            }
+
+            if (!string.IsNullOrWhiteSpace(cleanLocation))
+            {
+                url += "&location=" + Uri.EscapeDataString(cleanLocation);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(region))
@@ -231,7 +239,7 @@ public partial class JobindexSearchProvider(
     [GeneratedRegex(@"var\s+Stash\s*=\s*(\{.*?\})\s*;\s*$", RegexOptions.Multiline | RegexOptions.Singleline)]
     private static partial Regex StashRegex();
 
-    internal static List<JobSearchResult> ParseResultsHtml(string html)
+    public static List<JobSearchResult> ParseResultsHtml(string html)
     {
         var results = new List<JobSearchResult>();
         if (string.IsNullOrWhiteSpace(html))
@@ -286,7 +294,7 @@ public partial class JobindexSearchProvider(
                         var area = GetSafeString(item, "area");
                         var shareUrl = GetSafeString(item, "share_url");
                         var applyUrl = GetSafeString(item, "url") ?? "";
-                        var lastDate = GetSafeString(item, "lastdate");
+                        var datePosted = GetSafeString(item, "firstdate") ?? GetSafeString(item, "lastdate");
                         var snippet = GetSafeString(item, "companytext");
 
                         var jobUrl = !string.IsNullOrWhiteSpace(shareUrl) ? shareUrl : BuildJobUrl(tid);
@@ -299,7 +307,7 @@ public partial class JobindexSearchProvider(
                             Title: Clean(headline),
                             Company: Clean(company),
                             Location: Clean(area),
-                            DatePosted: ParseDate(lastDate),
+                            DatePosted: ParseDate(datePosted),
                             Url: jobUrl,
                             ApplyUrl: applyUrl,
                             DescriptionSnippet: Clean(snippet, maxLength: 500)
