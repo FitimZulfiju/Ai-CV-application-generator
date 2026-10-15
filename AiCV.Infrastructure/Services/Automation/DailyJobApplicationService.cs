@@ -154,56 +154,68 @@ public class DailyJobApplicationService(
                 continue;
             }
 
-            try
-            {
-                var provider = providerFactory.GetProvider(query.Provider);
-                if (provider is null)
-                {
-                    errors.Add($"No search provider available for '{query.Provider}'.");
-                    continue;
-                }
+            var providerNames = string.IsNullOrWhiteSpace(query.Provider)
+                ? ["Jobindex"]
+                : query.Provider.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-                var customProperties = new Dictionary<string, string>();
-                if (!string.IsNullOrEmpty(settings.SearchProviderSettingsJson))
+            if (providerNames.Length == 0)
+            {
+                providerNames = ["Jobindex"];
+            }
+
+            foreach (var providerName in providerNames)
+            {
+                try
                 {
-                    try
+                    var provider = providerFactory.GetProvider(providerName);
+                    if (provider is null)
                     {
-                        var parsed = System.Text.Json.JsonSerializer.Deserialize<List<SearchProviderConfig>>(settings.SearchProviderSettingsJson);
-                        if (parsed != null)
+                        errors.Add($"No search provider available for '{providerName}'.");
+                        continue;
+                    }
+
+                    var customProperties = new Dictionary<string, string>();
+                    if (!string.IsNullOrEmpty(settings.SearchProviderSettingsJson))
+                    {
+                        try
                         {
-                            var providerConfig = parsed.FirstOrDefault(p => string.Equals(p.Provider, query.Provider, StringComparison.OrdinalIgnoreCase));
-                            if (providerConfig != null)
+                            var parsed = System.Text.Json.JsonSerializer.Deserialize<List<SearchProviderConfig>>(settings.SearchProviderSettingsJson);
+                            if (parsed != null)
                             {
-                                if (!string.IsNullOrEmpty(providerConfig.ApiKey))
-                                    customProperties[$"{query.Provider}ApiKey"] = providerConfig.ApiKey;
-                                if (!string.IsNullOrEmpty(providerConfig.ApiHost))
-                                    customProperties[$"{query.Provider}ApiHost"] = providerConfig.ApiHost;
+                                var providerConfig = parsed.FirstOrDefault(p => string.Equals(p.Provider, providerName, StringComparison.OrdinalIgnoreCase));
+                                if (providerConfig != null)
+                                {
+                                    if (!string.IsNullOrEmpty(providerConfig.ApiKey))
+                                        customProperties[$"{providerName}ApiKey"] = providerConfig.ApiKey;
+                                    if (!string.IsNullOrEmpty(providerConfig.ApiHost))
+                                        customProperties[$"{providerName}ApiHost"] = providerConfig.ApiHost;
+                                }
                             }
                         }
+                        catch (System.Text.Json.JsonException ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to parse SearchProviderSettingsJson for user {UserId}", settings.UserId);
+                        }
                     }
-                    catch (System.Text.Json.JsonException ex)
-                    {
-                        _logger.LogWarning(ex, "Failed to parse SearchProviderSettingsJson for user {UserId}", settings.UserId);
-                    }
+
+                    var results = await provider.SearchAsync(
+                        new JobSearchQuery(
+                            query.Query,
+                            providerName,
+                            query.Location,
+                            query.Region,
+                            Math.Max(1, query.MaxResults),
+                            Math.Clamp(query.JobAgeDays, 1, 365),
+                            customProperties),
+                        cancellationToken);
+
+                    allJobs.AddRange(results);
                 }
-
-                var results = await provider.SearchAsync(
-                    new JobSearchQuery(
-                        query.Query,
-                        query.Provider,
-                        query.Location,
-                        query.Region,
-                        Math.Max(1, query.MaxResults),
-                        Math.Clamp(query.JobAgeDays, 1, 365),
-                        customProperties),
-                    cancellationToken);
-
-                allJobs.AddRange(results);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Search failed for query '{Query}' (provider {Provider}, user {UserId})", query.Query, query.Provider, userId);
-                errors.Add($"Search '{query.Query}' via {query.Provider} failed: {ex.Message}");
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Search failed for query '{Query}' (provider {Provider}, user {UserId})", query.Query, providerName, userId);
+                    errors.Add($"Search '{query.Query}' via {providerName} failed: {ex.Message}");
+                }
             }
         }
 

@@ -379,7 +379,7 @@ builder.Services.Configure<AutomationOptions>(options =>
     options.DefaultCron = builder.Configuration["AUTOMATION_CRON"] ?? "0 6 * * *";
     options.DefaultMaxApplicationsPerRun = builder.Configuration.GetValue("AUTOMATION_MAX_PER_RUN", 10);
     options.PollIntervalSeconds = builder.Configuration.GetValue("AUTOMATION_POLL_INTERVAL_SECONDS", 60);
-    options.Jobindex.BaseUrl = builder.Configuration["AUTOMATION_JOBINDEX_BASE_URL"] ?? "https://www.jobindex.dk/jobsoegning.json";
+    options.Jobindex.BaseUrl = builder.Configuration["AUTOMATION_JOBINDEX_BASE_URL"] ?? "https://www.jobindex.dk/jobsoegning";
     options.Jobindex.SearchPageUrl = builder.Configuration["AUTOMATION_JOBINDEX_SEARCH_URL"] ?? "https://www.jobindex.dk/jobsoegning";
     options.Jobindex.RateLimitPerSecond = builder.Configuration.GetValue("AUTOMATION_JOBINDEX_RATE_LIMIT", 1.0);
 });
