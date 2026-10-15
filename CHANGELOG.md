@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: include automation search queries in user settings data backup export and restore
 
 ---
+## [1.24.2] - 2026-10-15
+
+### Fixed
+- fix(automation): resolve Jobindex 404, LinkedIn 429 rate limits, and split multi-keyword queries
+- fix: sanitize unescaped control characters in tailored CV JSON deserialization
+
 ## [1.24.1] - 2026-10-15
 
 ### Fixed

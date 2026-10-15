@@ -9,6 +9,35 @@ public partial class LinkedInSearchProvider(
 
     public string ProviderName => "LinkedIn";
 
+    private static readonly System.Threading.Lock RateLimitGate = new();
+    private static DateTime _lastRequestAtUtc = DateTime.MinValue;
+    private const int MinRequestIntervalMs = 2000;
+
+    private static async Task ThrottleAsync(CancellationToken cancellationToken)
+    {
+        TimeSpan delay;
+        lock (RateLimitGate)
+        {
+            var now = DateTime.UtcNow;
+            var nextAllowed = _lastRequestAtUtc.AddMilliseconds(MinRequestIntervalMs);
+            if (now < nextAllowed)
+            {
+                delay = nextAllowed - now;
+                _lastRequestAtUtc = nextAllowed;
+            }
+            else
+            {
+                delay = TimeSpan.Zero;
+                _lastRequestAtUtc = now;
+            }
+        }
+
+        if (delay > TimeSpan.Zero)
+        {
+            await Task.Delay(delay, cancellationToken);
+        }
+    }
+
     public async Task<List<JobSearchResult>> SearchAsync(JobSearchQuery query, CancellationToken cancellationToken = default)
     {
         var results = new List<JobSearchResult>();
@@ -19,10 +48,21 @@ public partial class LinkedInSearchProvider(
             var location = Uri.EscapeDataString(query.Location ?? query.Region ?? "Denmark");
             var url = $"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={keywords}&location={location}&start=0";
 
+            await ThrottleAsync(cancellationToken);
+
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9,da;q=0.8");
 
             using var response = await client.GetAsync(url, cancellationToken);
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                _logger.LogWarning("LinkedIn rate limit reached (429 Too Many Requests) for query '{Query}'. Waiting 3s backoff.", query.Query);
+                await Task.Delay(3000, cancellationToken);
+                return results;
+            }
+
             response.EnsureSuccessStatusCode();
 
             var html = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -99,9 +139,14 @@ public partial class LinkedInSearchProvider(
                 ));
             }
         }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            _logger.LogWarning("LinkedIn rate limit reached (429 Too Many Requests) for query '{Query}'.", query.Query);
+            return results;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error searching LinkedIn jobs via public guest API");
+            _logger.LogError(ex, "Error searching LinkedIn jobs via public guest API for query '{Query}'", query.Query);
             throw;
         }
 

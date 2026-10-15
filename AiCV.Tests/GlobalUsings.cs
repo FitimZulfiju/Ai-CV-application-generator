@@ -27,3 +27,4 @@ global using Microsoft.Extensions.Options;
 global using Microsoft.Extensions.Http;
 global using System.Net.Http;
 global using Microsoft.Extensions.Configuration;
+global using AiCV.Application.Common;

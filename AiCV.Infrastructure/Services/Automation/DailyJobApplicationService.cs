@@ -198,18 +198,59 @@ public class DailyJobApplicationService(
                         }
                     }
 
-                    var results = await provider.SearchAsync(
-                        new JobSearchQuery(
-                            query.Query,
-                            providerName,
-                            query.Location,
-                            query.Region,
-                            Math.Max(1, query.MaxResults),
-                            Math.Clamp(query.JobAgeDays, 1, 365),
-                            customProperties),
-                        cancellationToken);
+                    var subQueries = query.Query.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    if (subQueries.Length == 0)
+                    {
+                        subQueries = [query.Query];
+                    }
 
-                    allJobs.AddRange(results);
+                    var queryProviderJobs = new List<JobSearchResult>();
+                    var seenUrls = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                    foreach (var subQuery in subQueries)
+                    {
+                        if (cancellationToken.IsCancellationRequested || queryProviderJobs.Count >= query.MaxResults)
+                        {
+                            break;
+                        }
+
+                        try
+                        {
+                            var needed = Math.Max(1, query.MaxResults - queryProviderJobs.Count);
+                            var results = await provider.SearchAsync(
+                                new JobSearchQuery(
+                                    subQuery,
+                                    providerName,
+                                    query.Location,
+                                    query.Region,
+                                    needed,
+                                    Math.Clamp(query.JobAgeDays, 1, 365),
+                                    customProperties),
+                                cancellationToken);
+
+                            foreach (var r in results)
+                            {
+                                if (!string.IsNullOrEmpty(r.Url) && seenUrls.Add(r.Url))
+                                {
+                                    queryProviderJobs.Add(r);
+                                    if (queryProviderJobs.Count >= query.MaxResults)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Search failed for sub-query '{SubQuery}' (provider {Provider}, user {UserId})", subQuery, providerName, userId);
+                            if (subQueries.Length == 1)
+                            {
+                                errors.Add($"Search '{subQuery}' via {providerName} failed: {ex.Message}");
+                            }
+                        }
+                    }
+
+                    allJobs.AddRange(queryProviderJobs);
                 }
                 catch (Exception ex)
                 {
@@ -256,7 +297,28 @@ public class DailyJobApplicationService(
 
             try
             {
-                var jobPosting = await orchestrator.FetchJobDetailsAsync(matchedJob.Job.Url);
+                JobPosting jobPosting;
+                try
+                {
+                    jobPosting = await orchestrator.FetchJobDetailsAsync(matchedJob.Job.Url);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to scrape job posting details for '{JobTitle}' at {JobUrl}. Using available search data as fallback.", matchedJob.Job.Title, matchedJob.Job.Url);
+                    jobPosting = new JobPosting
+                    {
+                        Url = matchedJob.Job.Url,
+                        ApplyUrl = matchedJob.Job.ApplyUrl,
+                        Title = !string.IsNullOrWhiteSpace(matchedJob.Job.Title) ? matchedJob.Job.Title : "Job Opening",
+                        CompanyName = !string.IsNullOrWhiteSpace(matchedJob.Job.Company) ? matchedJob.Job.Company : "Company",
+                        Description = !string.IsNullOrWhiteSpace(matchedJob.Job.DescriptionSnippet)
+                            ? matchedJob.Job.DescriptionSnippet
+                            : $"Position: {matchedJob.Job.Title}\nCompany: {matchedJob.Job.Company}\nLocation: {matchedJob.Job.Location}",
+                        Source = matchedJob.Job.Provider,
+                        DatePosted = matchedJob.Job.DatePosted ?? DateTime.UtcNow
+                    };
+                }
+
                 jobPosting.ApplyUrl = matchedJob.Job.ApplyUrl;
                 if (!string.IsNullOrWhiteSpace(matchedJob.Job.Provider))
                 {

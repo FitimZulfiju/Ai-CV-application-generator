@@ -76,8 +76,9 @@ public partial class ApplicationDetails
             {
                 try
                 {
+                    var cleanJson = JsonSanitizer.Sanitize(_application.TailoredResumeJson);
                     _tailoredResume = System.Text.Json.JsonSerializer.Deserialize<CandidateProfile>(
-                        _application.TailoredResumeJson
+                        cleanJson
                     );
                     if (_tailoredResume != null)
                     {

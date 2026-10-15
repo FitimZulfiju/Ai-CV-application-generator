@@ -151,6 +151,96 @@ public class JobindexSearchProviderTests
         Assert.Contains("ASP.NET Core", results[0].Title, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(0, null)]
+    [InlineData(-5, null)]
+    [InlineData(1, 1)]
+    [InlineData(2, 2)]
+    [InlineData(3, 3)]
+    [InlineData(5, 7)]
+    [InlineData(7, 7)]
+    [InlineData(10, 14)]
+    [InlineData(14, 14)]
+    [InlineData(20, 21)]
+    [InlineData(21, 21)]
+    [InlineData(25, 30)]
+    [InlineData(30, 30)]
+    [InlineData(35, null)]
+    public void NormalizeJobAge_ShouldMapToValidBuckets(int inputDays, int? expectedBucket)
+    {
+        var result = JobindexSearchProvider.NormalizeJobAge(inputDays);
+        Assert.Equal(expectedBucket, result);
+    }
+
+    [Fact]
+    public void BuildUrl_OmitsJobAgeWhenNull()
+    {
+        var url = JobindexSearchProvider.BuildUrl("https://www.jobindex.dk/jobsoegning", "c#", "Aarhus", null, 1, null);
+        Assert.DoesNotContain("jobage=", url);
+        Assert.Contains("q=c%23", url);
+        Assert.Contains("location=Aarhus", url);
+    }
+
+    [Fact]
+    public void BuildUrl_IncludesJobAgeWhenProvided()
+    {
+        var url = JobindexSearchProvider.BuildUrl("https://www.jobindex.dk/jobsoegning", ".net", null, null, 1, 14);
+        Assert.Contains("jobage=14", url);
+    }
+
+    [Fact]
+    public async Task SearchAsync_WhenFirstRequestReturns404_RetriesWithoutJobAge()
+    {
+        var calls = 0;
+        var requestedUrls = new List<string>();
+        var handlerMock = new Mock<HttpMessageHandler>();
+        handlerMock.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .Returns<HttpRequestMessage, CancellationToken>((req, _) =>
+            {
+                calls++;
+                requestedUrls.Add(req.RequestUri!.ToString());
+                if (calls == 1)
+                {
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
+                }
+                const string html = """
+                <div class="jobsearch-result">
+                    <a href="/jobsoegning/h9999999" class="title">Fallback Engineer</a>
+                    <div class="company">Fallback Co</div>
+                </div>
+                """;
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(html, Encoding.UTF8, "text/html")
+                });
+            });
+
+        var client = new HttpClient(handlerMock.Object)
+        {
+            BaseAddress = new Uri("https://www.jobindex.dk/")
+        };
+        var factory = Mock.Of<IHttpClientFactory>(f => f.CreateClient("Jobindex") == client);
+        var provider = new JobindexSearchProvider(
+            factory,
+            Options.Create(TestOptions),
+            Mock.Of<ILogger<JobindexSearchProvider>>());
+
+        var results = await provider.SearchAsync(
+            new JobSearchQuery(".NET", "Jobindex", null, null, 20, 10),
+            CancellationToken.None);
+
+        Assert.Equal(2, calls);
+        Assert.Contains("jobage=14", requestedUrls[0]);
+        Assert.DoesNotContain("jobage=", requestedUrls[1]);
+        var job = Assert.Single(results);
+        Assert.Equal("h9999999", job.Id);
+    }
+
     [Fact]
     public async Task SearchAsync_BotProtection_ReturnsEmpty()
     {
