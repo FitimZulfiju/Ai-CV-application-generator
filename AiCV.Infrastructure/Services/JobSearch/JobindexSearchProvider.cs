@@ -43,11 +43,22 @@ public partial class JobindexSearchProvider(
     public async Task<List<JobSearchResult>> SearchAsync(JobSearchQuery query, CancellationToken cancellationToken = default)
     {
         var opts = _options.Value.Jobindex;
-        var jobAge = Math.Clamp(query.JobAgeDays, 1, 9999);
+        var jobAge = NormalizeJobAge(query.JobAgeDays);
         var url = BuildUrl(opts.BaseUrl, query.Query, query.Location, query.Region, 1, jobAge);
 
         await ThrottleAsync(cancellationToken);
-        var raw = await GetStringWithClientAsync(url, cancellationToken);
+        string raw;
+        try
+        {
+            raw = await GetStringWithClientAsync(url, cancellationToken);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound && jobAge.HasValue)
+        {
+            _logger.LogWarning(ex, "Jobindex search returned 404 for '{Url}'. Retrying without jobage filter.", url);
+            var fallbackUrl = BuildUrl(opts.BaseUrl, query.Query, query.Location, query.Region, 1, null);
+            await ThrottleAsync(cancellationToken);
+            raw = await GetStringWithClientAsync(fallbackUrl, cancellationToken);
+        }
 
         var results = ParseJsonResponse(raw);
 
@@ -58,10 +69,17 @@ public partial class JobindexSearchProvider(
 
         if (results.Count == 0 && !string.IsNullOrWhiteSpace(opts.SearchPageUrl))
         {
-            var pageUrl = BuildUrl(opts.SearchPageUrl, query.Query, query.Location, query.Region, 1, jobAge);
-            await ThrottleAsync(cancellationToken);
-            var pageRaw = await GetStringWithClientAsync(pageUrl, cancellationToken);
-            results = ParseResultsHtml(pageRaw);
+            try
+            {
+                var pageUrl = BuildUrl(opts.SearchPageUrl, query.Query, query.Location, query.Region, 1, jobAge);
+                await ThrottleAsync(cancellationToken);
+                var pageRaw = await GetStringWithClientAsync(pageUrl, cancellationToken);
+                results = ParseResultsHtml(pageRaw);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to search Jobindex fallback SearchPageUrl: {Url}", opts.SearchPageUrl);
+            }
         }
 
         return [.. results.Take(Math.Max(1, query.MaxResults))];
@@ -80,16 +98,38 @@ public partial class JobindexSearchProvider(
         return ParseDetailPage(html, jobId, url);
     }
 
-    private static string BuildUrl(string baseUrl, string query, string? location, string? region, int page, int jobAge)
+    public static int? NormalizeJobAge(int jobAgeDays)
+    {
+        return jobAgeDays switch
+        {
+            <= 0 => null,
+            <= 1 => 1,
+            <= 2 => 2,
+            <= 3 => 3,
+            <= 7 => 7,
+            <= 14 => 14,
+            <= 21 => 21,
+            <= 30 => 30,
+            _ => null
+        };
+    }
+
+    public static string BuildUrl(string baseUrl, string query, string? location, string? region, int page, int? jobAge)
     {
         var separator = baseUrl.Contains('?') ? '&' : '?';
         var url = string.Concat(
             baseUrl,
             separator, "q=", Uri.EscapeDataString(query),
-            "&page=", page.ToString(CultureInfo.InvariantCulture),
-            "&jobage=", jobAge.ToString(CultureInfo.InvariantCulture),
-            "&sort=date"
+            "&page=", page.ToString(CultureInfo.InvariantCulture)
         );
+
+        if (jobAge.HasValue)
+        {
+            url += "&jobage=" + jobAge.Value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        url += "&sort=date";
+
         if (!string.IsNullOrWhiteSpace(location))
         {
             url += "&location=" + Uri.EscapeDataString(location);
@@ -213,8 +253,7 @@ public partial class JobindexSearchProvider(
                 using var doc = JsonDocument.Parse(stashJson);
                 var root = doc.RootElement;
 
-                JsonElement app;
-                if (!root.TryGetProperty("jobsearch/result_app/list", out app))
+                if (!root.TryGetProperty("jobsearch/result_app/list", out JsonElement app))
                 {
                     root.TryGetProperty("jobsearch/result_app", out app);
                 }

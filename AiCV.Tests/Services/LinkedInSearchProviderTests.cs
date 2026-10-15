@@ -58,5 +58,33 @@ public class LinkedInSearchProviderTests
         Assert.Equal("https://linkedin.com/apply/12345", job.ApplyUrl);
         Assert.Equal(new DateTime(2023, 10, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime(), job.DatePosted?.ToLocalTime());
     }
+
+    [Fact]
+    public async Task SearchAsync_When429TooManyRequests_ReturnsEmptyListInsteadOfThrowing()
+    {
+        var handlerMock = new Mock<HttpMessageHandler>();
+        handlerMock.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.TooManyRequests
+            });
+
+        var client = new HttpClient(handlerMock.Object);
+        var factoryMock = new Mock<IHttpClientFactory>();
+        factoryMock.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(client);
+
+        var loggerMock = new Mock<ILogger<LinkedInSearchProvider>>();
+        var provider = new LinkedInSearchProvider(factoryMock.Object, loggerMock.Object);
+
+        var query = new JobSearchQuery("test");
+        var results = await provider.SearchAsync(query, CancellationToken.None);
+
+        Assert.Empty(results);
+    }
 }
 

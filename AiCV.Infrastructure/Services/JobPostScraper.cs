@@ -10,6 +10,35 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
     [GeneratedRegex(@"(\r?\n\s*){3,}")]
     private static partial Regex MultipleNewlinesRegex();
 
+    private static readonly System.Threading.Lock RateLimitGate = new();
+    private static DateTime _lastRequestAtUtc = DateTime.MinValue;
+    private const int MinRequestIntervalMs = 1500;
+
+    private static async Task ThrottleAsync(CancellationToken cancellationToken = default)
+    {
+        TimeSpan delay;
+        lock (RateLimitGate)
+        {
+            var now = DateTime.UtcNow;
+            var nextAllowed = _lastRequestAtUtc.AddMilliseconds(MinRequestIntervalMs);
+            if (now < nextAllowed)
+            {
+                delay = nextAllowed - now;
+                _lastRequestAtUtc = nextAllowed;
+            }
+            else
+            {
+                delay = TimeSpan.Zero;
+                _lastRequestAtUtc = now;
+            }
+        }
+
+        if (delay > TimeSpan.Zero)
+        {
+            await Task.Delay(delay, cancellationToken);
+        }
+    }
+
     public async Task<JobPosting> ScrapeJobPostingAsync(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -18,10 +47,26 @@ public partial class JobPostScraper(IHttpClientFactory httpClientFactory) : IJob
         try
         {
             var httpClient = _httpClientFactory.CreateClient();
-            // Add a user agent to mimic a browser
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");
+            httpClient.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            httpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9,da;q=0.8");
 
-            var html = await httpClient.GetStringAsync(url);
+            await ThrottleAsync();
+            string html;
+            using var response = await httpClient.GetAsync(url);
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                await Task.Delay(3000);
+                await ThrottleAsync();
+                using var retryResponse = await httpClient.GetAsync(url);
+                retryResponse.EnsureSuccessStatusCode();
+                html = await retryResponse.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                response.EnsureSuccessStatusCode();
+                html = await response.Content.ReadAsStringAsync();
+            }
 
             // Use SmartReader to extract main content
             var reader = new SmartReader.Reader(url, html);
