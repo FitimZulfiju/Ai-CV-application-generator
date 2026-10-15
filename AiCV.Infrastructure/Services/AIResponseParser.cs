@@ -41,6 +41,8 @@ public static partial class AIResponseParser
                 cleanJson = cleanJson.Substring(startIndex, endIndex - startIndex + 1);
             }
 
+            cleanJson = JsonSanitizer.Sanitize(cleanJson);
+
             var resultDto = JsonSerializer.Deserialize<TailoredResumeResponseDto>(
                 cleanJson,
                 _jsonOptions

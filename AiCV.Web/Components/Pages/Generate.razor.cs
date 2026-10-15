@@ -56,7 +56,7 @@ public partial class Generate : IDisposable
                 if (!string.IsNullOrEmpty(_resumeJson))
                 {
                     _generatedResume =
-                        JsonSerializer.Deserialize<CandidateProfile>(_resumeJson);
+                        JsonSerializer.Deserialize<CandidateProfile>(JsonSanitizer.Sanitize(_resumeJson));
                 }
             }
             catch (Exception ex)
@@ -337,7 +337,7 @@ public partial class Generate : IDisposable
                 try
                 {
                     _generatedResume = JsonSerializer.Deserialize<CandidateProfile>(
-                        _resumeJson
+                        JsonSanitizer.Sanitize(_resumeJson)
                     );
                 }
                 catch
