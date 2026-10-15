@@ -9,7 +9,7 @@ public class JobindexSearchProviderTests
         PollIntervalSeconds = 60,
         Jobindex = new JobindexOptions
         {
-            BaseUrl = "https://www.jobindex.dk/jobsoegning.json",
+            BaseUrl = "https://www.jobindex.dk/jobsoegning",
             SearchPageUrl = "https://www.jobindex.dk/jobsoegning",
             RateLimitPerSecond = 1,
         },
@@ -44,8 +44,8 @@ public class JobindexSearchProviderTests
             new JobSearchQuery(".NET Copenhagen", "Jobindex", "Copenhagen", null, 20, 7),
             CancellationToken.None);
 
-        Assert.Single(results);
-        Assert.Equal("h1234567", results[0].Id);
+        var item = Assert.Single(results);
+        Assert.Equal("h1234567", item.Id);
         Assert.Equal(".NET Developer", results[0].Title);
         Assert.Equal("Acme", results[0].Company);
         // No href in the markup, so the id-based fallback URL is used.
@@ -71,8 +71,8 @@ public class JobindexSearchProviderTests
             new JobSearchQuery(".NET", "Jobindex", null, null, 20, 7),
             CancellationToken.None);
 
-        Assert.Single(results);
-        Assert.Equal("https://www.jobindex.dk/vis-job/h1234567/some-company-title", results[0].Url);
+        var item = Assert.Single(results);
+        Assert.Equal("https://www.jobindex.dk/vis-job/h1234567/some-company-title", item.Url);
     }
 
     [Fact]
@@ -146,8 +146,8 @@ public class JobindexSearchProviderTests
             new JobSearchQuery("ASP.NET Core", "Jobindex", null, null, 20, 7),
             CancellationToken.None);
 
-        Assert.Single(results);
-        Assert.Equal("h7654321", results[0].Id);
+        var item = Assert.Single(results);
+        Assert.Equal("h7654321", item.Id);
         Assert.Contains("ASP.NET Core", results[0].Title, StringComparison.OrdinalIgnoreCase);
     }
 
