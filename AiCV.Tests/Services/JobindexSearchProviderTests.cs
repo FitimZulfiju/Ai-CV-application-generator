@@ -189,6 +189,54 @@ public class JobindexSearchProviderTests
     }
 
     [Fact]
+    public void BuildUrl_DoesNotIncludeSortDate_ToPreserveKeywordRelevance()
+    {
+        var url = JobindexSearchProvider.BuildUrl("https://www.jobindex.dk/jobsoegning", ".net", null, null, 1, 14);
+        Assert.DoesNotContain("sort=date", url);
+    }
+
+    [Fact]
+    public void BuildUrl_SanitizesCommaSeparatedLocations()
+    {
+        var url = JobindexSearchProvider.BuildUrl("https://www.jobindex.dk/jobsoegning", ".net", "Copenhagen, Greater Copenhagen, Frederiksberg", null, 1, 14);
+        Assert.Contains("location=Copenhagen", url);
+        Assert.DoesNotContain("Frederiksberg", url);
+    }
+
+    [Fact]
+    public void ParseResultsHtml_StashJson_PrefersFirstDateOverLastDate()
+    {
+        const string html = """
+        <script>
+        var Stash = {
+            "jobsearch/result_app/list": {
+                "storeData": {
+                    "searchResponse": {
+                        "results": [
+                            {
+                                "tid": "h123456",
+                                "headline": ".NET Backend Engineer",
+                                "company": { "name": "Tech Corp" },
+                                "area": "København",
+                                "firstdate": "2026-10-12",
+                                "lastdate": "2026-11-08",
+                                "share_url": "https://www.jobindex.dk/vis-job/h123456"
+                            }
+                        ]
+                    }
+                }
+            }
+        };
+        </script>
+        """;
+
+        var results = JobindexSearchProvider.ParseResultsHtml(html);
+        var job = Assert.Single(results);
+        Assert.Equal("h123456", job.Id);
+        Assert.Equal(new DateTime(2026, 10, 12, 0, 0, 0, DateTimeKind.Utc), job.DatePosted);
+    }
+
+    [Fact]
     public async Task SearchAsync_WhenFirstRequestReturns404_RetriesWithoutJobAge()
     {
         var calls = 0;

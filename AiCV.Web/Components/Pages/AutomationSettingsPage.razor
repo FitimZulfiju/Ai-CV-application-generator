@@ -23,13 +23,13 @@
         <MudPaper Elevation="4" Class="pa-4 mb-2">
             <MudText Typo="Typo.h6" Class="mb-4 section-header-divider">@Localizer["GeneralConfiguration"]</MudText>
 
-            <MudGrid>
-                <MudItem xs="12">
+            <MudGrid Spacing="2">
+                <MudItem xs="12" sm="6" md="3" lg="2" Class="d-flex align-center">
                     <MudSwitch T="bool" @bind-Value="_settings.IsEnabled" Color="Color.Primary"
                                Label="@Localizer["EnableAutomation"]" />
                 </MudItem>
 
-                <MudItem xs="12" md="4" sm="6">
+                <MudItem xs="12" sm="6" md="3" lg="3">
                     <MudSelect T="string" Label="@Localizer["CronPresets"]" @bind-Value="_selectedPreset"
                                @bind-Value:after="ApplyPreset" Variant="Variant.Outlined" Margin="Margin.Dense">
                         <MudSelectItem Value="@PresetDaily6">@Localizer["Daily6AM"]</MudSelectItem>
@@ -39,13 +39,13 @@
                     </MudSelect>
                 </MudItem>
 
-                <MudItem xs="12" md="4" sm="6">
+                <MudItem xs="12" sm="6" md="3" lg="4">
                     <MudTextField T="string" @bind-Value="_settings.CronExpression"
                                   Label="@Localizer["CronExpression"]" Variant="Variant.Outlined" Margin="Margin.Dense"
                                   HelperText="@Localizer["CronExpressionHelper"]" />
                 </MudItem>
 
-                <MudItem xs="12" md="4" sm="6">
+                <MudItem xs="12" sm="6" md="3" lg="3">
                     <MudNumericField T="int" @bind-Value="_settings.MaxApplicationsPerRun" Min="1" Max="50"
                                      Label="@Localizer["MaxApplicationsPerRun"]" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>

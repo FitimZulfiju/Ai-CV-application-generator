@@ -83,7 +83,7 @@ public class JobApplicationOrchestrator(
                         var aiConfig = await _configService.GetActiveConfigurationAsync(userId);
                         if (aiConfig != null && !string.IsNullOrWhiteSpace(aiConfig.ApiKey))
                         {
-                            var discoveryResult = await _discoveryService.DiscoverModelsAsync(provider, aiConfig.ApiKey);
+                            var discoveryResult = await _discoveryService.DiscoverModelsAsync(provider, aiConfig.ApiKey, aiConfig.BaseUrl);
                             if (discoveryResult.Success && discoveryResult.Models != null)
                             {
                                 var dynamicModels = discoveryResult.Models
