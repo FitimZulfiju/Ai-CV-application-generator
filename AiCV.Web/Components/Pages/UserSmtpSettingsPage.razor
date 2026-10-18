@@ -32,10 +32,10 @@
                 }
 
                 <MudForm Model="@_settings" @ref="_form">
-                    <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <MudPaper Elevation="2" Class="pa-4 mb-6">
                         <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">SMTP Server Configuration</MudText>
                         <MudGrid>
-                            <MudItem xs="12" md="8">
+                            <MudItem xs="12" md="6">
                                 <MudTextField @bind-Value="_settings.SmtpHost" Label="Host / Server Address"
                                               Placeholder="e.g. smtp.gmail.com" Variant="Variant.Outlined"
                                               Required="true" RequiredError="Host is required." />
@@ -44,13 +44,12 @@
                                 <MudNumericField @bind-Value="_settings.SmtpPort" Label="Port"
                                                  Variant="Variant.Outlined" Required="true" Min="1" Max="65535" />
                             </MudItem>
-                            <MudItem xs="12">
+                            <MudItem xs="12" md="2" Class="pt-9">
                                 <MudCheckBox @bind-Value="_settings.EnableSsl" Label="Enable SSL/TLS" Color="Color.Primary" />
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
-
-                    <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <MudPaper Elevation="2" Class="pa-4 mb-6">
                         <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">Authentication</MudText>
                         <MudGrid>
                             <MudItem xs="12" md="6">
@@ -65,8 +64,7 @@
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
-
-                    <MudPaper Elevation="4" Class="pa-4 mb-6">
+                    <MudPaper Elevation="2" Class="pa-4 mb-6">
                         <MudText Typo="Typo.h6" Class="mb-4" Style="border-bottom: 1px solid var(--mud-palette-divider); padding-bottom: 8px;">Sender Information</MudText>
                         <MudGrid>
                             <MudItem xs="12" md="6">
@@ -79,7 +77,6 @@
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
-
                     <div class="d-flex justify-end gap-3 mb-6">
                         <MudButton Variant="Variant.Outlined" Color="Color.Default"
                                    Disabled="@_isTestingConnection" OnClick="TestConnection"
