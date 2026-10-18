@@ -72,7 +72,10 @@
                     <CellTemplate>
                         @if (!string.IsNullOrWhiteSpace(context.Item.JobPosting?.Source))
                         {
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@GetProviderColor(context.Item.JobPosting.Source)">
+                            <MudChip T="string" Size="Size.Small"
+                                     Variant="@GetProviderVariant(context.Item.JobPosting.Source)"
+                                     Color="@GetProviderColor(context.Item.JobPosting.Source)"
+                                     Icon="@GetProviderIcon(context.Item.JobPosting.Source)">
                                 <MudHighlighter Text="@context.Item.JobPosting.Source" HighlightedText="@searchString1" />
                             </MudChip>
                         }

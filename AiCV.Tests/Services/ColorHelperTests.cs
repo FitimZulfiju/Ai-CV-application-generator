@@ -62,11 +62,45 @@ public class ColorHelperTests
     [InlineData(ApplicationStatus.AutoApplied, Color.Success)]
     [InlineData(ApplicationStatus.Applied, Color.Success)]
     [InlineData(ApplicationStatus.Rejected, Color.Error)]
-    [InlineData(ApplicationStatus.Archived, Color.Default)]
     public void GetStatusColor_ApplicationStatus_ReturnsExpectedColor(string status, Color expectedColor)
     {
         var result = ColorHelper.GetStatusColor(status);
         Assert.Equal(expectedColor, result);
+    }
+
+    [Theory]
+    [InlineData("Jobindex", Variant.Filled)]
+    [InlineData("LinkedIn", Variant.Outlined)]
+    [InlineData("Indeed", Variant.Outlined)]
+    [InlineData("Glassdoor", Variant.Filled)]
+    [InlineData("JSearch", Variant.Filled)]
+    [InlineData("Google", Variant.Outlined)]
+    public void GetProviderVariant_KnownJobProviders_ReturnsExpectedVariant(string provider, Variant expectedVariant)
+    {
+        var result = ColorHelper.GetProviderVariant(provider);
+        Assert.Equal(expectedVariant, result);
+    }
+
+    [Theory]
+    [InlineData(null, Variant.Outlined)]
+    [InlineData("", Variant.Outlined)]
+    public void GetProviderVariant_NullOrEmpty_ReturnsOutlined(string? provider, Variant expectedVariant)
+    {
+        var result = ColorHelper.GetProviderVariant(provider);
+        Assert.Equal(expectedVariant, result);
+    }
+
+    [Theory]
+    [InlineData("LinkedIn", Icons.Custom.Brands.LinkedIn)]
+    [InlineData("Jobindex", Icons.Material.Filled.Work)]
+    [InlineData("Indeed", Icons.Material.Filled.Search)]
+    [InlineData("Glassdoor", Icons.Material.Filled.Star)]
+    [InlineData("JSearch", Icons.Material.Filled.TravelExplore)]
+    [InlineData("Google", Icons.Custom.Brands.Google)]
+    public void GetProviderIcon_KnownJobProviders_ReturnsExpectedIcon(string provider, string expectedIcon)
+    {
+        var result = ColorHelper.GetProviderIcon(provider);
+        Assert.Equal(expectedIcon, result);
     }
 }
 

@@ -20,7 +20,11 @@
                 <MudText Typo="Typo.h6" Class="ml-2">@_application.JobPosting?.Title @Localizer["at"] @_application.JobPosting?.CompanyName</MudText>
                 @if (!string.IsNullOrWhiteSpace(_application.JobPosting?.Source))
                 {
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@ColorHelper.GetProviderColor(_application.JobPosting.Source)" Class="ml-2">@_application.JobPosting.Source</MudChip>
+                    <MudChip T="string" Size="Size.Small"
+                             Variant="@ColorHelper.GetProviderVariant(_application.JobPosting.Source)"
+                             Color="@ColorHelper.GetProviderColor(_application.JobPosting.Source)"
+                             Icon="@ColorHelper.GetProviderIcon(_application.JobPosting.Source)"
+                             Class="ml-2">@_application.JobPosting.Source</MudChip>
                 }
                 @if (!string.IsNullOrEmpty(_application.JobPosting?.ApplyUrl) || !string.IsNullOrEmpty(_application.JobPosting?.Url))
                 {

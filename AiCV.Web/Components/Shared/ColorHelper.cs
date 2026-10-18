@@ -77,6 +77,67 @@ public static class ColorHelper
             _ => Icons.Material.Filled.Memory,
         };
 
+    private static readonly Variant[] ProviderVariants =
+    [
+        Variant.Outlined,
+        Variant.Filled
+    ];
+
+    public static Variant GetProviderVariant(string? provider)
+    {
+        if (string.IsNullOrWhiteSpace(provider))
+            return Variant.Outlined;
+
+        var normalized = provider.Trim();
+
+        if (normalized.Contains("jobindex", StringComparison.OrdinalIgnoreCase))
+            return Variant.Filled;
+        if (normalized.Contains("linkedin", StringComparison.OrdinalIgnoreCase))
+            return Variant.Outlined;
+        if (normalized.Contains("indeed", StringComparison.OrdinalIgnoreCase))
+            return Variant.Outlined;
+        if (normalized.Contains("glassdoor", StringComparison.OrdinalIgnoreCase))
+            return Variant.Filled;
+        if (normalized.Contains("jsearch", StringComparison.OrdinalIgnoreCase))
+            return Variant.Filled;
+        if (normalized.Contains("google", StringComparison.OrdinalIgnoreCase))
+            return Variant.Outlined;
+
+        var hash = 0;
+        foreach (var ch in normalized.ToLowerInvariant())
+        {
+            hash = (hash * 31) + ch;
+        }
+
+        return ProviderVariants[Math.Abs(hash) % ProviderVariants.Length];
+    }
+
+    public static string GetProviderIcon(string? provider)
+    {
+        if (string.IsNullOrWhiteSpace(provider))
+            return Icons.Material.Filled.WorkOutline;
+
+        var normalized = provider.Trim();
+
+        if (normalized.Contains("linkedin", StringComparison.OrdinalIgnoreCase))
+            return Icons.Custom.Brands.LinkedIn;
+        if (normalized.Contains("jobindex", StringComparison.OrdinalIgnoreCase))
+            return Icons.Material.Filled.Work;
+        if (normalized.Contains("indeed", StringComparison.OrdinalIgnoreCase))
+            return Icons.Material.Filled.Search;
+        if (normalized.Contains("glassdoor", StringComparison.OrdinalIgnoreCase))
+            return Icons.Material.Filled.Star;
+        if (normalized.Contains("jsearch", StringComparison.OrdinalIgnoreCase))
+            return Icons.Material.Filled.TravelExplore;
+        if (normalized.Contains("google", StringComparison.OrdinalIgnoreCase))
+            return Icons.Custom.Brands.Google;
+
+        if (Enum.TryParse<AIProvider>(normalized, true, out var aiProvider))
+            return GetProviderIcon(aiProvider);
+
+        return Icons.Material.Filled.Language;
+    }
+
     public static Color GetStatusColor(string? status) =>
         status switch
         {
