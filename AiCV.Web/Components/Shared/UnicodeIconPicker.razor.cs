@@ -16,6 +16,9 @@ public partial class UnicodeIconPicker
     [Parameter]
     public EventCallback<string> IconChanged { get; set; }
 
+    [Parameter]
+    public Variant Variant { get; set; }
+
     private async Task OnIconChanged(string value)
     {
         Icon = value;

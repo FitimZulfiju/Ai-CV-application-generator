@@ -748,31 +748,7 @@ public partial class Generate : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private static Color GetProviderColor(AIProvider provider) =>
-        provider switch
-        {
-            AIProvider.GoogleGemini => Color.Primary,
-            AIProvider.OpenAI => Color.Success,
-            AIProvider.Claude => Color.Warning,
-            AIProvider.Groq => Color.Info,
-            AIProvider.DeepSeek => Color.Secondary,
-            AIProvider.OpenRouter => Color.Dark,
-            AIProvider.OmniRouter => Color.Dark,
-            AIProvider.Custom => Color.Surface,
-            _ => Color.Default,
-        };
+    private static Color GetProviderColor(AIProvider provider) => ColorHelper.GetProviderColor(provider);
 
-    private static string GetProviderIcon(AIProvider provider) =>
-        provider switch
-        {
-            AIProvider.GoogleGemini => Icons.Material.Filled.AutoAwesome,
-            AIProvider.OpenAI => Icons.Material.Filled.Psychology,
-            AIProvider.Claude => Icons.Material.Filled.SmartToy,
-            AIProvider.Groq => Icons.Material.Filled.Speed,
-            AIProvider.DeepSeek => Icons.Material.Filled.Explore,
-            AIProvider.OpenRouter => Icons.Material.Filled.Hub,
-            AIProvider.OmniRouter => Icons.Material.Filled.Hub,
-            AIProvider.Custom => Icons.Material.Filled.Build,
-            _ => Icons.Material.Filled.Memory,
-        };
+    private static string GetProviderIcon(AIProvider provider) => ColorHelper.GetProviderIcon(provider);
 }

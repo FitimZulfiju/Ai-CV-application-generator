@@ -24,6 +24,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: include automation search queries in user settings data backup export and restore
 
 ---
+## [1.25.0] - 2026-10-18
+
+### Added
+- feat(ui): support configurable Variant in UnicodeIconPicker and update SectionHeaderCard styling
+- feat(ui): add dynamic provider chip variants and brand icons
+- feat(ui): add centralized ColorHelper and apply dynamic provider chip colors
+- feat(localization): add translations for email sending and SMTP settings across EN, DA, and SQ
+- feat(settings): integrate email sending settings tab and refine header layouts
+
+### Fixed
+- fix: adjust elevation and layout for SMTP settings form components
+
 ## [1.24.3] - 2026-10-15
 
 ### Fixed

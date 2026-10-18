@@ -1983,6 +1983,72 @@
   <data name="ImportingBackup" xml:space="preserve">
     <value>Importerer sikkerhedskopi...</value>
   </data>
+  <data name="BackupSmtpSettings" xml:space="preserve">
+    <value>SMTP-e-mailindstillinger</value>
+  </data>
+  <data name="EmailSendingSettings" xml:space="preserve">
+    <value>Indstillinger for e-mailafsendelse</value>
+  </data>
+  <data name="EmailSendingSettingsSubtitle" xml:space="preserve">
+    <value>Konfigurer dine personlige SMTP-oplysninger. Dette vil blive brugt til at sende jobansøgninger direkte til arbejdsgivere fra din egen e-mailadresse.</value>
+  </data>
+  <data name="SettingsSavedSuccessfully" xml:space="preserve">
+    <value>Indstillingerne blev gemt!</value>
+  </data>
+  <data name="SmtpServerConfiguration" xml:space="preserve">
+    <value>Konfiguration af SMTP-server</value>
+  </data>
+  <data name="HostServerAddress" xml:space="preserve">
+    <value>Vært / Serveradresse</value>
+  </data>
+  <data name="HostIsRequired" xml:space="preserve">
+    <value>Vært er påkrævet.</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="EnableSslTls" xml:space="preserve">
+    <value>Aktivér SSL/TLS</value>
+  </data>
+  <data name="Authentication" xml:space="preserve">
+    <value>Godkendelse</value>
+  </data>
+  <data name="UsernameEmail" xml:space="preserve">
+    <value>Brugernavn / E-mail</value>
+  </data>
+  <data name="UsernameIsRequired" xml:space="preserve">
+    <value>Brugernavn er påkrævet.</value>
+  </data>
+  <data name="SmtpPasswordLabel" xml:space="preserve">
+    <value>Adgangskode / (Generer en app-adgangskode ved Gmail eller 2FA)</value>
+  </data>
+  <data name="PasswordIsRequired" xml:space="preserve">
+    <value>Adgangskode er påkrævet.</value>
+  </data>
+  <data name="SenderInformation" xml:space="preserve">
+    <value>Afsenderoplysninger</value>
+  </data>
+  <data name="FromName" xml:space="preserve">
+    <value>Afsendernavn</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>Afsender e-mailadresse</value>
+  </data>
+  <data name="SmtpFillRequiredBeforeTest" xml:space="preserve">
+    <value>Udfyld venligst vært, brugernavn og adgangskode før test.</value>
+  </data>
+  <data name="SmtpTestEmailSubject" xml:space="preserve">
+    <value>AiCV - SMTP-forbindelsestest</value>
+  </data>
+  <data name="SmtpTestEmailBody" xml:space="preserve">
+    <value>Hvis du læser dette, fungerer din brugerdefinerede SMTP-konfiguration i AiCV korrekt!</value>
+  </data>
+  <data name="SmtpConnectionSuccess" xml:space="preserve">
+    <value>Forbindelse oprettet! En test-e-mail blev sendt til din afsenderadresse.</value>
+  </data>
+  <data name="SmtpConnectionFailed" xml:space="preserve">
+    <value>Forbindelsen mislykkedes. Tjek venligst dine loginoplysninger og serverindstillinger.</value>
+  </data>
 </root>
 
 

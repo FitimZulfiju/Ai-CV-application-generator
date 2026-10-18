@@ -1983,6 +1983,72 @@
   <data name="ImportingBackup" xml:space="preserve">
     <value>Duke importuar kopjen rezervë...</value>
   </data>
+  <data name="BackupSmtpSettings" xml:space="preserve">
+    <value>Cilësimet e email-it SMTP</value>
+  </data>
+  <data name="EmailSendingSettings" xml:space="preserve">
+    <value>Cilësimet e dërgimit të email-it</value>
+  </data>
+  <data name="EmailSendingSettingsSubtitle" xml:space="preserve">
+    <value>Konfiguroni kredencialet tuaja personale SMTP. Kjo do të përdoret për të dërguar aplikime për punë drejtpërdrejt te punëdhënësit nga adresa juaj e email-it.</value>
+  </data>
+  <data name="SettingsSavedSuccessfully" xml:space="preserve">
+    <value>Cilësimet u ruajtën me sukses!</value>
+  </data>
+  <data name="SmtpServerConfiguration" xml:space="preserve">
+    <value>Konfigurimi i serverit SMTP</value>
+  </data>
+  <data name="HostServerAddress" xml:space="preserve">
+    <value>Host / Adresa e serverit</value>
+  </data>
+  <data name="HostIsRequired" xml:space="preserve">
+    <value>Host-i kërkohet.</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Porti</value>
+  </data>
+  <data name="EnableSslTls" xml:space="preserve">
+    <value>Aktivizo SSL/TLS</value>
+  </data>
+  <data name="Authentication" xml:space="preserve">
+    <value>Autentifikimi</value>
+  </data>
+  <data name="UsernameEmail" xml:space="preserve">
+    <value>Emri i përdoruesit / Email</value>
+  </data>
+  <data name="UsernameIsRequired" xml:space="preserve">
+    <value>Emri i përdoruesit kërkohet.</value>
+  </data>
+  <data name="SmtpPasswordLabel" xml:space="preserve">
+    <value>Fjalëkalimi / (Nëse përdorni Gmail ose 2FA, krijoni një fjalëkalim aplikacioni.)</value>
+  </data>
+  <data name="PasswordIsRequired" xml:space="preserve">
+    <value>Fjalëkalimi kërkohet.</value>
+  </data>
+  <data name="SenderInformation" xml:space="preserve">
+    <value>Informacioni i dërguesit</value>
+  </data>
+  <data name="FromName" xml:space="preserve">
+    <value>Emri i dërguesit</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>Adresa e email-it të dërguesit</value>
+  </data>
+  <data name="SmtpFillRequiredBeforeTest" xml:space="preserve">
+    <value>Ju lutemi plotësoni host-in, emrin e përdoruesit dhe fjalëkalimin përpara testimit.</value>
+  </data>
+  <data name="SmtpTestEmailSubject" xml:space="preserve">
+    <value>AiCV - Testi i lidhjes SMTP</value>
+  </data>
+  <data name="SmtpTestEmailBody" xml:space="preserve">
+    <value>Nëse po e lexoni këtë, konfigurimi juaj i personalizuar SMTP në AiCV po funksionon siç duhet!</value>
+  </data>
+  <data name="SmtpConnectionSuccess" xml:space="preserve">
+    <value>Lidhja doli me sukses! Një email prove u dërgua në adresën tuaj.</value>
+  </data>
+  <data name="SmtpConnectionFailed" xml:space="preserve">
+    <value>Lidhja dështoi. Ju lutemi kontrolloni kredencialet dhe cilësimet e serverit tuaj.</value>
+  </data>
 </root>
 
 
