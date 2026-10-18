@@ -2005,4 +2005,67 @@
   <data name="ImportingBackup" xml:space="preserve">
     <value>Importing backup...</value>
   </data>
+  <data name="EmailSendingSettings" xml:space="preserve">
+    <value>Email Sending Settings</value>
+  </data>
+  <data name="EmailSendingSettingsSubtitle" xml:space="preserve">
+    <value>Configure your personal SMTP credentials. This will be used to send job applications directly to employers from your own email address.</value>
+  </data>
+  <data name="SettingsSavedSuccessfully" xml:space="preserve">
+    <value>Settings saved successfully!</value>
+  </data>
+  <data name="SmtpServerConfiguration" xml:space="preserve">
+    <value>SMTP Server Configuration</value>
+  </data>
+  <data name="HostServerAddress" xml:space="preserve">
+    <value>Host / Server Address</value>
+  </data>
+  <data name="HostIsRequired" xml:space="preserve">
+    <value>Host is required.</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="EnableSslTls" xml:space="preserve">
+    <value>Enable SSL/TLS</value>
+  </data>
+  <data name="Authentication" xml:space="preserve">
+    <value>Authentication</value>
+  </data>
+  <data name="UsernameEmail" xml:space="preserve">
+    <value>Username / Email</value>
+  </data>
+  <data name="UsernameIsRequired" xml:space="preserve">
+    <value>Username is required.</value>
+  </data>
+  <data name="SmtpPasswordLabel" xml:space="preserve">
+    <value>Password / (If using Gmail or 2FA, generate an App Password.)</value>
+  </data>
+  <data name="PasswordIsRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="SenderInformation" xml:space="preserve">
+    <value>Sender Information</value>
+  </data>
+  <data name="FromName" xml:space="preserve">
+    <value>From Name</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>From Email Address</value>
+  </data>
+  <data name="SmtpFillRequiredBeforeTest" xml:space="preserve">
+    <value>Please fill in Host, Username, and Password before testing.</value>
+  </data>
+  <data name="SmtpTestEmailSubject" xml:space="preserve">
+    <value>AiCV - SMTP Connection Test</value>
+  </data>
+  <data name="SmtpTestEmailBody" xml:space="preserve">
+    <value>If you are reading this, your custom SMTP configuration in AiCV is working correctly!</value>
+  </data>
+  <data name="SmtpConnectionSuccess" xml:space="preserve">
+    <value>Connection successful! A test email was sent to your from address.</value>
+  </data>
+  <data name="SmtpConnectionFailed" xml:space="preserve">
+    <value>Connection failed. Please check your credentials and server settings.</value>
+  </data>
 </root>

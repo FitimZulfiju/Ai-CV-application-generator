@@ -56,7 +56,7 @@ public partial class UserSmtpSettingsPage : ComponentBase
         if (string.IsNullOrWhiteSpace(_settings.SmtpHost) || string.IsNullOrWhiteSpace(_settings.SmtpUser) || string.IsNullOrWhiteSpace(_settings.SmtpPassword))
         {
             _testSuccess = false;
-            _testResult = "Please fill in Host, Username, and Password before testing.";
+            _testResult = Localizer["SmtpFillRequiredBeforeTest"];
             _testErrorDetails = null;
             return;
         }
@@ -80,8 +80,8 @@ public partial class UserSmtpSettingsPage : ComponentBase
             using var message = new MailMessage
             {
                 From = new MailAddress(fromAddress, fromName),
-                Subject = "AiCV - SMTP Connection Test",
-                Body = "If you are reading this, your custom SMTP configuration in AiCV is working correctly!",
+                Subject = Localizer["SmtpTestEmailSubject"],
+                Body = Localizer["SmtpTestEmailBody"],
                 IsBodyHtml = false
             };
 
@@ -90,12 +90,12 @@ public partial class UserSmtpSettingsPage : ComponentBase
             await client.SendMailAsync(message);
 
             _testSuccess = true;
-            _testResult = "Connection successful! A test email was sent to your from address.";
+            _testResult = Localizer["SmtpConnectionSuccess"];
         }
         catch (Exception ex)
         {
             _testSuccess = false;
-            _testResult = "Connection failed. Please check your credentials and server settings.";
+            _testResult = Localizer["SmtpConnectionFailed"];
             _testErrorDetails = ex.Message;
             if (ex.InnerException != null)
             {

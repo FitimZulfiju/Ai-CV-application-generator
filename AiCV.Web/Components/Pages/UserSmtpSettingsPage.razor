@@ -1,10 +1,10 @@
 <div class="flex-grow-1">
     <div class="d-flex align-center justify-space-between pb-3">
         <MudText Typo="Typo.h6" Class="settings-title-nowrap d-flex align-center gap-2">
-            <MudIcon Icon="@Icons.Material.Filled.Email" /> Email Sending Settings
+            <MudIcon Icon="@Icons.Material.Filled.Email" /> @Localizer["EmailSendingSettings"]
         </MudText>
         <MudText Typo="Typo.body2" Color="Color.Secondary">
-            Configure your personal SMTP credentials. This will be used to send job applications directly to employers from your own email address.
+            @Localizer["EmailSendingSettingsSubtitle"]
         </MudText>
     </div>
     @if (_isLoading)
@@ -18,7 +18,7 @@
         @if (_isSaved)
         {
             <MudAlert Severity="Severity.Success" Variant="Variant.Filled" ShowCloseIcon="true" CloseIconClicked="() => _isSaved = false" Class="mb-4">
-                Settings saved successfully!
+                @Localizer["SettingsSavedSuccessfully"]
             </MudAlert>
         }
 
@@ -27,15 +27,15 @@
                 <div class="d-flex flex-column flex-md-row gap-6">
                     <!-- SMTP Server Configuration -->
                     <div class="d-flex flex-column gap-4" style="flex: 1 1 0; min-width: 0;">
-                        <MudText Typo="Typo.h6">SMTP Server Configuration</MudText>
-                        <MudTextField @bind-Value="_settings.SmtpHost" Label="Host / Server Address"
-                                      Placeholder="e.g. smtp.gmail.com" Variant="Variant.Outlined"
-                                      Required="true" RequiredError="Host is required." />
+                        <MudText Typo="Typo.h6">@Localizer["SmtpServerConfiguration"]</MudText>
+                        <MudTextField @bind-Value="_settings.SmtpHost" Label="@Localizer["HostServerAddress"]"
+                                      Placeholder="smtp.gmail.com" Variant="Variant.Outlined"
+                                      Required="true" RequiredError="@Localizer["HostIsRequired"]" />
                         <div class="d-flex align-center gap-4">
-                            <MudNumericField @bind-Value="_settings.SmtpPort" Label="Port"
+                            <MudNumericField @bind-Value="_settings.SmtpPort" Label="@Localizer["Port"]"
                                              Variant="Variant.Outlined" Required="true" Min="1" Max="65535"
                                              Class="flex-grow-1" Style="min-width: 0;" />
-                            <MudCheckBox @bind-Value="_settings.EnableSsl" Label="Enable SSL/TLS" Color="Color.Primary" />
+                            <MudCheckBox @bind-Value="_settings.EnableSsl" Label="@Localizer["EnableSslTls"]" Color="Color.Primary" />
                         </div>
                     </div>
 
@@ -43,23 +43,23 @@
 
                     <!-- Authentication -->
                     <div class="d-flex flex-column gap-4" style="flex: 1 1 0; min-width: 0;">
-                        <MudText Typo="Typo.h6">Authentication</MudText>
-                        <MudTextField @bind-Value="_settings.SmtpUser" Label="Username / Email"
-                                      Variant="Variant.Outlined" Required="true" RequiredError="Username is required." />
-                        <MudTextField @bind-Value="_settings.SmtpPassword" Label="Password / (If using Gmail or 2FA, generate an App Password.)"
+                        <MudText Typo="Typo.h6">@Localizer["Authentication"]</MudText>
+                        <MudTextField @bind-Value="_settings.SmtpUser" Label="@Localizer["UsernameEmail"]"
+                                      Variant="Variant.Outlined" Required="true" RequiredError="@Localizer["UsernameIsRequired"]" />
+                        <MudTextField @bind-Value="_settings.SmtpPassword" Label="@Localizer["SmtpPasswordLabel"]"
                                       Variant="Variant.Outlined" InputType="InputType.Password"
-                                      Required="true" RequiredError="Password is required." />
+                                      Required="true" RequiredError="@Localizer["PasswordIsRequired"]" />
                     </div>
 
                     <MudDivider Vertical="true" FlexItem="true" />
 
                     <!-- Sender Information -->
                     <div class="d-flex flex-column gap-4" style="flex: 1 1 0; min-width: 0;">
-                        <MudText Typo="Typo.h6">Sender Information</MudText>
-                        <MudTextField @bind-Value="_settings.FromName" Label="From Name"
-                                      Placeholder="e.g. John Doe" Variant="Variant.Outlined" />
-                        <MudTextField @bind-Value="_settings.FromEmail" Label="From Email Address"
-                                      Placeholder="e.g. john@example.com" Variant="Variant.Outlined" />
+                        <MudText Typo="Typo.h6">@Localizer["SenderInformation"]</MudText>
+                        <MudTextField @bind-Value="_settings.FromName" Label="@Localizer["FromName"]"
+                                      Placeholder="John Doe" Variant="Variant.Outlined" />
+                        <MudTextField @bind-Value="_settings.FromEmail" Label="@Localizer["FromEmailAddress"]"
+                                      Placeholder="john@example.com" Variant="Variant.Outlined" />
                     </div>
                 </div>
             </MudPaper>
@@ -71,7 +71,7 @@
                     {
                         <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
                     }
-                    Test Connection
+                    @Localizer["TestConnection"]
                 </MudButton>
 
                 <MudButton Variant="Variant.Filled" Color="Color.Primary"
@@ -81,7 +81,7 @@
                     {
                         <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
                     }
-                    Save Settings
+                    @Localizer["SaveSettings"]
                 </MudButton>
             </div>
         </MudForm>
