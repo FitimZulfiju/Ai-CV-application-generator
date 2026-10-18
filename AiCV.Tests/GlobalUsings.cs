@@ -28,3 +28,6 @@ global using Microsoft.Extensions.Http;
 global using System.Net.Http;
 global using Microsoft.Extensions.Configuration;
 global using AiCV.Application.Common;
+global using AiCV.Web.Components.Shared;
+global using MudBlazor;
+global using AiCV.Domain.Constants;

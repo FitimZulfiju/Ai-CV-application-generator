@@ -163,17 +163,7 @@ public partial class MyApplications
         return false;
     }
 
-    private static Color GetStatusColor(string? status)
-    {
-        return status switch
-        {
-            ApplicationStatus.PendingReview => Color.Warning,
-            ApplicationStatus.Approved => Color.Info,
-            ApplicationStatus.AutoApplied => Color.Success,
-            ApplicationStatus.Applied => Color.Success,
-            ApplicationStatus.Rejected => Color.Error,
-            ApplicationStatus.Archived => Color.Default,
-            _ => Color.Default,
-        };
-    }
+    private static Color GetProviderColor(string? provider) => ColorHelper.GetProviderColor(provider);
+
+    private static Color GetStatusColor(string? status) => ColorHelper.GetStatusColor(status);
 }
