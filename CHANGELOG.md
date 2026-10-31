@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: include automation search queries in user settings data backup export and restore
 
 ---
+## [1.25.1] - 2026-10-31
+
+### Changed
+- Update README to indicate project archive status
+
 ## [1.25.0] - 2026-10-18
 
 ### Added

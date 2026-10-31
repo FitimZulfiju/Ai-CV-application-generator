@@ -1,3 +1,18 @@
+> [!IMPORTANT]
+>
+> ### 🚀 Project Archived — Development Has Moved
+>
+> This repository is **archived and no longer maintained**.
+>
+> The project has been rebuilt using a different framework, and all future development, improvements, and maintenance will take place in the new repository.
+>
+> **➡️ [Visit the new repository](https://github.com/FitimZulfiju/iCV-application-generator.git)**
+>
+> This repository remains publicly available for reference and historical purposes.
+>
+> For the latest version, updates, bug reports, and contributions, please use the new repository.
+
+
 # AiCV – The AI‑Assisted CV Application Generator (Workflow Test)
 
 **AiCV** is an open‑source, self‑hosted **experimental .NET application** that explores AI‑assisted workflows for generating CVs and cover letters based on job postings.
